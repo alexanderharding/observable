@@ -3,7 +3,7 @@
   "specifiers": {
     "jsr:@std/assert@^1.0.16": "1.0.16",
     "jsr:@std/internal@^1.0.12": "1.0.12",
-    "jsr:@xan/observer@0.1": "0.1.0"
+    "jsr:@xan/observer@0.2": "0.2.0"
   },
   "jsr": {
     "@std/assert@1.0.16": {
@@ -15,14 +15,14 @@
     "@std/internal@1.0.12": {
       "integrity": "972a634fd5bc34b242024402972cd5143eac68d8dffaca5eaa4dba30ce17b027"
     },
-    "@xan/observer@0.1.0": {
-      "integrity": "a05d35416102441584c182b94963a2d6d357c060e82173efc3181ca61108ebb9"
+    "@xan/observer@0.2.0": {
+      "integrity": "26ab968167b162726759ba3cc42b906ae2210dbabffb8d4b4d54967b239a5c3f"
     }
   },
   "workspace": {
     "dependencies": [
       "jsr:@std/assert@^1.0.16",
-      "jsr:@xan/observer@0.1"
+      "jsr:@xan/observer@0.2"
     ]
   }
 }
