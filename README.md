@@ -1,8 +1,9 @@
 # @xan/observable
 
-A template for connecting a [consumer](https://jsr.io/@xan/observer#consumer) to a
-[producer](https://jsr.io/@xan/observer#producer) to be
-[observed](https://jsr.io/@xan/observer#observation)
+A template for connecting an [`Observer`](https://jsr.io/@xan/observer/doc/~/Observer), as a
+[`consumer`](https://jsr.io/@xan/observer#consumer), to a
+[`producer`](https://jsr.io/@xan/observer#producer), via a
+[`subscribe`](https://jsr.io/@xan/observable/doc/~/.subscribe) action.
 
 ## Build
 

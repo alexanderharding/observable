@@ -242,3 +242,14 @@ Deno.test("should call internal subscribe again on resubscribe", () => {
   // Assert
   assertEquals(subscribeCalls.length, 2);
 });
+
+Deno.test(
+  "Subject should enforce the correct 'this' binding when calling instance methods",
+  () => {
+    assertThrows(
+      () => Observable.prototype.subscribe(new Observer()),
+      TypeError,
+      "'this' is not instanceof 'Observable'",
+    );
+  },
+);
