@@ -1,3 +1,4 @@
-export function noop(): void {
-  // Do nothing.
-}
+/**
+ * A function that does nothing and returns nothing.
+ */
+export function noop(): void {}
