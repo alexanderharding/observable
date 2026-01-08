@@ -9,7 +9,7 @@ import {
 import { ObserverConstructor } from "./observer-constructor.ts";
 
 /**
- * Object interface that defines a standard way to [`consume`](https://jsr.io/@observable/core#consumer) a
+ * Object interface that defines a standard way to [`consume`](https://jsr.io/@xan/observable-core#consumer) a
  * sequence of values (either finite or infinite).
  */
 // This is meant to reflect similar semantics as the Iterator protocol, while also supporting aborts.
@@ -17,21 +17,21 @@ import { ObserverConstructor } from "./observer-constructor.ts";
 // is different.
 export interface Observer<Value = unknown> {
   /**
-   * The [`consumer`](https://jsr.io/@observable/core#consumer) is telling the [`producer`](https://jsr.io/@observable/core#producer)
+   * The [`consumer`](https://jsr.io/@xan/observable-core#consumer) is telling the [`producer`](https://jsr.io/@xan/observable-core#producer)
    * it's no longer interested in receiving {@linkcode Value|values}.
    */
   readonly signal: AbortSignal;
   /**
-   * The [`producer`](https://jsr.io/@observable/core#producer) is pushing a {@linkcode value} to the [`consumer`](https://jsr.io/@observable/core#consumer).
+   * The [`producer`](https://jsr.io/@xan/observable-core#producer) is pushing a {@linkcode value} to the [`consumer`](https://jsr.io/@xan/observable-core#consumer).
    */
   next(value: Value): void;
   /**
-   * The [`producer`](https://jsr.io/@observable/core#producer) is telling the [`consumer`](https://jsr.io/@observable/core#consumer)
+   * The [`producer`](https://jsr.io/@xan/observable-core#producer) is telling the [`consumer`](https://jsr.io/@xan/observable-core#consumer)
    * that it does not intend to {@linkcode next} any more values, and can perform any cleanup actions.
    */
   return(): void;
   /**
-   * The [`producer`](https://jsr.io/@observable/core#producer) is telling the [`consumer`](https://jsr.io/@observable/core#consumer) that
+   * The [`producer`](https://jsr.io/@xan/observable-core#producer) is telling the [`consumer`](https://jsr.io/@xan/observable-core#consumer) that
    * it has encountered a {@linkcode value|problem}, does not intend to {@linkcode next} any more values, and can perform any cleanup actions.
    */
   throw(value: unknown): void;
