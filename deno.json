@@ -1,0 +1,12 @@
+{
+  "workspace": ["internal"],
+  "license": "MIT",
+  "tasks": {
+    "test": "deno test --watch",
+    "test:ci": "deno test"
+  },
+  "fmt": { "lineWidth": 100, "bracePosition": "sameLine" },
+  "imports": {
+    "@std/assert": "jsr:@std/assert@^1.0.16"
+  }
+}
