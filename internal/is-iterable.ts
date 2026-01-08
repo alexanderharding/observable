@@ -5,7 +5,7 @@ import { isObject } from "./is-object.ts";
  * Checks if a {@linkcode value} is an object that implements the {@linkcode Iterable} interface.
  * @example
  * ```ts
- * import { isIterable } from "@observable/shared";
+ * import { isIterable } from "@xan/observable-internal";
  *
  * const iterableLiteral: Iterable<unknown> = {
  *   [Symbol.iterator]() {

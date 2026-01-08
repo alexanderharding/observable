@@ -1,5 +1,5 @@
 {
-  "workspace": ["shared"],
+  "workspace": ["internal"],
   "license": "MIT",
   "tasks": {
     "test": "deno test --watch",

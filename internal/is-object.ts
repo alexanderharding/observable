@@ -1,10 +1,10 @@
-import { MinimumArgumentsRequiredError } from "@observable/shared";
+import { MinimumArgumentsRequiredError } from "./minimum-arguments-required-error.ts";
 
 /**
  * Checks if a {@linkcode value} is an `object`.
  * @example
  * ```ts
- * import { isObject } from "@observable/shared";
+ * import { isObject } from "@xan/observable-internal";
  *
  * isObject({}); // true
  * isObject(null)); // false

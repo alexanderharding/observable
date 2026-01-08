@@ -1,10 +1,10 @@
-import { MinimumArgumentsRequiredError } from "@observable/shared";
+import { MinimumArgumentsRequiredError } from "@xan/observable-internal";
 
 /**
  * Checks if a {@linkcode value} is `null` or `undefined`.
  * @example
  * ```ts
- * import { isNil } from "@observable/shared";
+ * import { isNil } from "@xan/observable-internal";
  *
  * isNil(undefined); // true
  * isNil(null); // true
