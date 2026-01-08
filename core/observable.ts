@@ -6,7 +6,7 @@ import {
 import { isObserver } from "./is-observer.ts";
 import type { Observer } from "./observer.ts";
 import { toObserver } from "./to-observer.ts";
-import { ObservableConstructor } from "./observable-constructor.ts";
+import type { ObservableConstructor } from "./observable-constructor.ts";
 
 /**
  * Object interface that acts as a template for connecting an {@linkcode Observer}, as a

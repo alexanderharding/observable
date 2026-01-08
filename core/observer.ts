@@ -6,7 +6,7 @@ import {
   MinimumArgumentsRequiredError,
   ParameterTypeError,
 } from "@xan/observable-internal";
-import { ObserverConstructor } from "./observer-constructor.ts";
+import type { ObserverConstructor } from "./observer-constructor.ts";
 
 /**
  * Object interface that defines a standard way to [`consume`](https://jsr.io/@xan/observable-core#consumer) a
