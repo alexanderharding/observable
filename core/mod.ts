@@ -6,3 +6,6 @@ export { Observable } from "./observable.ts";
 export type { ObservableConstructor } from "./observable-constructor.ts";
 export { isObservable } from "./is-observable.ts";
 export { toObservable } from "./to-observable.ts";
+export { Subject } from "./subject.ts";
+export type { SubjectConstructor } from "./subject-constructor.ts";
+export { isSubject } from "./is-subject.ts";
