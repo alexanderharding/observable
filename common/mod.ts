@@ -10,3 +10,4 @@ export type { ObserverNotification } from "./observer-notification.ts";
 export { materialize } from "./materialize.ts";
 export { dematerialize } from "./dematerialize.ts";
 export { drop } from "./drop.ts";
+export { filter } from "./filter.ts";
