@@ -12,8 +12,8 @@ import { takeUntil } from "./take-until.ts";
 
 /**
  * Creates and returns an [`Observable`](https://jsr.io/@xan/observable-core/doc/~/Observable) whose
- * [`nexted`](https://jsr.io/@xan/observable-core/doc/~/Observer.next) values are calculated from the latest
- * [`nexted`](https://jsr.io/@xan/observable-core/doc/~/Observer.next) values of each of its {@linkcode sources}.
+ * [`next`](https://jsr.io/@xan/observable-core/doc/~/Observer.next)ed values are calculated from the latest
+ * [`next`](https://jsr.io/@xan/observable-core/doc/~/Observer.next)ed values of each of its {@linkcode sources}.
  * If any of the {@linkcode sources} are {@linkcode empty}, the returned [`Observable`](https://jsr.io/@xan/observable-core/doc/~/Observable)
  * will also be {@linkcode empty}.
  */

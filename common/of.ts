@@ -7,7 +7,7 @@ import {
 
 /**
  * Creates and returns an [`Observable`](https://jsr.io/@xan/observable-core/doc/~/Observable) that emits a sequence of {@linkcode values} in order on
- * [`subscribe`](https://jsr.io/@xan/observable-core/doc/~/Observable.subscribe) and then [`returns`](https://jsr.io/@xan/observable-core/doc/~/Observer.return).
+ * [`subscribe`](https://jsr.io/@xan/observable-core/doc/~/Observable.subscribe) and then [`return`](https://jsr.io/@xan/observable-core/doc/~/Observer.return)s.
  * @example
  * ```ts
  * import { of } from "@xan/observable-common";

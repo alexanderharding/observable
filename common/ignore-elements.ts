@@ -2,7 +2,7 @@ import { isObservable, Observable, toObservable } from "@xan/observable-core";
 import { MinimumArgumentsRequiredError, noop, ParameterTypeError } from "@xan/observable-internal";
 
 /**
- * Ignores all [`nexted`](https://jsr.io/@xan/observable-core/doc/~/Observer.next) values from the
+ * Ignores all [`next`](https://jsr.io/@xan/observable-core/doc/~/Observer.next)ed values from the
  * `source` [`Observable`](https://jsr.io/@xan/observable-core/doc/~/Observable).
  * @example
  * ```ts

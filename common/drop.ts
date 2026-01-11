@@ -5,7 +5,7 @@ import { pipe } from "./pipe.ts";
 import { filter } from "./filter.ts";
 
 /**
- * Drops the first {@linkcode count} values [`nexted`](https://jsr.io/@xan/observable-core/doc/~/Observer.next) by the `source`
+ * Drops the first {@linkcode count} values [`next`](https://jsr.io/@xan/observable-core/doc/~/Observer.next)ed by the `source`
  * [`Observable`](https://jsr.io/@xan/observable-core/doc/~/Observable).
  * @example
  * ```ts
