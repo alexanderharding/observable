@@ -1,4 +1,4 @@
-import { ReplaySubject } from "./replay-subject.ts";
+import type { ReplaySubject } from "./replay-subject.ts";
 
 /**
  * Object interface for an {@linkcode ReplaySubject} factory.
