@@ -1,5 +1,7 @@
-import { isObservable, Observable, toObservable } from "@xan/observable-core";
+import { isObservable, Observable } from "@xan/observable-core";
 import { MinimumArgumentsRequiredError, noop, ParameterTypeError } from "@xan/observable-internal";
+import { pipe } from "./pipe.ts";
+import { asObservable } from "./as-observable.ts";
 
 /**
  * Ignores all [`next`](https://jsr.io/@xan/observable-core/doc/~/Observer.next)ed values from the
@@ -26,7 +28,7 @@ export function ignoreElements<Value>(): (
   return function ignoreElementsFn(source) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
-    source = toObservable(source);
+    source = pipe(source, asObservable());
     return new Observable((observer) =>
       source.subscribe({
         signal: observer.signal,

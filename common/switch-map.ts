@@ -1,16 +1,11 @@
-import {
-  isObservable,
-  type Observable,
-  Observer,
-  Subject,
-  toObservable,
-} from "@xan/observable-core";
+import { isObservable, type Observable, Observer, Subject } from "@xan/observable-core";
 import { MinimumArgumentsRequiredError, noop, ParameterTypeError } from "@xan/observable-internal";
 import { defer } from "./defer.ts";
 import { pipe } from "./pipe.ts";
 import { takeUntil } from "./take-until.ts";
 import { tap } from "./tap.ts";
 import { mergeMap } from "./merge-map.ts";
+import { asObservable } from "./as-observable.ts";
 
 /**
  * {@linkcode project|Projects} each source value to an [`Observable`](https://jsr.io/@xan/observable-core/doc/~/Observable) which is
@@ -27,7 +22,7 @@ export function switchMap<In, Out>(
   return function switchMapFn(source) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
-    source = toObservable(source);
+    source = pipe(source, asObservable());
     return defer(() => {
       const switching = new Subject<void>();
       return pipe(

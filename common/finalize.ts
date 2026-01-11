@@ -1,5 +1,7 @@
-import { isObservable, Observable, toObservable } from "@xan/observable-core";
+import { isObservable, Observable } from "@xan/observable-core";
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@xan/observable-internal";
+import { pipe } from "./pipe.ts";
+import { asObservable } from "./as-observable.ts";
 
 /**
  * The [producer](https://jsr.io/@xan/observable-core#producer) is notifying the [consumer](https://jsr.io/@xan/observable-core#consumer)
@@ -17,7 +19,7 @@ export function finalize<Value>(
   return function finalizeFn(source) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
-    source = toObservable(source);
+    source = pipe(source, asObservable());
     return new Observable((observer) => {
       const observerAbortListenerController = new AbortController();
       observer.signal.addEventListener("abort", () => finalizer(), {

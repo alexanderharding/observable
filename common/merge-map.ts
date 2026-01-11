@@ -1,5 +1,7 @@
-import { isObservable, Observable, toObservable } from "@xan/observable-core";
+import { isObservable, Observable } from "@xan/observable-core";
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@xan/observable-internal";
+import { pipe } from "./pipe.ts";
+import { asObservable } from "./as-observable.ts";
 
 /**
  * {@linkcode project|Projects} each source value to an [`Observable`](https://jsr.io/@xan/observable-core/doc/~/Observable)
@@ -16,7 +18,7 @@ export function mergeMap<In, Out>(
   return function mergeMapFn(source) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
-    source = toObservable(source);
+    source = pipe(source, asObservable());
     return new Observable((observer) => {
       let index = 0;
       let outerSubscriptionHasReturned = false;
@@ -26,7 +28,7 @@ export function mergeMap<In, Out>(
         signal: observer.signal,
         next(value) {
           activeInnerSubscriptions++;
-          toObservable(project(value, index++)).subscribe({
+          pipe(project(value, index++), asObservable()).subscribe({
             signal: observer.signal,
             next: (value) => observer.next(value),
             return() {

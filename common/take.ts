@@ -1,6 +1,8 @@
-import { isObservable, Observable, toObservable } from "@xan/observable-core";
+import { isObservable, Observable } from "@xan/observable-core";
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@xan/observable-internal";
 import { empty } from "./empty.ts";
+import { pipe } from "./pipe.ts";
+import { asObservable } from "./as-observable.ts";
 
 /**
  * Takes the first {@linkcode count} values [`next`](https://jsr.io/@xan/observable-core/doc/~/Observer.next)ed
@@ -30,7 +32,7 @@ export function take<Value>(
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
     if (count <= 0 || Number.isNaN(count)) return empty;
-    source = toObservable(source);
+    source = pipe(source, asObservable());
     if (count === Infinity) return source;
     return new Observable((observer) => {
       let seen = 0;

@@ -1,6 +1,8 @@
-import { isObservable, Observable, toObservable } from "@xan/observable-core";
+import { isObservable, Observable } from "@xan/observable-core";
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@xan/observable-internal";
 import type { ObserverNotification } from "./observer-notification.ts";
+import { pipe } from "./pipe.ts";
+import { asObservable } from "./as-observable.ts";
 
 /**
  * Represents all of the {@linkcode ObserverNotification|notifications} from the
@@ -86,7 +88,7 @@ export function materialize<Value>(): (
   return function materializeFn(source) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
-    source = toObservable(source);
+    source = pipe(source, asObservable());
     return new Observable((observer) =>
       source.subscribe({
         signal: observer.signal,

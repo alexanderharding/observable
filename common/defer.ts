@@ -1,5 +1,7 @@
-import { Observable, toObservable } from "@xan/observable-core";
+import { Observable } from "@xan/observable-core";
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@xan/observable-internal";
+import { pipe } from "./pipe.ts";
+import { asObservable } from "./as-observable.ts";
 
 /**
  * Creates an [`Observable`](https://jsr.io/@xan/observable-core/doc/~/Observable) that, on
@@ -15,5 +17,5 @@ export function defer<Value>(
   if (typeof factory !== "function") {
     throw new ParameterTypeError(0, "Function");
   }
-  return new Observable((observer) => toObservable(factory()).subscribe(observer));
+  return new Observable((observer) => pipe(factory(), asObservable()).subscribe(observer));
 }
