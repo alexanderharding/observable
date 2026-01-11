@@ -21,4 +21,5 @@ export { mergeMap } from "./merge-map.ts";
 export { merge } from "./merge.ts";
 export { exhaustMap } from "./exhaust-map.ts";
 export { flatMap } from "./flat-map.ts";
+export { flat } from "./flat.ts";
 export { finalize } from "./finalize.ts";
