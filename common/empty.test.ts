@@ -18,7 +18,7 @@ Deno.test(
     );
 
     // Assert
-    assertEquals(notifications, [["R"]]);
+    assertEquals(notifications, [["return"]]);
   },
 );
 
@@ -37,7 +37,7 @@ Deno.test(
     );
 
     // Assert
-    assertEquals(notifications, [["R"]]);
+    assertEquals(notifications, [["return"]]);
   },
 );
 
@@ -54,6 +54,6 @@ Deno.test(
     );
 
     // Assert
-    assertEquals(notifications, [["R"]]);
+    assertEquals(notifications, [["return"]]);
   },
 );

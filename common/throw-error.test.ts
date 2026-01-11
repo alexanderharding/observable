@@ -19,6 +19,6 @@ Deno.test(
     );
 
     // Assert
-    assertEquals(notifications, [["T", error]]);
+    assertEquals(notifications, [["throw", error]]);
   },
 );

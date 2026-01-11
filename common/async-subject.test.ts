@@ -66,7 +66,7 @@ Deno.test(
     source.subscribe(subject);
 
     // Assert
-    assertEquals(notifications, [["N", 5], ["R"]]);
+    assertEquals(notifications, [["next", 5], ["return"]]);
   },
 );
 
@@ -84,7 +84,7 @@ Deno.test("AsyncSubject should only emit the last value on return", () => {
   subject.return();
 
   // Assert
-  assertEquals(notifications, [["N", "bar"], ["R"]]);
+  assertEquals(notifications, [["next", "bar"], ["return"]]);
 });
 
 Deno.test("AsyncSubject should not emit if no value is nexted", () => {
@@ -99,7 +99,7 @@ Deno.test("AsyncSubject should not emit if no value is nexted", () => {
   subject.return();
 
   // Assert
-  assertEquals(notifications, [["R"]]);
+  assertEquals(notifications, [["return"]]);
 });
 
 Deno.test("AsyncSubject should emit last value to late subscribers", () => {
@@ -116,7 +116,7 @@ Deno.test("AsyncSubject should emit last value to late subscribers", () => {
   );
 
   // Assert
-  assertEquals(notifications, [["N", "bar"], ["R"]]);
+  assertEquals(notifications, [["next", "bar"], ["return"]]);
 });
 
 Deno.test(
@@ -133,7 +133,7 @@ Deno.test(
     );
 
     // Assert
-    assertEquals(notifications, [["R"]]);
+    assertEquals(notifications, [["return"]]);
   },
 );
 
@@ -167,7 +167,7 @@ Deno.test("AsyncSubject.throw should pass through this subject", () => {
   subject.throw(error);
 
   // Assert
-  assertEquals(notifications, [["T", error]]);
+  assertEquals(notifications, [["throw", error]]);
 });
 
 Deno.test("AsyncSubject.throw should notify late subscribers", () => {
@@ -200,7 +200,7 @@ Deno.test("AsyncSubject.throw should notify late subscribers", () => {
   );
 
   // Assert
-  assertEquals(notifications, [["T", error]]);
+  assertEquals(notifications, [["throw", error]]);
   assertStrictEquals(queueMicrotaskCalls.length, 1);
   assertThrows(queueMicrotaskCalls[0][0], Error, "test error");
   overrideGlobals = false;
@@ -252,7 +252,7 @@ Deno.test("AsyncSubject.return should pass through this subject", () => {
   subject.return();
 
   // Assert
-  assertEquals(notifications, [["N", "foo"], ["R"]]);
+  assertEquals(notifications, [["next", "foo"], ["return"]]);
 });
 
 Deno.test("AsyncSubject.return should notify late subscribers", () => {
@@ -268,7 +268,7 @@ Deno.test("AsyncSubject.return should notify late subscribers", () => {
   );
 
   // Assert
-  assertEquals(notifications, [["N", "foo"], ["R"]]);
+  assertEquals(notifications, [["next", "foo"], ["return"]]);
 });
 
 Deno.test(

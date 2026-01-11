@@ -40,16 +40,16 @@ Deno.test("mergeMap should map-and-flatten each item to an Observable", () => {
 
   // Assert
   assertEquals(notifications, [
-    ["N", 10],
-    ["N", 10],
-    ["N", 10],
-    ["N", 30],
-    ["N", 30],
-    ["N", 30],
-    ["N", 50],
-    ["N", 50],
-    ["N", 50],
-    ["R"],
+    ["next", 10],
+    ["next", 10],
+    ["next", 10],
+    ["next", 30],
+    ["next", 30],
+    ["next", 30],
+    ["next", 50],
+    ["next", 50],
+    ["next", 50],
+    ["return"],
   ]);
 });
 
@@ -113,20 +113,20 @@ Deno.test("mergeMap should merge many regular interval inners", () => {
 
   // Assert
   assertEquals(notifications, [
-    ["N", "a"],
-    ["N", "a"],
-    ["N", "b"],
-    ["N", "a"],
-    ["N", "b"],
-    ["N", "a"],
-    ["N", "b"],
-    ["N", "c"],
-    ["N", "c"],
-    ["N", "c"],
-    ["N", "d"],
-    ["N", "c"],
-    ["N", "c"],
-    ["R"],
+    ["next", "a"],
+    ["next", "a"],
+    ["next", "b"],
+    ["next", "a"],
+    ["next", "b"],
+    ["next", "a"],
+    ["next", "b"],
+    ["next", "c"],
+    ["next", "c"],
+    ["next", "c"],
+    ["next", "d"],
+    ["next", "c"],
+    ["next", "c"],
+    ["return"],
   ]);
 });
 
@@ -194,13 +194,13 @@ Deno.test(
 
     // Assert
     assertEquals(notifications, [
-      ["N", "a"],
-      ["N", "a"],
-      ["N", "b"],
-      ["N", "a"],
-      ["N", "b"],
-      ["N", "a"],
-      ["T", error],
+      ["next", "a"],
+      ["next", "a"],
+      ["next", "b"],
+      ["next", "a"],
+      ["next", "b"],
+      ["next", "a"],
+      ["throw", error],
     ]);
   },
 );
@@ -269,19 +269,19 @@ Deno.test(
 
     // Assert
     assertEquals(notifications, [
-      ["N", "a"],
-      ["N", "a"],
-      ["N", "b"],
-      ["N", "a"],
-      ["N", "b"],
-      ["N", "a"],
-      ["N", "b"],
-      ["N", "c"],
-      ["N", "c"],
-      ["N", "c"],
-      ["N", "d"],
-      ["N", "c"],
-      ["T", error],
+      ["next", "a"],
+      ["next", "a"],
+      ["next", "b"],
+      ["next", "a"],
+      ["next", "b"],
+      ["next", "a"],
+      ["next", "b"],
+      ["next", "c"],
+      ["next", "c"],
+      ["next", "c"],
+      ["next", "d"],
+      ["next", "c"],
+      ["throw", error],
     ]);
   },
 );
@@ -351,15 +351,15 @@ Deno.test(
 
     // Assert
     assertEquals(notifications, [
-      ["N", "a"],
-      ["N", "a"],
-      ["N", "b"],
-      ["N", "a"],
-      ["N", "b"],
-      ["N", "a"],
-      ["N", "b"],
-      ["N", "c"],
-      ["T", error],
+      ["next", "a"],
+      ["next", "a"],
+      ["next", "b"],
+      ["next", "a"],
+      ["next", "b"],
+      ["next", "a"],
+      ["next", "b"],
+      ["next", "c"],
+      ["throw", error],
     ]);
   },
 );

@@ -28,10 +28,10 @@ Deno.test(
 
     // Assert
     assertEquals(notifications, [
-      ["N", [3, 6, 7]],
-      ["N", [3, 6, 8]],
-      ["N", [3, 6, 9]],
-      ["R"],
+      ["next", [3, 6, 7]],
+      ["next", [3, 6, 8]],
+      ["next", [3, 6, 9]],
+      ["return"],
     ]);
   },
 );
@@ -62,7 +62,7 @@ Deno.test(
     );
 
     // Assert
-    assertEquals(notifications, [["R"]]);
+    assertEquals(notifications, [["return"]]);
     assertEquals(deferCalls, [1, 2]);
   },
 );
@@ -81,7 +81,7 @@ Deno.test("all should handle reentrancy", () => {
     new Observer((notification) => {
       notifications.push(notification);
       if (
-        notification[0] === "N" &&
+        notification[0] === "next" &&
         notification[1][2] === 7 &&
         notification[1][0] !== 10
       ) {
@@ -92,10 +92,10 @@ Deno.test("all should handle reentrancy", () => {
 
   // Assert
   assertEquals(notifications, [
-    ["N", [3, 6, 7]],
-    ["N", [10, 6, 7]],
-    ["N", [10, 6, 8]],
-    ["N", [10, 6, 9]],
+    ["next", [3, 6, 7]],
+    ["next", [10, 6, 7]],
+    ["next", [10, 6, 8]],
+    ["next", [10, 6, 9]],
   ]);
 });
 

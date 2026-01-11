@@ -58,12 +58,12 @@ Deno.test(
 
     // Assert
     assertEquals(notifications, [
-      ["N", 1],
-      ["N", 2],
-      ["N", 3],
-      ["N", 4],
-      ["N", 5],
-      ["R"],
+      ["next", 1],
+      ["next", 2],
+      ["next", 3],
+      ["next", 4],
+      ["next", 5],
+      ["return"],
     ]);
   },
 );
@@ -85,8 +85,8 @@ Deno.test(
 
     // Assert
     assertEquals(notifications, [
-      ["N", "second"],
-      ["N", "third"],
+      ["next", "second"],
+      ["next", "third"],
     ]);
   },
 );
@@ -108,9 +108,9 @@ Deno.test(
 
     // Assert
     assertEquals(notifications, [
-      ["N", "first"],
-      ["N", "second"],
-      ["N", "third"],
+      ["next", "first"],
+      ["next", "second"],
+      ["next", "third"],
     ]);
   },
 );
@@ -131,7 +131,11 @@ Deno.test(
     );
 
     // Assert
-    assertEquals(notifications, [["N", "first"], ["N", "second"], ["R"]]);
+    assertEquals(notifications, [
+      ["next", "first"],
+      ["next", "second"],
+      ["return"],
+    ]);
   },
 );
 
@@ -149,8 +153,8 @@ Deno.test("ReplaySubject.next should emit values to subscribers", () => {
 
   // Assert
   assertEquals(notifications, [
-    ["N", "foo"],
-    ["N", "bar"],
+    ["next", "foo"],
+    ["next", "bar"],
   ]);
 });
 
@@ -168,8 +172,8 @@ Deno.test("ReplaySubject.next should store values for late subscribers", () => {
 
   // Assert
   assertEquals(notifications, [
-    ["N", "foo"],
-    ["N", "bar"],
+    ["next", "foo"],
+    ["next", "bar"],
   ]);
 });
 
@@ -189,9 +193,9 @@ Deno.test("ReplaySubject.throw should pass through this subject", () => {
 
   // Assert
   assertEquals(notifications, [
-    ["N", "foo"],
-    ["N", "bar"],
-    ["T", error],
+    ["next", "foo"],
+    ["next", "bar"],
+    ["throw", error],
   ]);
 });
 
@@ -211,8 +215,8 @@ Deno.test("ReplaySubject.throw should notify late subscribers", () => {
 
   // Assert
   assertEquals(notifications, [
-    ["N", "foo"],
-    ["T", error],
+    ["next", "foo"],
+    ["throw", error],
   ]);
 });
 
@@ -229,7 +233,7 @@ Deno.test("ReplaySubject.return should pass through this subject", () => {
   subject.return();
 
   // Assert
-  assertEquals(notifications, [["N", "foo"], ["R"]]);
+  assertEquals(notifications, [["next", "foo"], ["return"]]);
 });
 
 Deno.test("ReplaySubject.return should notify late subscribers", () => {
@@ -245,7 +249,7 @@ Deno.test("ReplaySubject.return should notify late subscribers", () => {
   );
 
   // Assert
-  assertEquals(notifications, [["N", "foo"], ["R"]]);
+  assertEquals(notifications, [["next", "foo"], ["return"]]);
 });
 
 Deno.test(

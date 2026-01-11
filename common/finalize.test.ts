@@ -31,8 +31,8 @@ Deno.test(
 
     // Assert
     assertEquals(notifications, [
-      ...values.map((value) => ["N", value] as const),
-      ["R"],
+      ...values.map((value) => ["next", value] as const),
+      ["return"],
       ["F"],
     ]);
   },
@@ -61,8 +61,8 @@ Deno.test(
 
     // Assert
     assertEquals(notifications, [
-      ...values.map((value) => ["N", value] as const),
-      ["T", error],
+      ...values.map((value) => ["next", value] as const),
+      ["throw", error],
       ["F"],
     ]);
   },

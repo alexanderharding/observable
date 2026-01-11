@@ -87,7 +87,7 @@ Deno.test("BehaviorSubject should be created with an initial value", () => {
   );
 
   // Assert
-  assertEquals(notifications, [["N", value]]);
+  assertEquals(notifications, [["next", value]]);
 });
 
 Deno.test(
@@ -104,7 +104,7 @@ Deno.test(
     );
 
     // Assert
-    assertEquals(notifications, [["N", "second"]]);
+    assertEquals(notifications, [["next", "second"]]);
   },
 );
 
@@ -121,8 +121,8 @@ Deno.test("BehaviorSubject.next should emit value to subscribers", () => {
 
   // Assert
   assertEquals(notifications, [
-    ["N", "initial"],
-    ["N", "foo"],
+    ["next", "initial"],
+    ["next", "foo"],
   ]);
 });
 
@@ -140,7 +140,7 @@ Deno.test(
     );
 
     // Assert
-    assertEquals(notifications, [["N", "foo"]]);
+    assertEquals(notifications, [["next", "foo"]]);
   },
 );
 
@@ -158,8 +158,8 @@ Deno.test("BehaviorSubject.throw should pass through this subject", () => {
 
   // Assert
   assertEquals(notifications, [
-    ["N", "initial"],
-    ["T", error],
+    ["next", "initial"],
+    ["throw", error],
   ]);
 });
 
@@ -178,8 +178,8 @@ Deno.test("BehaviorSubject.throw should notify late subscribers", () => {
 
   // Assert
   assertEquals(notifications, [
-    ["N", "initial"],
-    ["T", error],
+    ["next", "initial"],
+    ["throw", error],
   ]);
 });
 
@@ -195,7 +195,7 @@ Deno.test("BehaviorSubject.return should pass through this subject", () => {
   subject.return();
 
   // Assert
-  assertEquals(notifications, [["N", "initial"], ["R"]]);
+  assertEquals(notifications, [["next", "initial"], ["return"]]);
 });
 
 Deno.test("BehaviorSubject.return should notify late subscribers", () => {
@@ -210,7 +210,7 @@ Deno.test("BehaviorSubject.return should notify late subscribers", () => {
   );
 
   // Assert
-  assertEquals(notifications, [["N", "initial"], ["R"]]);
+  assertEquals(notifications, [["next", "initial"], ["return"]]);
 });
 
 Deno.test(
@@ -232,13 +232,13 @@ Deno.test(
 
     // Assert
     assertEquals(notifications, [
-      ["N", 0],
-      ["N", 1],
-      ["N", 2],
-      ["N", 3],
-      ["N", 4],
-      ["N", 5],
-      ["R"],
+      ["next", 0],
+      ["next", 1],
+      ["next", 2],
+      ["next", 3],
+      ["next", 4],
+      ["next", 5],
+      ["return"],
     ]);
   },
 );

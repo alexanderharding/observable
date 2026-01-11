@@ -39,16 +39,16 @@ Deno.test(
     // Arrange
     const subject = new Subject();
     const notifications: Array<
-      Readonly<["R"] | ["T", unknown] | ["N", unknown]>
+      Readonly<["return"] | ["throw", unknown] | ["next", unknown]>
     > = [];
 
     // Act
     const value = Math.random();
     subject.subscribe(
       new Observer({
-        next: (value) => notifications.push(["N", value]),
-        return: () => notifications.push(["R"]),
-        throw: (value) => notifications.push(["T", value]),
+        next: (value) => notifications.push(["next", value]),
+        return: () => notifications.push(["return"]),
+        throw: (value) => notifications.push(["throw", value]),
       }),
     );
     subject.next(undefined);
@@ -56,41 +56,49 @@ Deno.test(
     subject.return();
 
     // Assert
-    assertEquals(notifications, [["N", undefined], ["N", value], ["R"]]);
+    assertEquals(notifications, [
+      ["next", undefined],
+      ["next", value],
+      ["return"],
+    ]);
   },
 );
 
 Deno.test("Subject should allow empty next when created with void type", () => {
   // Arrange
   const subject = new Subject<void>();
-  const notifications: Array<Readonly<["R"] | ["T", unknown] | ["N", void]>> = [];
+  const notifications: Array<
+    Readonly<["return"] | ["throw", unknown] | ["next", void]>
+  > = [];
 
   // Act
   subject.subscribe(
     new Observer({
-      next: (value) => notifications.push(["N", value]),
-      return: () => notifications.push(["R"]),
-      throw: (value) => notifications.push(["T", value]),
+      next: (value) => notifications.push(["next", value]),
+      return: () => notifications.push(["return"]),
+      throw: (value) => notifications.push(["throw", value]),
     }),
   );
   subject.next();
   subject.return();
 
   // Assert
-  assertEquals(notifications, [["N", void 0], ["R"]]);
+  assertEquals(notifications, [["next", void 0], ["return"]]);
 });
 
 Deno.test("Subject should pump values right on through itself", () => {
   // Arrange
   const subject = new Subject<string>();
-  const notifications: Array<Readonly<["R"] | ["T", unknown] | ["N", string]>> = [];
+  const notifications: Array<
+    Readonly<["return"] | ["throw", unknown] | ["next", string]>
+  > = [];
 
   // Act
   subject.subscribe(
     new Observer({
-      next: (value) => notifications.push(["N", value]),
-      return: () => notifications.push(["R"]),
-      throw: (value) => notifications.push(["T", value]),
+      next: (value) => notifications.push(["next", value]),
+      return: () => notifications.push(["return"]),
+      throw: (value) => notifications.push(["throw", value]),
     }),
   );
   subject.next("foo");
@@ -98,29 +106,29 @@ Deno.test("Subject should pump values right on through itself", () => {
   subject.return();
 
   // Assert
-  assertEquals(notifications, [["N", "foo"], ["N", "bar"], ["R"]]);
+  assertEquals(notifications, [["next", "foo"], ["next", "bar"], ["return"]]);
 });
 
 Deno.test("Subject should push values to multiple observers", () => {
   // Arrange
   const subject = new Subject<string>();
   const notifications: Array<
-    [1 | 2, Readonly<["R"] | ["T", unknown] | ["N", string]>]
+    [1 | 2, Readonly<["return"] | ["throw", unknown] | ["next", string]>]
   > = [];
 
   // Act
   subject.subscribe(
     new Observer({
-      next: (value) => notifications.push([1, ["N", value]]),
-      return: () => notifications.push([1, ["R"]]),
-      throw: (value) => notifications.push([1, ["T", value]]),
+      next: (value) => notifications.push([1, ["next", value]]),
+      return: () => notifications.push([1, ["return"]]),
+      throw: (value) => notifications.push([1, ["throw", value]]),
     }),
   );
   subject.subscribe(
     new Observer({
-      next: (value) => notifications.push([2, ["N", value]]),
-      return: () => notifications.push([2, ["R"]]),
-      throw: (value) => notifications.push([2, ["T", value]]),
+      next: (value) => notifications.push([2, ["next", value]]),
+      return: () => notifications.push([2, ["return"]]),
+      throw: (value) => notifications.push([2, ["throw", value]]),
     }),
   );
   subject.next("foo");
@@ -129,12 +137,12 @@ Deno.test("Subject should push values to multiple observers", () => {
 
   // Assert
   assertEquals(notifications, [
-    [1, ["N", "foo"]],
-    [2, ["N", "foo"]],
-    [1, ["N", "bar"]],
-    [2, ["N", "bar"]],
-    [1, ["R"]],
-    [2, ["R"]],
+    [1, ["next", "foo"]],
+    [2, ["next", "foo"]],
+    [1, ["next", "bar"]],
+    [2, ["next", "bar"]],
+    [1, ["return"]],
+    [2, ["return"]],
   ]);
 });
 
@@ -144,7 +152,7 @@ Deno.test(
     // Arrange
     const subject = new Subject<number>();
     const notifications: Array<
-      [1 | 2 | 3, Readonly<["R"] | ["T", unknown] | ["N", number]>]
+      [1 | 2 | 3, Readonly<["return"] | ["throw", unknown] | ["next", number]>]
     > = [];
     const controller1 = new AbortController();
     const controller2 = new AbortController();
@@ -159,9 +167,9 @@ Deno.test(
     // First subscriber joins
     subject.subscribe(
       new Observer({
-        next: (value) => notifications.push([1, ["N", value]]),
-        return: () => notifications.push([1, ["R"]]),
-        throw: (value) => notifications.push([1, ["T", value]]),
+        next: (value) => notifications.push([1, ["next", value]]),
+        return: () => notifications.push([1, ["return"]]),
+        throw: (value) => notifications.push([1, ["throw", value]]),
         signal: controller1.signal,
       }),
     );
@@ -170,9 +178,9 @@ Deno.test(
     // Second subscriber joins
     subject.subscribe(
       new Observer({
-        next: (value) => notifications.push([2, ["N", value]]),
-        return: () => notifications.push([2, ["R"]]),
-        throw: (value) => notifications.push([2, ["T", value]]),
+        next: (value) => notifications.push([2, ["next", value]]),
+        return: () => notifications.push([2, ["return"]]),
+        throw: (value) => notifications.push([2, ["throw", value]]),
         signal: controller2.signal,
       }),
     );
@@ -191,9 +199,9 @@ Deno.test(
     // Third subscriber joins and leaves
     subject.subscribe(
       new Observer({
-        next: (value) => notifications.push([3, ["N", value]]),
-        return: () => notifications.push([3, ["R"]]),
-        throw: (value) => notifications.push([3, ["T", value]]),
+        next: (value) => notifications.push([3, ["next", value]]),
+        return: () => notifications.push([3, ["return"]]),
+        throw: (value) => notifications.push([3, ["throw", value]]),
         signal: controller3.signal,
       }),
     );
@@ -202,13 +210,13 @@ Deno.test(
 
     // Assert
     assertEquals(notifications, [
-      [1, ["N", 5]],
-      [1, ["N", 6]],
-      [2, ["N", 6]],
-      [1, ["N", 7]],
-      [2, ["N", 7]],
-      [2, ["N", 8]],
-      [3, ["N", 11]],
+      [1, ["next", 5]],
+      [1, ["next", 6]],
+      [2, ["next", 6]],
+      [1, ["next", 7]],
+      [2, ["next", 7]],
+      [2, ["next", 8]],
+      [3, ["next", 11]],
     ]);
   },
 );
@@ -219,7 +227,7 @@ Deno.test(
     // Arrange
     const subject = new Subject<number>();
     const notifications: Array<
-      [1 | 2 | 3, Readonly<["R"] | ["T", unknown] | ["N", number]>]
+      [1 | 2 | 3, Readonly<["return"] | ["throw", unknown] | ["next", number]>]
     > = [];
     const controller1 = new AbortController();
     const controller2 = new AbortController();
@@ -234,9 +242,9 @@ Deno.test(
     // First subscriber joins
     subject.subscribe(
       new Observer({
-        next: (value) => notifications.push([1, ["N", value]]),
-        return: () => notifications.push([1, ["R"]]),
-        throw: (value) => notifications.push([1, ["T", value]]),
+        next: (value) => notifications.push([1, ["next", value]]),
+        return: () => notifications.push([1, ["return"]]),
+        throw: (value) => notifications.push([1, ["throw", value]]),
         signal: controller1.signal,
       }),
     );
@@ -245,9 +253,9 @@ Deno.test(
     // Second subscriber joins
     subject.subscribe(
       new Observer({
-        next: (value) => notifications.push([2, ["N", value]]),
-        return: () => notifications.push([2, ["R"]]),
-        throw: (value) => notifications.push([2, ["T", value]]),
+        next: (value) => notifications.push([2, ["next", value]]),
+        return: () => notifications.push([2, ["return"]]),
+        throw: (value) => notifications.push([2, ["throw", value]]),
         signal: controller2.signal,
       }),
     );
@@ -266,9 +274,9 @@ Deno.test(
     // Third subscriber joins and leaves after completion
     subject.subscribe(
       new Observer({
-        next: (value) => notifications.push([3, ["N", value]]),
-        return: () => notifications.push([3, ["R"]]),
-        throw: (value) => notifications.push([3, ["T", value]]),
+        next: (value) => notifications.push([3, ["next", value]]),
+        return: () => notifications.push([3, ["return"]]),
+        throw: (value) => notifications.push([3, ["throw", value]]),
         signal: controller3.signal,
       }),
     );
@@ -276,13 +284,13 @@ Deno.test(
 
     // Assert
     assertEquals(notifications, [
-      [1, ["N", 5]],
-      [1, ["N", 6]],
-      [2, ["N", 6]],
-      [1, ["N", 7]],
-      [2, ["N", 7]],
-      [2, ["R"]],
-      [3, ["R"]],
+      [1, ["next", 5]],
+      [1, ["next", 6]],
+      [2, ["next", 6]],
+      [1, ["next", 7]],
+      [2, ["next", 7]],
+      [2, ["return"]],
+      [3, ["return"]],
     ]);
   },
 );
@@ -293,7 +301,7 @@ Deno.test(
     // Arrange
     const subject = new Subject<number>();
     const notifications: Array<
-      [1 | 2 | 3, Readonly<["R"] | ["T", unknown] | ["N", number]>]
+      [1 | 2 | 3, Readonly<["return"] | ["throw", unknown] | ["next", number]>]
     > = [];
     const controller1 = new AbortController();
     const controller2 = new AbortController();
@@ -309,9 +317,9 @@ Deno.test(
     // First subscriber joins
     subject.subscribe(
       new Observer({
-        next: (value) => notifications.push([1, ["N", value]]),
-        return: () => notifications.push([1, ["R"]]),
-        throw: (value) => notifications.push([1, ["T", value]]),
+        next: (value) => notifications.push([1, ["next", value]]),
+        return: () => notifications.push([1, ["return"]]),
+        throw: (value) => notifications.push([1, ["throw", value]]),
         signal: controller1.signal,
       }),
     );
@@ -320,9 +328,9 @@ Deno.test(
     // Second subscriber joins
     subject.subscribe(
       new Observer({
-        next: (value) => notifications.push([2, ["N", value]]),
-        return: () => notifications.push([2, ["R"]]),
-        throw: (value) => notifications.push([2, ["T", value]]),
+        next: (value) => notifications.push([2, ["next", value]]),
+        return: () => notifications.push([2, ["return"]]),
+        throw: (value) => notifications.push([2, ["throw", value]]),
         signal: controller2.signal,
       }),
     );
@@ -341,9 +349,9 @@ Deno.test(
     // Third subscriber joins and leaves after error
     subject.subscribe(
       new Observer({
-        next: (value) => notifications.push([3, ["N", value]]),
-        return: () => notifications.push([3, ["R"]]),
-        throw: (value) => notifications.push([3, ["T", value]]),
+        next: (value) => notifications.push([3, ["next", value]]),
+        return: () => notifications.push([3, ["return"]]),
+        throw: (value) => notifications.push([3, ["throw", value]]),
         signal: controller3.signal,
       }),
     );
@@ -351,13 +359,13 @@ Deno.test(
 
     // Assert
     assertEquals(notifications, [
-      [1, ["N", 5]],
-      [1, ["N", 6]],
-      [2, ["N", 6]],
-      [1, ["N", 7]],
-      [2, ["N", 7]],
-      [2, ["T", testError]],
-      [3, ["T", testError]],
+      [1, ["next", 5]],
+      [1, ["next", 6]],
+      [2, ["next", 6]],
+      [1, ["next", 7]],
+      [2, ["next", 7]],
+      [2, ["throw", testError]],
+      [3, ["throw", testError]],
     ]);
   },
 );
@@ -368,7 +376,7 @@ Deno.test(
     // Arrange
     const subject = new Subject<number>();
     const notifications: Array<
-      [1 | 2 | 3, Readonly<["R"] | ["T", unknown] | ["N", number]>]
+      [1 | 2 | 3, Readonly<["return"] | ["throw", unknown] | ["next", number]>]
     > = [];
     const controller1 = new AbortController();
     const controller2 = new AbortController();
@@ -377,17 +385,17 @@ Deno.test(
     // Act
     subject.subscribe(
       new Observer({
-        next: (value) => notifications.push([1, ["N", value]]),
-        return: () => notifications.push([1, ["R"]]),
-        throw: (value) => notifications.push([1, ["T", value]]),
+        next: (value) => notifications.push([1, ["next", value]]),
+        return: () => notifications.push([1, ["return"]]),
+        throw: (value) => notifications.push([1, ["throw", value]]),
         signal: controller1.signal,
       }),
     );
     subject.subscribe(
       new Observer({
-        next: (value) => notifications.push([2, ["N", value]]),
-        return: () => notifications.push([2, ["R"]]),
-        throw: (value) => notifications.push([2, ["T", value]]),
+        next: (value) => notifications.push([2, ["next", value]]),
+        return: () => notifications.push([2, ["return"]]),
+        throw: (value) => notifications.push([2, ["throw", value]]),
         signal: controller2.signal,
       }),
     );
@@ -398,9 +406,9 @@ Deno.test(
 
     subject.subscribe(
       new Observer({
-        next: (value) => notifications.push([3, ["N", value]]),
-        return: () => notifications.push([3, ["R"]]),
-        throw: (value) => notifications.push([3, ["T", value]]),
+        next: (value) => notifications.push([3, ["next", value]]),
+        return: () => notifications.push([3, ["return"]]),
+        throw: (value) => notifications.push([3, ["throw", value]]),
         signal: controller3.signal,
       }),
     );
@@ -408,8 +416,8 @@ Deno.test(
 
     // Assert
     assertEquals(notifications, [
-      [2, ["R"]],
-      [3, ["R"]],
+      [2, ["return"]],
+      [3, ["return"]],
     ]);
   },
 );
@@ -420,7 +428,7 @@ Deno.test(
     // Arrange
     const subject = new Subject<number>();
     const notifications: Array<
-      [1 | 2 | 3, Readonly<["R"] | ["T", unknown] | ["N", number]>]
+      [1 | 2 | 3, Readonly<["return"] | ["throw", unknown] | ["next", number]>]
     > = [];
     const controller1 = new AbortController();
     const controller2 = new AbortController();
@@ -429,9 +437,9 @@ Deno.test(
     // Act
     subject.subscribe(
       new Observer({
-        next: (value) => notifications.push([1, ["N", value]]),
-        return: () => notifications.push([1, ["R"]]),
-        throw: (value) => notifications.push([1, ["T", value]]),
+        next: (value) => notifications.push([1, ["next", value]]),
+        return: () => notifications.push([1, ["return"]]),
+        throw: (value) => notifications.push([1, ["throw", value]]),
         signal: controller1.signal,
       }),
     );
@@ -440,9 +448,9 @@ Deno.test(
 
     subject.subscribe(
       new Observer({
-        next: (value) => notifications.push([2, ["N", value]]),
-        return: () => notifications.push([2, ["R"]]),
-        throw: (value) => notifications.push([2, ["T", value]]),
+        next: (value) => notifications.push([2, ["next", value]]),
+        return: () => notifications.push([2, ["return"]]),
+        throw: (value) => notifications.push([2, ["throw", value]]),
         signal: controller2.signal,
       }),
     );
@@ -456,9 +464,9 @@ Deno.test(
 
     subject.subscribe(
       new Observer({
-        next: (value) => notifications.push([3, ["N", value]]),
-        return: () => notifications.push([3, ["R"]]),
-        throw: (value) => notifications.push([3, ["T", value]]),
+        next: (value) => notifications.push([3, ["next", value]]),
+        return: () => notifications.push([3, ["return"]]),
+        throw: (value) => notifications.push([3, ["throw", value]]),
         signal: controller3.signal,
       }),
     );
@@ -466,15 +474,15 @@ Deno.test(
     // Assert
     assertStrictEquals(subject.signal.aborted, true);
     assertEquals(notifications, [
-      [1, ["N", 1]],
-      [1, ["N", 2]],
-      [1, ["N", 3]],
-      [2, ["N", 3]],
-      [1, ["N", 4]],
-      [2, ["N", 4]],
-      [1, ["N", 5]],
-      [2, ["N", 5]],
-      [3, ["R"]],
+      [1, ["next", 1]],
+      [1, ["next", 2]],
+      [1, ["next", 3]],
+      [2, ["next", 3]],
+      [1, ["next", 4]],
+      [2, ["next", 4]],
+      [1, ["next", 5]],
+      [2, ["next", 5]],
+      [3, ["return"]],
     ]);
   },
 );
@@ -492,27 +500,27 @@ Deno.test(
     });
     const subject = new Subject<number>();
     const notifications: Array<
-      Readonly<["R"] | ["T", unknown] | ["N", number]>
+      Readonly<["return"] | ["throw", unknown] | ["next", number]>
     > = [];
 
     // Act
     subject.subscribe(
       new Observer({
-        next: (value) => notifications.push(["N", value]),
-        return: () => notifications.push(["R"]),
-        throw: (value) => notifications.push(["T", value]),
+        next: (value) => notifications.push(["next", value]),
+        return: () => notifications.push(["return"]),
+        throw: (value) => notifications.push(["throw", value]),
       }),
     );
     source.subscribe(subject);
 
     // Assert
     assertEquals(notifications, [
-      ["N", 1],
-      ["N", 2],
-      ["N", 3],
-      ["N", 4],
-      ["N", 5],
-      ["R"],
+      ["next", 1],
+      ["next", 2],
+      ["next", 3],
+      ["next", 4],
+      ["next", 5],
+      ["return"],
     ]);
   },
 );
@@ -562,14 +570,16 @@ Deno.test("Subject should be aborted after return", () => {
 Deno.test("Subject should not next after returned", () => {
   // Arrange
   const subject = new Subject<string>();
-  const notifications: Array<Readonly<["R"] | ["T", unknown] | ["N", string]>> = [];
+  const notifications: Array<
+    Readonly<["return"] | ["throw", unknown] | ["next", string]>
+  > = [];
 
   // Act
   subject.subscribe(
     new Observer({
-      next: (value) => notifications.push(["N", value]),
-      return: () => notifications.push(["R"]),
-      throw: (value) => notifications.push(["T", value]),
+      next: (value) => notifications.push(["next", value]),
+      return: () => notifications.push(["return"]),
+      throw: (value) => notifications.push(["throw", value]),
     }),
   );
   subject.next("a");
@@ -577,21 +587,23 @@ Deno.test("Subject should not next after returned", () => {
   subject.next("b");
 
   // Assert
-  assertEquals(notifications, [["N", "a"], ["R"]]);
+  assertEquals(notifications, [["next", "a"], ["return"]]);
 });
 
 Deno.test("Subject should not next after error", () => {
   // Arrange
   const error = new Error("wut?");
   const subject = new Subject<string>();
-  const notifications: Array<Readonly<["R"] | ["T", unknown] | ["N", string]>> = [];
+  const notifications: Array<
+    Readonly<["return"] | ["throw", unknown] | ["next", string]>
+  > = [];
 
   // Act
   subject.subscribe(
     new Observer({
-      next: (value) => notifications.push(["N", value]),
-      return: () => notifications.push(["R"]),
-      throw: (value) => notifications.push(["T", value]),
+      next: (value) => notifications.push(["next", value]),
+      return: () => notifications.push(["return"]),
+      throw: (value) => notifications.push(["throw", value]),
     }),
   );
   subject.next("a");
@@ -600,15 +612,15 @@ Deno.test("Subject should not next after error", () => {
 
   // Assert
   assertEquals(notifications, [
-    ["N", "a"],
-    ["T", error],
+    ["next", "a"],
+    ["throw", error],
   ]);
 });
 
 Deno.test("Subject should handle reentrant observers when nexting", () => {
   // Arrange
   const notifications: Array<
-    [1 | 2, Readonly<["R"] | ["T", unknown] | ["N", number]>]
+    [1 | 2, Readonly<["return"] | ["throw", unknown] | ["next", number]>]
   > = [];
   const source = new Subject<number>();
 
@@ -616,17 +628,17 @@ Deno.test("Subject should handle reentrant observers when nexting", () => {
   source.subscribe(
     new Observer({
       next: (value) => {
-        notifications.push([1, ["N", value]]);
+        notifications.push([1, ["next", value]]);
         source.subscribe(
           new Observer({
-            next: (value) => notifications.push([2, ["N", value]]),
-            return: () => notifications.push([2, ["R"]]),
-            throw: (value) => notifications.push([2, ["T", value]]),
+            next: (value) => notifications.push([2, ["next", value]]),
+            return: () => notifications.push([2, ["return"]]),
+            throw: (value) => notifications.push([2, ["throw", value]]),
           }),
         );
       },
-      return: () => notifications.push([1, ["R"]]),
-      throw: (value) => notifications.push([1, ["T", value]]),
+      return: () => notifications.push([1, ["return"]]),
+      throw: (value) => notifications.push([1, ["throw", value]]),
     }),
   );
 
@@ -636,45 +648,45 @@ Deno.test("Subject should handle reentrant observers when nexting", () => {
 
   // Assert
   assertEquals(notifications, [
-    [1, ["N", 1]],
-    [1, ["N", 2]],
-    [2, ["N", 2]],
-    [1, ["N", 3]],
-    [2, ["N", 3]],
-    [2, ["N", 3]],
+    [1, ["next", 1]],
+    [1, ["next", 2]],
+    [2, ["next", 2]],
+    [1, ["next", 3]],
+    [2, ["next", 3]],
+    [2, ["next", 3]],
   ]);
 });
 
 Deno.test("Subject should handle reentrant observers when returning", () => {
   // Arrange
   const notifications: Array<
-    [1 | 2, Readonly<["R"] | ["T", unknown] | ["N", number]>]
+    [1 | 2, Readonly<["return"] | ["throw", unknown] | ["next", number]>]
   > = [];
   const source = new Subject<number>();
 
   // Act
   source.subscribe(
     new Observer({
-      next: (value) => notifications.push([1, ["N", value]]),
+      next: (value) => notifications.push([1, ["next", value]]),
       return: () => {
-        notifications.push([1, ["R"]]);
+        notifications.push([1, ["return"]]);
         source.subscribe(
           new Observer({
-            next: (value) => notifications.push([2, ["N", value]]),
-            return: () => notifications.push([2, ["R"]]),
-            throw: (value) => notifications.push([2, ["T", value]]),
+            next: (value) => notifications.push([2, ["next", value]]),
+            return: () => notifications.push([2, ["return"]]),
+            throw: (value) => notifications.push([2, ["throw", value]]),
           }),
         );
       },
-      throw: (value) => notifications.push([1, ["T", value]]),
+      throw: (value) => notifications.push([1, ["throw", value]]),
     }),
   );
   source.return();
 
   // Assert
   assertEquals(notifications, [
-    [1, ["R"]],
-    [2, ["R"]],
+    [1, ["return"]],
+    [2, ["return"]],
   ]);
 });
 
@@ -682,22 +694,22 @@ Deno.test("Subject should handle reentrant observers when throwing", () => {
   // Arrange
   const error = new Error("test");
   const notifications: Array<
-    [1 | 2, Readonly<["R"] | ["T", unknown] | ["N", number]>]
+    [1 | 2, Readonly<["return"] | ["throw", unknown] | ["next", number]>]
   > = [];
   const source = new Subject<number>();
 
   // Act
   source.subscribe(
     new Observer({
-      next: (value) => notifications.push([1, ["N", value]]),
-      return: () => notifications.push([1, ["R"]]),
+      next: (value) => notifications.push([1, ["next", value]]),
+      return: () => notifications.push([1, ["return"]]),
       throw: (value) => {
-        notifications.push([1, ["T", value]]);
+        notifications.push([1, ["throw", value]]);
         source.subscribe(
           new Observer({
-            next: (value) => notifications.push([2, ["N", value]]),
-            return: () => notifications.push([2, ["R"]]),
-            throw: (value) => notifications.push([2, ["T", value]]),
+            next: (value) => notifications.push([2, ["next", value]]),
+            return: () => notifications.push([2, ["return"]]),
+            throw: (value) => notifications.push([2, ["throw", value]]),
           }),
         );
       },
@@ -708,8 +720,8 @@ Deno.test("Subject should handle reentrant observers when throwing", () => {
 
   // Assert
   assertEquals(notifications, [
-    [1, ["T", error]],
-    [2, ["T", error]],
+    [1, ["throw", error]],
+    [2, ["throw", error]],
   ]);
 });
 
@@ -719,24 +731,24 @@ Deno.test(
     // Arrange
     const error = new Error("test");
     const notifications: Array<
-      [1 | 2, Readonly<["R"] | ["T", unknown] | ["N", number]>]
+      [1 | 2, Readonly<["return"] | ["throw", unknown] | ["next", number]>]
     > = [];
     const source = new Subject<number>();
 
     // Act
     source.subscribe(
       new Observer({
-        next: (value) => notifications.push([1, ["N", value]]),
-        return: () => notifications.push([1, ["R"]]),
-        throw: (value) => notifications.push([1, ["T", value]]),
+        next: (value) => notifications.push([1, ["next", value]]),
+        return: () => notifications.push([1, ["return"]]),
+        throw: (value) => notifications.push([1, ["throw", value]]),
       }),
     );
     source.throw(error);
     source.subscribe(
       new Observer({
-        next: (value) => notifications.push([2, ["N", value]]),
-        return: () => notifications.push([2, ["R"]]),
-        throw: (value) => notifications.push([2, ["T", value]]),
+        next: (value) => notifications.push([2, ["next", value]]),
+        return: () => notifications.push([2, ["return"]]),
+        throw: (value) => notifications.push([2, ["throw", value]]),
       }),
     );
 
@@ -744,8 +756,8 @@ Deno.test(
 
     // Assert
     assertEquals(notifications, [
-      [1, ["T", error]],
-      [2, ["T", error]],
+      [1, ["throw", error]],
+      [2, ["throw", error]],
     ]);
   },
 );
@@ -757,7 +769,7 @@ Deno.test(
     let proxy = true;
     const error = new Error("test");
     const notifications: Array<
-      [1 | 2, Readonly<["R"] | ["T", unknown] | ["N", number]>]
+      [1 | 2, Readonly<["return"] | ["throw", unknown] | ["next", number]>]
     > = [];
     const source = new Subject<number>();
     const queueMicrotaskCalls: Array<
@@ -781,16 +793,16 @@ Deno.test(
     source.throw(error);
     source.subscribe(
       new Observer({
-        next: (value) => notifications.push([1, ["N", value]]),
-        return: () => notifications.push([1, ["R"]]),
-        throw: (value) => notifications.push([1, ["T", value]]),
+        next: (value) => notifications.push([1, ["next", value]]),
+        return: () => notifications.push([1, ["return"]]),
+        throw: (value) => notifications.push([1, ["throw", value]]),
       }),
     );
     source.subscribe(
       new Observer({
-        next: (value) => notifications.push([2, ["N", value]]),
-        return: () => notifications.push([2, ["R"]]),
-        throw: (value) => notifications.push([2, ["T", value]]),
+        next: (value) => notifications.push([2, ["next", value]]),
+        return: () => notifications.push([2, ["return"]]),
+        throw: (value) => notifications.push([2, ["throw", value]]),
       }),
     );
 
@@ -798,8 +810,8 @@ Deno.test(
 
     // Assert
     assertEquals(notifications, [
-      [1, ["T", error]],
-      [2, ["T", error]],
+      [1, ["throw", error]],
+      [2, ["throw", error]],
     ]);
     assertStrictEquals(queueMicrotaskCalls.length, 1);
     assertThrows(() => queueMicrotaskCalls[0][0](), Error, "test");
