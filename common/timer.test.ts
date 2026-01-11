@@ -62,7 +62,7 @@ Deno.test(
     );
 
     // Assert
-    assertEquals(notifications, [["N", 0], ["R"]]);
+    assertEquals(notifications, [["next", 0], ["return"]]);
     assertStrictEquals(setTimeoutCalls.length, 0);
     proxy = false;
   },
@@ -111,7 +111,7 @@ Deno.test(
     callback();
 
     // Assert
-    assertEquals(notifications, [["N", 0], ["R"]]);
+    assertEquals(notifications, [["next", 0], ["return"]]);
     assertStrictEquals(setTimeoutCalls.length, 1);
     assertEquals(setTimeoutCalls[0][1], milliseconds);
     proxy = false;

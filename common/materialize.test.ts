@@ -27,7 +27,12 @@ Deno.test(
     );
 
     // Assert
-    assertEquals(nextCalls, [[["N", 1]], [["N", 2]], [["N", 3]], [["R"]]]);
+    assertEquals(nextCalls, [
+      [["next", 1]],
+      [["next", 2]],
+      [["next", 3]],
+      [["return"]],
+    ]);
     assertEquals(returnCalls, [[]]);
     assertEquals(throwCalls, []);
   },
@@ -53,7 +58,7 @@ Deno.test(
     );
 
     // Assert
-    assertEquals(notifications, [["T", error]]);
+    assertEquals(notifications, [["throw", error]]);
     assertEquals(returnCalls, [[]]);
     assertEquals(throwCalls, []);
   },
@@ -80,8 +85,8 @@ Deno.test("materialize should honor unsubscription", () => {
 
   // Assert
   assertEquals(nextCalls, [
-    ["N", 1],
-    ["N", 2],
+    ["next", 1],
+    ["next", 2],
   ]);
   assertEquals(returnCalls, []);
   assertEquals(throwCalls, []);

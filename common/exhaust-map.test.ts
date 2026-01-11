@@ -50,16 +50,16 @@ Deno.test(
     // Since cold is synchronous, by the time hot.next(3) is called,
     // the first inner observable has already completed
     assertEquals(notifications, [
-      ["N", 10],
-      ["N", 10],
-      ["N", 10],
-      ["N", 30],
-      ["N", 30],
-      ["N", 30],
-      ["N", 50],
-      ["N", 50],
-      ["N", 50],
-      ["R"],
+      ["next", 10],
+      ["next", 10],
+      ["next", 10],
+      ["next", 30],
+      ["next", 30],
+      ["next", 30],
+      ["next", 50],
+      ["next", 50],
+      ["next", 50],
+      ["return"],
     ]);
   },
 );
@@ -105,12 +105,12 @@ Deno.test("exhaustMap should ignore values while inner is active", () => {
 
   // Assert
   assertEquals(notifications, [
-    ["N", "a"],
-    ["N", "a"],
-    ["N", "a"],
-    ["N", "b"],
-    ["N", "b"],
-    ["R"],
+    ["next", "a"],
+    ["next", "a"],
+    ["next", "a"],
+    ["next", "b"],
+    ["next", "b"],
+    ["return"],
   ]);
 });
 
@@ -161,12 +161,12 @@ Deno.test("exhaustMap should exhaust many hot inners", () => {
 
   // Assert
   assertEquals(notifications, [
-    ["N", "a"],
-    ["N", "a"],
-    ["N", "a"],
-    ["N", "c"],
-    ["N", "c"],
-    ["R"],
+    ["next", "a"],
+    ["next", "a"],
+    ["next", "a"],
+    ["next", "c"],
+    ["next", "c"],
+    ["return"],
   ]);
 });
 
@@ -194,7 +194,7 @@ Deno.test("exhaustMap should raise error when projection throws", () => {
   );
 
   // Assert
-  assertEquals(notifications, [["T", error]]);
+  assertEquals(notifications, [["throw", error]]);
 });
 
 Deno.test(
@@ -232,9 +232,9 @@ Deno.test(
 
     // Assert
     assertEquals(notifications, [
-      ["N", "a"],
-      ["N", "b"],
-      ["T", error],
+      ["next", "a"],
+      ["next", "b"],
+      ["throw", error],
     ]);
   },
 );
@@ -263,9 +263,9 @@ Deno.test("exhaustMap should handle outer throw", () => {
 
   // Assert
   assertEquals(notifications, [
-    ["N", "1"],
-    ["N", "2"],
-    ["T", error],
+    ["next", "1"],
+    ["next", "2"],
+    ["throw", error],
   ]);
 });
 
@@ -293,7 +293,7 @@ Deno.test("exhaustMap should exhaust inner empty and empty", () => {
   );
 
   // Assert
-  assertEquals(notifications, [["R"]]);
+  assertEquals(notifications, [["return"]]);
 });
 
 Deno.test("exhaustMap should exhaust inner empty and never", () => {
@@ -409,7 +409,7 @@ Deno.test("exhaustMap should exhaust inner empty and throw", () => {
 
   // Assert
   // x (empty) completes, then y (throw) is subscribed
-  assertEquals(notifications, [["T", error]]);
+  assertEquals(notifications, [["throw", error]]);
 });
 
 Deno.test("exhaustMap should handle outer empty", () => {
@@ -433,7 +433,7 @@ Deno.test("exhaustMap should handle outer empty", () => {
   );
 
   // Assert
-  assertEquals(notifications, [["R"]]);
+  assertEquals(notifications, [["return"]]);
 });
 
 Deno.test("exhaustMap should handle outer never", () => {
@@ -482,7 +482,7 @@ Deno.test("exhaustMap should handle outer throwError", () => {
   );
 
   // Assert
-  assertEquals(notifications, [["T", error]]);
+  assertEquals(notifications, [["throw", error]]);
 });
 
 Deno.test(
@@ -594,7 +594,12 @@ Deno.test("exhaustMap should pass index to projection function", () => {
   // Assert
   // All indices should be recorded since inner completes synchronously
   assertEquals(indices, [0, 1, 2]);
-  assertEquals(notifications, [["N", "x"], ["N", "x"], ["N", "x"], ["R"]]);
+  assertEquals(notifications, [
+    ["next", "x"],
+    ["next", "x"],
+    ["next", "x"],
+    ["return"],
+  ]);
 });
 
 Deno.test(
@@ -633,7 +638,7 @@ Deno.test(
 
     // Assert - indices should only count accepted source values
     assertEquals(indices, [0, 1]);
-    assertEquals(notifications, [["N", "1"], ["N", "2"], ["R"]]);
+    assertEquals(notifications, [["next", "1"], ["next", "2"], ["return"]]);
   },
 );
 
@@ -683,9 +688,9 @@ Deno.test(
 
     // Assert
     assertEquals(notifications, [
-      ["N", "a"],
-      ["N", "b"],
-      ["N", "c"],
+      ["next", "a"],
+      ["next", "b"],
+      ["next", "c"],
     ]);
   },
 );
@@ -727,11 +732,11 @@ Deno.test(
 
     // Assert
     assertEquals(notifications, [
-      ["N", "1a"],
-      ["N", "1b"],
-      ["N", "3a"],
-      ["N", "3b"],
-      ["R"],
+      ["next", "1a"],
+      ["next", "1b"],
+      ["next", "3a"],
+      ["next", "3b"],
+      ["return"],
     ]);
   },
 );

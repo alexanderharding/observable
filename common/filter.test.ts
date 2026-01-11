@@ -24,7 +24,7 @@ Deno.test(
     );
 
     // Assert
-    assertEquals(notifications, [["N", 2], ["N", 4], ["R"]]);
+    assertEquals(notifications, [["next", 2], ["next", 4], ["return"]]);
   },
 );
 
@@ -50,8 +50,8 @@ Deno.test("filter should pump throws right through itself", () => {
 
   // Assert
   assertEquals(notifications, [
-    ["N", 2],
-    ["T", error],
+    ["next", 2],
+    ["throw", error],
   ]);
 });
 
@@ -84,5 +84,5 @@ Deno.test("filter should honor unsubscribe", () => {
   );
 
   // Assert
-  assertEquals(notifications, [["N", 2]]);
+  assertEquals(notifications, [["next", 2]]);
 });

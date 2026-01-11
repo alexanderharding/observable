@@ -26,10 +26,10 @@ Deno.test("tap should pump next notifications to the provided observer", () => {
 
   // Assert
   assertEquals(notifications, [
-    [1, ["N", 1]],
-    [2, ["N", 1]],
-    [1, ["N", 2]],
-    [2, ["N", 2]],
+    [1, ["next", 1]],
+    [2, ["next", 1]],
+    [1, ["next", 2]],
+    [2, ["next", 2]],
   ]);
 });
 
@@ -50,8 +50,8 @@ Deno.test(
 
     // Assert
     assertEquals(notifications, [
-      [1, ["R"]],
-      [2, ["R"]],
+      [1, ["return"]],
+      [2, ["return"]],
     ]);
   },
 );
@@ -74,8 +74,8 @@ Deno.test(
 
     // Assert
     assertEquals(notifications, [
-      [1, ["T", error]],
-      [2, ["T", error]],
+      [1, ["throw", error]],
+      [2, ["throw", error]],
     ]);
   },
 );
@@ -106,12 +106,12 @@ Deno.test(
 
     // Assert
     assertEquals(notifications, [
-      [1, ["N", 1]],
-      [2, ["N", 1]],
-      [1, ["N", 2]],
-      [2, ["N", 2]],
-      [2, ["N", 3]],
-      [2, ["R"]],
+      [1, ["next", 1]],
+      [2, ["next", 1]],
+      [1, ["next", 2]],
+      [2, ["next", 2]],
+      [2, ["next", 3]],
+      [2, ["return"]],
     ]);
   },
 );
@@ -138,9 +138,9 @@ Deno.test("tap should handle source unsubscribe", () => {
 
   // Assert
   assertEquals(notifications, [
-    [1, ["N", 1]],
-    [2, ["N", 1]],
-    [1, ["N", 2]],
-    [2, ["N", 2]],
+    [1, ["next", 1]],
+    [2, ["next", 1]],
+    [1, ["next", 2]],
+    [2, ["next", 2]],
   ]);
 });

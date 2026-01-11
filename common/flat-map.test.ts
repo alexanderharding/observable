@@ -65,15 +65,15 @@ Deno.test("flatMap should flatten many inners", () => {
 
   // Assert
   assertEquals(notifications, [
-    ["N", "a"],
-    ["N", "a"],
-    ["N", "a"],
-    ["N", "b"],
-    ["N", "c"],
-    ["N", "c"],
-    ["N", "d"],
-    ["N", "d"],
-    ["R"],
+    ["next", "a"],
+    ["next", "a"],
+    ["next", "a"],
+    ["next", "b"],
+    ["next", "c"],
+    ["next", "c"],
+    ["next", "d"],
+    ["next", "d"],
+    ["return"],
   ]);
 });
 
@@ -137,13 +137,13 @@ Deno.test("flatMap should flatten many inner, and inner throws", () => {
 
   // Assert
   assertEquals(notifications, [
-    ["N", "a"],
-    ["N", "a"],
-    ["N", "a"],
-    ["N", "b"],
-    ["N", "c"],
-    ["N", "c"],
-    ["T", error],
+    ["next", "a"],
+    ["next", "a"],
+    ["next", "a"],
+    ["next", "b"],
+    ["next", "c"],
+    ["next", "c"],
+    ["throw", error],
   ]);
 });
 
@@ -207,12 +207,12 @@ Deno.test("flatMap should flatten many inner, and outer throws", () => {
 
   // Assert
   assertEquals(notifications, [
-    ["N", "a"],
-    ["N", "a"],
-    ["N", "a"],
-    ["N", "b"],
-    ["N", "c"],
-    ["N", "c"],
-    ["T", error],
+    ["next", "a"],
+    ["next", "a"],
+    ["next", "a"],
+    ["next", "b"],
+    ["next", "c"],
+    ["next", "c"],
+    ["throw", error],
   ]);
 });

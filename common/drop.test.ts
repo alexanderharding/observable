@@ -68,6 +68,11 @@ Deno.test(
     );
 
     // Assert
-    assertEquals(notifications, [["N", 3], ["N", 4], ["N", 5], ["R"]]);
+    assertEquals(notifications, [
+      ["next", 3],
+      ["next", 4],
+      ["next", 5],
+      ["return"],
+    ]);
   },
 );

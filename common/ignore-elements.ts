@@ -3,7 +3,7 @@ import { MinimumArgumentsRequiredError, noop, ParameterTypeError } from "@xan/ob
 
 /**
  * Ignores all [`next`](https://jsr.io/@xan/observable-core/doc/~/Observer.next)ed values from the
- * `source` [`Observable`](https://jsr.io/@xan/observable-core/doc/~/Observable).
+ * [source](https://jsr.io/@xan/observable-core#source).
  * @example
  * ```ts
  * import { ignoreElements, of, pipe } from "@xan/observable-common";

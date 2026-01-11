@@ -18,15 +18,15 @@ Deno.test("merge should merge the values", () => {
 
   // Assert
   assertEquals(notifications, [
-    ["N", 1],
-    ["N", 2],
-    ["N", 3],
-    ["N", 4],
-    ["N", 5],
-    ["N", 6],
-    ["N", 7],
-    ["N", 8],
-    ["N", 9],
-    ["R"],
+    ["next", 1],
+    ["next", 2],
+    ["next", 3],
+    ["next", 4],
+    ["next", 5],
+    ["next", 6],
+    ["next", 7],
+    ["next", 8],
+    ["next", 9],
+    ["return"],
   ]);
 });

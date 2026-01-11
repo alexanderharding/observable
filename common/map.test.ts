@@ -26,7 +26,12 @@ Deno.test("map should project the values", () => {
   );
 
   // Assert
-  assertEquals(notifications, [["N", 2], ["N", 4], ["N", 6], ["R"]]);
+  assertEquals(notifications, [
+    ["next", 2],
+    ["next", 4],
+    ["next", 6],
+    ["return"],
+  ]);
   assertEquals(indices, [0, 1, 2]);
 });
 
@@ -46,7 +51,7 @@ Deno.test("map should pump throws through itself", () => {
   );
 
   // Assert
-  assertEquals(notifications, [["T", error]]);
+  assertEquals(notifications, [["throw", error]]);
 });
 
 Deno.test("map should pump returns through itself", () => {
@@ -64,7 +69,7 @@ Deno.test("map should pump returns through itself", () => {
   );
 
   // Assert
-  assertEquals(notifications, [["R"]]);
+  assertEquals(notifications, [["return"]]);
 });
 
 Deno.test("map should handle unsubscribe", () => {
@@ -107,5 +112,5 @@ Deno.test("map should throw if the project function throws", () => {
   );
 
   // Assert
-  assertEquals(notifications, [["T", error]]);
+  assertEquals(notifications, [["throw", error]]);
 });

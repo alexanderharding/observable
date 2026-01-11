@@ -2,9 +2,9 @@ import { isObservable, Observable, toObservable } from "@xan/observable-core";
 import { MinimumArgumentsRequiredError, noop, ParameterTypeError } from "@xan/observable-internal";
 
 /**
- * Takes [`next`](https://jsr.io/@xan/observable-core/doc/~/Observer.next)ed values from the `source`
- * until the {@linkcode notifier} [`Observable`](https://jsr.io/@xan/observable-core/doc/~/Observable)
- * [`next`](https://jsr.io/@xan/observable-core/doc/~/Observer.next)s any value.
+ * Takes [`next`](https://jsr.io/@xan/observable-core/doc/~/Observer.next)ed values from the
+ * [source](https://jsr.io/@xan/observable-core#source) until [notified](https://jsr.io/@xan/observable-core#notifier)
+ * to not.
  * @example
  * ```ts
  * import { Subject } from "@xan/observable-core";

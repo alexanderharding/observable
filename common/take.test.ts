@@ -76,7 +76,7 @@ Deno.test(
     );
 
     // Assert
-    assertEquals(notifications, [["N", 1], ["N", 2], ["R"]]);
+    assertEquals(notifications, [["next", 1], ["next", 2], ["return"]]);
   },
 );
 
@@ -90,7 +90,7 @@ Deno.test("take should handle reentrant subscribers", () => {
   materialized.subscribe(
     new Observer((notification) => {
       notifications.push(notification);
-      if (notification[0] === "N" && notification[1] === 2) source.next(3);
+      if (notification[0] === "next" && notification[1] === 2) source.next(3);
     }),
   );
   source.next(1);
@@ -98,5 +98,5 @@ Deno.test("take should handle reentrant subscribers", () => {
   source.return();
 
   // Assert
-  assertEquals(notifications, [["N", 1], ["N", 2], ["R"]]);
+  assertEquals(notifications, [["next", 1], ["next", 2], ["return"]]);
 });

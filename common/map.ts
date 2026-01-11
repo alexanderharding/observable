@@ -2,9 +2,8 @@ import { isObservable, Observable, toObservable } from "@xan/observable-core";
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@xan/observable-internal";
 
 /**
- * {@linkcode project|Projects} each {@linkcode In|value} from the `source`
- * [`Observable`](https://jsr.io/@xan/observable-core/doc/~/Observable) to a new
- * {@linkcode Out|value}.
+ * {@linkcode project|Projects} each {@linkcode In|value} from the [source](https://jsr.io/@xan/observable-core#source)
+ * to a new {@linkcode Out|value}.
  * @example
  * ```ts
  * import { map, pipe, of } from "@xan/observable-common";

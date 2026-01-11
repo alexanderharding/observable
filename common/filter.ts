@@ -2,9 +2,8 @@ import { isObservable, Observable, toObservable } from "@xan/observable-core";
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@xan/observable-internal";
 
 /**
- * Filters [`next`](https://jsr.io/@xan/observable-core/doc/~/Observer.next)ed values from the `source`
- * [`Observable`](https://jsr.io/@xan/observable-core/doc/~/Observable) that satisfy a specified
- * {@linkcode predicate}.
+ * Filters [`next`](https://jsr.io/@xan/observable-core/doc/~/Observer.next)ed values from the
+ * [source](https://jsr.io/@xan/observable-core#source) that satisfy a specified {@linkcode predicate}.
  * @example
  * ```ts
  * import { filter, of, pipe } from "@xan/observable-common";

@@ -11,7 +11,7 @@ Deno.test(
     // Arrange
     const source = new Observable<ObserverNotification<number>>((observer) => {
       for (const value of [1, 2, 3]) {
-        observer.next(["N", value]);
+        observer.next(["next", value]);
         if (observer.signal.aborted) return;
       }
       observer.return();
@@ -25,7 +25,12 @@ Deno.test(
     );
 
     // Assert
-    assertEquals(notifications, [["N", 1], ["N", 2], ["N", 3], ["R"]]);
+    assertEquals(notifications, [
+      ["next", 1],
+      ["next", 2],
+      ["next", 3],
+      ["return"],
+    ]);
   },
 );
 
@@ -34,10 +39,10 @@ Deno.test("dematerialize should honor unsubscribe", () => {
   const controller = new AbortController();
   const source = new Observable<ObserverNotification<number>>((observer) => {
     for (const value of [1, 2, 3]) {
-      observer.next(["N", value]);
+      observer.next(["next", value]);
       if (observer.signal.aborted) return;
     }
-    observer.next(["R"]);
+    observer.next(["return"]);
     observer.return();
   });
 
@@ -57,7 +62,7 @@ Deno.test("dematerialize should honor unsubscribe", () => {
 
   // Assert
   assertEquals(notifications, [
-    ["N", 1],
-    ["N", 2],
+    ["next", 1],
+    ["next", 2],
   ]);
 });

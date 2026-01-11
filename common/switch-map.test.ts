@@ -46,16 +46,16 @@ Deno.test("switchMap should map-and-flatten each item to an Observable", () => {
 
   // Assert
   assertEquals(notifications, [
-    ["N", 10],
-    ["N", 10],
-    ["N", 10],
-    ["N", 30],
-    ["N", 30],
-    ["N", 30],
-    ["N", 50],
-    ["N", 50],
-    ["N", 50],
-    ["R"],
+    ["next", 10],
+    ["next", 10],
+    ["next", 10],
+    ["next", 30],
+    ["next", 30],
+    ["next", 30],
+    ["next", 50],
+    ["next", 50],
+    ["next", 50],
+    ["return"],
   ]);
 });
 
@@ -110,7 +110,7 @@ Deno.test("switchMap should raise error when projection throws", () => {
   );
 
   // Assert
-  assertEquals(notifications, [["T", error]]);
+  assertEquals(notifications, [["throw", error]]);
 });
 
 Deno.test(
@@ -160,9 +160,9 @@ Deno.test(
 
     // Assert
     assertEquals(notifications, [
-      ["N", "a"],
-      ["N", "b"],
-      ["N", "c"],
+      ["next", "a"],
+      ["next", "b"],
+      ["next", "c"],
     ]);
   },
 );
@@ -205,15 +205,15 @@ Deno.test(
 
     // Assert
     assertEquals(notifications, [
-      ["N", "a"],
-      ["N", "b"],
-      ["N", "c"],
-      ["N", "d"],
-      ["N", "e"],
-      ["N", "f"],
-      ["N", "g"],
-      ["N", "h"],
-      ["N", "i"],
+      ["next", "a"],
+      ["next", "b"],
+      ["next", "c"],
+      ["next", "d"],
+      ["next", "e"],
+      ["next", "f"],
+      ["next", "g"],
+      ["next", "h"],
+      ["next", "i"],
     ]);
   },
 );
@@ -252,11 +252,11 @@ Deno.test(
 
     // Assert
     assertEquals(notifications, [
-      ["N", "f"],
-      ["N", "g"],
-      ["N", "h"],
-      ["N", "i"],
-      ["R"],
+      ["next", "f"],
+      ["next", "g"],
+      ["next", "h"],
+      ["next", "i"],
+      ["return"],
     ]);
   },
 );
@@ -296,9 +296,9 @@ Deno.test(
 
     // Assert
     assertEquals(notifications, [
-      ["N", "a"],
-      ["N", "b"],
-      ["T", error],
+      ["next", "a"],
+      ["next", "b"],
+      ["throw", error],
     ]);
   },
 );
@@ -327,7 +327,7 @@ Deno.test("switchMap should switch inner empty and empty", () => {
   );
 
   // Assert
-  assertEquals(notifications, [["R"]]);
+  assertEquals(notifications, [["return"]]);
 });
 
 Deno.test("switchMap should switch inner empty and never", () => {
@@ -381,7 +381,7 @@ Deno.test("switchMap should switch inner never and empty", () => {
   );
 
   // Assert
-  assertEquals(notifications, [["R"]]);
+  assertEquals(notifications, [["return"]]);
 });
 
 Deno.test("switchMap should switch inner never and throw", () => {
@@ -409,7 +409,7 @@ Deno.test("switchMap should switch inner never and throw", () => {
   );
 
   // Assert
-  assertEquals(notifications, [["T", error]]);
+  assertEquals(notifications, [["throw", error]]);
 });
 
 Deno.test("switchMap should switch inner empty and throw", () => {
@@ -437,7 +437,7 @@ Deno.test("switchMap should switch inner empty and throw", () => {
   );
 
   // Assert
-  assertEquals(notifications, [["T", error]]);
+  assertEquals(notifications, [["throw", error]]);
 });
 
 Deno.test("switchMap should handle outer empty", () => {
@@ -461,7 +461,7 @@ Deno.test("switchMap should handle outer empty", () => {
   );
 
   // Assert
-  assertEquals(notifications, [["R"]]);
+  assertEquals(notifications, [["return"]]);
 });
 
 Deno.test("switchMap should handle outer never", () => {
@@ -510,7 +510,7 @@ Deno.test("switchMap should handle outer throw", () => {
   );
 
   // Assert
-  assertEquals(notifications, [["T", error]]);
+  assertEquals(notifications, [["throw", error]]);
 });
 
 Deno.test(
@@ -571,7 +571,7 @@ Deno.test(
     e.next(1);
 
     // Assert
-    assertEquals(notifications, [["N", 3]]);
+    assertEquals(notifications, [["next", 3]]);
   },
 );
 

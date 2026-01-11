@@ -31,7 +31,7 @@ Deno.test(
     source2.return();
 
     // Assert
-    assertEquals(notifications, [["N", 1], ["N", 3], ["R"]]);
+    assertEquals(notifications, [["next", 1], ["next", 3], ["return"]]);
   },
 );
 
@@ -62,9 +62,9 @@ Deno.test(
 
     // Assert
     assertEquals(notifications, [
-      ["N", 1],
-      ["N", 2],
-      ["N", 3],
+      ["next", 1],
+      ["next", 2],
+      ["next", 3],
     ]);
     assertEquals(deferredCalls, [1, 2]);
   },
@@ -98,10 +98,10 @@ Deno.test(
 
     // Assert
     assertEquals(notifications, [
-      ["N", 1],
-      ["N", 2],
-      ["N", 3],
-      ["T", error],
+      ["next", 1],
+      ["next", 2],
+      ["next", 3],
+      ["throw", error],
     ]);
     assertEquals(deferredCalls, [1, 2]);
   },

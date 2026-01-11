@@ -16,7 +16,7 @@ Deno.test("of should return empty if no values are provided", () => {
   );
 
   // Assert
-  assertEquals(notifications, [["R"]]);
+  assertEquals(notifications, [["return"]]);
 });
 
 Deno.test("of should emit all values in order and then return", () => {
@@ -30,5 +30,10 @@ Deno.test("of should emit all values in order and then return", () => {
   );
 
   // Assert
-  assertEquals(notifications, [["N", 1], ["N", "test"], ["N", true], ["R"]]);
+  assertEquals(notifications, [
+    ["next", 1],
+    ["next", "test"],
+    ["next", true],
+    ["return"],
+  ]);
 });

@@ -15,7 +15,7 @@ Deno.test(
       () =>
         new Observable<ObserverNotification<number>>((observer) => {
           for (const value of [1, 2, 3]) {
-            observer.next(["N", value]);
+            observer.next(["next", value]);
             if (observer.signal.aborted) return;
           }
           observer.return();
@@ -29,7 +29,12 @@ Deno.test(
     );
 
     // Assert
-    assertEquals(notifications, [["N", 1], ["N", 2], ["N", 3], ["R"]]);
+    assertEquals(notifications, [
+      ["next", 1],
+      ["next", 2],
+      ["next", 3],
+      ["return"],
+    ]);
   },
 );
 
@@ -48,5 +53,5 @@ Deno.test("defer should throw an error if the factory throws an error", () => {
   );
 
   // Assert
-  assertEquals(notifications, [["T", error]]);
+  assertEquals(notifications, [["throw", error]]);
 });

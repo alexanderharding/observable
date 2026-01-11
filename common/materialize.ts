@@ -3,10 +3,12 @@ import { MinimumArgumentsRequiredError, ParameterTypeError } from "@xan/observab
 import type { ObserverNotification } from "./observer-notification.ts";
 
 /**
- * Represents all of the {@linkcode ObserverNotification|notifications} from the `source` [`Observable`](https://jsr.io/@xan/observable-core/doc/~/Observable) as
- * [`next`](https://jsr.io/@xan/observable-core/doc/~/Observer.next) emissions marked with their original types within
- * {@linkcode ObserverNotification|notification} entries.
- * @example <caption>An Observable that emits values and then returns</caption>
+ * Represents all of the {@linkcode ObserverNotification|notifications} from the
+ * [source](https://jsr.io/@xan/observable-core#source) as
+ * [`next`](https://jsr.io/@xan/observable-core/doc/~/Observer.next)ed values
+ * marked with their original types within {@linkcode ObserverNotification|notification} entries.
+ * This is especially useful for testing, debugging, and logging.
+ * @example
  * ```ts
  * import { materialize, of, pipe } from "@xan/observable-common";
  *
@@ -19,13 +21,13 @@ import type { ObserverNotification } from "./observer-notification.ts";
  * });
  *
  * // Console output:
- * // ["N", 1]
- * // ["N", 2]
- * // ["N", 3]
- * // ["R"]
+ * // ["next", 1]
+ * // ["next", 2]
+ * // ["next", 3]
+ * // ["return"]
  * // "return"
  * ```
- * @example <caption>An Observable that throws</caption>
+ * @example
  * ```ts
  * import { throwError, of, materialize, pipe } from "@xan/observable-common";
  *
@@ -38,8 +40,44 @@ import type { ObserverNotification } from "./observer-notification.ts";
  * });
  *
  * // Console output:
- * // ["T", new Error("error")]
+ * // ["throw", new Error("error")]
  * // "return"
+ * ```
+ * @example
+ * Unit testing
+ * ```ts
+ * import { materialize, pipe, of } from "@xan/observable-common";
+ *
+ * const observable = of([1, 2, 3]);
+ *
+ * describe("observable", () => {
+ *  let activeSubscriptionController: AbortController;
+ *
+ *  beforeEach(() => activeSubscriptionController = new AbortController());
+ *
+ *  afterEach(() => activeSubscriptionController?.abort());
+ *
+ *  it("should emit the notifications", () => {
+ *    // Arrange
+ *    const notifications: Array<ObserverNotification<number>> = [];
+ *
+ *    // Act
+ *    pipe(observable, materialize()).subscribe(
+ *      new Observer({
+ *        signal: activeSubscriptionController.signal,
+ *        next: (notification) => notifications.push(notification),
+ *      }),
+ *    );
+ *
+ *    // Assert
+ *    expect(notifications).toEqual([
+ *      ["next", 1],
+ *      ["next", 2],
+ *      ["next", 3],
+ *      ["return"],
+ *    ]);
+ *  });
+ * });
  * ```
  */
 export function materialize<Value>(): (
@@ -52,13 +90,13 @@ export function materialize<Value>(): (
     return new Observable((observer) =>
       source.subscribe({
         signal: observer.signal,
-        next: (value) => observer.next(["N", value]),
+        next: (value) => observer.next(["next", value]),
         return() {
-          observer.next(["R"]);
+          observer.next(["return"]);
           observer.return();
         },
         throw(value) {
-          observer.next(["T", value]);
+          observer.next(["throw", value]);
           observer.return();
         },
       })

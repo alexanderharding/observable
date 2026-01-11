@@ -23,7 +23,7 @@ Deno.test("takeUntil should complete when notifier nexts", () => {
   );
 
   // Assert
-  assertEquals(notifications, [["N", 1], ["N", 2], ["R"]]);
+  assertEquals(notifications, [["next", 1], ["next", 2], ["return"]]);
 });
 
 Deno.test("takeUntil should let values through until notifier nexts", () => {
@@ -44,7 +44,7 @@ Deno.test("takeUntil should let values through until notifier nexts", () => {
   source.return();
 
   // Assert
-  assertEquals(notifications, [["N", 1], ["N", 2], ["R"]]);
+  assertEquals(notifications, [["next", 1], ["next", 2], ["return"]]);
 });
 
 Deno.test("takeUntil should allow all values if notifier never fires", () => {
@@ -60,7 +60,12 @@ Deno.test("takeUntil should allow all values if notifier never fires", () => {
   );
 
   // Assert
-  assertEquals(notifications, [["N", 10], ["N", 20], ["N", 30], ["R"]]);
+  assertEquals(notifications, [
+    ["next", 10],
+    ["next", 20],
+    ["next", 30],
+    ["return"],
+  ]);
 });
 
 Deno.test("takeUntil should propagate throws from source", () => {
@@ -81,8 +86,8 @@ Deno.test("takeUntil should propagate throws from source", () => {
 
   // Assert
   assertEquals(notifications, [
-    ["N", 1],
-    ["T", error],
+    ["next", 1],
+    ["throw", error],
   ]);
 });
 
@@ -101,7 +106,7 @@ Deno.test("takeUntil should propagate throws from notifier", () => {
   notifier.throw(error);
 
   // Assert
-  assertEquals(notifications, [["T", error]]);
+  assertEquals(notifications, [["throw", error]]);
 });
 
 Deno.test("takeUntil should honor unsubscribe", () => {
@@ -127,5 +132,5 @@ Deno.test("takeUntil should honor unsubscribe", () => {
   source.return();
 
   // Assert
-  assertEquals(notifications, [["N", 123]]);
+  assertEquals(notifications, [["next", 123]]);
 });

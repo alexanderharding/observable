@@ -19,13 +19,13 @@ export function dematerialize<Value>(): (
         signal: observer.signal,
         next(value) {
           switch (value[0]) {
-            case "N":
+            case "next":
               observer.next(value[1]);
               break;
-            case "R":
+            case "return":
               observer.return();
               break;
-            case "T":
+            case "throw":
               observer.throw(value[1]);
               break;
             default:

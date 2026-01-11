@@ -20,7 +20,7 @@ Deno.test(
     );
 
     // Assert: should only get a "return" notification
-    assertEquals(notifications, [["R"]]);
+    assertEquals(notifications, [["return"]]);
   },
 );
 
@@ -40,7 +40,7 @@ Deno.test("ignoreElements should pump throws right through itself", () => {
   );
 
   // Assert: next values are ignored, threw value is propagated
-  assertEquals(notifications, [["T", error]]);
+  assertEquals(notifications, [["throw", error]]);
 });
 
 Deno.test("ignoreElements should honor unsubscribe", () => {
