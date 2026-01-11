@@ -20,4 +20,5 @@ export { switchMap } from "./switch-map.ts";
 export { mergeMap } from "./merge-map.ts";
 export { merge } from "./merge.ts";
 export { exhaustMap } from "./exhaust-map.ts";
+export { flatMap } from "./flat-map.ts";
 export { finalize } from "./finalize.ts";
