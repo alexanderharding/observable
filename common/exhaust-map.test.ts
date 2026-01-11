@@ -47,8 +47,6 @@ Deno.test(
     hot.return();
 
     // Assert
-    // Since cold is synchronous, by the time hot.next(3) is called,
-    // the first inner observable has already completed
     assertEquals(notifications, [
       ["next", 10],
       ["next", 10],
@@ -90,14 +88,14 @@ Deno.test("exhaustMap should ignore values while inner is active", () => {
   materialized.subscribe(
     new Observer((notification) => notifications.push(notification)),
   );
-  source.next("a"); // Start inner A
+  source.next("a");
   innerA.next();
-  source.next("b"); // Ignored because inner A is active
+  source.next("b");
   innerA.next();
-  source.next("b"); // Ignored because inner A is active
+  source.next("b");
   innerA.next();
-  innerA.return(); // Inner A completes
-  source.next("b"); // Now B should be accepted
+  innerA.return();
+  source.next("b");
   innerB.next();
   innerB.next();
   innerB.return();
@@ -147,14 +145,14 @@ Deno.test("exhaustMap should exhaust many hot inners", () => {
   );
   source.next("a");
   a.next();
-  source.next("b"); // Ignored - a is active
+  source.next("b");
   a.next();
-  b.next(); // Emits nothing (b was ignored)
+  b.next();
   a.next();
-  a.return(); // a completes
-  source.next("c"); // Now c is accepted
+  a.return();
+  source.next("c");
   c.next();
-  source.next("a"); // Ignored - c is active
+  source.next("a");
   c.next();
   c.return();
   source.return();
@@ -320,7 +318,7 @@ Deno.test("exhaustMap should exhaust inner empty and never", () => {
   );
 
   // Assert
-  // x emits empty (completes immediately), then y (never) is subscribed
+
   assertEquals(notifications, []);
 });
 
@@ -348,8 +346,7 @@ Deno.test("exhaustMap should exhaust inner never and empty", () => {
   );
 
   // Assert
-  // x (never) is subscribed first and never completes
-  // y is ignored because x is still active
+
   assertEquals(notifications, []);
 });
 
@@ -378,8 +375,7 @@ Deno.test("exhaustMap should exhaust inner never and throw", () => {
   );
 
   // Assert
-  // x (never) is subscribed first
-  // y is ignored because x is still active, no error thrown
+
   assertEquals(notifications, []);
 });
 
@@ -408,7 +404,7 @@ Deno.test("exhaustMap should exhaust inner empty and throw", () => {
   );
 
   // Assert
-  // x (empty) completes, then y (throw) is subscribed
+
   assertEquals(notifications, [["throw", error]]);
 });
 
@@ -592,7 +588,7 @@ Deno.test("exhaustMap should pass index to projection function", () => {
   source.return();
 
   // Assert
-  // All indices should be recorded since inner completes synchronously
+
   assertEquals(indices, [0, 1, 2]);
   assertEquals(notifications, [
     ["next", "x"],
@@ -626,17 +622,17 @@ Deno.test(
     materialized.subscribe(
       new Observer((notification) => notifications.push(notification)),
     );
-    source.next("a"); // index 0, starts inner1
-    source.next("b"); // ignored (inner active)
-    source.next("c"); // ignored (inner active)
+    source.next("a");
+    source.next("b");
+    source.next("c");
     inner1.next("1");
-    inner1.return(); // inner1 completes
-    source.next("d"); // index 1, starts inner2
+    inner1.return();
+    source.next("d");
     inner2.next("2");
     inner2.return();
     source.return();
 
-    // Assert - indices should only count accepted source values
+    // Assert
     assertEquals(indices, [0, 1]);
     assertEquals(notifications, [["next", "1"], ["next", "2"], ["return"]]);
   },
@@ -717,13 +713,13 @@ Deno.test(
       new Observer((notification) => notifications.push(notification)),
     );
 
-    source.next(1); // Inner 1 starts
+    source.next(1);
     inners[1].next("1a");
-    source.next(2); // Ignored - inner 1 active
+    source.next(2);
     inners[1].next("1b");
-    inners[1].return(); // Inner 1 completes
+    inners[1].return();
 
-    source.next(3); // Inner 3 starts (2 was never accepted)
+    source.next(3);
     inners[3].next("3a");
     inners[3].next("3b");
     inners[3].return();
