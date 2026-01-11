@@ -29,3 +29,4 @@ export { takeUntil } from "./take-until.ts";
 export { take } from "./take.ts";
 export { tap } from "./tap.ts";
 export { throwError } from "./throw-error.ts";
+export { timer } from "./timer.ts";
