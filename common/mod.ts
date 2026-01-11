@@ -1,4 +1,5 @@
 export { all } from "./all.ts";
+export { asObservable } from "./as-observable.ts";
 export type { AsyncSubjectConstructor } from "./async-subject-constructor.ts";
 export { AsyncSubject } from "./async-subject.ts";
 export type { BehaviorSubjectConstructor } from "./behavior-subject-constructor.ts";
