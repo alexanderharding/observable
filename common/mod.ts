@@ -23,3 +23,4 @@ export { exhaustMap } from "./exhaust-map.ts";
 export { flatMap } from "./flat-map.ts";
 export { flat } from "./flat.ts";
 export { finalize } from "./finalize.ts";
+export { race } from "./race.ts";
