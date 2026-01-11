@@ -19,7 +19,9 @@ const success = of([0]);
  * ```ts
  * import { timer } from "@xan/observable-common";
  *
+ * const controller = new AbortController();
  * timer(1_000).subscribe({
+ *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
  *   return: () => console.log("return"),
  *   throw: (value) => console.log("throw", value),
