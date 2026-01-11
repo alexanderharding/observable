@@ -25,3 +25,4 @@ export { flat } from "./flat.ts";
 export { finalize } from "./finalize.ts";
 export { race } from "./race.ts";
 export { all } from "./all.ts";
+export { ignoreElements } from "./ignore-elements.ts";
