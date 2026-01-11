@@ -5,7 +5,7 @@ import { asObservable } from "./as-observable.ts";
 import { of } from "./of.ts";
 
 Deno.test(
-  "from should convert a custom observable to a proper observable",
+  "asObservable should convert a custom observable to a proper observable",
   () => {
     // Arrange
     const observer = new Observer();
@@ -31,7 +31,7 @@ Deno.test(
 );
 
 Deno.test(
-  "from should return the same observer if it is already a proper observer",
+  "asObservable should return the same observer if it is already a proper observer",
   () => {
     // Arrange
     const expected = of([1, 2]);

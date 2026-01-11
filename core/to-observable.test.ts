@@ -3,7 +3,7 @@ import { assertEquals, assertInstanceOf, assertStrictEquals } from "@std/assert"
 import { toObservable } from "./to-observable.ts";
 
 Deno.test(
-  "from should convert a custom observable to a proper observable",
+  "toObservable should convert a custom observable to a proper observable",
   () => {
     // Arrange
     const observer = new Observer();
@@ -29,7 +29,7 @@ Deno.test(
 );
 
 Deno.test(
-  "from should return the same observer if it is already a proper observer",
+  "toObservable should return the same observer if it is already a proper observer",
   () => {
     // Arrange
     const expected = new Observable<number>((observer) => {
