@@ -16,3 +16,4 @@ export { takeUntil } from "./take-until.ts";
 export { tap } from "./tap.ts";
 export { throwError } from "./throw-error.ts";
 export { map } from "./map.ts";
+export { switchMap } from "./switch-map.ts";
