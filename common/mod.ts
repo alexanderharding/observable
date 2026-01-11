@@ -1,8 +1,11 @@
 export { never } from "./never.ts";
 export { empty } from "./empty.ts";
-export { ReplaySubject, type ReplaySubjectConstructor } from "./replay-subject.ts";
-export { AsyncSubject, type AsyncSubjectConstructor } from "./async-subject.ts";
-export { BehaviorSubject, type BehaviorSubjectConstructor } from "./behavior-subject.ts";
+export { ReplaySubject } from "./replay-subject.ts";
+export type { ReplaySubjectConstructor } from "./replay-subject-constructor.ts";
+export { AsyncSubject } from "./async-subject.ts";
+export type { AsyncSubjectConstructor } from "./async-subject-constructor.ts";
+export { BehaviorSubject } from "./behavior-subject.ts";
+export type { BehaviorSubjectConstructor } from "./behavior-subject-constructor.ts";
 export { defer } from "./defer.ts";
 export { of } from "./of.ts";
 export { pipe } from "./pipe.ts";
