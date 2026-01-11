@@ -3,9 +3,10 @@ import { MinimumArgumentsRequiredError, ParameterTypeError } from "@xan/observab
 import type { ObserverNotification } from "./observer-notification.ts";
 
 /**
- * Represents all of the {@linkcode ObserverNotification|notifications} from the `source` [`Observable`](https://jsr.io/@xan/observable-core/doc/~/Observable) as
- * [`next`](https://jsr.io/@xan/observable-core/doc/~/Observer.next) emissions marked with their original types within
- * {@linkcode ObserverNotification|notification} entries.
+ * Represents all of the {@linkcode ObserverNotification|notifications} from the
+ * [source](https://jsr.io/@xan/observable-core#source) as
+ * [`next`](https://jsr.io/@xan/observable-core/doc/~/Observer.next)ed values
+ * marked with their original types within {@linkcode ObserverNotification|notification} entries.
  * @example <caption>An Observable that emits values and then returns</caption>
  * ```ts
  * import { materialize, of, pipe } from "@xan/observable-common";

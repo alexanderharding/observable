@@ -9,7 +9,7 @@ import {
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@xan/observable-internal";
 
 /**
- * Used to perform side-effects on the `source` [`Observable`](https://jsr.io/@xan/observable-core/doc/~/Observable).
+ * Used to perform side-effects on the [source](https://jsr.io/@xan/observable-core#source).
  * ```ts
  * import { of, pipe, tap } from "@xan/observable-common";
  *
