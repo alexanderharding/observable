@@ -14,3 +14,4 @@ export { filter } from "./filter.ts";
 export { take } from "./take.ts";
 export { takeUntil } from "./take-until.ts";
 export { tap } from "./tap.ts";
+export { throwError } from "./throw-error.ts";
