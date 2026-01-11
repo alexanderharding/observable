@@ -5,3 +5,4 @@ export { AsyncSubject, type AsyncSubjectConstructor } from "./async-subject.ts";
 export { BehaviorSubject, type BehaviorSubjectConstructor } from "./behavior-subject.ts";
 export { defer } from "./defer.ts";
 export { of } from "./of.ts";
+export { pipe } from "./pipe.ts";
