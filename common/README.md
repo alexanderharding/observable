@@ -40,3 +40,7 @@ function logout(): void {
   jwt.next(null);
 }
 ```
+
+# Glossary And Semantics
+
+[@xan/observable-core](https://jsr.io/@xan/observable-core#glossary-and-semantics)

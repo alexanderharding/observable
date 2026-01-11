@@ -10,7 +10,7 @@ import { switchMap } from "./switch-map.ts";
  * {@linkcode project|Projects} each source value to an [`Observable`](https://jsr.io/@xan/observable-core/doc/~/Observable)
  * which is merged in the output [`Observable`](https://jsr.io/@xan/observable-core/doc/~/Observable) only if the previous
  * {@linkcode project|projected} [`Observable`](https://jsr.io/@xan/observable-core/doc/~/Observable) has
- * [`returned`](https://jsr.io/@xan/observable-core/doc/~/Observer.return).
+ * [`return`](https://jsr.io/@xan/observable-core/doc/~/Observer.return)ed.
  */
 export function exhaustMap<In, Out>(
   project: (value: In, index: number) => Observable<Out>,

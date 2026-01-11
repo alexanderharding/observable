@@ -2,7 +2,7 @@ import { isObservable, Observable, toObservable } from "@xan/observable-core";
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@xan/observable-internal";
 
 /**
- * Filters [`nexted`](https://jsr.io/@xan/observable-core/doc/~/Observer.next) values from the `source`
+ * Filters [`next`](https://jsr.io/@xan/observable-core/doc/~/Observer.next)ed values from the `source`
  * [`Observable`](https://jsr.io/@xan/observable-core/doc/~/Observable) that satisfy a specified
  * {@linkcode predicate}.
  * @example

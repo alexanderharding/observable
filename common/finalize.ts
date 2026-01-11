@@ -2,8 +2,8 @@ import { isObservable, Observable, toObservable } from "@xan/observable-core";
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@xan/observable-internal";
 
 /**
- * The [`producer`](https://jsr.io/@xan/observable-core/doc/~/Observable.subscribe) is notifying the [`consumer`](https://jsr.io/@xan/observable-core/doc/~/Observer)
- * that it's done [`nexting`](https://jsr.io/@xan/observable-core/doc/~/Observer.next), values for any reason, and will send no more values. Finalization,
+ * The [producer](https://jsr.io/@xan/observable-core#producer) is notifying the [consumer](https://jsr.io/@xan/observable-core#consumer)
+ * that it's done [`next`](https://jsr.io/@xan/observable-core/doc/~/Observer.next)ing, values for any reason, and will send no more values. Finalization,
  * if it occurs, will always happen as a side-effect _after_ [`return`](https://jsr.io/@xan/observable-core/doc/~/Observer.return),
  * [`throw`](https://jsr.io/@xan/observable-core/doc/~/Observer.throw), or [`unsubscribe`](https://jsr.io/@xan/observable-core/doc/~/Observer.signal) (whichever comes last).
  */

@@ -11,7 +11,7 @@ import { mergeMap } from "./merge-map.ts";
 
 /**
  * Creates and returns an [`Observable`](https://jsr.io/@xan/observable-core/doc/~/Observable) which concurrently
- * [`nexts`](https://jsr.io/@xan/observable-core/doc/~/Observer.next) all values from every given {@linkcode sources|source}.
+ * [`next`](https://jsr.io/@xan/observable-core/doc/~/Observer.next)s all values from every given {@linkcode sources|source}.
  */
 export function merge<Value>(
   // Accepting an Iterable is a design choice for performance (iterables are lazily evaluated) and

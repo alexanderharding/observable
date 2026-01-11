@@ -3,7 +3,7 @@ import { MinimumArgumentsRequiredError, ParameterTypeError } from "@xan/observab
 import { empty } from "./empty.ts";
 
 /**
- * Takes the first {@linkcode count} values [`nexted`](https://jsr.io/@xan/observable-core/doc/~/Observer.next) by the `source`
+ * Takes the first {@linkcode count} values [`next`](https://jsr.io/@xan/observable-core/doc/~/Observer.next)ed by the `source`
  * [`Observable`](https://jsr.io/@xan/observable-core/doc/~/Observable).
  * @example
  * ```ts

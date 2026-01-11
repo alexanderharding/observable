@@ -6,8 +6,8 @@ import type { Observer } from "./observer.ts";
  */
 export interface ObservableConstructor {
   /**
-   * Creates and returns an object that acts as a template for connecting a [`producer`](https://jsr.io/@xan/observable-core#producer)
-   * to a [`consumer`](https://jsr.io/@xan/observable-core#consumer) via a {@linkcode Observable.subscribe|subscribe} action.
+   * Creates and returns an object that acts as a template for connecting a [producer](https://jsr.io/@xan/observable-core#producer)
+   * to a [consumer](https://jsr.io/@xan/observable-core#consumer) via a {@linkcode Observable.subscribe|subscribe} action.
    * @param subscribe The function called for each {@linkcode Observable.subscribe|subscribe} action.
    * @example
    * Creating an observable with a synchronous producer.
