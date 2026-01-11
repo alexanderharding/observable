@@ -168,7 +168,7 @@ Deno.test(
 );
 
 Deno.test(
-  "switchMap should switch inner cold observables, inner never completes",
+  "switchMap should switch inner cold observables, inner never returns",
   () => {
     // Arrange
     const x = new Observable<string>((observer) => {

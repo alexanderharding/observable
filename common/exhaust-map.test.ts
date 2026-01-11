@@ -692,7 +692,7 @@ Deno.test(
 );
 
 Deno.test(
-  "exhaustMap should process next source value after inner completes",
+  "exhaustMap should process next source value after inner returns",
   () => {
     // Arrange
     const source = new Subject<number>();

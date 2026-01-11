@@ -7,7 +7,7 @@ import { takeUntil } from "./take-until.ts";
 import { materialize } from "./materialize.ts";
 import type { ObserverNotification } from "./observer-notification.ts";
 
-Deno.test("takeUntil should complete when notifier nexts", () => {
+Deno.test("takeUntil should return when notifier nexts", () => {
   // Arrange
   const notifications: Array<ObserverNotification<number>> = [];
   const source = of([1, 2, 3, 4, 5]);
