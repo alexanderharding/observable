@@ -3,10 +3,11 @@ import {
   isObserver,
   Observable,
   type Observer,
-  toObservable,
   toObserver,
 } from "@xan/observable-core";
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@xan/observable-internal";
+import { pipe } from "./pipe.ts";
+import { asObservable } from "./as-observable.ts";
 
 /**
  * Used to perform side-effects on the [source](https://jsr.io/@xan/observable-core#source).
@@ -52,7 +53,7 @@ export function tap<Value>(
   return function tapFn(source) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
-    source = toObservable(source);
+    source = pipe(source, asObservable());
     return new Observable((observer) =>
       source.subscribe({
         signal: observer.signal,

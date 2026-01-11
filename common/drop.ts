@@ -1,8 +1,9 @@
-import { isObservable, type Observable, toObservable } from "@xan/observable-core";
+import { isObservable, type Observable } from "@xan/observable-core";
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@xan/observable-internal";
 import { empty } from "./empty.ts";
 import { pipe } from "./pipe.ts";
 import { filter } from "./filter.ts";
+import { asObservable } from "./as-observable.ts";
 
 /**
  * Drops the first {@linkcode count} values [`next`](https://jsr.io/@xan/observable-core/doc/~/Observer.next)ed
@@ -37,7 +38,7 @@ export function drop<Value>(
     if (count < 0 || Number.isNaN(count) || count === Infinity) return empty;
     return pipe(
       source,
-      count === 0 ? toObservable : filter((_, index) => index >= count),
+      count === 0 ? asObservable() : filter((_, index) => index >= count),
     );
   };
 }

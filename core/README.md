@@ -35,8 +35,8 @@ const observable = new Observable<0>((observer) => {
   const producer = setTimeout(() => {
     // Next the value to the observer.
     observer.next(0);
-    // The producer is done, notify complete.
-    observer.complete();
+    // The producer is done, notify return.
+    observer.return();
   }, 1000);
 
   // Add an abort listener to handle unsubscription by canceling the producer.

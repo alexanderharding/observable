@@ -1,5 +1,7 @@
-import { isObservable, Observable, toObservable } from "@xan/observable-core";
+import { isObservable, Observable } from "@xan/observable-core";
 import { MinimumArgumentsRequiredError, noop, ParameterTypeError } from "@xan/observable-internal";
+import { pipe } from "./pipe.ts";
+import { asObservable } from "./as-observable.ts";
 
 /**
  * Takes [`next`](https://jsr.io/@xan/observable-core/doc/~/Observer.next)ed values from the
@@ -38,11 +40,11 @@ export function takeUntil<Value>(
 ): (source: Observable<Value>) => Observable<Value> {
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
   if (!isObservable(notifier)) throw new ParameterTypeError(0, "Observable");
-  notifier = toObservable(notifier);
+  notifier = pipe(notifier, asObservable());
   return function takeUntilFn(source) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
-    source = toObservable(source);
+    source = pipe(source, asObservable());
     return new Observable((observer) => {
       notifier.subscribe({
         signal: observer.signal,
