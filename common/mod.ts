@@ -17,3 +17,5 @@ export { tap } from "./tap.ts";
 export { throwError } from "./throw-error.ts";
 export { map } from "./map.ts";
 export { switchMap } from "./switch-map.ts";
+export { mergeMap } from "./merge-map.ts";
+export { merge } from "./merge.ts";
