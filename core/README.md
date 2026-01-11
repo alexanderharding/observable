@@ -26,19 +26,13 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 import { Observable } from "@xan/observable-core";
 
 const observable = new Observable<0>((observer) => {
-  // Note that this logic is invoked for every new subscribe action.
-
-  // If the observer is already aborted, there's no work to do.
-  if (observer.signal.aborted) return;
-
-  // Create a timeout as our producer to next a value after 1 second.
+  // Create a timeout as our producer to next a successful execution code (0) after 1 second.
   const producer = setTimeout(() => {
-    // Next the value to the observer.
+    // A value has been produced, notify next.
     observer.next(0);
     // The producer is done, notify return.
     observer.return();
-  }, 1000);
-
+  }, 1_000);
   // Add an abort listener to handle unsubscription by canceling the producer.
   observer.signal.addEventListener("abort", () => clearTimeout(producer), {
     once: true,

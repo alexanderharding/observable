@@ -15,15 +15,15 @@ export interface ObservableConstructor {
    * import { Observable } from "@xan/observable-core";
    *
    * const observable = new Observable<number>((observer) => {
-   *   // Note that this logic is invoked for every new subscribe action.
+   *   // Create an Array as our producer to next a sequence of values.
    *   const producer = [1, 2, 3];
    *   for (const value of producer) {
+   *     // Next the value to the observer.
+   *     observer.next(value);
    *     // If the observer has been aborted, there's no more work to do.
    *     if (observer.signal.aborted) return;
-   *     // Next the value to the observer
-   *     observer.next(value);
    *   }
-   *   // The producer is done, return.
+   *   // The producer is done, notify return.
    *   observer.return();
    * });
    *
@@ -32,16 +32,16 @@ export interface ObservableConstructor {
    *
    * observable.subscribe({
    *   signal: controller.signal,
-   *   next: (value) => console.log(value),
+   *   next: (value) => console.log("next", value),
    *   return: () => console.log("return"),
-   *   throw: (error) => console.error(error),
+   *   throw: (value) => console.error("throw", value),
    * });
    *
    * // console output (synchronously):
-   * // 1
-   * // 2
-   * // 3
-   * // return
+   * // "next" 1
+   * // "next" 2
+   * // "next" 3
+   * // "return"
    * ```
    *
    * @example
@@ -50,16 +50,11 @@ export interface ObservableConstructor {
    * import { Observable } from "@xan/observable-core";
    *
    * const observable = new Observable<0>((observer) => {
-   *   // Note that this logic is invoked for every new subscribe action.
-   *
-   *   // If the observer is already aborted, there's no work to do.
-   *   if (observer.signal.aborted) return;
-   *
-   *   // Create a timeout as our producer to next a value after 1 second.
+   *   // Create a timeout as our producer to next a successful execution code (0) after 1 second.
    *   const producer = setTimeout(() => {
-   *     // Next the value to the observer
+   *     // Next the value to the observer.
    *     observer.next(0);
-   *     // The producer is done, return.
+   *     // The producer is done, notify return.
    *     observer.return();
    *   }, 1000);
    *
@@ -76,14 +71,14 @@ export interface ObservableConstructor {
    *
    * observable.subscribe({
    *   signal: controller.signal,
-   *   next: (value) => console.log(value),
+   *   next: (value) => console.log("next", value),
    *   return: () => console.log("return"),
-   *   throw: (error) => console.error(error),
+   *   throw: (value) => console.error("throw", value),
    * });
    *
    * // console output (asynchronously):
-   * // 0
-   * // return
+   * // "next" 0
+   * // "return"
    * ```
    *
    * @example
@@ -98,9 +93,9 @@ export interface ObservableConstructor {
    *
    * observable.subscribe({
    *   signal: controller.signal,
-   *   next: (value) => console.log(value),
+   *   next: (value) => console.log("next", value),
    *   return: () => console.log("return"),
-   *   throw: (error) => console.error(error),
+   *   throw: (value) => console.error("throw", value),
    * });
    *
    * // no console output
