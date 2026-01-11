@@ -12,4 +12,5 @@ export { dematerialize } from "./dematerialize.ts";
 export { drop } from "./drop.ts";
 export { filter } from "./filter.ts";
 export { take } from "./take.ts";
+export { takeUntil } from "./take-until.ts";
 export { tap } from "./tap.ts";
