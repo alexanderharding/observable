@@ -31,6 +31,52 @@ const success = of([0]);
  * // "next" 0
  * // "return"
  * ```
+ * @example
+ * ```ts
+ * import { timer } from "@xan/observable-common";
+ *
+ * const controller = new AbortController();
+ * timer(0).subscribe({
+ *   signal: controller.signal,
+ *   next: (value) => console.log("next", value),
+ *   return: () => console.log("return"),
+ *   throw: (value) => console.log("throw", value),
+ * });
+ *
+ * // Console output (synchronously):
+ * // "next" 0
+ * // "return"
+ * ```
+ * @example
+ * ```ts
+ * import { timer } from "@xan/observable-common";
+ *
+ * const controller = new AbortController();
+ * timer(-1).subscribe({
+ *   signal: controller.signal,
+ *   next: (value) => console.log("next", value),
+ *   return: () => console.log("return"),
+ *   throw: (value) => console.log("throw", value),
+ * });
+ *
+ * // Console output (synchronously):
+ * // "return"
+ * ```
+ * @example
+ * ```ts
+ * import { timer } from "@xan/observable-common";
+ *
+ * const controller = new AbortController();
+ * timer(NaN).subscribe({
+ *   signal: controller.signal,
+ *   next: (value) => console.log("next", value),
+ *   return: () => console.log("return"),
+ *   throw: (value) => console.log("throw", value),
+ * });
+ *
+ * // Console output (synchronously):
+ * // "return"
+ * ```
  */
 export function timer(milliseconds: number): Observable<0> {
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
