@@ -1,7 +1,8 @@
 import { assertEquals, assertStrictEquals, assertThrows } from "@std/assert";
 import { Observable, Observer } from "@xan/observable-core";
 import { AsyncSubject } from "./async-subject.ts";
-import { materialize, type ObserverNotification } from "./materialize.ts";
+import { materialize } from "./materialize.ts";
+import type { ObserverNotification } from "./observer-notification.ts";
 import { pipe } from "./pipe.ts";
 
 Deno.test("AsyncSubject.toString should be '[object AsyncSubject]'", () => {

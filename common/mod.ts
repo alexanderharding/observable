@@ -6,3 +6,6 @@ export { BehaviorSubject, type BehaviorSubjectConstructor } from "./behavior-sub
 export { defer } from "./defer.ts";
 export { of } from "./of.ts";
 export { pipe } from "./pipe.ts";
+export type { ObserverNotification } from "./observer-notification.ts";
+export { materialize } from "./materialize.ts";
+export { dematerialize } from "./dematerialize.ts";

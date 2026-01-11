@@ -3,7 +3,8 @@ import { Observer } from "@xan/observable-core";
 import { noop } from "@xan/observable-internal";
 import { of } from "./of.ts";
 import { pipe } from "./pipe.ts";
-import { materialize, type ObserverNotification } from "./materialize.ts";
+import { materialize } from "./materialize.ts";
+import type { ObserverNotification } from "./observer-notification.ts";
 import { ReplaySubject } from "./replay-subject.ts";
 
 Deno.test("ReplaySubject.toString should be '[object ReplaySubject]'", () => {

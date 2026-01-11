@@ -1,7 +1,8 @@
 import { assertEquals } from "@std/assert";
 import { Observable, Observer } from "@xan/observable-core";
 import { dematerialize } from "./dematerialize.ts";
-import { materialize, type ObserverNotification } from "./materialize.ts";
+import { materialize } from "./materialize.ts";
+import type { ObserverNotification } from "./observer-notification.ts";
 import { pipe } from "./pipe.ts";
 import { defer } from "./defer.ts";
 
