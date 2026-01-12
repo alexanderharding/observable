@@ -18,7 +18,7 @@ export interface ObservableConstructor {
    *   // Create an Array as our producer to next a sequence of values.
    *   const producer = [1, 2, 3];
    *   for (const value of producer) {
-   *     // Next the value to the observer.
+   *     // A value has been produced, notify next.
    *     observer.next(value);
    *     // If the observer has been aborted, there's no more work to do.
    *     if (observer.signal.aborted) return;
@@ -52,7 +52,7 @@ export interface ObservableConstructor {
    * const observable = new Observable<0>((observer) => {
    *   // Create a timeout as our producer to next a successful execution code (0) after 1 second.
    *   const producer = setTimeout(() => {
-   *     // Next the value to the observer.
+   *     // A value has been produced, notify next.
    *     observer.next(0);
    *     // The producer is done, notify return.
    *     observer.return();
