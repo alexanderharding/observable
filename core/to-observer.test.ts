@@ -1,4 +1,4 @@
-import { Observer } from "@xan/observable-core";
+import { Observer } from "@observable/core";
 import { assertEquals, assertInstanceOf, assertStrictEquals } from "@std/assert";
 import { toObserver } from "./to-observer.ts";
 

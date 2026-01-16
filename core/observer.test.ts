@@ -1,4 +1,4 @@
-import { noop } from "@xan/observable-internal";
+import { noop } from "@observable/internal";
 import { Observer } from "./observer.ts";
 import { assertEquals, assertInstanceOf, assertStrictEquals, assertThrows } from "@std/assert";
 import { isObserver } from "./is-observer.ts";

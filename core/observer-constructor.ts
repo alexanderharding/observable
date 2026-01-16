@@ -5,10 +5,10 @@ import type { Observer } from "./observer.ts";
  */
 export interface ObserverConstructor {
   /**
-   * Creates and return a object that provides a standard way to [`consume`](https://jsr.io/@xan/observable-core#consumer) a sequence of values
+   * Creates and return a object that provides a standard way to [`consume`](https://jsr.io/@observable/core#consumer) a sequence of values
    * (either finite or infinite).
    * ```ts
-   * import { Observer } from "@xan/observable-core";
+   * import { Observer } from "@observable/core";
    *
    * const observer = new Observer<0>({
    *   next: (value) => console.log(value),
