@@ -5,7 +5,7 @@ import {
   InstanceofError,
   MinimumArgumentsRequiredError,
   ParameterTypeError,
-} from "@xan/observable-internal";
+} from "@observable/internal";
 import type { SubjectConstructor } from "./subject-constructor.ts";
 
 /**
@@ -22,7 +22,7 @@ const notThrown = Symbol("Flag indicating that a value is not thrown.");
 export const Subject: SubjectConstructor = class {
   readonly [Symbol.toStringTag] = "Subject";
   /**
-   * Tracking the value that was thrown by the [producer](https://jsr.io/@xan/observable-core#producer), if any.
+   * Tracking the value that was thrown by the [producer](https://jsr.io/@observable/core#producer), if any.
    */
   #thrown: unknown = notThrown;
 

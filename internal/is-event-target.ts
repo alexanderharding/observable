@@ -1,11 +1,11 @@
-import { MinimumArgumentsRequiredError } from "@xan/observable-internal";
+import { MinimumArgumentsRequiredError } from "./minimum-arguments-required-error.ts";
 import { isObject } from "./is-object.ts";
 
 /**
  * Checks if a {@linkcode value} is an object that implements the {@linkcode EventTarget} interface.
  * @example
  * ```ts
- * import { isEventTarget } from "@xan/observable-internal";
+ * import { isEventTarget } from "@observable/internal";
  *
  * const eventTargetInstance = new EventTarget();
  * isEventTarget(eventTargetInstance); // true

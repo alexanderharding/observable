@@ -1,7 +1,7 @@
 import { assertStrictEquals } from "@std/assert";
 import { isObserver } from "./is-observer.ts";
 import type { Observer } from "./observer.ts";
-import { noop } from "@xan/observable-internal";
+import { noop } from "@observable/internal";
 
 Deno.test("isObserver should return false if the value is null", () => {
   // Arrange

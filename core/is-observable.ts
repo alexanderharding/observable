@@ -1,11 +1,11 @@
-import { isObject, MinimumArgumentsRequiredError } from "@xan/observable-internal";
+import { isObject, MinimumArgumentsRequiredError } from "@observable/internal";
 import { Observable } from "./observable.ts";
 
 /**
  * Checks if a {@linkcode value} is an object that implements the {@linkcode Observable} interface.
  * @example
  * ```ts
- * import { isObservable, Observable } from "@xan/observable-core";
+ * import { isObservable, Observable } from "@observable/core";
  *
  * const observableInstance = new Observable((observer) => {
  *   // Implementation omitted for brevity.

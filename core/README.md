@@ -1,10 +1,10 @@
-# @xan/observable-core
+# @observable/core
 
 A lightweight, [RxJS](https://rxjs.dev/)-inspired implementation of the
 [Observer pattern](https://refactoring.guru/design-patterns/observer) in JavaScript. Features
-[`Observable`](https://jsr.io/@xan/observable-core/doc/~/Observable)'s with
+[`Observable`](https://jsr.io/@observable/core/doc/~/Observable)'s with
 [`AbortController`](https://developer.mozilla.org/en-US/docs/Web/API/AbortController)-based
-[`unsubscription`](https://jsr.io/@xan/observable-core/doc/~/Observer.signal), supporting both
+[`unsubscription`](https://jsr.io/@observable/core/doc/~/Observer.signal), supporting both
 synchronous and asynchronous [producers](#producer).
 
 ## Build
@@ -23,7 +23,7 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 ## Example
 
 ```ts
-import { Observable } from "@xan/observable-core";
+import { Observable } from "@observable/core";
 
 const observable = new Observable<0>((observer) => {
   // Create a timeout as our producer to next a successful execution code (0) after 1 second.
@@ -42,11 +42,11 @@ const observable = new Observable<0>((observer) => {
 
 # Glossary And Semantics
 
-When discussing and documenting [`Observable`](https://jsr.io/@xan/observable-core/~/Observable)s,
-it's important to have a common language and a known set of rules around what is going on. This
-document is an attempt to standardize these things so we can try to control the language in our
-docs, and hopefully other publications about this library, so we can discuss reactive programming
-with this library on consistent terms.
+When discussing and documenting [`Observable`](https://jsr.io/@observable/core/~/Observable)s, it's
+important to have a common language and a known set of rules around what is going on. This document
+is an attempt to standardize these things so we can try to control the language in our docs, and
+hopefully other publications about this library, so we can discuss reactive programming with this
+library on consistent terms.
 
 While not all of the documentation for this library reflects this terminology, it's a goal to ensure
 it does, and to ensure the language and names around the library use this document as a source of
@@ -56,7 +56,7 @@ truth and unified language.
 
 There are high level entities that are frequently discussed. It's important to define them
 separately from other lower-level concepts, because they relate to the nature of
-[`Observable`](https://jsr.io/@xan/observable-core/doc/~/Observable).
+[`Observable`](https://jsr.io/@observable/core/doc/~/Observable).
 
 ### Consumer
 
@@ -87,8 +87,8 @@ A [consumer](#consumer) reacting to [producer](#producer) [notifications](#notif
 
 ### Observation Chain
 
-When an [`Observable`](https://jsr.io/@xan/observable-core/doc/~/Observable) uses another
-[`Observable`](https://jsr.io/@xan/observable-core/doc/~/Observable) as a [producer](#producer), an
+When an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) uses another
+[`Observable`](https://jsr.io/@observable/core/doc/~/Observable) as a [producer](#producer), an
 "observation chain" is set up. That is a chain of [observation](#observation) such that multiple
 [observers](#observation) are notifying each other in a unidirectional way toward the final
 [consumer](#consumer).
@@ -96,10 +96,10 @@ When an [`Observable`](https://jsr.io/@xan/observable-core/doc/~/Observable) use
 ### Notification
 
 The act of a [producer](#producer) pushing
-[`next`](https://jsr.io/@xan/observable-core/doc/~/Observer.next)ed values,
-[`throw`](https://jsr.io/@xan/observable-core/doc/~/Observer.throw)n values, or
-[`return`](https://jsr.io/@xan/observable-core/doc/~/Observer.return)s to a [consumer](#consumer) to
-be [observed](#observation).
+[`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values,
+[`throw`](https://jsr.io/@observable/core/doc/~/Observer.throw)n values, or
+[`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s to a [consumer](#consumer) to be
+[observed](#observation).
 
 ## Major Concepts
 
@@ -108,29 +108,28 @@ in [push-based](#push) reactive systems.
 
 ### Cold
 
-An [`Observable`](https://jsr.io/@xan/observable-core/~/Observable) is "cold" when it creates a new
-[producer](#producer) during
-[`subscribe`](https://jsr.io/@xan/observable-core/~/Observable.subscribe) for every new
-[subscription](#subscription). As a result, "cold"
-[`Observable`](https://jsr.io/@xan/observable-core/~/Observable)s are _always_ [unicast](#unicast),
+An [`Observable`](https://jsr.io/@observable/core/~/Observable) is "cold" when it creates a new
+[producer](#producer) during [`subscribe`](https://jsr.io/@observable/core/~/Observable.subscribe)
+for every new [subscription](#subscription). As a result, "cold"
+[`Observable`](https://jsr.io/@observable/core/~/Observable)s are _always_ [unicast](#unicast),
 being one [producer](#producer) [observed](#observation) by one [consumer](#consumer). Cold
-[`Observable`](https://jsr.io/@xan/observable-core/~/Observable)s can be made [hot](#hot) but not
-the other way around.
+[`Observable`](https://jsr.io/@observable/core/~/Observable)s can be made [hot](#hot) but not the
+other way around.
 
 ### Hot
 
-An [`Observable`](https://jsr.io/@xan/observable-core/~/Observable) is "hot", when its
+An [`Observable`](https://jsr.io/@observable/core/~/Observable) is "hot", when its
 [producer](#producer) was created outside of the context of the
-[`subscribe`](https://jsr.io/@xan/observable-core/~/Observable.subscribe) action. This means that
-the "hot" [`Observable`](https://jsr.io/@xan/observable-core/~/Observable) is almost always
+[`subscribe`](https://jsr.io/@observable/core/~/Observable.subscribe) action. This means that the
+"hot" [`Observable`](https://jsr.io/@observable/core/~/Observable) is almost always
 [multicast](#multicast). It is possible that a "hot"
-[`Observable`](https://jsr.io/@xan/observable-core/~/Observable) is still _technically_
+[`Observable`](https://jsr.io/@observable/core/~/Observable) is still _technically_
 [unicast](#unicast), if it is engineered to only allow one [subscription](#subscription) at a time,
 however, there is no straightforward mechanism for this in the library, and the scenario is an
 unlikely one. For the purposes of discussion, all "hot"
-[`Observable`](https://jsr.io/@xan/observable-core/~/Observable)s can be assumed to be
-[multicast](#multicast). Hot [`Observable`](https://jsr.io/@xan/observable-core/~/Observable)s
-cannot be made [cold](#cold).
+[`Observable`](https://jsr.io/@observable/core/~/Observable)s can be assumed to be
+[multicast](#multicast). Hot [`Observable`](https://jsr.io/@observable/core/~/Observable)s cannot be
+made [cold](#cold).
 
 ### Multicast
 
@@ -144,10 +143,10 @@ The act of one [producer](#producer) being [observed](#observation) by **only on
 
 ### Push
 
-[`Observer`](https://jsr.io/@xan/observable-core/doc/~/Observer)s are a push-based type. That means
+[`Observer`](https://jsr.io/@observable/core/doc/~/Observer)s are a push-based type. That means
 rather than having the [consumer](#consumer) call a function or perform some other action to get a
 value, the [consumer](#consumer) receives values as soon as the [producer](#producer) has produced
-them, via a registered [next](https://jsr.io/@xan/observable-core/doc/~/Observer.next) handler.
+them, via a registered [next](https://jsr.io/@observable/core/doc/~/Observer.next) handler.
 
 ### Pull
 
@@ -168,22 +167,22 @@ A factory function that creates an [operator function](#operator-function).
 
 ### Operator Function
 
-A function that takes an [`Observable`](https://jsr.io/@xan/observable-core/doc/~/Observable), and
-maps it to a new [`Observable`](https://jsr.io/@xan/observable-core/doc/~/Observable). Nothing more,
-nothing less. [Operator functions](#operator-function) are created by [operators](#operator).
+A function that takes an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable), and maps
+it to a new [`Observable`](https://jsr.io/@observable/core/doc/~/Observable). Nothing more, nothing
+less. [Operator functions](#operator-function) are created by [operators](#operator).
 
 ### Operation
 
 An action taken while handling a [notification](#notification), as set up by an
 [operator](#operator) and/or [operator function](#operator-function). During
 [subscription](#subscription) to that
-[`Observable`](https://jsr.io/@xan/observable-core/doc/~/Observable), [operations](#operation) are
+[`Observable`](https://jsr.io/@observable/core/doc/~/Observable), [operations](#operation) are
 performed in an order dictated by the [observation chain](#observation-chain).
 
 ### Stream
 
 A "stream" or "streaming" in the case of
-[`observables`](https://jsr.io/@xan/observable-core/doc/~/Observable), refers to the collection of
+[`observables`](https://jsr.io/@observable/core/doc/~/Observable), refers to the collection of
 [operations](#operation), as they are processed during a [subscription](#subscription). This is not
 to be confused with node Streams, and the word "stream", on its own, should be used sparingly in
 documentation and articles. Instead, prefer [observation chain](#observation-chain),
@@ -192,32 +191,32 @@ fine to use given this defined meaning.
 
 ### Source
 
-An [`Observable`](https://jsr.io/@xan/observable-core/doc/~/Observable) that will supply values to
-another [`Observable`](https://jsr.io/@xan/observable-core/doc/~/Observable). This
-[source](#source), will be the [producer](#producer) for the resulting
-[`Observable`](https://jsr.io/@xan/observable-core/doc/~/Observable) and all of its
+An [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) that will supply values to
+another [`Observable`](https://jsr.io/@observable/core/doc/~/Observable). This [source](#source),
+will be the [producer](#producer) for the resulting
+[`Observable`](https://jsr.io/@observable/core/doc/~/Observable) and all of its
 [subscriptions](#subscriptions). Sources may generally be any type of
-[`Observable`](https://jsr.io/@xan/observable-core/doc/~/Observable).
+[`Observable`](https://jsr.io/@observable/core/doc/~/Observable).
 
 ### Notifier
 
-An [`Observable`](https://jsr.io/@xan/observable-core/doc/~/Observable) that is being used to notify
-another [`Observable`](https://jsr.io/@xan/observable-core/doc/~/Observable) that it needs to
-perform some action. The action should only occur on a
-[`next`](https://jsr.io/@xan/observable-core/doc/~/Observer.next) and _never_ on
-[`return`](https://jsr.io/@xan/observable-core/doc/~/Observer.return) or
-[`throw`](https://jsr.io/@xan/observable-core/doc/~/Observer.throw).
+An [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) that is being used to notify
+another [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) that it needs to perform
+some action. The action should only occur on a
+[`next`](https://jsr.io/@observable/core/doc/~/Observer.next) and _never_ on
+[`return`](https://jsr.io/@observable/core/doc/~/Observer.return) or
+[`throw`](https://jsr.io/@observable/core/doc/~/Observer.throw).
 
 ## Other Concepts
 
 ### Unhandled Errors
 
-An "unhandled error" is any [`throw`](https://jsr.io/@xan/observable-core/doc/~/Observer.throw)n
-value that is not handled by a [consumer](#consumer)-provided function, which is generally provided
-during the [`subscribe`](https://jsr.io/@xan/observable-core/doc/~/Observable.subscribe) action by
-constructing a new [`Observer`](https://jsr.io/@xan/observable-core/doc/~/Observer). If no
-[`throw handler`](https://jsr.io/@xan/observable-core/doc/~/Observer.throw) was provided, this
-library will assume the error is "unhandled" and rethrow it on a new callstack to prevent
+An "unhandled error" is any [`throw`](https://jsr.io/@observable/core/doc/~/Observer.throw)n value
+that is not handled by a [consumer](#consumer)-provided function, which is generally provided during
+the [`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe) action by constructing
+a new [`Observer`](https://jsr.io/@observable/core/doc/~/Observer). If no
+[`throw handler`](https://jsr.io/@observable/core/doc/~/Observer.throw) was provided, this library
+will assume the error is "unhandled" and rethrow it on a new callstack to prevent
 ["producer interference"](#producer-interference).
 
 ### Producer Interference

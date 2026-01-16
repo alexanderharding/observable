@@ -1,5 +1,5 @@
 import { assertStrictEquals } from "@std/assert";
-import { noop } from "@xan/observable-internal";
+import { noop } from "@observable/internal";
 import { isObservable } from "./is-observable.ts";
 import { Observable } from "./observable.ts";
 

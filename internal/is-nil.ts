@@ -1,10 +1,10 @@
-import { MinimumArgumentsRequiredError } from "@xan/observable-internal";
+import { MinimumArgumentsRequiredError } from "./minimum-arguments-required-error.ts";
 
 /**
  * Checks if a {@linkcode value} is `null` or `undefined`.
  * @example
  * ```ts
- * import { isNil } from "@xan/observable-internal";
+ * import { isNil } from "@observable/internal";
  *
  * isNil(undefined); // true
  * isNil(null); // true

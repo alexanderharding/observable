@@ -1,0 +1,54 @@
+import { isObservable, type Observable, Observer, Subject, toObservable } from "@observable/core";
+import { MinimumArgumentsRequiredError, noop, ParameterTypeError } from "@observable/internal";
+import { defer } from "@observable/defer";
+import { pipe } from "@observable/pipe";
+import { takeUntil } from "@observable/take-until";
+import { tap } from "@observable/tap";
+import { mergeMap } from "@observable/merge-map";
+
+/**
+ * {@linkcode project|Projects} each [source](https://jsr.io/@observable/core#source) value to an
+ * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) which is merged in the output
+ * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable), emitting values only from the most
+ * recently {@linkcode project|projected} [`Observable`](https://jsr.io/@observable/core/doc/~/Observable).
+ * @example
+ * ```ts
+ * import { BehaviorSubject } from "@observable/behavior-subject";
+ * import { switchMap } from "@observable/switch-map";
+ * import { of } from "@observable/of";
+ * import { pipe } from "@observable/pipe";
+ *
+ * const page = new BehaviorSubject(1);
+ * const controller = new AbortController();
+ * pipe(page, switchMap((value) => fetchPage(value))).subscribe({
+ *   signal: controller.signal,
+ *   next: (value) => console.log("next", value),
+ *   return: () => console.log("return"),
+ *   throw: (value) => console.log("throw", value),
+ * });
+ *
+ * function fetchPage(page: number): Observable<string> {
+ *   return of(`Page ${page}`);
+ * }
+ */
+export function switchMap<In, Out>(
+  project: (value: In, index: number) => Observable<Out>,
+): (source: Observable<In>) => Observable<Out> {
+  if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
+  if (typeof project !== "function") {
+    throw new ParameterTypeError(0, "Function");
+  }
+  return function switchMapFn(source) {
+    if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
+    if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
+    source = toObservable(source);
+    return defer(() => {
+      const switching = new Subject<void>();
+      return pipe(
+        source,
+        tap(new Observer({ next: () => switching.next(), throw: noop })),
+        mergeMap((value, index) => pipe(project(value, index), takeUntil(switching))),
+      );
+    });
+  };
+}
