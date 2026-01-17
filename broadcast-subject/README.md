@@ -8,6 +8,19 @@ with the same name even if they are in different browsing contexts (e.g. browser
 [consumers](https://jsr.io/@observable/core#consumer) of the `BroadcastSubject` do not receive its
 _own_ [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values.
 
+## Build
+
+Automated by [Deno](https://deno.land/)
+
+## Publishing
+
+Automated by `.github\workflows\publish.yml`.
+
+## Running unit tests
+
+Run `deno task test` or `deno task test:ci` to execute the unit tests via
+[Deno](https://deno.land/).
+
 ## Example
 
 ```ts

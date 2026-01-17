@@ -9,7 +9,7 @@ synchronous and asynchronous [producers](#producer).
 
 ## Build
 
-Automated by [JSR](https://jsr.io/)
+Automated by [Deno](https://deno.land/)
 
 ## Publishing
 

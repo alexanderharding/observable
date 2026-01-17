@@ -2,6 +2,19 @@
 
 Projects each value from the [source](https://jsr.io/@observable/core#source) to a new value.
 
+## Build
+
+Automated by [Deno](https://deno.land/)
+
+## Publishing
+
+Automated by `.github\workflows\publish.yml`.
+
+## Running unit tests
+
+Run `deno task test` or `deno task test:ci` to execute the unit tests via
+[Deno](https://deno.land/).
+
 ## Example
 
 ```ts

@@ -4,6 +4,19 @@ Represents all of the notifications from the [source](https://jsr.io/@observable
 [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values marked with their original
 types within notification entries. This is especially useful for testing, debugging, and logging.
 
+## Build
+
+Automated by [Deno](https://deno.land/)
+
+## Publishing
+
+Automated by `.github\workflows\publish.yml`.
+
+## Running unit tests
+
+Run `deno task test` or `deno task test:ci` to execute the unit tests via
+[Deno](https://deno.land/).
+
 ## Example
 
 ```ts

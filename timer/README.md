@@ -4,6 +4,19 @@ Creates an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) that
 [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s a `0` value after a specified number
 of milliseconds and then [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s.
 
+## Build
+
+Automated by [Deno](https://deno.land/)
+
+## Publishing
+
+Automated by `.github\workflows\publish.yml`.
+
+## Running unit tests
+
+Run `deno task test` or `deno task test:ci` to execute the unit tests via
+[Deno](https://deno.land/).
+
 ## Example
 
 ```ts
