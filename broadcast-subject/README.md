@@ -10,7 +10,7 @@ _own_ [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values.
 
 ## Build
 
-Automated by [Deno](https://deno.land/)
+Automated by [JSR](https://jsr.io/)
 
 ## Publishing
 

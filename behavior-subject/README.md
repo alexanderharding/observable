@@ -6,7 +6,7 @@ current value and replays it to [`consumers`](https://jsr.io/@observable/core#co
 
 ## Build
 
-Automated by [Deno](https://deno.land/)
+Automated by [JSR](https://jsr.io/)
 
 ## Publishing
 

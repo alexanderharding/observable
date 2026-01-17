@@ -6,7 +6,7 @@ types within notification entries. This is especially useful for testing, debugg
 
 ## Build
 
-Automated by [Deno](https://deno.land/)
+Automated by [JSR](https://jsr.io/)
 
 ## Publishing
 

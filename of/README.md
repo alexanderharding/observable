@@ -7,7 +7,7 @@ sequence of values in order on
 
 ## Build
 
-Automated by [Deno](https://deno.land/)
+Automated by [JSR](https://jsr.io/)
 
 ## Publishing
 

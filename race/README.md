@@ -7,7 +7,7 @@ the first [source](https://jsr.io/@observable/core#source) to
 
 ## Build
 
-Automated by [Deno](https://deno.land/)
+Automated by [JSR](https://jsr.io/)
 
 ## Publishing
 

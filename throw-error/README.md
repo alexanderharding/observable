@@ -6,7 +6,7 @@ Creates an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) that
 
 ## Build
 
-Automated by [Deno](https://deno.land/)
+Automated by [JSR](https://jsr.io/)
 
 ## Publishing
 

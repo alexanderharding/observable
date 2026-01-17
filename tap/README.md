@@ -4,7 +4,7 @@ Used to perform side-effects on the [source](https://jsr.io/@observable/core#sou
 
 ## Build
 
-Automated by [Deno](https://deno.land/)
+Automated by [JSR](https://jsr.io/)
 
 ## Publishing
 

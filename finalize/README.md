@@ -10,7 +10,7 @@ send no more values. Finalization, if it occurs, will always happen as a side-ef
 
 ## Build
 
-Automated by [Deno](https://deno.land/)
+Automated by [JSR](https://jsr.io/)
 
 ## Publishing
 

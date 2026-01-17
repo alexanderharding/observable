@@ -6,7 +6,7 @@ of milliseconds and then [`return`](https://jsr.io/@observable/core/doc/~/Observ
 
 ## Build
 
-Automated by [Deno](https://deno.land/)
+Automated by [JSR](https://jsr.io/)
 
 ## Publishing
 

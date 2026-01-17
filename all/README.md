@@ -9,7 +9,7 @@ latest [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values of
 
 ## Build
 
-Automated by [Deno](https://deno.land/)
+Automated by [JSR](https://jsr.io/)
 
 ## Publishing
 

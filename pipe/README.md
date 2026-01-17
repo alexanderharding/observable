@@ -4,7 +4,7 @@ Pipe a value through a series of unary functions.
 
 ## Build
 
-Automated by [Deno](https://deno.land/)
+Automated by [JSR](https://jsr.io/)
 
 ## Publishing
 

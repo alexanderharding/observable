@@ -5,7 +5,7 @@ Filters [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values f
 
 ## Build
 
-Automated by [Deno](https://deno.land/)
+Automated by [JSR](https://jsr.io/)
 
 ## Publishing
 

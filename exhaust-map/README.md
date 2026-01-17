@@ -8,7 +8,7 @@ Projects each [source](https://jsr.io/@observable/core#source) value to an
 
 ## Build
 
-Automated by [Deno](https://deno.land/)
+Automated by [JSR](https://jsr.io/)
 
 ## Publishing
 

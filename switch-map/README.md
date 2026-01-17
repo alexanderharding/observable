@@ -7,7 +7,7 @@ recently projected [`Observable`](https://jsr.io/@observable/core/doc/~/Observab
 
 ## Build
 
-Automated by [Deno](https://deno.land/)
+Automated by [JSR](https://jsr.io/)
 
 ## Publishing
 

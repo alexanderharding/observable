@@ -6,7 +6,7 @@ A variant of [`Subject`](https://jsr.io/@observable/core/doc/~/Subject) that rep
 
 ## Build
 
-Automated by [Deno](https://deno.land/)
+Automated by [JSR](https://jsr.io/)
 
 ## Publishing
 

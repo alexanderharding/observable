@@ -5,7 +5,7 @@ this library directly as it's an internal implementation detail.
 
 ## Build
 
-Automated by [Deno](https://deno.land/)
+Automated by [JSR](https://jsr.io/)
 
 ## Publishing
 
