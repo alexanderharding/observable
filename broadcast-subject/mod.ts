@@ -15,12 +15,10 @@ export type BroadcastSubject<Value = unknown> = Subject<Value>;
  */
 export interface BroadcastSubjectConstructor {
   /**
-   * Creates and returns a variant of [`Subject`](https://jsr.io/@xan/subject/doc/~/Subject). When values
-   * are [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed, they are
-   * {@linkcode structuredClone|structured cloned} and sent only to [consumers](https://jsr.io/@observable/core#consumer)
-   * of _other_ {@linkcode BroadcastSubject} instances with the same {@linkcode name} even if they are in different browsing
-   * contexts (e.g. browser tabs). Logically, [consumers](https://jsr.io/@observable/core#consumer) of the
-   * {@linkcode BroadcastSubject} do not receive it's _own_
+   * Creates and returns a variant of [`Subject`](https://jsr.io/@xan/subject/doc/~/Subject) whose [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed
+   * values are [`structured cloned`](https://developer.mozilla.org/en-US/docs/Web/API/structuredClone) and sent only to [consumers](https://jsr.io/@observable/core#consumer)
+   * of _other_ {@linkcode BroadcastSubject} instances with the same {@linkcode name} even if they are in different browsing contexts (e.g. browser tabs). Logically,
+   * [consumers](https://jsr.io/@observable/core#consumer) of the {@linkcode BroadcastSubject} do not receive it's _own_
    * [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values.
    * @example
    * ```ts
