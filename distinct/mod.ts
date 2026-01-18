@@ -6,9 +6,9 @@ import { tap } from "@observable/tap";
 import { filter } from "@observable/filter";
 
 /**
- * Only [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s values from the [source](https://jsr.io/@observable/core#source)
- * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) that are distinct from the previous
- * value according to a specified {@linkcode comparator}. Defaults to comparing with `Object.is`.
+ * Only [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s values from the
+ * [source](https://jsr.io/@observable/core#source) [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)
+ * that are distinct from all previous values.
  * @example
  * ```ts
  * import { distinct } from "@observable/distinct";
