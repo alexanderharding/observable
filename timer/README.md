@@ -1,8 +1,9 @@
 # @observable/timer
 
 Creates an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) that
-[`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s a `0` value after a specified number
-of milliseconds and then [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s.
+[`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s a successful execution code (`0`)
+after a specified number of milliseconds and then
+[`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s.
 
 ## Build
 

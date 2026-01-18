@@ -12,8 +12,8 @@ const success = of([0]);
 
 /**
  * Creates an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) that
- * [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s a `0` value after a
- * specified number of {@linkcode milliseconds} and then
+ * [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s a successful execution
+ * code (`0`) after a specified number of {@linkcode milliseconds} and then
  * [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s.
  * @example
  * ```ts
