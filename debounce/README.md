@@ -1,6 +1,8 @@
-# @observable/keep-alive
+# @observable/debounce
 
-Ignores [`unsubscribe`](https://jsr.io/@observable/core/doc/~/Observer.signal) indefinitely.
+Debounces the emission of values from the [source](https://jsr.io/@observable/core#source)
+[`Observable`](https://jsr.io/@observable/core/doc/~/Observable) by the specified number of
+milliseconds.
 
 ## Build
 
@@ -18,26 +20,26 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 ## Example
 
 ```ts
-import { keepAlive } from "@observable/keep-alive";
-import { of } from "@observable/of";
+import { debounce } from "@observable/debounce";
+import { Subject } from "@observable/core";
 import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
-pipe(of([1, 2, 3]), keepAlive()).subscribe({
+const source = new Subject<number>();
+
+pipe(source, debounce(100)).subscribe({
   signal: controller.signal,
-  next: (value) => {
-    console.log("next", value);
-    if (value === 2) controller.abort(); // Ignored
-  },
+  next: (value) => console.log("next", value),
   return: () => console.log("return"),
   throw: (value) => console.log("throw", value),
 });
 
-// console output:
-// "next" 1
-// "next" 2
+source.next(1);
+source.next(2);
+source.next(3); // Only this value will be emitted after 100ms
+
+// Console output (after 100ms):
 // "next" 3
-// "return"
 ```
 
 # Glossary And Semantics

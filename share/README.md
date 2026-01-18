@@ -1,6 +1,9 @@
-# @observable/keep-alive
+# @observable/share
 
-Converts an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) to an `AsyncIterable`.
+Converts an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) to an
+[`Observable`](https://jsr.io/@observable/core/doc/~/Observable) that shares a single subscription
+to the [source](https://jsr.io/@observable/core#source)
+[`Observable`](https://jsr.io/@observable/core/doc/~/Observable).
 
 ## Build
 
@@ -18,18 +21,30 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 ## Example
 
 ```ts
-import { asAsyncIterable } from "@observable/as-async-iterable";
-import { of } from "@observable/of";
+import { share } from "@observable/share";
+import { timer } from "@observable/timer";
 import { pipe } from "@observable/pipe";
 
-for await (const value of pipe(of([1, 2, 3]), asAsyncIterable())) {
-  console.log(value);
-}
+const shared = pipe(timer(1_000), share());
+const controller = new AbortController();
+shared.subscribe({
+  signal: controller.signal,
+  next: (value) => console.log("next", value),
+  return: () => console.log("return"),
+  throw: (value) => console.log("throw", value),
+});
+shared.subscribe({
+  signal: controller.signal,
+  next: (value) => console.log("next", value),
+  return: () => console.log("return"),
+  throw: (value) => console.log("throw", value),
+});
 
-// Console output:
-// 1
-// 2
-// 3
+// Console output (after 1 second):
+// "next" 0
+// "next" 0
+// "return"
+// "return"
 ```
 
 # Glossary And Semantics

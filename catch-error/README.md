@@ -1,6 +1,8 @@
-# @observable/keep-alive
+# @observable/catch-error
 
-Ignores [`unsubscribe`](https://jsr.io/@observable/core/doc/~/Observer.signal) indefinitely.
+Catches errors from the [source](https://jsr.io/@observable/core#source)
+[`Observable`](https://jsr.io/@observable/core/doc/~/Observable) and returns a new
+[`Observable`](https://jsr.io/@observable/core/doc/~/Observable) with the resolved value.
 
 ## Build
 
@@ -18,25 +20,24 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 ## Example
 
 ```ts
-import { keepAlive } from "@observable/keep-alive";
+import { catchError } from "@observable/catch-error";
+import { throwError } from "@observable/throw-error";
 import { of } from "@observable/of";
 import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
-pipe(of([1, 2, 3]), keepAlive()).subscribe({
+pipe(
+  throwError(new Error("error")),
+  catchError(() => of(["fallback"])),
+).subscribe({
   signal: controller.signal,
-  next: (value) => {
-    console.log("next", value);
-    if (value === 2) controller.abort(); // Ignored
-  },
+  next: (value) => console.log("next", value),
   return: () => console.log("return"),
   throw: (value) => console.log("throw", value),
 });
 
-// console output:
-// "next" 1
-// "next" 2
-// "next" 3
+// Console output:
+// "next" "fallback"
 // "return"
 ```
 

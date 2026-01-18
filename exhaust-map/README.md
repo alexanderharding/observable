@@ -26,6 +26,7 @@ import { exhaustMap } from "@observable/exhaust-map";
 import { of } from "@observable/of";
 import { pipe } from "@observable/pipe";
 import { timer } from "@observable/timer";
+import { map } from "@observable/map";
 
 const controller = new AbortController();
 const source = of([1, 2, 3]);

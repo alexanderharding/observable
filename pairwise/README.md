@@ -1,6 +1,7 @@
-# @observable/keep-alive
+# @observable/pairwise
 
-Ignores [`unsubscribe`](https://jsr.io/@observable/core/doc/~/Observer.signal) indefinitely.
+Emits pairs of consecutive values from the [source](https://jsr.io/@observable/core#source)
+[`Observable`](https://jsr.io/@observable/core/doc/~/Observable).
 
 ## Build
 
@@ -18,25 +19,22 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 ## Example
 
 ```ts
-import { keepAlive } from "@observable/keep-alive";
+import { pairwise } from "@observable/pairwise";
 import { of } from "@observable/of";
 import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
-pipe(of([1, 2, 3]), keepAlive()).subscribe({
+pipe(of([1, 2, 3, 4]), pairwise()).subscribe({
   signal: controller.signal,
-  next: (value) => {
-    console.log("next", value);
-    if (value === 2) controller.abort(); // Ignored
-  },
+  next: (value) => console.log("next", value),
   return: () => console.log("return"),
   throw: (value) => console.log("throw", value),
 });
 
-// console output:
-// "next" 1
-// "next" 2
-// "next" 3
+// Console output:
+// "next" [1, 2]
+// "next" [2, 3]
+// "next" [3, 4]
 // "return"
 ```
 

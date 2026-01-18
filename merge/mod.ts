@@ -25,7 +25,7 @@ import { mergeMap } from "@observable/merge-map";
  * const source2 = new Subject<number>();
  * const source3 = new Subject<number>();
  *
- * pipe(merge([source1, source2, source3]).subscribe({
+ * merge([source1, source2, source3]).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
  *   return: () => console.log("return"),

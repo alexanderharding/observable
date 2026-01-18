@@ -28,7 +28,7 @@ import { AsyncSubject } from "@observable/async-subject";
  * const source2 = new Subject<number>();
  * const source3 = new Subject<number>();
  *
- * race([source1, source2, source3].subscribe({
+ * race([source1, source2, source3]).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
  *   return: () => console.log("return"),

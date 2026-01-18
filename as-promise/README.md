@@ -1,6 +1,6 @@
-# @observable/keep-alive
+# @observable/as-promise
 
-Ignores [`unsubscribe`](https://jsr.io/@observable/core/doc/~/Observer.signal) indefinitely.
+Converts an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) to a `Promise`.
 
 ## Build
 
@@ -18,26 +18,14 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 ## Example
 
 ```ts
-import { keepAlive } from "@observable/keep-alive";
+import { asPromise } from "@observable/as-promise";
 import { of } from "@observable/of";
 import { pipe } from "@observable/pipe";
 
-const controller = new AbortController();
-pipe(of([1, 2, 3]), keepAlive()).subscribe({
-  signal: controller.signal,
-  next: (value) => {
-    console.log("next", value);
-    if (value === 2) controller.abort(); // Ignored
-  },
-  return: () => console.log("return"),
-  throw: (value) => console.log("throw", value),
-});
+console.log(await pipe(of([1, 2, 3]), asPromise()));
 
-// console output:
-// "next" 1
-// "next" 2
-// "next" 3
-// "return"
+// Console output:
+// 3
 ```
 
 # Glossary And Semantics

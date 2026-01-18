@@ -17,7 +17,29 @@ const indexes = pipe(
 
 /**
  * Creates an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) that emits an index value after a specific
- * number of {@linkcode milliseconds}.
+ * number of {@linkcode milliseconds}, repeatedly.
+ * @example
+ * ```ts
+ * import { interval } from "@observable/interval";
+ * import { take } from "@observable/take";
+ * import { pipe } from "@observable/pipe";
+ *
+ * const controller = new AbortController();
+ * pipe(interval(1000), take(3)).subscribe({
+ *   signal: controller.signal,
+ *   next: (value) => console.log("next", value),
+ *   return: () => console.log("return"),
+ *   throw: (value) => console.log("throw", value),
+ * });
+ *
+ * // Console output (after 1 second):
+ * // "next" 0
+ * // Console output (after 2 seconds):
+ * // "next" 1
+ * // Console output (after 3 seconds):
+ * // "next" 2
+ * // "return"
+ * ```
  */
 export function interval(milliseconds: number): Observable<number> {
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();

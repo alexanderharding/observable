@@ -1,6 +1,8 @@
-# @observable/keep-alive
+# @observable/throttle
 
-Ignores [`unsubscribe`](https://jsr.io/@observable/core/doc/~/Observer.signal) indefinitely.
+Throttles the emission of values from the [source](https://jsr.io/@observable/core#source)
+[`Observable`](https://jsr.io/@observable/core/doc/~/Observable) by the specified number of
+milliseconds.
 
 ## Build
 
@@ -18,26 +20,31 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 ## Example
 
 ```ts
-import { keepAlive } from "@observable/keep-alive";
-import { of } from "@observable/of";
+import { throttle } from "@observable/throttle";
+import { Subject } from "@observable/core";
 import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
-pipe(of([1, 2, 3]), keepAlive()).subscribe({
+const source = new Subject<number>();
+
+pipe(source, throttle(100)).subscribe({
   signal: controller.signal,
-  next: (value) => {
-    console.log("next", value);
-    if (value === 2) controller.abort(); // Ignored
-  },
+  next: (value) => console.log("next", value),
   return: () => console.log("return"),
   throw: (value) => console.log("throw", value),
 });
 
-// console output:
+source.next(1); // Emitted immediately
+source.next(2); // Ignored (within throttle window)
+source.next(3); // Ignored (within throttle window)
+
+// After 100ms, the next value will be emitted
+source.next(4); // Emitted after throttle window
+
+// Console output:
 // "next" 1
-// "next" 2
-// "next" 3
-// "return"
+// (after 100ms)
+// "next" 4
 ```
 
 # Glossary And Semantics

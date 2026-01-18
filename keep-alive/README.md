@@ -40,43 +40,6 @@ pipe(of([1, 2, 3]), keepAlive()).subscribe({
 // "return"
 ```
 
-## Synchronous completion with 0ms
-
-```ts
-import { timer } from "@observable/timer";
-
-const controller = new AbortController();
-timer(0).subscribe({
-  signal: controller.signal,
-  next: (value) => console.log("next", value),
-  return: () => console.log("return"),
-  throw: (value) => console.log("throw", value),
-});
-
-// Console output (synchronously):
-// "next" 0
-// "return"
-```
-
-## Edge cases
-
-```ts
-import { timer } from "@observable/timer";
-
-const controller = new AbortController();
-
-// Negative values return immediately
-timer(-1).subscribe({
-  signal: controller.signal,
-  next: (value) => console.log("next", value),
-  return: () => console.log("return"),
-  throw: (value) => console.log("throw", value),
-});
-
-// Console output (synchronously):
-// "return"
-```
-
 # Glossary And Semantics
 
 [@observable/core](https://jsr.io/@observable/core#glossary-and-semantics)

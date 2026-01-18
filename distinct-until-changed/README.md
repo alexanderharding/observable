@@ -1,6 +1,8 @@
-# @observable/keep-alive
+# @observable/distinct-until-changed
 
-Ignores [`unsubscribe`](https://jsr.io/@observable/core/doc/~/Observer.signal) indefinitely.
+Only [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s values from the
+[source](https://jsr.io/@observable/core#source) that are distinct from the previous value
+according to a specified comparator. Defaults to comparing with `Object.is`.
 
 ## Build
 
@@ -18,26 +20,23 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 ## Example
 
 ```ts
-import { keepAlive } from "@observable/keep-alive";
+import { distinctUntilChanged } from "@observable/distinct-until-changed";
 import { of } from "@observable/of";
 import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
-pipe(of([1, 2, 3]), keepAlive()).subscribe({
+pipe(of([1, 1, 1, 2, 2, 3]), distinctUntilChanged()).subscribe({
   signal: controller.signal,
-  next: (value) => {
-    console.log("next", value);
-    if (value === 2) controller.abort(); // Ignored
-  },
+  next: (value) => console.log(value),
   return: () => console.log("return"),
-  throw: (value) => console.log("throw", value),
+  throw: (value) => console.log(value),
 });
 
 // console output:
-// "next" 1
-// "next" 2
-// "next" 3
-// "return"
+// 1
+// 2
+// 3
+// return
 ```
 
 # Glossary And Semantics

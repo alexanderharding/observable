@@ -34,6 +34,7 @@ import { takeUntil } from "@observable/take-until";
  * // "next" [3, 6, 8]
  * // "next" [3, 6, 9]
  * // "return"
+ * ```
  * @example
  * ```ts
  * import { all } from "@observable/all";
@@ -50,6 +51,7 @@ import { takeUntil } from "@observable/take-until";
  *
  * // Console output:
  * // "return"
+ * ```
  */
 export function all<const Values extends ReadonlyArray<unknown>>(
   sources: Readonly<{ [Key in keyof Values]: Observable<Values[Key]> }>,

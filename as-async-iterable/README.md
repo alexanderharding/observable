@@ -1,4 +1,4 @@
-# @observable/keep-alive
+# @observable/as-async-iterable
 
 Converts an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) to an `AsyncIterable`.
 

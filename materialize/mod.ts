@@ -42,7 +42,9 @@ export type ObserverNotification<Value = unknown> = Readonly<
  * ```
  * @example
  * ```ts
- * import { throwError, of, materialize, pipe } from "@xan/observable-common";
+ * import { materialize } from "@observable/materialize";
+ * import { throwError } from "@observable/throw-error";
+ * import { pipe } from "@observable/pipe";
  *
  * const controller = new AbortController();
  * pipe(throwError(new Error("error")), materialize()).subscribe({
@@ -59,7 +61,10 @@ export type ObserverNotification<Value = unknown> = Readonly<
  * @example
  * Unit testing
  * ```ts
- * import { materialize, pipe, of } from "@xan/observable-common";
+ * import { materialize, ObserverNotification } from "@observable/materialize";
+ * import { pipe } from "@observable/pipe";
+ * import { of } from "@observable/of";
+ * import { Observer } from "@observable/core";
  *
  * const observable = of([1, 2, 3]);
  *

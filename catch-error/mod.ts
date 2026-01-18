@@ -2,7 +2,31 @@ import { isObservable, Observable, toObservable } from "@observable/core";
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 
 /**
- * Catches errors from the source observable and emits a new observable with the resolved value.
+ * Catches errors from the [source](https://jsr.io/@observable/core#source)
+ * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) and returns a new
+ * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) with the resolved value.
+ * @example
+ * ```ts
+ * import { catchError } from "@observable/catch-error";
+ * import { throwError } from "@observable/throw-error";
+ * import { of } from "@observable/of";
+ * import { pipe } from "@observable/pipe";
+ *
+ * const controller = new AbortController();
+ * pipe(
+ *   throwError(new Error("error")),
+ *   catchError(() => of(["fallback"])),
+ * ).subscribe({
+ *   signal: controller.signal,
+ *   next: (value) => console.log("next", value),
+ *   return: () => console.log("return"),
+ *   throw: (value) => console.log("throw", value),
+ * });
+ *
+ * // Console output:
+ * // "next" "fallback"
+ * // "return"
+ * ```
  */
 export function catchError<Value, ResolvedValue>(
   resolver: (value: unknown) => Observable<ResolvedValue>,

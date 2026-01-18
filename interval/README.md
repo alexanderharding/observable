@@ -1,8 +1,7 @@
-# @observable/timer
+# @observable/interval
 
-Creates an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) that
-[`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s a `0` value after a specified number
-of milliseconds and then [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s.
+Creates an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) that emits an index
+value after a specific number of milliseconds, repeatedly.
 
 ## Build
 
@@ -20,10 +19,12 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 ## Example
 
 ```ts
-import { timer } from "@observable/timer";
+import { interval } from "@observable/interval";
+import { take } from "@observable/take";
+import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
-timer(1_000).subscribe({
+pipe(interval(1000), take(3)).subscribe({
   signal: controller.signal,
   next: (value) => console.log("next", value),
   return: () => console.log("return"),
@@ -32,44 +33,35 @@ timer(1_000).subscribe({
 
 // Console output (after 1 second):
 // "next" 0
-// "return"
-```
-
-## Synchronous completion with 0ms
-
-```ts
-import { timer } from "@observable/timer";
-
-const controller = new AbortController();
-timer(0).subscribe({
-  signal: controller.signal,
-  next: (value) => console.log("next", value),
-  return: () => console.log("return"),
-  throw: (value) => console.log("throw", value),
-});
-
-// Console output (synchronously):
-// "next" 0
+// Console output (after 2 seconds):
+// "next" 1
+// Console output (after 3 seconds):
+// "next" 2
 // "return"
 ```
 
 ## Edge cases
 
 ```ts
-import { timer } from "@observable/timer";
+import { interval } from "@observable/interval";
 
 const controller = new AbortController();
 
-// Negative values return immediately
-timer(-1).subscribe({
+// 0ms interval emits synchronously
+interval(0).subscribe({
   signal: controller.signal,
-  next: (value) => console.log("next", value),
+  next: (value) => {
+    console.log("next", value);
+    if (value === 2) controller.abort();
+  },
   return: () => console.log("return"),
   throw: (value) => console.log("throw", value),
 });
 
 // Console output (synchronously):
-// "return"
+// "next" 0
+// "next" 1
+// "next" 2
 ```
 
 # Glossary And Semantics

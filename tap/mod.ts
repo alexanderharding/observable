@@ -10,6 +10,7 @@ import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/i
 
 /**
  * Used to perform side-effects on the [source](https://jsr.io/@observable/core#source).
+ * @example
  * ```ts
  * import { tap } from "@observable/tap";
  * import { of } from "@observable/of";
