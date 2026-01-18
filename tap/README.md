@@ -1,4 +1,4 @@
-# @observable/tap
+# [@observable/tap](https://jsr.io/@observable/tap)
 
 Used to perform side-effects on the [source](https://jsr.io/@observable/core#source).
 

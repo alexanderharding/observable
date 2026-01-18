@@ -1,4 +1,4 @@
-# @observable/broadcast-subject
+# [@observable/broadcast-subject](https://jsr.io/@observable/broadcast-subject)
 
 A variant of [`Subject`](https://jsr.io/@xan/subject/doc/~/Subject) whose
 [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values are

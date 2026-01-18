@@ -1,4 +1,4 @@
-# @observable/timer
+# [@observable/timer](https://jsr.io/@observable/timer)
 
 Creates an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) that
 [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s a successful execution code (`0`)

@@ -1,4 +1,4 @@
-# @observable/distinct-until-changed
+# [@observable/distinct-until-changed](https://jsr.io/@observable/distinct-until-changed)
 
 Only [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s values from the
 [source](https://jsr.io/@observable/core#source) that are distinct from the previous value according

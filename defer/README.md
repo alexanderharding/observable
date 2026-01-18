@@ -1,4 +1,4 @@
-# @observable/defer
+# [@observable/defer](https://jsr.io/@observable/defer)
 
 Creates an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) that, on
 [`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe), calls an

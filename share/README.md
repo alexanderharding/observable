@@ -1,4 +1,4 @@
-# @observable/share
+# [@observable/share](https://jsr.io/@observable/share)
 
 Converts an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) to an
 [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) that shares a single subscription

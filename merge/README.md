@@ -1,4 +1,4 @@
-# @observable/merge
+# [@observable/merge](https://jsr.io/@observable/merge)
 
 Creates and returns an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) which
 concurrently [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s all values from every

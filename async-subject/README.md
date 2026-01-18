@@ -1,4 +1,4 @@
-# @observable/async-subject
+# [@observable/async-subject](https://jsr.io/@observable/async-subject)
 
 A variant of [`Subject`](https://jsr.io/@observable/core/doc/~/Subject) that buffers the most recent
 [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed value until

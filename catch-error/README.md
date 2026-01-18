@@ -1,4 +1,4 @@
-# @observable/catch-error
+# [@observable/catch-error](https://jsr.io/@observable/catch-error)
 
 Catches errors from the [source](https://jsr.io/@observable/core#source)
 [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) and returns a new

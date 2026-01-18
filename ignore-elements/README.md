@@ -1,4 +1,4 @@
-# @observable/ignore-elements
+# [@observable/ignore-elements](https://jsr.io/@observable/ignore-elements)
 
 Ignores all [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values from the
 [source](https://jsr.io/@observable/core#source).

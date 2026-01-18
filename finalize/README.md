@@ -1,4 +1,4 @@
-# @observable/finalize
+# [@observable/finalize](https://jsr.io/@observable/finalize)
 
 The [producer](https://jsr.io/@observable/core#producer) is notifying the
 [consumer](https://jsr.io/@observable/core#consumer) that it's done

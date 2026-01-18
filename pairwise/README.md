@@ -1,4 +1,4 @@
-# @observable/pairwise
+# [@observable/pairwise](https://jsr.io/@observable/pairwise)
 
 Emits pairs of consecutive values from the [source](https://jsr.io/@observable/core#source)
 [`Observable`](https://jsr.io/@observable/core/doc/~/Observable).

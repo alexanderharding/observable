@@ -1,4 +1,4 @@
-# @observable/filter
+# [@observable/filter](https://jsr.io/@observable/filter)
 
 Filters [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values from the
 [source](https://jsr.io/@observable/core#source) that satisfy a specified predicate.

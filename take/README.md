@@ -1,4 +1,4 @@
-# @observable/take
+# [@observable/take](https://jsr.io/@observable/take)
 
 Takes the first `count` values [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed by
 the [source](https://jsr.io/@observable/core#source).

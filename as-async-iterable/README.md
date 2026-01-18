@@ -1,4 +1,4 @@
-# @observable/as-async-iterable
+# [@observable/as-async-iterable](https://jsr.io/@observable/as-async-iterable)
 
 Converts an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) to an `AsyncIterable`.
 

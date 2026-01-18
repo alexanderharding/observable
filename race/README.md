@@ -1,4 +1,4 @@
-# @observable/race
+# [@observable/race](https://jsr.io/@observable/race)
 
 Creates and returns an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) that mirrors
 the first [source](https://jsr.io/@observable/core#source) to

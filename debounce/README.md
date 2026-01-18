@@ -1,4 +1,4 @@
-# @observable/debounce
+# [@observable/debounce](https://jsr.io/@observable/debounce)
 
 Debounces the emission of values from the [source](https://jsr.io/@observable/core#source)
 [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) by the specified number of

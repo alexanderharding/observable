@@ -1,4 +1,4 @@
-# @observable/throw-error
+# [@observable/throw-error](https://jsr.io/@observable/throw-error)
 
 Creates an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) that will
 [`throw`](https://jsr.io/@observable/core/doc/~/Observer.throw) the given value immediately upon

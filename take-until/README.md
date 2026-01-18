@@ -1,4 +1,4 @@
-# @observable/take-until
+# [@observable/take-until](https://jsr.io/@observable/take-until)
 
 Takes [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values from the
 [source](https://jsr.io/@observable/core#source) until

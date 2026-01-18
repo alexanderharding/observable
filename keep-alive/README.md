@@ -1,4 +1,4 @@
-# @observable/keep-alive
+# [@observable/keep-alive](https://jsr.io/@observable/keep-alive)
 
 Ignores [`unsubscribe`](https://jsr.io/@observable/core/doc/~/Observer.signal) indefinitely.
 

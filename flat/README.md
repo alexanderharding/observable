@@ -1,4 +1,4 @@
-# @observable/flat
+# [@observable/flat](https://jsr.io/@observable/flat)
 
 Creates an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) which sequentially emits
 all values from the first given [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) and

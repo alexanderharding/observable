@@ -1,4 +1,4 @@
-# @observable/replay-subject
+# [@observable/replay-subject](https://jsr.io/@observable/replay-subject)
 
 A variant of [`Subject`](https://jsr.io/@observable/core/doc/~/Subject) that replays buffered
 [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values upon

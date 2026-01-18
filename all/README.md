@@ -1,4 +1,4 @@
-# @observable/all
+# [@observable/all](https://jsr.io/@observable/all)
 
 Creates and returns an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) whose
 [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values are calculated from the

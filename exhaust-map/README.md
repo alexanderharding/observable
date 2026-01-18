@@ -1,4 +1,4 @@
-# @observable/exhaust-map
+# [@observable/exhaust-map](https://jsr.io/@observable/exhaust-map)
 
 Projects each [source](https://jsr.io/@observable/core#source) value to an
 [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) which is merged in the output

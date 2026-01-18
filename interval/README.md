@@ -1,4 +1,4 @@
-# @observable/interval
+# [@observable/interval](https://jsr.io/@observable/interval)
 
 Creates an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) that emits an index
 value after a specific number of milliseconds, repeatedly.

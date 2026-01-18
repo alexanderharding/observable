@@ -1,4 +1,4 @@
-# @observable/throttle
+# [@observable/throttle](https://jsr.io/@observable/throttle)
 
 Throttles the emission of values from the [source](https://jsr.io/@observable/core#source)
 [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) by the specified number of

@@ -1,4 +1,4 @@
-# @observable/flat-map
+# [@observable/flat-map](https://jsr.io/@observable/flat-map)
 
 Projects each [source](https://jsr.io/@observable/core#source) value to an
 [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) which is merged in the output

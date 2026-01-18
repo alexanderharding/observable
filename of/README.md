@@ -1,4 +1,4 @@
-# @observable/of
+# [@observable/of](https://jsr.io/@observable/of)
 
 Creates and returns an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) that emits a
 sequence of values in order on

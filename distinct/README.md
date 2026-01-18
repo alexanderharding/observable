@@ -1,4 +1,4 @@
-# @observable/distinct
+# [@observable/distinct](https://jsr.io/@observable/distinct)
 
 Only [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s values from the
 [source](https://jsr.io/@observable/core#source)

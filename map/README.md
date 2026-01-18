@@ -1,4 +1,4 @@
-# @observable/map
+# [@observable/map](https://jsr.io/@observable/map)
 
 Projects each value from the [source](https://jsr.io/@observable/core#source) to a new value.
 

@@ -1,4 +1,4 @@
-# @observable/behavior-subject
+# [@observable/behavior-subject](https://jsr.io/@observable/behavior-subject)
 
 A variant of [`Subject`](https://jsr.io/@observable/core/doc/~/Subject) that keeps track of its
 current value and replays it to [`consumers`](https://jsr.io/@observable/core#consumer) upon

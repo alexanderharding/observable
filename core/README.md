@@ -1,4 +1,4 @@
-# @observable/core
+# [@observable/core](https://jsr.io/@observable/core)
 
 A lightweight, [RxJS](https://rxjs.dev/)-inspired implementation of the
 [Observer pattern](https://refactoring.guru/design-patterns/observer) in JavaScript. Features

@@ -1,4 +1,4 @@
-# @observable/as-promise
+# [@observable/as-promise](https://jsr.io/@observable/as-promise)
 
 Converts an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) to a `Promise`.
 
