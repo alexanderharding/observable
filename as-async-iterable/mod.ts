@@ -27,7 +27,7 @@ const notThrown = Symbol("Flag indicating that a value is not thrown.");
  */
 export function asAsyncIterable<Value>(): (
   source: Observable<Value>,
-) => AsyncIterable<Value> {
+) => AsyncIterable<Value, void, void> {
   return function asAsyncIterableFn(source) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
