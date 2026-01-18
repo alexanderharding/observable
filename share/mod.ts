@@ -5,8 +5,9 @@ import { finalize } from "@observable/finalize";
 import { defer } from "@observable/defer";
 
 /**
- * Converts an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) to a {@linkcode Observable} that shares
- * a single subscription to the source [`Observable`](https://jsr.io/@observable/core/doc/~/Observable).
+ * Converts an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) to an {@linkcode Observable} that shares
+ * a single subscription to the [source](https://jsr.io/@observable/core#source)
+ * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable).
  * @example
  * ```ts
  * import { share } from "@observable/share";
