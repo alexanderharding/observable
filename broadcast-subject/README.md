@@ -1,12 +1,14 @@
 # @observable/broadcast-subject
 
-A variant of [`Subject`](https://jsr.io/@observable/core/doc/~/Subject). When values are
-[`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed, they are
-[`structuredClone`](https://developer.mozilla.org/en-US/docs/Web/API/structuredClone)d and sent only
-to [consumers](https://jsr.io/@observable/core#consumer) of _other_ `BroadcastSubject` instances
+A variant of [`Subject`](https://jsr.io/@xan/subject/doc/~/Subject) whose
+[`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values are
+[`structured cloned`](https://developer.mozilla.org/en-US/docs/Web/API/structuredClone) and sent
+only to [consumers](https://jsr.io/@observable/core#consumer) of _other_
+[`BroadcastSubject`](https://jsr.io/@observable/broadcast-subject/doc/~/BroadcastSubject) instances
 with the same name even if they are in different browsing contexts (e.g. browser tabs). Logically,
-[consumers](https://jsr.io/@observable/core#consumer) of the `BroadcastSubject` do not receive its
-_own_ [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values.
+[consumers](https://jsr.io/@observable/core#consumer) of the
+[`BroadcastSubject`](https://jsr.io/@observable/broadcast-subject/doc/~/BroadcastSubject) do not
+receive it's _own_ [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values.
 
 ## Build
 
