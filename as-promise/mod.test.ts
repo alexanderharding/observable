@@ -1,5 +1,4 @@
 import { assertEquals, assertStrictEquals } from "@std/assert";
-import type { ObserverNotification } from "@observable/materialize";
 import { pipe } from "@observable/pipe";
 import { asPromise } from "./mod.ts";
 import { of } from "@observable/of";

@@ -36,7 +36,7 @@ import { defer } from "@observable/defer";
  * ```
  */
 export function share<Value>(
-  connector = () => new Subject<NoInfer<Value>>(),
+  connector = (): Subject<NoInfer<Value>> => new Subject(),
 ): (source: Observable<Value>) => Observable<Value> {
   if (typeof connector !== "function") {
     throw new ParameterTypeError(0, "Function");

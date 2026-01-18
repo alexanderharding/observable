@@ -1,5 +1,5 @@
 import { assertEquals, assertRejects, assertStrictEquals, assertThrows } from "@std/assert";
-import { Observable, Observer } from "@observable/core";
+import { Observable, type Observer } from "@observable/core";
 import { pipe } from "@observable/pipe";
 import { asAsyncIterable } from "./mod.ts";
 import { of } from "@observable/of";

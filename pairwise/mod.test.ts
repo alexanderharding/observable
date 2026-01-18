@@ -1,6 +1,6 @@
 import { assertEquals, assertThrows } from "@std/assert";
 import { flat } from "@observable/flat";
-import { Observable, Observer, Subject } from "@observable/core";
+import { Observer, Subject } from "@observable/core";
 import { throwError } from "@observable/throw-error";
 import { pipe } from "@observable/pipe";
 import { of } from "@observable/of";
