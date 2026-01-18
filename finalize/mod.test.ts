@@ -1,26 +1,22 @@
 import { assertEquals } from "@std/assert";
-import { Observable, Observer } from "@observable/core";
+import { Observer } from "@observable/core";
 import { materialize, type ObserverNotification } from "@observable/materialize";
 import { pipe } from "@observable/pipe";
 import { finalize } from "./mod.ts";
-import { never } from "@observable/never";
+import { flat } from "@observable/flat";
+import { of } from "@observable/of";
+import { throwError } from "@observable/throw-error";
 
 Deno.test(
   "finalize should call the finalizer function after the source is returned",
   () => {
     // Arrange
-    const notifications: Array<ObserverNotification<number> | [type: "F"]> = [];
+    const notifications: Array<ObserverNotification<number> | [type: "finalize"]> = [];
     const values = [1, 2, 3] as const;
     const observable = pipe(
-      new Observable<number>((observer) => {
-        for (const value of values) {
-          observer.next(value);
-          if (observer.signal.aborted) return;
-        }
-        observer.return();
-      }),
+      of(values),
+      finalize(() => notifications.push(["finalize"])),
       materialize(),
-      finalize(() => notifications.push(["F"])),
     );
 
     // Act
@@ -31,8 +27,8 @@ Deno.test(
     // Assert
     assertEquals(notifications, [
       ...values.map((value) => ["next", value] as const),
+      ["finalize"],
       ["return"],
-      ["F"],
     ]);
   },
 );
@@ -42,15 +38,12 @@ Deno.test(
   () => {
     // Arrange
     const error = new Error("test");
-    const notifications: Array<ObserverNotification<number> | [type: "F"]> = [];
+    const notifications: Array<ObserverNotification<number> | [type: "finalize"]> = [];
     const values = [1, 2, 3] as const;
     const observable = pipe(
-      new Observable<number>((observer) => {
-        for (const value of values) observer.next(value);
-        observer.throw(error);
-      }),
+      flat([of(values), throwError(error)]),
+      finalize(() => notifications.push(["finalize"])),
       materialize(),
-      finalize(() => notifications.push(["F"])),
     );
 
     // Act
@@ -61,8 +54,8 @@ Deno.test(
     // Assert
     assertEquals(notifications, [
       ...values.map((value) => ["next", value] as const),
+      ["finalize"],
       ["throw", error],
-      ["F"],
     ]);
   },
 );
@@ -71,24 +64,28 @@ Deno.test(
   "finalize should call the finalizer function after the source is unsubscribed",
   () => {
     // Arrange
-    const notifications: Array<ObserverNotification<number> | [type: "F"]> = [];
+    const notifications: Array<ObserverNotification<number> | [type: "finalize"]> = [];
     const controller = new AbortController();
     const observable = pipe(
-      never,
+      of([1, 2, 3]),
+      finalize(() => notifications.push(["finalize"])),
       materialize(),
-      finalize(() => notifications.push(["F"])),
     );
 
     // Act
     observable.subscribe(
       new Observer({
-        next: (notification) => notifications.push(notification),
         signal: controller.signal,
+        next: (notification) => {
+          notifications.push(notification);
+          if (notification[0] === "next" && notification[1] === 2) {
+            controller.abort();
+          }
+        },
       }),
     );
-    controller.abort();
 
     // Assert
-    assertEquals(notifications, [["F"]]);
+    assertEquals(notifications, [["next", 1], ["next", 2], ["finalize"]]);
   },
 );

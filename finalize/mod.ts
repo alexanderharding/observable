@@ -3,9 +3,7 @@ import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/i
 
 /**
  * The [producer](https://jsr.io/@observable/core#producer) is notifying the [consumer](https://jsr.io/@observable/core#consumer)
- * that it's done [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ing, values for any reason, and will send no more values. Finalization,
- * if it occurs, will always happen as a side-effect _after_ [`return`](https://jsr.io/@observable/core/doc/~/Observer.return),
- * [`throw`](https://jsr.io/@observable/core/doc/~/Observer.throw), or [`unsubscribe`](https://jsr.io/@observable/core/doc/~/Observer.signal) (whichever comes last).
+ * that it's done [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ing, values for any reason, and will send no more values.
  * @example
  * ```ts
  * import { finalize } from "@observable/finalize";
@@ -24,15 +22,39 @@ import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/i
  * // "next" 1
  * // "next" 2
  * // "next" 3
- * // "return"
  * // "finalized"
+ * // "return"
+ * ```
+ * @example
+ * ```ts
+ * import { finalize } from "@observable/finalize";
+ * import { throwError } from "@observable/throw-error";
+ * import { pipe } from "@observable/pipe";
+ * import { of } from "@observable/of";
+ * import { flat } from "@observable/flat";
+ *
+ * const controller = new AbortController();
+ * const source = flat([of([1, 2, 3]), throwError(new Error("error"))]);
+ * pipe(source, finalize(() => console.log("finalized"))).subscribe({
+ *   signal: controller.signal,
+ *   next: (value) => console.log("next", value),
+ *   return: () => console.log("return"),
+ *   throw: (value) => console.log("throw", value),
+ * });
+ *
+ * // Console output:
+ * // "next" 1
+ * // "next" 2
+ * // "next" 3
+ * // "finalized"
+ * // "throw" Error: error
  * ```
  */
 export function finalize<Value>(
-  finalizer: () => void,
+  teardown: () => void,
 ): (source: Observable<Value>) => Observable<Value> {
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-  if (typeof finalizer !== "function") {
+  if (typeof teardown !== "function") {
     throw new ParameterTypeError(0, "Function");
   }
   return function finalizeFn(source) {
@@ -40,25 +62,10 @@ export function finalize<Value>(
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
     source = toObservable(source);
     return new Observable((observer) => {
-      const observerAbortListenerController = new AbortController();
-      observer.signal.addEventListener("abort", () => finalizer(), {
+      observer.signal.addEventListener("abort", () => teardown(), {
         once: true,
-        signal: observerAbortListenerController.signal,
       });
-      source.subscribe({
-        signal: observer.signal,
-        next: (value) => observer.next(value),
-        return() {
-          observerAbortListenerController.abort();
-          observer.return();
-          finalizer();
-        },
-        throw(value) {
-          observerAbortListenerController.abort();
-          observer.throw(value);
-          finalizer();
-        },
-      });
+      source.subscribe(observer);
     });
   };
 }
