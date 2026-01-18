@@ -28,15 +28,15 @@ import { pipe } from "@observable/pipe";
 const controller = new AbortController();
 pipe(of([1, 2, 2, 3, 1, 3]), distinct()).subscribe({
   signal: controller.signal,
-  next: (value) => console.log(value),
+  next: (value) => console.log("next", value),
   return: () => console.log("return"),
-  throw: (value) => console.log(value),
+  throw: (value) => console.log("throw", value),
 });
 
 // Console output:
-// 1
-// 2
-// 3
+// "next" 1
+// "next" 2
+// "next" 3
 // return
 ```
 

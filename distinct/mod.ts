@@ -18,50 +18,15 @@ import { filter } from "@observable/filter";
  * const controller = new AbortController();
  * pipe(of([1, 2, 2, 3, 1, 3]), distinct()).subscribe({
  *   signal: controller.signal,
- *   next: (value) => console.log(value),
+ *   next: (value) => console.log("next", value),
  *   return: () => console.log("return"),
- *   throw: (value) => console.log(value),
+ *   throw: (value) => console.log("throw", value),
  * });
  *
  * // Console output:
- * // 1
- * // 2
- * // 3
- * // return
- * ```
- * @example
- * ```ts
- * import { distinct } from "@observable/distinct";
- * import { Observer } from "@observable/core";
- * import { pipe } from "@observable/pipe";
- * import { defer } from "@observable/defer";
- * import { noop } from "@observable/internal";
- * import { of } from "@observable/of";
- * import { filter } from "@observable/filter";
- * import { tap } from "@observable/tap";
- *
- * const controller = new AbortController();
- * const source = of([{ id: 1 }, { id: 2 }, { id: 2 }, { id: 3 }, { id: 1 }, { id: 3 }]);
- * const observable = defer(() => {
- *   const values = new Set<number>();
- *   return pipe(
- *     source,
- *     filter((value) => !values.has(value.id)),
- *     tap(new Observer({ next: (value) => values.add(value.id), throw: noop })),
- *   );
- * });
- *
- * observable.subscribe({
- *   signal: controller.signal,
- *   next: (value) => console.log(value),
- *   return: () => console.log("return"),
- *   throw: (value) => console.log(value),
- * });
- *
- * // Console output:
- * // { id: 1 }
- * // { id: 2 }
- * // { id: 3 }
+ * // "next" 1
+ * // "next" 2
+ * // "next" 3
  * // return
  * ```
  */
