@@ -869,7 +869,7 @@ export function pipe<Value>(
   for (let index = 0; index < fns.length; index++) {
     const fn = fns[index];
     if (typeof fn !== "function") {
-      throw new ParameterTypeError(index, "Function");
+      throw new ParameterTypeError(index + 1, "Function");
     }
     source = fn(source);
   }
