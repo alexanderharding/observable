@@ -3,16 +3,6 @@
 A set of lightweight, modern reactive libraries inspired by [RxJS](https://rxjs.dev/), implementing
 the [Observer pattern](https://refactoring.guru/design-patterns/observer) in JavaScript.
 
-## What You'll Find Here
-
-- A tribute to [RxJS](https://rxjs.dev/), built for real-world use.
-- Carefully crafted utilities and primitives by a solo developer who loves reactive programming.
-
-## What You Won't Find Here
-
-- A drop-in replacement for [RxJS](https://rxjs.dev/). [RxJS](https://rxjs.dev/) remains the gold
-  standard for enterprise-scale projects, while this monorepo aims for simplicity and focus.
-
 ## Repository Expectations
 
 ### SOLID Principles
