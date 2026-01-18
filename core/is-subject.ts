@@ -1,4 +1,4 @@
-import { MinimumArgumentsRequiredError } from "@xan/observable-internal";
+import { MinimumArgumentsRequiredError } from "@observable/internal";
 import { Subject } from "./subject.ts";
 import { isObservable } from "./is-observable.ts";
 import { isObserver } from "./is-observer.ts";
@@ -7,7 +7,7 @@ import { isObserver } from "./is-observer.ts";
  * Checks if a {@linkcode value} is an object that implements the {@linkcode Subject} interface.
  * @example
  * ```ts
- * import { isSubject, Subject } from "@xan/observable-core";
+ * import { isSubject, Subject } from "@observable/core";
  *
  * const subjectInstance = new Subject();
  * isSubject(subjectInstance); // true

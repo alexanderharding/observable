@@ -1,0 +1,42 @@
+# [@observable/filter](https://jsr.io/@observable/filter)
+
+Filters [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values from the
+[source](https://jsr.io/@observable/core#source) that satisfy a specified predicate.
+
+## Build
+
+Automated by [JSR](https://jsr.io/)
+
+## Publishing
+
+Automated by `.github\workflows\publish.yml`.
+
+## Running unit tests
+
+Run `deno task test` or `deno task test:ci` to execute the unit tests via
+[Deno](https://deno.land/).
+
+## Example
+
+```ts
+import { filter } from "@observable/filter";
+import { of } from "@observable/of";
+import { pipe } from "@observable/pipe";
+
+const controller = new AbortController();
+pipe(of([1, 2, 3, 4, 5]), filter((value) => value % 2 === 0)).subscribe({
+  signal: controller.signal,
+  next: (value) => console.log("next", value),
+  return: () => console.log("return"),
+  throw: (value) => console.log("throw", value),
+});
+
+// Console output:
+// "next" 2
+// "next" 4
+// "return"
+```
+
+# Glossary And Semantics
+
+[@observable/core](https://jsr.io/@observable/core#glossary-and-semantics)

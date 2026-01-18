@@ -1,6 +1,7 @@
 {
-  "name": "@xan/observable-core",
-  "version": "0.7.0",
+  "name": "@observable/core",
+  "version": "0.1.0",
   "license": "MIT",
-  "exports": "./mod.ts"
+  "exports": "./mod.ts",
+  "publish": { "exclude": ["*.test.ts"] }
 }

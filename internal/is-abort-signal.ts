@@ -5,7 +5,7 @@ import { MinimumArgumentsRequiredError } from "./minimum-arguments-required-erro
  * Checks if a {@linkcode value} is an object that implements the {@linkcode AbortSignal} interface.
  * @example
  * ```ts
- * import { isAbortSignal } from "@xan/observable-internal";
+ * import { isAbortSignal } from "@observable/internal";
  *
  * const abortSignalInstance = new AbortController().signal;
  * isAbortSignal(abortSignalInstance); // true

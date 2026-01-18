@@ -1,4 +1,4 @@
-import { MinimumArgumentsRequiredError, ParameterTypeError } from "@xan/observable-internal";
+import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 import { isObservable } from "./is-observable.ts";
 import { Observable } from "./observable.ts";
 
@@ -9,7 +9,7 @@ import { Observable } from "./observable.ts";
  * that wraps the original {@linkcode value}.
  * @example
  * ```ts
- * import { toObservable, Observable } from "@xan/observable-core";
+ * import { toObservable, Observable } from "@observable/core";
  *
  * const observableInstance = new Observable((observer) => {
  *   // Implementation omitted for brevity.
@@ -21,7 +21,7 @@ import { Observable } from "./observable.ts";
  * ```
  * @example
  * ```ts
- * import { toObservable, Observable } from "@xan/observable-core";
+ * import { toObservable, Observable } from "@observable/core";
  *
  * const customObservable: Observable = {
  *   subscribe(observer) {

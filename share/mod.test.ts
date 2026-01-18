@@ -1,0 +1,456 @@
+import { assertEquals, assertStrictEquals, assertThrows } from "@std/assert";
+import { Observer, Subject } from "@observable/core";
+import { pipe } from "@observable/pipe";
+import { share } from "./mod.ts";
+import { of } from "@observable/of";
+import { throwError } from "@observable/throw-error";
+import { materialize, type ObserverNotification } from "@observable/materialize";
+import { ReplaySubject } from "@observable/replay-subject";
+import { defer } from "@observable/defer";
+import { never } from "@observable/never";
+import { flat } from "@observable/flat";
+import { take } from "@observable/take";
+import { ignoreElements } from "@observable/ignore-elements";
+import { empty } from "@observable/empty";
+
+Deno.test("share should not throw when called with no connector argument", () => {
+  // Arrange / Act / Assert
+  share(...([] as unknown as Parameters<typeof share>));
+});
+
+Deno.test("share should throw when connector is not a function", () => {
+  // Arrange / Act / Assert
+  assertThrows(
+    // deno-lint-ignore no-explicit-any
+    () => share(1 as any),
+    TypeError,
+    "Parameter 1 is not of type 'Function'",
+  );
+  assertThrows(
+    // deno-lint-ignore no-explicit-any
+    () => share(null as any),
+    TypeError,
+    "Parameter 1 is not of type 'Function'",
+  );
+  assertThrows(
+    // deno-lint-ignore no-explicit-any
+    () => share("test" as any),
+    TypeError,
+    "Parameter 1 is not of type 'Function'",
+  );
+});
+
+Deno.test("share should throw when called with no source", () => {
+  // Arrange
+  const operator = share();
+
+  // Act / Assert
+  assertThrows(
+    () => operator(...([] as unknown as Parameters<typeof operator>)),
+    TypeError,
+    "1 argument required but 0 present",
+  );
+});
+
+Deno.test("share should throw when source is not an Observable", () => {
+  // Arrange
+  const operator = share();
+
+  // Act / Assert
+  assertThrows(
+    // deno-lint-ignore no-explicit-any
+    () => operator(1 as any),
+    TypeError,
+    "Parameter 1 is not of type 'Observable'",
+  );
+  assertThrows(
+    // deno-lint-ignore no-explicit-any
+    () => operator(null as any),
+    TypeError,
+    "Parameter 1 is not of type 'Observable'",
+  );
+  assertThrows(
+    // deno-lint-ignore no-explicit-any
+    () => operator(undefined as any),
+    TypeError,
+    "Parameter 1 is not of type 'Observable'",
+  );
+});
+
+Deno.test("share should multicast values to all subscribers", () => {
+  // Arrange
+  const source = new Subject<number>();
+  const shared = pipe(source, share());
+  const notifications1: Array<ObserverNotification<number>> = [];
+  const notifications2: Array<ObserverNotification<number>> = [];
+
+  // Act
+  pipe(shared, materialize()).subscribe(
+    new Observer((notification) => notifications1.push(notification)),
+  );
+  pipe(shared, materialize()).subscribe(
+    new Observer((notification) => notifications2.push(notification)),
+  );
+  source.next(1);
+  source.next(2);
+  source.next(3);
+
+  // Assert
+  assertEquals(notifications1, [["next", 1], ["next", 2], ["next", 3]]);
+  assertEquals(notifications2, [["next", 1], ["next", 2], ["next", 3]]);
+});
+
+Deno.test("share should only subscribe to source once for multiple subscribers", () => {
+  // Arrange
+  let subscribeCount = 0;
+  const source = defer(() => {
+    subscribeCount++;
+    return never;
+  });
+  const shared = pipe(source, share());
+
+  // Act
+  shared.subscribe(new Observer());
+  shared.subscribe(new Observer());
+  shared.subscribe(new Observer());
+
+  // Assert
+  assertStrictEquals(subscribeCount, 1);
+});
+
+Deno.test("share should not subscribe to source until first subscriber", () => {
+  // Arrange
+  let subscribed = false;
+  const source = defer(() => {
+    subscribed = true;
+    return of([1]);
+  });
+  const shared = pipe(source, share());
+  assertStrictEquals(subscribed, false);
+
+  // Act
+  shared.subscribe(new Observer());
+
+  // Assert
+  assertStrictEquals(subscribed, true);
+});
+
+Deno.test("share should reset when all subscribers unsubscribe", () => {
+  // Arrange
+  let subscribeCount = 0;
+  const source = defer(() => {
+    subscribeCount++;
+    return never;
+  });
+  const shared = pipe(source, share());
+  const controller1 = new AbortController();
+  const controller2 = new AbortController();
+
+  // Act
+  shared.subscribe(new Observer({ signal: controller1.signal }));
+  shared.subscribe(new Observer({ signal: controller2.signal }));
+  assertStrictEquals(subscribeCount, 1);
+  controller1.abort();
+  assertStrictEquals(subscribeCount, 1);
+  controller2.abort();
+  shared.subscribe(new Observer());
+
+  // Assert
+  assertStrictEquals(subscribeCount, 2);
+});
+
+Deno.test("share should propagate throw to all subscribers", () => {
+  // Arrange
+  const throwNotifier = new Subject<void>();
+  const error = new Error("test error");
+  const source = flat([
+    pipe(throwNotifier, take(1), ignoreElements()),
+    throwError(error),
+  ]);
+  const shared = pipe(source, share());
+  const notifications1: Array<ObserverNotification<number>> = [];
+  const notifications2: Array<ObserverNotification<number>> = [];
+
+  // Act
+  pipe(shared, materialize()).subscribe(
+    new Observer((notification) => notifications1.push(notification)),
+  );
+  pipe(shared, materialize()).subscribe(
+    new Observer((notification) => notifications2.push(notification)),
+  );
+  throwNotifier.next();
+
+  // Assert
+  assertEquals(notifications1, [["throw", error]]);
+  assertEquals(notifications2, [["throw", error]]);
+});
+
+Deno.test("share should propagate return to all subscribers", () => {
+  // Arrange
+  const returnNotifier = new Subject<void>();
+  const source = flat([
+    pipe(returnNotifier, take(1), ignoreElements()),
+    empty,
+  ]);
+  const shared = pipe(source, share());
+  const notifications1: Array<ObserverNotification<never>> = [];
+  const notifications2: Array<ObserverNotification<never>> = [];
+
+  // Act
+  pipe(shared, materialize()).subscribe(
+    new Observer((notification) => notifications1.push(notification)),
+  );
+  pipe(shared, materialize()).subscribe(
+    new Observer((notification) => notifications2.push(notification)),
+  );
+  returnNotifier.next();
+
+  // Assert
+  assertEquals(notifications1, [["return"]]);
+  assertEquals(notifications2, [["return"]]);
+});
+
+Deno.test("share should use custom connector", () => {
+  // Arrange
+  let connectorCalled = false;
+  const customSubject = new Subject<number>();
+  const connector = () => {
+    connectorCalled = true;
+    return customSubject;
+  };
+  const source = of([1, 2, 3]);
+  const shared = pipe(source, share(connector));
+
+  // Act
+  shared.subscribe(new Observer());
+
+  // Assert
+  assertStrictEquals(connectorCalled, true);
+});
+
+Deno.test("share with ReplaySubject should replay values to late subscribers", () => {
+  // Arrange
+  const source = new Subject<number>();
+  const shared = pipe(source, share(() => new ReplaySubject<number>(2)));
+  const notifications1: Array<ObserverNotification<number>> = [];
+  const notifications2: Array<ObserverNotification<number>> = [];
+
+  // Act
+  pipe(shared, materialize()).subscribe(
+    new Observer((notification) => notifications1.push(notification)),
+  );
+  source.next(1);
+  source.next(2);
+  source.next(3);
+  pipe(shared, materialize()).subscribe(
+    new Observer((notification) => notifications2.push(notification)),
+  );
+  source.next(4);
+
+  // Assert
+  assertEquals(notifications1, [["next", 1], ["next", 2], ["next", 3], ["next", 4]]);
+  assertEquals(notifications2, [["next", 2], ["next", 3], ["next", 4]]);
+});
+
+Deno.test("share should reset connection when all unsubscribe", () => {
+  // Arrange
+  let subscribeCount = 0;
+  const source = defer(() => {
+    subscribeCount++;
+    return never;
+  });
+  const shared = pipe(source, share());
+  const controller1 = new AbortController();
+  const controller2 = new AbortController();
+
+  // Act
+  shared.subscribe(new Observer({ signal: controller1.signal }));
+  shared.subscribe(new Observer({ signal: controller2.signal }));
+  assertStrictEquals(subscribeCount, 1);
+  controller1.abort();
+  controller2.abort();
+  shared.subscribe(new Observer());
+
+  // Assert
+  assertStrictEquals(subscribeCount, 2);
+});
+
+Deno.test("share should handle synchronous source return", () => {
+  // Arrange
+  const source = of([1, 2, 3]);
+  const shared = pipe(source, share());
+  const notifications: Array<ObserverNotification<number>> = [];
+
+  // Act
+  pipe(shared, materialize()).subscribe(
+    new Observer((notification) => notifications.push(notification)),
+  );
+
+  // Assert
+  assertEquals(notifications, [
+    ["next", 1],
+    ["next", 2],
+    ["next", 3],
+    ["return"],
+  ]);
+});
+
+Deno.test("share should handle synchronous source throw", () => {
+  // Arrange
+  const error = new Error("sync error");
+  const source = throwError(error);
+  const shared = pipe(source, share());
+  const notifications: Array<ObserverNotification<never>> = [];
+
+  // Act
+  pipe(shared, materialize()).subscribe(
+    new Observer((notification) => notifications.push(notification)),
+  );
+
+  // Assert
+  assertEquals(notifications, [["throw", error]]);
+});
+
+Deno.test("share should create new subject after reset via unsubscribe", () => {
+  // Arrange
+  let connectionCount = 0;
+  const connector = () => {
+    connectionCount++;
+    return new Subject<number>();
+  };
+  const source = never;
+  const shared = pipe(source, share(connector));
+  const controller1 = new AbortController();
+
+  // Act
+  shared.subscribe(new Observer({ signal: controller1.signal }));
+  assertStrictEquals(connectionCount, 1);
+  controller1.abort();
+  shared.subscribe(new Observer());
+
+  // Assert
+  assertStrictEquals(connectionCount, 2);
+});
+
+Deno.test("share should create new source subscription after source returns", () => {
+  // Arrange
+  let sourceSubscribeCount = 0;
+  const source = defer(() => {
+    sourceSubscribeCount++;
+    return of([sourceSubscribeCount]);
+  });
+  const shared = pipe(source, share());
+  const notifications1: Array<ObserverNotification<number>> = [];
+  const notifications2: Array<ObserverNotification<number>> = [];
+
+  // Act
+  pipe(shared, materialize()).subscribe(
+    new Observer((notification) => notifications1.push(notification)),
+  );
+  assertStrictEquals(sourceSubscribeCount, 1);
+  pipe(shared, materialize()).subscribe(
+    new Observer((notification) => notifications2.push(notification)),
+  );
+
+  // Assert
+  assertStrictEquals(sourceSubscribeCount, 2);
+  assertEquals(notifications1, [["next", 1], ["return"]]);
+  assertEquals(notifications2, [["next", 2], ["return"]]);
+});
+
+Deno.test("share should not create new subject for second subscriber", () => {
+  // Arrange
+  let connectionCount = 0;
+  const connector = () => {
+    connectionCount++;
+    return new Subject<number>();
+  };
+  const source = never;
+  const shared = pipe(source, share(connector));
+
+  // Act
+  shared.subscribe(new Observer());
+  shared.subscribe(new Observer());
+  shared.subscribe(new Observer());
+
+  // Assert
+  assertStrictEquals(connectionCount, 1);
+});
+
+Deno.test("share should handle late subscriber joining during emission", () => {
+  // Arrange
+  const source = new Subject<number>();
+  const shared = pipe(source, share());
+  const notifications1: Array<ObserverNotification<number>> = [];
+  const notifications2: Array<ObserverNotification<number>> = [];
+
+  // Act
+  pipe(shared, materialize()).subscribe(
+    new Observer((notification) => notifications1.push(notification)),
+  );
+  source.next(1);
+  pipe(shared, materialize()).subscribe(
+    new Observer((notification) => notifications2.push(notification)),
+  );
+  source.next(2);
+  source.next(3);
+
+  // Assert
+  assertEquals(notifications1, [["next", 1], ["next", 2], ["next", 3]]);
+  assertEquals(notifications2, [["next", 2], ["next", 3]]);
+});
+
+Deno.test("share should handle subscriber unsubscribing during emission", () => {
+  // Arrange
+  const source = new Subject<number>();
+  const shared = pipe(source, share());
+  const notifications1: Array<ObserverNotification<number>> = [];
+  const notifications2: Array<ObserverNotification<number>> = [];
+  const controller1 = new AbortController();
+
+  // Act
+  pipe(shared, materialize()).subscribe(
+    new Observer({
+      signal: controller1.signal,
+      next: (notification) => {
+        notifications1.push(notification);
+        if (notification[0] === "next" && notification[1] === 2) controller1.abort();
+      },
+    }),
+  );
+  pipe(shared, materialize()).subscribe(
+    new Observer((notification) => notifications2.push(notification)),
+  );
+  source.next(1);
+  source.next(2);
+  source.next(3);
+
+  // Assert
+  assertEquals(notifications1, [["next", 1], ["next", 2]]);
+  assertEquals(notifications2, [["next", 1], ["next", 2], ["next", 3]]);
+});
+
+Deno.test("share should work with observable-like sources", () => {
+  // Arrange
+  const observableLike = {
+    subscribe(observer: Observer<number>) {
+      observer.next(1);
+      observer.next(2);
+      observer.return();
+    },
+  };
+  const shared = pipe(observableLike, share());
+  const notifications: Array<ObserverNotification<number>> = [];
+
+  // Act
+  pipe(shared, materialize()).subscribe(
+    new Observer((notification) => notifications.push(notification)),
+  );
+
+  // Assert
+  assertEquals(notifications, [
+    ["next", 1],
+    ["next", 2],
+    ["return"],
+  ]);
+});

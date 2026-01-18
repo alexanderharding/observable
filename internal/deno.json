@@ -1,6 +1,7 @@
 {
-  "name": "@xan/observable-internal",
+  "name": "@observable/internal",
   "version": "0.1.0",
   "license": "MIT",
-  "exports": "./mod.ts"
+  "exports": "./mod.ts",
+  "publish": { "exclude": ["*.test.ts"] }
 }

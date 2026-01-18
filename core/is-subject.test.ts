@@ -1,7 +1,7 @@
 import { assertEquals } from "@std/assert";
 import { isSubject } from "./is-subject.ts";
 import { Subject } from "./subject.ts";
-import { noop } from "@xan/observable-internal";
+import { noop } from "@observable/internal";
 
 Deno.test(
   "isSubject should return true if the value is an instance of Subject",

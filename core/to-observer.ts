@@ -1,4 +1,4 @@
-import { MinimumArgumentsRequiredError, ParameterTypeError } from "@xan/observable-internal";
+import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 import { Observer } from "./observer.ts";
 import { isObserver } from "./is-observer.ts";
 
@@ -9,7 +9,7 @@ import { isObserver } from "./is-observer.ts";
  * that wraps the original {@linkcode value}.
  * @example
  * ```ts
- * import { toObserver, Observer } from "@xan/observable-core";
+ * import { toObserver, Observer } from "@observable/core";
  *
  * const instance = new Observer((value) => {
  *   // Implementation omitted for brevity.
@@ -21,7 +21,7 @@ import { isObserver } from "./is-observer.ts";
  * ```
  * @example
  * ```ts
- * import { toObserver, Observer } from "@xan/observable-core";
+ * import { toObserver, Observer } from "@observable/core";
  *
  * const custom: Observer = {
  *   signal: new AbortController().signal,

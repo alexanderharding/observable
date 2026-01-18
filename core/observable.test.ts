@@ -1,7 +1,7 @@
 import { assertEquals, assertInstanceOf, assertStrictEquals, assertThrows } from "@std/assert";
 import { Observer } from "./observer.ts";
 import { Observable } from "./observable.ts";
-import { noop } from "@xan/observable-internal";
+import { noop } from "@observable/internal";
 
 Deno.test("Observable.toString should be '[object Observable]'", () => {
   // Arrange / Act / Assert

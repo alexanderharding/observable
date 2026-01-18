@@ -6,13 +6,13 @@ import type { Observer } from "./observer.ts";
  */
 export interface ObservableConstructor {
   /**
-   * Creates and returns an object that acts as a template for connecting a [producer](https://jsr.io/@xan/observable-core#producer)
-   * to a [consumer](https://jsr.io/@xan/observable-core#consumer) via a {@linkcode Observable.subscribe|subscribe} action.
+   * Creates and returns an object that acts as a template for connecting a [producer](https://jsr.io/@observable/core#producer)
+   * to a [consumer](https://jsr.io/@observable/core#consumer) via a {@linkcode Observable.subscribe|subscribe} action.
    * @param subscribe The function called for each {@linkcode Observable.subscribe|subscribe} action.
    * @example
    * Creating an observable with a synchronous producer.
    * ```ts
-   * import { Observable } from "@xan/observable-core";
+   * import { Observable } from "@observable/core";
    *
    * const observable = new Observable<number>((observer) => {
    *   // Create an Array as our producer to next a sequence of values.
@@ -37,7 +37,7 @@ export interface ObservableConstructor {
    *   throw: (value) => console.error("throw", value),
    * });
    *
-   * // console output (synchronously):
+   * // Console output (synchronously):
    * // "next" 1
    * // "next" 2
    * // "next" 3
@@ -47,7 +47,7 @@ export interface ObservableConstructor {
    * @example
    * Creating an observable with an asynchronous producer.
    * ```ts
-   * import { Observable } from "@xan/observable-core";
+   * import { Observable } from "@observable/core";
    *
    * const observable = new Observable<0>((observer) => {
    *   // Create a timeout as our producer to next a successful execution code (0) after 1 second.
@@ -76,7 +76,7 @@ export interface ObservableConstructor {
    *   throw: (value) => console.error("throw", value),
    * });
    *
-   * // console output (asynchronously):
+   * // Console output (asynchronously):
    * // "next" 0
    * // "return"
    * ```
@@ -84,7 +84,7 @@ export interface ObservableConstructor {
    * @example
    * Creating an observable with no producer.
    * ```ts
-   * import { Observable } from "@xan/observable-core";
+   * import { Observable } from "@observable/core";
    *
    * const observable = new Observable<never>();
    *

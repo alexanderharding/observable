@@ -5,15 +5,15 @@ import type { Subject } from "./subject.ts";
  */
 export interface SubjectConstructor {
   /**
-   * Creates and returns an object that acts as both an [`observer`](https://jsr.io/@xan/observable-core/doc/~/Observer)
-   * ([`multicast`](https://jsr.io/@xan/observable-core#multicast)) and an [`observable`](https://jsr.io/@xan/observable-core/doc/~/Observable)
-   * ([`hot`](https://jsr.io/@xan/observable-core#hot)). [`return`](https://jsr.io/@xan/observable-core/doc/~/Observer.return)
-   * and [`throw`](https://jsr.io/@xan/observable-core/doc/~/Observer.throw) will be replayed to late
-   * [`consumers`](https://jsr.io/@xan/observable-core#consumer) upon [`subscription`](https://jsr.io/@xan/observable-core/doc/~/Observable.subscribe).
+   * Creates and returns an object that acts as both an [`observer`](https://jsr.io/@observable/core/doc/~/Observer)
+   * ([`multicast`](https://jsr.io/@observable/core#multicast)) and an [`observable`](https://jsr.io/@observable/core/doc/~/Observable)
+   * ([`hot`](https://jsr.io/@observable/core#hot)). [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)
+   * and [`throw`](https://jsr.io/@observable/core/doc/~/Observer.throw) will be replayed to late
+   * [`consumers`](https://jsr.io/@observable/core#consumer) upon [`subscription`](https://jsr.io/@observable/core/doc/~/Observable.subscribe).
    * @example
    * Basic
    * ```ts
-   * import { Subject } from "@xan/observable-core";
+   * import { Subject } from "@observable/core";
    *
    * const subject = new Subject<number>();
    * const controller = new AbortController();
@@ -27,7 +27,7 @@ export interface SubjectConstructor {
    *
    * subject.next(1);
    *
-   * // console output:
+   * // Console output:
    * // 1
    *
    * subject.subscribe({
@@ -39,13 +39,13 @@ export interface SubjectConstructor {
    *
    * subject.next(2);
    *
-   * // console output:
+   * // Console output:
    * // 2
    * // 2
    *
    * subject.return();
    *
-   * // console output:
+   * // Console output:
    * // return
    *
    * subject.subscribe({
@@ -55,13 +55,13 @@ export interface SubjectConstructor {
    *   throw: () => console.error("throw"),
    * });
    *
-   * // console output:
+   * // Console output:
    * // return
    * ```
    * @example
    * Advanced
    * ```ts
-   * import { Subject, toObservable } from "@xan/observable-core";
+   * import { Subject, toObservable } from "@observable/core";
    *
    * class Authenticator {
    *   readonly #events = new Subject<Event>();
