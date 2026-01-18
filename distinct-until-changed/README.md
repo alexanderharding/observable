@@ -1,8 +1,8 @@
 # @observable/distinct-until-changed
 
 Only [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s values from the
-[source](https://jsr.io/@observable/core#source) that are distinct from the previous value
-according to a specified comparator. Defaults to comparing with `Object.is`.
+[source](https://jsr.io/@observable/core#source) that are distinct from the previous value according
+to a specified comparator. Defaults to comparing with `Object.is`.
 
 ## Build
 
@@ -32,7 +32,7 @@ pipe(of([1, 1, 1, 2, 2, 3]), distinctUntilChanged()).subscribe({
   throw: (value) => console.log(value),
 });
 
-// console output:
+// Console output:
 // 1
 // 2
 // 3

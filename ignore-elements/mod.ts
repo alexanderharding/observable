@@ -18,7 +18,7 @@ import { MinimumArgumentsRequiredError, noop, ParameterTypeError } from "@observ
  *   throw: (value) => console.log("throw", value),
  * });
  *
- * // console output:
+ * // Console output:
  * // "return"
  * ```
  */

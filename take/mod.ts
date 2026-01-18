@@ -19,7 +19,7 @@ import { empty } from "@observable/empty";
  *   throw: (value) => console.log("throw", value),
  * });
  *
- * // console output:
+ * // Console output:
  * // "next" 1
  * // "next" 2
  * // "return"

@@ -37,7 +37,7 @@ import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/i
  *   throw: (value) => console.log("throw", value),
  * });
  *
- * // console output:
+ * // Console output:
  * // "tap next" 1
  * // "next" 1
  * // "tap next" 2

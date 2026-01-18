@@ -28,7 +28,7 @@ const noValue = Symbol("Flag indicating that no value has been emitted yet");
  *   throw: (value) => console.log(value),
  * });
  *
- * // console output:
+ * // Console output:
  * // 1
  * // 2
  * // 3

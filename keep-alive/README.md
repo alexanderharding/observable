@@ -33,7 +33,7 @@ pipe(of([1, 2, 3]), keepAlive()).subscribe({
   throw: (value) => console.log("throw", value),
 });
 
-// console output:
+// Console output:
 // "next" 1
 // "next" 2
 // "next" 3

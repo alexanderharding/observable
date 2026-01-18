@@ -22,7 +22,7 @@ const { signal: noopSignal } = new AbortController();
  *   throw: (value) => console.log("throw", value),
  * });
  *
- * // console output:
+ * // Console output:
  * // "next" 1
  * // "next" 2
  * // "next" 3

@@ -2,8 +2,8 @@
 
 Only [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s values from the
 [source](https://jsr.io/@observable/core#source)
-[`Observable`](https://jsr.io/@observable/core/doc/~/Observable) that are distinct from all
-previous values. Defaults to comparing with `Object.is`.
+[`Observable`](https://jsr.io/@observable/core/doc/~/Observable) that are distinct from all previous
+values. Defaults to comparing with `Object.is`.
 
 ## Build
 
@@ -33,7 +33,7 @@ pipe(of([1, 2, 2, 3, 1, 3]), distinct()).subscribe({
   throw: (value) => console.log(value),
 });
 
-// console output:
+// Console output:
 // 1
 // 2
 // 3

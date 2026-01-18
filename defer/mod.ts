@@ -23,7 +23,7 @@ import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/i
  *   throw: (value) => console.error("throw", value),
  * });
  *
- * // console output:
+ * // Console output:
  * // "next" 1
  * // "next" 2
  * // "next" 3
@@ -37,7 +37,7 @@ import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/i
  *   throw: (value) => console.error("throw", value),
  * });
  *
- * // console output:
+ * // Console output:
  * // "next" 4
  * // "next" 5
  * // "next" 6

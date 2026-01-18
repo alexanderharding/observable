@@ -27,7 +27,7 @@ export interface SubjectConstructor {
    *
    * subject.next(1);
    *
-   * // console output:
+   * // Console output:
    * // 1
    *
    * subject.subscribe({
@@ -39,13 +39,13 @@ export interface SubjectConstructor {
    *
    * subject.next(2);
    *
-   * // console output:
+   * // Console output:
    * // 2
    * // 2
    *
    * subject.return();
    *
-   * // console output:
+   * // Console output:
    * // return
    *
    * subject.subscribe({
@@ -55,7 +55,7 @@ export interface SubjectConstructor {
    *   throw: () => console.error("throw"),
    * });
    *
-   * // console output:
+   * // Console output:
    * // return
    * ```
    * @example

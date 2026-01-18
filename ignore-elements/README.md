@@ -31,7 +31,7 @@ pipe(of([1, 2, 3, 4, 5]), ignoreElements()).subscribe({
   throw: (value) => console.log("throw", value),
 });
 
-// console output:
+// Console output:
 // "return"
 ```
 

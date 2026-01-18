@@ -37,7 +37,7 @@ export interface ObservableConstructor {
    *   throw: (value) => console.error("throw", value),
    * });
    *
-   * // console output (synchronously):
+   * // Console output (synchronously):
    * // "next" 1
    * // "next" 2
    * // "next" 3
@@ -76,7 +76,7 @@ export interface ObservableConstructor {
    *   throw: (value) => console.error("throw", value),
    * });
    *
-   * // console output (asynchronously):
+   * // Console output (asynchronously):
    * // "next" 0
    * // "return"
    * ```

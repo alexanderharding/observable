@@ -23,7 +23,7 @@ import { filter } from "@observable/filter";
  *   throw: (value) => console.log(value),
  * });
  *
- * // console output:
+ * // Console output:
  * // 1
  * // 2
  * // 3
@@ -58,7 +58,7 @@ import { filter } from "@observable/filter";
  *   throw: (value) => console.log(value),
  * });
  *
- * // console output:
+ * // Console output:
  * // { id: 1 }
  * // { id: 2 }
  * // { id: 3 }

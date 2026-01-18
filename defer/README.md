@@ -36,7 +36,7 @@ observable.subscribe({
   throw: (value) => console.error("throw", value),
 });
 
-// console output:
+// Console output:
 // "next" 1
 // "next" 2
 // "next" 3
@@ -50,7 +50,7 @@ observable.subscribe({
   throw: (value) => console.error("throw", value),
 });
 
-// console output:
+// Console output:
 // "next" 4
 // "next" 5
 // "next" 6

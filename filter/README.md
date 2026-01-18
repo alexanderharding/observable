@@ -31,7 +31,7 @@ pipe(of([1, 2, 3, 4, 5]), filter((value) => value % 2 === 0)).subscribe({
   throw: (value) => console.log("throw", value),
 });
 
-// console output:
+// Console output:
 // "next" 2
 // "next" 4
 // "return"

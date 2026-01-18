@@ -37,17 +37,17 @@ export interface BehaviorSubjectConstructor {
    *  throw: () => console.error("throw"),
    * });
    *
-   * // console output:
+   * // Console output:
    * // "next" 0
    *
    * subject.next(1);
    *
-   * // console output:
+   * // Console output:
    * // "next" 1
    *
    * subject.return();
    *
-   * // console output:
+   * // Console output:
    * // "return"
    *
    * subject.subscribe({
@@ -57,7 +57,7 @@ export interface BehaviorSubjectConstructor {
    *  throw: () => console.error("throw"),
    * });
    *
-   * // console output:
+   * // Console output:
    * // "next" 1
    * // "return"
    * ```
