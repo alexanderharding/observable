@@ -235,4 +235,4 @@ on a separate callstack.
 The order in which [notifications](#notification) are processed by [operations](#operation) in a
 [stream](#stream) have a directionality to them. "Upstream" refers to an [operations](#operation)
 that was already processed before the current [operations](#operation) , and "downstream" refers to
-an [operations](#operation) that will be processed after the current [operations](#operation) .
+an [operations](#operation) that will be processed after the current [operations](#operation).
