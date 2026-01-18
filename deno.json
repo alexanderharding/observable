@@ -44,8 +44,8 @@
   ],
   "license": "MIT",
   "tasks": {
-    "test": "deno test --watch",
-    "test:ci": "deno test"
+    "test": "deno test --watch --parallel",
+    "test:ci": "deno test --parallel"
   },
   "fmt": { "lineWidth": 100, "bracePosition": "sameLine" },
   "imports": {
