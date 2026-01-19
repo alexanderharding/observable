@@ -1,6 +1,8 @@
 import { isObservable, type Observable, Observer } from "@observable/core";
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 import { AsyncSubject } from "@observable/async-subject";
+import { pipe } from "@observable/pipe";
+import { share } from "@observable/share";
 
 /**
  * Converts an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) to a {@linkcode Promise}.
@@ -23,9 +25,9 @@ export function asPromise<Value>(): (
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
     const { resolve, reject, promise } = Promise.withResolvers<Value>();
-    const subject = new AsyncSubject<Value>();
-    subject.subscribe(new Observer({ next: resolve, throw: reject }));
-    source.subscribe(subject);
+    pipe(source, share(() => new AsyncSubject())).subscribe(
+      new Observer<Value>({ next: resolve, throw: reject }),
+    );
     return promise;
   };
 }
