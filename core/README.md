@@ -237,186 +237,59 @@ The order in which [notifications](#notification) are processed by [operations](
 that was already processed before the current [operations](#operation) , and "downstream" refers to
 an [operations](#operation) that will be processed after the current [operations](#operation).
 
-## Differences From [RxJS](https://rxjs.dev/)
+# Differences From [RxJS](https://rxjs.dev/)
 
 While inspired by [RxJS](https://rxjs.dev/), this library takes a different approach in several key
-areas. These differences are driven by a **simplicity-first** design philosophy that prioritizes
-correctness, maintainability, and ease of understanding.
+areas that are worth discussing here.
 
-### Simplicity First
+## Simplicity First
 
 This library is designed to be minimal and focused. Rather than providing an exhaustive set of
-operators and features, it aims to provide a solid foundation with correct semantics. The API
+features, it aims to provide a solid foundation with correct and predictable semantics. The API
 surface is intentionally small, making it easier to learn, debug, and reason about.
 
-### Composition Over Inheritance
+## Composition Over Inheritance
 
-[RxJS](https://rxjs.dev/) relies heavily on class inheritance for its internal implementation. This
-library instead favors **composition**.
+[RxJS](https://rxjs.dev/) relies heavily on class inheritance. At a glance this is fine, especially
+within the bounds of the [RxJS](https://rxjs.dev/) library, but once you want to create your own
+custom implementations it falls apart. This is because implementing classes requires you to
+implement the _entire_ interface, including internal and private members. This library goes out of
+its way to use composition to provide a simple interface and hide internal and private members so
+that you can create custom implementations without headache.
 
-This design choice has a significant benefit for users who want to create custom implementations. In
-[RxJS](https://rxjs.dev/), attempting to create a custom `Observable` or `Subject` using the
-`implements` keyword is painful because [RxJS](https://rxjs.dev/) classes expose their entire
-implementation—including internal and private properties—as part of the class definition. This means
-your custom implementation must somehow satisfy or work around these internal details.
-
-This library solves this problem by separating the **public interface** from the **class
-implementation** using three components:
-
-1. An **interface** (or type) that exposes _only_ the public API
-2. A **constructor interface** that types the class and abstracts away private members
-3. A **class expression** that contains all the private implementation details
-
-For example, the `Observable` interface only requires a single `subscribe` method:
+### Example
 
 ```ts
-interface Observable<Value = unknown> {
-  subscribe(observer: Observer<Value>): void;
-}
-```
+import { Observable, type Observer, Subject } from "@observable/core";
 
-The constructor interface
-([`ObservableConstructor`](https://jsr.io/@observable/core/doc/~/ObservableConstructor)) defines the
-`new` signature and `prototype`, ensuring the class is typed to only expose the public `Observable`
-interface:
+type Customer = Readonly<Record<"email" | "name", string>>;
 
-```ts
-interface ObservableConstructor {
-  new <Value>(subscribe: (observer: Observer<Value>) => void): Observable<Value>;
-  readonly prototype: Observable;
-}
-```
+// No errors! It's that easy
+class CustomerService implements Observable<Customer> {
+  readonly #customer = new Observable<Customer>(async (observer) => {
+    const response = await fetch("https://www.example.com/api/customer");
+    return await response.json();
+  });
 
-The actual class expression with its private `#subscribe` field is then assigned to this constructor
-type, effectively obfuscating the private members from the public API:
-
-```ts
-const Observable: ObservableConstructor = class {
-  readonly #subscribe: (observer: Observer) => void;
-  // ... implementation details hidden from consumers
-};
-```
-
-This means you can easily create your own custom observable by implementing just the public
-interface:
-
-```ts
-import type { Observable, Observer } from "@observable/core";
-
-class MyCustomObservable<T> implements Observable<T> {
-  subscribe(observer: Observer<T>): void {
-    // Your custom implementation here
+  subscribe(observer: Observer<Customer>): void {
+    this.#customer.subscribe(observer);
   }
 }
 ```
 
-The same pattern applies to all classes in this library. You only need to implement the public
-contract, not internal implementation details.
+## Correct Teardown Ordering
 
-### Correct Teardown Ordering
-
-One of the most significant differences is how this library handles the ordering of teardown
+This is a [known issue in RxJS](https://github.com/ReactiveX/rxjs/issues/7443) that has persisted
+for nearly a decade. This library fixes this problem by reversing the ordering of teardown
 ([`unsubscription`](https://jsr.io/@observable/core/doc/~/Observer.signal)) relative to terminal
 [notifications](#notification) ([`throw`](https://jsr.io/@observable/core/doc/~/Observer.throw) and
 [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)).
 
-In [RxJS](https://rxjs.dev/), the historical behavior has been to notify the [consumer](#consumer)
-of completion or error _before_
-[unsubscribing](https://jsr.io/@observable/core/doc/~/Observer.signal) from the [source](#source).
-This ordering can cause reentrancy bugs where a [source](#source) synchronously emits back into
-itself before cleanup occurs. This is a
-[known issue in RxJS](https://github.com/ReactiveX/rxjs/issues/7443) that has persisted for nearly a
-decade.
+## Native AbortController Integration
 
-This library takes the correct approach: **teardown always occurs before terminal notifications**.
-When [`return`](https://jsr.io/@observable/core/doc/~/Observer.return) or
-[`throw`](https://jsr.io/@observable/core/doc/~/Observer.throw) is called, the
-[`Observer`](https://jsr.io/@observable/core/doc/~/Observer) first aborts via its
-[`signal`](https://jsr.io/@observable/core/doc/~/Observer.signal), and _then_ notifies the
-[consumer](#consumer).
-
-This ordering aligns with how JavaScript's other constructs behave:
-
-**Iterables finalize before the consumer knows iteration is complete:**
-
-```ts
-function* iterable() {
-  try {
-    yield 1;
-  } finally {
-    console.log("finalized");
-  }
-}
-
-for (const value of iterable()) {
-  console.log(value);
-}
-console.log("consumer knows iteration is complete");
-
-// Logs:
-// 1
-// finalized
-// consumer knows iteration is complete
-```
-
-**Promises finalize before resolving:**
-
-```ts
-Promise.resolve(1)
-  .finally(() => console.log("finalized"))
-  .then(console.log);
-
-// Logs:
-// finalized
-// 1
-```
-
-By following this principle, this library avoids an entire class of reentrancy bugs that can occur
-in [RxJS](https://rxjs.dev/), making [observation chains](#observation-chain) more predictable and
-correct.
-
-### Native AbortController Integration
-
-Rather than inventing a custom `Subscription` type, this library uses the web-native
-[`AbortController`](https://developer.mozilla.org/en-US/docs/Web/API/AbortController) and
-[`AbortSignal`](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal) APIs for
-[`unsubscription`](https://jsr.io/@observable/core/doc/~/Observer.signal). This makes it trivial to
+With the wide support of
+[`AbortController`](https://developer.mozilla.org/en-US/docs/Web/API/AbortController) since 2019,
+there's no longer the need for a custom `Subscription` implementation. This makes it trivial to
 integrate with other APIs that support abort signals (like
-[`fetch`](https://developer.mozilla.org/en-US/docs/Web/API/fetch)) and reduces the learning curve
-for developers already familiar with these web standards.
-
-This approach also solves the
-["synchronous firehose" problem](https://github.com/ReactiveX/rxjs/discussions/6345) that plagues
-[RxJS](https://rxjs.dev/). In [RxJS](https://rxjs.dev/), when a synchronous [producer](#producer)
-emits many values rapidly (a "firehose"), there's no reliable way for the [consumer](#consumer) to
-[unsubscribe](https://jsr.io/@observable/core/doc/~/Observer.signal) mid-stream.
-
-With an [`AbortController`](https://developer.mozilla.org/en-US/docs/Web/API/AbortController)-based
-system, the [consumer](#consumer) creates the controller _before_
-[subscribeing](https://jsr.io/@observable/core/doc/~/Observable.subscribe) and passes its
-[`signal`](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal) to the
-[`Observer`](https://jsr.io/@observable/core/doc/~/Observer). This means the [consumer](#consumer)
-already has a reference to abort at any time—even during synchronous emissions:
-
-```ts
-const controller = new AbortController();
-
-firehose.subscribe({
-  signal: controller.signal,
-  next: (value) => {
-    if (value >= 3) controller.abort(); // Unsubscribe mid-stream
-  },
-});
-```
-
-The [producer](#producer) can check `observer.signal.aborted` on each iteration to respect
-unsubscription:
-
-```ts
-const firehose = new Observable<number>((observer) => {
-  let n = 0;
-  while (!observer.signal.aborted && n < 1_000_000) {
-    observer.next(n++);
-  }
-});
-```
+[`fetch`](https://developer.mozilla.org/en-US/docs/Web/API/fetch)) while also solving the
+["synchronous firehose" problem](https://github.com/ReactiveX/rxjs/discussions/6345).
