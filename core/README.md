@@ -4,8 +4,8 @@ A lightweight, [RxJS](https://rxjs.dev/)-inspired implementation of the
 [Observer pattern](https://refactoring.guru/design-patterns/observer) in JavaScript. Features
 [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)'s with
 [`AbortController`](https://developer.mozilla.org/en-US/docs/Web/API/AbortController)-based
-[`unsubscription`](https://jsr.io/@observable/core/doc/~/Observer.signal), supporting both
-synchronous and asynchronous [producers](#producer).
+[unsubscription](https://jsr.io/@observable/core/doc/~/Observer.signal), supporting both synchronous
+and asynchronous [producers](#producer).
 
 ## Build
 
@@ -281,7 +281,7 @@ class CustomerService implements Observable<Customer> {
 
 This is a [known issue in RxJS](https://github.com/ReactiveX/rxjs/issues/7443) that has persisted
 for nearly a decade. This library fixes this problem by reversing the ordering of teardown
-([`unsubscription`](https://jsr.io/@observable/core/doc/~/Observer.signal)) relative to terminal
+([unsubscription](https://jsr.io/@observable/core/doc/~/Observer.signal)) relative to terminal
 [notifications](#notification) ([`throw`](https://jsr.io/@observable/core/doc/~/Observer.throw) and
 [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)).
 
