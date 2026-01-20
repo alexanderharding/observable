@@ -7,6 +7,7 @@ import { of } from "@observable/of";
 import { pipe } from "@observable/pipe";
 import { materialize, type ObserverNotification } from "@observable/materialize";
 import { take } from "./mod.ts";
+import { finalize } from "@observable/finalize";
 
 Deno.test(
   "take should return an empty observable if the count is equal to 0",
@@ -81,9 +82,14 @@ Deno.test(
 
 Deno.test("take should handle reentrant subscribers", () => {
   // Arrange
-  const notifications: Array<ObserverNotification<number>> = [];
+  const notifications: Array<ObserverNotification<number> | [type: "finalize"]> = [];
   const source = new Subject<number>();
-  const materialized = pipe(source, take(2), materialize());
+  const materialized = pipe(
+    source,
+    finalize(() => notifications.push(["finalize"])),
+    take(2),
+    materialize(),
+  );
 
   // Act
   materialized.subscribe(
@@ -97,5 +103,5 @@ Deno.test("take should handle reentrant subscribers", () => {
   source.return();
 
   // Assert
-  assertEquals(notifications, [["next", 1], ["next", 2], ["return"]]);
+  assertEquals(notifications, [["next", 1], ["finalize"], ["next", 2], ["return"]]);
 });
