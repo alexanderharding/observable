@@ -36,12 +36,14 @@ export function take<Value>(
     if (count === Infinity) return source;
     return new Observable((observer) => {
       let seen = 0;
+      const controller = new AbortController();
       source.subscribe({
-        signal: observer.signal,
+        signal: AbortSignal.any([observer.signal, controller.signal]),
         next(value) {
-          if (++seen > count) return;
+          const isLastValue = ++seen === count;
+          if (isLastValue) controller.abort();
           observer.next(value);
-          if (count <= seen) observer.return();
+          if (isLastValue) observer.return();
         },
         return: () => observer.return(),
         throw: (value) => observer.throw(value),
