@@ -1,9 +1,11 @@
-import { isObservable, type Observable, Observer, toObservable } from "@observable/core";
-import { MinimumArgumentsRequiredError, noop, ParameterTypeError } from "@observable/internal";
-import { defer } from "@observable/defer";
+import { isObservable, type Observable, toObservable } from "@observable/core";
+import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 import { pipe } from "@observable/pipe";
-import { tap } from "@observable/tap";
+import { map } from "@observable/map";
 import { filter } from "@observable/filter";
+import { pairwise } from "@observable/pairwise";
+import { flat } from "@observable/flat";
+import { of } from "@observable/of";
 
 /**
  * Flag indicating that no value has been emitted yet.
@@ -48,21 +50,17 @@ export function distinctUntilChanged<Value>(
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
     source = toObservable(source);
-    return defer(() => {
-      let previous: Value | typeof noValue = noValue;
-      return pipe(
-        source,
-        filter(isDistinct),
-        tap(new Observer({ next: processNextValue, throw: noop })),
-      );
-
-      function isDistinct(current: Value): boolean {
-        return previous === noValue || !comparator(previous, current);
-      }
-
-      function processNextValue(current: Value): void {
-        previous = current;
-      }
-    });
+    return pipe(
+      flat([of([noValue]), source]),
+      pairwise(),
+      filter(isDistinct),
+      map(([_, current]) => current),
+    );
   };
+
+  function isDistinct(
+    [previous, current]: Readonly<[previous: Value | typeof noValue, current: Value]>,
+  ): boolean {
+    return previous === noValue || !comparator(previous, current);
+  }
 }
