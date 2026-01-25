@@ -1,9 +1,8 @@
-import { isObservable, type Observable, Observer, Subject, toObservable } from "@observable/core";
-import { MinimumArgumentsRequiredError, noop, ParameterTypeError } from "@observable/internal";
+import { isObservable, type Observable, Subject, toObservable } from "@observable/core";
+import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 import { defer } from "@observable/defer";
 import { pipe } from "@observable/pipe";
 import { takeUntil } from "@observable/take-until";
-import { tap } from "@observable/tap";
 import { mergeMap } from "@observable/merge-map";
 
 /**
@@ -46,8 +45,10 @@ export function switchMap<In, Out>(
       const switching = new Subject<void>();
       return pipe(
         source,
-        tap(new Observer({ next: () => switching.next(), throw: noop })),
-        mergeMap((value, index) => pipe(project(value, index), takeUntil(switching))),
+        mergeMap((value, index) => {
+          switching.next();
+          return pipe(project(value, index), takeUntil(switching));
+        }),
       );
     });
   };
