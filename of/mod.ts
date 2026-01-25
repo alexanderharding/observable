@@ -4,6 +4,7 @@ import {
   MinimumArgumentsRequiredError,
   ParameterTypeError,
 } from "@observable/internal";
+import { empty } from "@observable/empty";
 
 /**
  * Creates and returns an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) that emits a sequence of {@linkcode values} in order on
@@ -62,6 +63,7 @@ export function of<Value>(
 ): Observable<Value> {
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
   if (!isIterable(values)) throw new ParameterTypeError(0, "Iterable");
+  if (Array.isArray(values) && !values.length) return empty;
   return new Observable((observer) => {
     for (const value of values) {
       observer.next(value);

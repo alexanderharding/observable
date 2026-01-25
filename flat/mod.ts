@@ -8,6 +8,7 @@ import {
 import { of } from "@observable/of";
 import { pipe } from "@observable/pipe";
 import { flatMap } from "@observable/flat-map";
+import { empty } from "@observable/empty";
 
 /**
  * Creates an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) which sequentially emits all values from the first given
@@ -53,5 +54,6 @@ export function flat<Value>(
 ): Observable<Value> {
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
   if (!isIterable(sources)) throw new ParameterTypeError(0, "Iterable");
+  if (Array.isArray(sources) && !sources.length) return empty;
   return pipe(of(sources), flatMap(identity));
 }

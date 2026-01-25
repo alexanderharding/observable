@@ -1,4 +1,4 @@
-import { assertEquals } from "@std/assert";
+import { assertEquals, assertStrictEquals } from "@std/assert";
 import { Observer, Subject } from "@observable/core";
 import { empty } from "@observable/empty";
 import { never } from "@observable/never";
@@ -31,6 +31,24 @@ Deno.test(
 
     // Assert
     assertEquals(notifications, [["next", 1], ["next", 3], ["return"]]);
+  },
+);
+
+Deno.test(
+  "race should return empty when given an empty array",
+  () => {
+    // Arrange
+    const notifications: Array<ObserverNotification> = [];
+    const observable = race([]);
+
+    // Act
+    pipe(observable, materialize()).subscribe(
+      new Observer((notification) => notifications.push(notification)),
+    );
+
+    // Assert
+    assertStrictEquals(observable, empty);
+    assertEquals(notifications, [["return"]]);
   },
 );
 
