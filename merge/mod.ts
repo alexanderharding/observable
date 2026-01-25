@@ -42,8 +42,14 @@ import { mergeMap } from "@observable/merge-map";
  * source3.return(); // "return"
  * ```
  */
+export function merge<const Values extends ReadonlyArray<unknown>>(
+  sources: Readonly<{ [Key in keyof Values]: Observable<Values[Key]> }>,
+): Observable<Values[number]>;
 export function merge<Value>(
-  // Accepting an Iterable is a design choice for performance (iterables are lazily evaluated) and
+  sources: Iterable<Observable<Value>>,
+): Observable<Value>;
+export function merge<Value>(
+  // Accepting any iterable is a design choice for performance (iterables are lazily evaluated) and
   // flexibility (can accept any iterable, not just arrays).
   sources: Iterable<Observable<Value>>,
 ): Observable<Value> {
