@@ -21,14 +21,14 @@ Deno.test("timeout should setup a timeout", () => {
   // Arrange
   let overrode = true;
   const milliseconds = 1_000;
-  const timeout = Math.random();
+  const setTimeoutId = Math.random();
   const notifications: Array<ObserverNotification<0>> = [];
   const setTimeoutCalls: Array<Parameters<typeof setTimeout>> = [];
   const originalSetTimeout = globalThis.setTimeout;
   Object.defineProperty(globalThis, "setTimeout", {
     value: (...args: Parameters<typeof setTimeout>) => {
       setTimeoutCalls.push(args);
-      return overrode ? timeout : originalSetTimeout(...args);
+      return overrode ? setTimeoutId : originalSetTimeout(...args);
     },
   });
 
@@ -54,7 +54,7 @@ Deno.test(
     // Arrange
     let overrideGlobals = true;
     const milliseconds = 1_000;
-    const timeout = Math.random();
+    const setTimeoutId = Math.random();
     const notifications: Array<ObserverNotification<0>> = [];
     const setTimeoutCalls: Array<Parameters<typeof setTimeout>> = [];
     const clearTimeoutCalls: Array<Parameters<typeof clearTimeout>> = [];
@@ -65,13 +65,13 @@ Deno.test(
     Object.defineProperty(globalThis, "setTimeout", {
       value: (...args: Parameters<typeof setTimeout>) => {
         setTimeoutCalls.push(args);
-        return overrideGlobals ? timeout : originalSetTimeout(...args);
+        return overrideGlobals ? setTimeoutId : originalSetTimeout(...args);
       },
     });
     Object.defineProperty(globalThis, "clearTimeout", {
       value: (...args: Parameters<typeof clearTimeout>) => {
         clearTimeoutCalls.push(args);
-        return overrideGlobals ? timeout : originalClearTimeout(...args);
+        return overrideGlobals ? setTimeoutId : originalClearTimeout(...args);
       },
     });
     // Act
@@ -86,7 +86,7 @@ Deno.test(
     // Assert
     assertStrictEquals(setTimeoutCalls.length, 1);
     assertEquals(notifications, []);
-    assertEquals(clearTimeoutCalls, [[timeout]]);
+    assertEquals(clearTimeoutCalls, [[setTimeoutId]]);
     const [[callback, delay]] = setTimeoutCalls;
     assertStrictEquals(delay, milliseconds);
     assertInstanceOf(callback, Function);
@@ -102,7 +102,7 @@ Deno.test(
     // Arrange
     let overrideGlobals = true;
     const milliseconds = 1_000;
-    const timeout = Math.random();
+    const setTimeoutId = Math.random();
     const notifications: Array<ObserverNotification<0>> = [];
     const setTimeoutCalls: Array<Parameters<typeof setTimeout>> = [];
     const clearTimeoutCalls: Array<Parameters<typeof clearTimeout>> = [];
@@ -113,13 +113,13 @@ Deno.test(
     Object.defineProperty(globalThis, "setTimeout", {
       value: (...args: Parameters<typeof setTimeout>) => {
         setTimeoutCalls.push(args);
-        return overrideGlobals ? timeout : originalSetTimeout(...args);
+        return overrideGlobals ? setTimeoutId : originalSetTimeout(...args);
       },
     });
     Object.defineProperty(globalThis, "clearTimeout", {
       value: (...args: Parameters<typeof clearTimeout>) => {
         clearTimeoutCalls.push(args);
-        return overrideGlobals ? timeout : originalClearTimeout(...args);
+        return overrideGlobals ? setTimeoutId : originalClearTimeout(...args);
       },
     });
     controller.abort();
@@ -143,7 +143,7 @@ Deno.test(
 Deno.test("timeout should emit immediately if the milliseconds is 0", () => {
   // Arrange
   let overrideGlobals = true;
-  const timeout = Math.random();
+  const setTimeoutId = Math.random();
   const notifications: Array<ObserverNotification<0>> = [];
   const setTimeoutCalls: Array<Parameters<typeof setTimeout>> = [];
   const clearTimeoutCalls: Array<Parameters<typeof clearTimeout>> = [];
@@ -153,13 +153,13 @@ Deno.test("timeout should emit immediately if the milliseconds is 0", () => {
   Object.defineProperty(globalThis, "setTimeout", {
     value: (...args: Parameters<typeof setTimeout>) => {
       setTimeoutCalls.push(args);
-      return overrideGlobals ? timeout : originalSetTimeout(...args);
+      return overrideGlobals ? setTimeoutId : originalSetTimeout(...args);
     },
   });
   Object.defineProperty(globalThis, "clearTimeout", {
     value: (...args: Parameters<typeof clearTimeout>) => {
       clearTimeoutCalls.push(args);
-      return overrideGlobals ? timeout : originalClearTimeout(...args);
+      return overrideGlobals ? setTimeoutId : originalClearTimeout(...args);
     },
   });
 
