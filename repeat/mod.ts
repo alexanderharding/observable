@@ -55,7 +55,7 @@ export function repeat<Value>(
 ): (source: Observable<Value>) => Observable<Value> {
   if (!isObservable(notifier)) throw new ParameterTypeError(0, "Observable");
   notifier = toObservable(notifier);
-  return function repeat(source) {
+  return function repeatFn(source) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
     source = toObservable(source);
