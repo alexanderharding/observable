@@ -109,7 +109,7 @@ export const ReplaySubject: ReplaySubjectConstructor = class {
     }
     Object.freeze(this);
     (this.#count = count) >= 0 ? this.#bufferSnapshot = undefined : this.return();
-    if (this.signal.aborted) return;
+    if (this.signal.aborted || this.#count === 0) return;
     this.signal.addEventListener("abort", () => {
       this.#buffer.length = 0;
       this.#bufferSnapshot = empty;
