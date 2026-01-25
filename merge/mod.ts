@@ -49,8 +49,8 @@ export function merge<Value>(
   sources: Iterable<Observable<Value>>,
 ): Observable<Value>;
 export function merge<Value>(
-  // Accepting any iterable is a design choice for performance (iterables are lazily evaluated) and
-  // flexibility (can accept any iterable, not just arrays).
+  // Accepting any iterable is a design choice for performance (iterables are 
+  // lazily evaluated) and flexibility.
   sources: Iterable<Observable<Value>>,
 ): Observable<Value> {
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();

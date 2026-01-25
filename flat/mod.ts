@@ -47,8 +47,8 @@ export function flat<Value>(
   sources: Iterable<Observable<Value>>,
 ): Observable<Value>;
 export function flat<Value>(
-  // Accepting any iterable is a design choice for performance (iterables are lazily evaluated) and
-  // flexibility (can accept any iterable, not just arrays).
+  // Accepting any iterable is a design choice for performance (iterables are 
+  // lazily evaluated) and flexibility.
   sources: Iterable<Observable<Value>>,
 ): Observable<Value> {
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();

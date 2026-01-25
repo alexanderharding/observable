@@ -56,8 +56,8 @@ export function of<Value>(
   values: Iterable<Value>,
 ): Observable<Value>;
 export function of<Value>(
-  // Accepting any iterable is a design choice for performance (iterables are lazily evaluated) and
-  // flexibility (can accept any iterable, not just arrays).
+  // Accepting any iterable is a design choice for performance (iterables are 
+  // lazily evaluated) and flexibility.
   values: Iterable<Value>,
 ): Observable<Value> {
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
