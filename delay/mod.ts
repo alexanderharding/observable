@@ -19,7 +19,7 @@ import { never } from "@observable/never";
  *
  * const controller = new AbortController();
  * pipe(of([1, 2, 3, 4, 5]), delay(1_000)).subscribe({
- *   signal: controller.signal, 
+ *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
  *   return: () => console.log("return"),
  *   throw: (value) => console.log("throw", value),
