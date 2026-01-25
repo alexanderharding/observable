@@ -165,7 +165,7 @@ const Example: ExampleConstructor = class {
 `${new Example()}`; // "[object Example]"
 ```
 
-### Prefer Iterables Over Arrays
+### Prefer [Iterables](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#the_iterable_protocol) Over [`Array`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)s
 
 Functions that accept collections
 ([`Array`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array),
