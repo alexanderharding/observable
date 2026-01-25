@@ -37,8 +37,14 @@ export interface Observer<Value = unknown> {
   throw(value: unknown): void;
 }
 
+/**
+ * A fixed string that is used to identify the {@linkcode Observer} class.
+ * @internal Do NOT export.
+ */
+const stringTag = "Observer";
+
 export const Observer: ObserverConstructor = class {
-  readonly [Symbol.toStringTag] = "Observer";
+  readonly [Symbol.toStringTag] = stringTag;
   readonly #observer?: Partial<Observer> | null;
   readonly #controller = new AbortController();
   readonly signal = this.#controller.signal;
@@ -60,9 +66,7 @@ export const Observer: ObserverConstructor = class {
   }
 
   next(value: unknown): void {
-    if (!(this instanceof Observer)) {
-      throw new InstanceofError("this", "Observer");
-    }
+    if (!(this instanceof Observer)) throw new InstanceofError("this", stringTag);
 
     // If this observer has been aborted there is nothing to do.
     if (this.signal.aborted) return;
@@ -75,9 +79,7 @@ export const Observer: ObserverConstructor = class {
   }
 
   return(): void {
-    if (!(this instanceof Observer)) {
-      throw new InstanceofError("this", "Observer");
-    }
+    if (!(this instanceof Observer)) throw new InstanceofError("this", stringTag);
 
     // If this observer has been aborted there is nothing to do.
     if (this.signal.aborted) return;
@@ -95,9 +97,7 @@ export const Observer: ObserverConstructor = class {
   }
 
   throw(value: unknown): void {
-    if (!(this instanceof Observer)) {
-      throw new InstanceofError("this", "Observer");
-    }
+    if (!(this instanceof Observer)) throw new InstanceofError("this", stringTag);
 
     // If this observer has been aborted there is nothing to do.
     if (this.signal.aborted) return;

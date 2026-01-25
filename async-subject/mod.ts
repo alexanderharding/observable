@@ -65,8 +65,14 @@ export interface AsyncSubjectConstructor {
   readonly prototype: AsyncSubject;
 }
 
+/**
+ * A fixed string that is used to identify the {@linkcode AsyncSubject} class.
+ * @internal Do NOT export.
+ */
+const stringTag = "AsyncSubject";
+
 export const AsyncSubject: AsyncSubjectConstructor = class {
-  readonly [Symbol.toStringTag] = "AsyncSubject";
+  readonly [Symbol.toStringTag] = stringTag;
   readonly #subject = new ReplaySubject(1);
   readonly signal = this.#subject.signal;
   readonly #observable = pipe(
@@ -80,23 +86,21 @@ export const AsyncSubject: AsyncSubjectConstructor = class {
 
   next(value: unknown): void {
     if (this instanceof AsyncSubject) this.#subject.next(value);
-    else throw new InstanceofError("this", "AsyncSubject");
+    else throw new InstanceofError("this", stringTag);
   }
 
   return(): void {
     if (this instanceof AsyncSubject) this.#subject.return();
-    else throw new InstanceofError("this", "AsyncSubject");
+    else throw new InstanceofError("this", stringTag);
   }
 
   throw(value: unknown): void {
     if (this instanceof AsyncSubject) this.#subject.throw(value);
-    else throw new InstanceofError("this", "AsyncSubject");
+    else throw new InstanceofError("this", stringTag);
   }
 
   subscribe(observer: Observer): void {
-    if (!(this instanceof AsyncSubject)) {
-      throw new InstanceofError("this", "AsyncSubject");
-    }
+    if (!(this instanceof AsyncSubject)) throw new InstanceofError("this", stringTag);
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObserver(observer)) throw new ParameterTypeError(0, "Observer");
     this.#observable.subscribe(observer);

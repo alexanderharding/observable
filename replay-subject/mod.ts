@@ -86,8 +86,14 @@ export interface ReplaySubjectConstructor {
   readonly prototype: ReplaySubject;
 }
 
+/**
+ * A fixed string that is used to identify the {@linkcode ReplaySubject} class.
+ * @internal Do NOT export.
+ */
+const stringTag = "ReplaySubject";
+
 export const ReplaySubject: ReplaySubjectConstructor = class {
-  readonly [Symbol.toStringTag] = "ReplaySubject";
+  readonly [Symbol.toStringTag] = stringTag;
   readonly #count: number;
   /**
    * Tracking a known list of buffered values as an Observable, so we don't have to clone
@@ -117,9 +123,7 @@ export const ReplaySubject: ReplaySubjectConstructor = class {
   }
 
   next(value: unknown): void {
-    if (!(this instanceof ReplaySubject)) {
-      throw new InstanceofError("this", "ReplaySubject");
-    }
+    if (!(this instanceof ReplaySubject)) throw new InstanceofError("this", stringTag);
     if (!this.signal.aborted && this.#count > 0) {
       // Add the next value to the buffer.
       const length = this.#buffer.push(value);
@@ -133,18 +137,16 @@ export const ReplaySubject: ReplaySubjectConstructor = class {
 
   return(): void {
     if (this instanceof ReplaySubject) this.#subject.return();
-    else throw new InstanceofError("this", "ReplaySubject");
+    else throw new InstanceofError("this", stringTag);
   }
 
   throw(value: unknown): void {
     if (this instanceof ReplaySubject) this.#subject.throw(value);
-    else throw new InstanceofError("this", "ReplaySubject");
+    else throw new InstanceofError("this", stringTag);
   }
 
   subscribe(observer: Observer): void {
-    if (!(this instanceof ReplaySubject)) {
-      throw new InstanceofError("this", "ReplaySubject");
-    }
+    if (!(this instanceof ReplaySubject)) throw new InstanceofError("this", stringTag);
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObserver(observer)) throw new ParameterTypeError(0, "Observer");
     this.#observable.subscribe(observer);
