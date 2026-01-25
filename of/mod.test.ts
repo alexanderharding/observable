@@ -1,4 +1,5 @@
-import { assertEquals } from "@std/assert";
+import { assertEquals, assertStrictEquals } from "@std/assert";
+import { empty } from "@observable/empty";
 import { Observer } from "@observable/core";
 import { of } from "./mod.ts";
 import { pipe } from "@observable/pipe";
@@ -15,6 +16,7 @@ Deno.test("of should return empty if no values are provided", () => {
   );
 
   // Assert
+  assertStrictEquals(observable, empty);
   assertEquals(notifications, [["return"]]);
 });
 

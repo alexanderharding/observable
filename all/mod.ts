@@ -63,7 +63,7 @@ export function all(
   sources: ReadonlyArray<Observable>,
 ): Observable<ReadonlyArray<unknown>> {
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-  if (!Array.isArray(sources)) throw new ParameterTypeError(0, "Array");
+  if (!isArray(sources)) throw new ParameterTypeError(0, "Array");
   if (sources.length === 0) return empty;
   return defer(() => {
     let receivedFirstValueCount = 0;
@@ -100,4 +100,12 @@ export function all(
       takeUntil(emptySourceNotifier),
     );
   });
+}
+
+/**
+ * Like `Array.isArray`, but with better type inference.
+ * @internal Do NOT export.
+ */
+function isArray(value: unknown): value is Array<unknown> {
+  return Array.isArray(value);
 }

@@ -17,10 +17,10 @@ const success = of([0]);
  * [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s.
  * @example
  * ```ts
- * import { timer } from "@observable/timer";
+ * import { timeout } from "@observable/timeout";
  *
  * const controller = new AbortController();
- * timer(1_000).subscribe({
+ * timeout(1_000).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
  *   return: () => console.log("return"),
@@ -33,10 +33,10 @@ const success = of([0]);
  * ```
  * @example
  * ```ts
- * import { timer } from "@observable/timer";
+ * import { timeout } from "@observable/timeout";
  *
  * const controller = new AbortController();
- * timer(0).subscribe({
+ * timeout(0).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
  *   return: () => console.log("return"),
@@ -49,10 +49,10 @@ const success = of([0]);
  * ```
  * @example
  * ```ts
- * import { timer } from "@observable/timer";
+ * import { timeout } from "@observable/timeout";
  *
  * const controller = new AbortController();
- * timer(-1).subscribe({
+ * timeout(-1).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
  *   return: () => console.log("return"),
@@ -64,10 +64,10 @@ const success = of([0]);
  * ```
  * @example
  * ```ts
- * import { timer } from "@observable/timer";
+ * import { timeout } from "@observable/timeout";
  *
  * const controller = new AbortController();
- * timer(NaN).subscribe({
+ * timeout(NaN).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
  *   return: () => console.log("return"),
@@ -78,7 +78,7 @@ const success = of([0]);
  * // "return"
  * ```
  */
-export function timer(milliseconds: number): Observable<0> {
+export function timeout(milliseconds: number): Observable<0> {
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
   if (typeof milliseconds !== "number") {
     throw new ParameterTypeError(0, "Number");

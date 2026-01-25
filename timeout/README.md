@@ -1,4 +1,4 @@
-# [@observable/timer](https://jsr.io/@observable/timer)
+# [@observable/timeout](https://jsr.io/@observable/timeout)
 
 Creates an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) that
 [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s a successful execution code (`0`)
@@ -21,10 +21,10 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 ## Example
 
 ```ts
-import { timer } from "@observable/timer";
+import { timeout } from "@observable/timeout";
 
 const controller = new AbortController();
-timer(1_000).subscribe({
+timeout(1_000).subscribe({
   signal: controller.signal,
   next: (value) => console.log("next", value),
   return: () => console.log("return"),
@@ -39,10 +39,10 @@ timer(1_000).subscribe({
 ## Synchronous completion with 0ms
 
 ```ts
-import { timer } from "@observable/timer";
+import { timeout } from "@observable/timeout";
 
 const controller = new AbortController();
-timer(0).subscribe({
+timeout(0).subscribe({
   signal: controller.signal,
   next: (value) => console.log("next", value),
   return: () => console.log("return"),
@@ -57,12 +57,12 @@ timer(0).subscribe({
 ## Edge cases
 
 ```ts
-import { timer } from "@observable/timer";
+import { timeout } from "@observable/timeout";
 
 const controller = new AbortController();
 
 // Negative values return immediately
-timer(-1).subscribe({
+timeout(-1).subscribe({
   signal: controller.signal,
   next: (value) => console.log("next", value),
   return: () => console.log("return"),

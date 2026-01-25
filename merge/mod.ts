@@ -8,6 +8,7 @@ import {
 import { of } from "@observable/of";
 import { pipe } from "@observable/pipe";
 import { mergeMap } from "@observable/merge-map";
+import { empty } from "@observable/empty";
 
 /**
  * Creates and returns an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) which concurrently
@@ -55,5 +56,6 @@ export function merge<Value>(
 ): Observable<Value> {
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
   if (!isIterable(sources)) throw new ParameterTypeError(0, "Iterable");
+  if (Array.isArray(sources) && !sources.length) return empty;
   return pipe(of(sources), mergeMap(identity));
 }

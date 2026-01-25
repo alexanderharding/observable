@@ -5,7 +5,7 @@ import { pipe } from "@observable/pipe";
 import { exhaustMap } from "@observable/exhaust-map";
 import { flat } from "@observable/flat";
 import { of } from "@observable/of";
-import { timer } from "@observable/timer";
+import { timeout } from "@observable/timeout";
 import { ignoreElements } from "@observable/ignore-elements";
 
 /**
@@ -53,7 +53,7 @@ export function throttle<Value>(
     if (milliseconds < 0 || Number.isNaN(milliseconds)) return empty;
     return pipe(
       source,
-      exhaustMap((value) => flat([of([value]), pipe(timer(milliseconds), ignoreElements())])),
+      exhaustMap((value) => flat([of([value]), pipe(timeout(milliseconds), ignoreElements())])),
     );
   };
 }

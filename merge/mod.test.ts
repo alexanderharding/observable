@@ -3,7 +3,8 @@ import { of } from "@observable/of";
 import { Observer } from "@observable/core";
 import { pipe } from "@observable/pipe";
 import { materialize, type ObserverNotification } from "@observable/materialize";
-import { assertEquals } from "@std/assert";
+import { assertEquals, assertStrictEquals } from "@std/assert";
+import { empty } from "@observable/empty";
 
 Deno.test("merge should merge the values", () => {
   // Arrange
@@ -28,4 +29,19 @@ Deno.test("merge should merge the values", () => {
     ["next", 9],
     ["return"],
   ]);
+});
+
+Deno.test("merge should return empty when given an empty array", () => {
+  // Arrange
+  const notifications: Array<ObserverNotification> = [];
+  const observable = merge([]);
+
+  // Act
+  pipe(observable, materialize()).subscribe(
+    new Observer((notification) => notifications.push(notification)),
+  );
+
+  // Assert
+  assertStrictEquals(observable, empty);
+  assertEquals(notifications, [["return"]]);
 });
