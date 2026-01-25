@@ -61,8 +61,14 @@ export interface BehaviorSubjectConstructor {
   readonly prototype: BehaviorSubject;
 }
 
+/**
+ * A fixed string that is used to identify the {@linkcode BehaviorSubject} class.
+ * @internal Do NOT export.
+ */
+const stringTag = "BehaviorSubject";
+
 export const BehaviorSubject: BehaviorSubjectConstructor = class<Value> {
-  readonly [Symbol.toStringTag] = "BehaviorSubject";
+  readonly [Symbol.toStringTag] = stringTag;
   readonly #subject = new ReplaySubject<Value>(1);
   readonly signal = this.#subject.signal;
 
@@ -74,23 +80,21 @@ export const BehaviorSubject: BehaviorSubjectConstructor = class<Value> {
 
   next(value: Value): void {
     if (this instanceof BehaviorSubject) this.#subject.next(value);
-    else throw new InstanceofError("this", "BehaviorSubject");
+    else throw new InstanceofError("this", stringTag);
   }
 
   return(): void {
     if (this instanceof BehaviorSubject) this.#subject.return();
-    else throw new InstanceofError("this", "BehaviorSubject");
+    else throw new InstanceofError("this", stringTag);
   }
 
   throw(value: unknown): void {
     if (this instanceof BehaviorSubject) this.#subject.throw(value);
-    else throw new InstanceofError("this", "BehaviorSubject");
+    else throw new InstanceofError("this", stringTag);
   }
 
   subscribe(observer: Observer<Value>): void {
-    if (!(this instanceof BehaviorSubject)) {
-      throw new InstanceofError("this", "BehaviorSubject");
-    }
+    if (!(this instanceof BehaviorSubject)) throw new InstanceofError("this", stringTag);
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObserver(observer)) throw new ParameterTypeError(0, "Observer");
     this.#subject.subscribe(observer);

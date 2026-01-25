@@ -22,8 +22,14 @@ export interface Observable<Value = unknown> {
   subscribe(observer: Observer<Value>): void;
 }
 
+/**
+ * A fixed string that is used to identify the {@linkcode Observable} class.
+ * @internal Do NOT export.
+ */
+const stringTag = "Observable";
+
 export const Observable: ObservableConstructor = class {
-  readonly [Symbol.toStringTag] = "Observable";
+  readonly [Symbol.toStringTag] = stringTag;
   readonly #subscribe: (observer: Observer) => void;
 
   constructor(subscribe: (observer: Observer) => void) {
@@ -36,9 +42,7 @@ export const Observable: ObservableConstructor = class {
   }
 
   subscribe(observer: Observer): void {
-    if (!(this instanceof Observable)) {
-      throw new InstanceofError("this", "Observable");
-    }
+    if (!(this instanceof Observable)) throw new InstanceofError("this", stringTag);
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObserver(observer)) throw new ParameterTypeError(0, "Observer");
     observer = toObserver(observer);

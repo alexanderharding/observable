@@ -19,8 +19,14 @@ export type Subject<Value = unknown> = Observer<Value> & Observable<Value>;
  */
 const notThrown = Symbol("Flag indicating that a value is not thrown.");
 
+/**
+ * A fixed string that is used to identify the {@linkcode Subject} class.
+ * @internal Do NOT export.
+ */
+const stringTag = "Subject";
+
 export const Subject: SubjectConstructor = class {
-  readonly [Symbol.toStringTag] = "Subject";
+  readonly [Symbol.toStringTag] = stringTag;
   /**
    * Tracking the value that was thrown by the [producer](https://jsr.io/@observable/core#producer), if any.
    */
@@ -94,23 +100,21 @@ export const Subject: SubjectConstructor = class {
 
   next(value: unknown): void {
     if (this instanceof Subject) this.#observer.next(value);
-    else throw new InstanceofError("this", "Subject");
+    else throw new InstanceofError("this", stringTag);
   }
 
   return(): void {
     if (this instanceof Subject) this.#observer.return();
-    else throw new InstanceofError("this", "Subject");
+    else throw new InstanceofError("this", stringTag);
   }
 
   throw(value: unknown): void {
     if (this instanceof Subject) this.#observer.throw(value);
-    else throw new InstanceofError("this", "Subject");
+    else throw new InstanceofError("this", stringTag);
   }
 
   subscribe(observer: Observer): void {
-    if (!(this instanceof Subject)) {
-      throw new InstanceofError("this", "Subject");
-    }
+    if (!(this instanceof Subject)) throw new InstanceofError("this", stringTag);
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObserver(observer)) throw new ParameterTypeError(0, "Observer");
     this.#observable.subscribe(observer);
