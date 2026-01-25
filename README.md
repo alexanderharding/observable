@@ -165,6 +165,27 @@ const Example: ExampleConstructor = class {
 `${new Example()}`; // "[object Example]"
 ```
 
+### Prefer [Iterables](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#the_iterable_protocol) Over [`Array`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)s
+
+Functions that accept collections
+([`Array`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array),
+[`Set`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set),
+[`Map`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map), etc.)
+should accept any
+[iterable](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#the_iterable_protocol)
+rather than a specific collection type. This is _generally_ more flexible and performant.
+
+```ts
+// ✓ Good: Accepts any iterable
+function sum(values: Iterable<number>): number;
+
+// ✗ Bad: Restricts to arrays unnecessarily
+function sum(values: Array<number>): number;
+```
+
+**Exception:** Use specific collection types when there's a concrete performance or correctness
+requirement.
+
 ### Pure Functions
 
 Functions should be pure wherever possible:

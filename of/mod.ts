@@ -49,9 +49,15 @@ import {
  * // "next" 2
  * ```
  */
+export function of<const Values extends ReadonlyArray<unknown>>(
+  values: Values,
+): Observable<Values[number]>;
 export function of<Value>(
-  // Accepting an Iterable is a design choice for performance (iterables are lazily evaluated) and
-  // flexibility (can accept any iterable, not just arrays).
+  values: Iterable<Value>,
+): Observable<Value>;
+export function of<Value>(
+  // Accepting any iterable is a design choice for performance (iterables are
+  // lazily evaluated) and flexibility.
   values: Iterable<Value>,
 ): Observable<Value> {
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();

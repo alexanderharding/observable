@@ -40,9 +40,15 @@ import { flatMap } from "@observable/flat-map";
  * // "return"
  * ```
  */
+export function flat<const Values extends ReadonlyArray<unknown>>(
+  sources: Readonly<{ [Key in keyof Values]: Observable<Values[Key]> }>,
+): Observable<Values[number]>;
 export function flat<Value>(
-  // Accepting an Iterable is a design choice for performance (iterables are lazily evaluated) and
-  // flexibility (can accept any iterable, not just arrays).
+  sources: Iterable<Observable<Value>>,
+): Observable<Value>;
+export function flat<Value>(
+  // Accepting any iterable is a design choice for performance (iterables are
+  // lazily evaluated) and flexibility.
   sources: Iterable<Observable<Value>>,
 ): Observable<Value> {
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
