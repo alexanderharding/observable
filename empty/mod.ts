@@ -1,5 +1,4 @@
-import type { Observable } from "@observable/core";
-import { of } from "@observable/of";
+import { Observable } from "@observable/core";
 
 /**
  * An [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) that calls [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)
@@ -21,4 +20,4 @@ import { of } from "@observable/of";
  * // "return"
  * ```
  */
-export const empty: Observable<never> = of([]);
+export const empty: Observable<never> = new Observable((observer) => observer.return());

@@ -13,6 +13,7 @@ import { mergeMap } from "@observable/merge-map";
 import { takeUntil } from "@observable/take-until";
 import { filter } from "@observable/filter";
 import { AsyncSubject } from "@observable/async-subject";
+import { empty } from "@observable/empty";
 
 /**
  * Creates and returns an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) that mirrors the first
@@ -58,17 +59,21 @@ export function race<Value>(
 ): Observable<Value> {
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
   if (!isIterable(sources)) throw new ParameterTypeError(0, "Iterable");
+  if (Array.isArray(sources) && !sources.length) return empty;
   return defer(() => {
     const finished = new AsyncSubject<number>();
     return pipe(
       of(sources),
       takeUntil(finished),
       mergeMap((source, index) => {
-        const observer = new Observer<Value>({ next: finish, throw: noop });
+        const controller = new AbortController();
+        const { signal } = controller;
+        const observer = new Observer<Value>({ signal, next: finish, throw: noop });
         const lost = pipe(finished, filter(isLoser));
         return pipe(source, tap(observer), takeUntil(lost));
 
         function finish(): void {
+          controller.abort();
           finished.next(index);
           finished.return();
         }

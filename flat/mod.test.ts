@@ -1,4 +1,5 @@
-import { assertEquals } from "@std/assert";
+import { assertEquals, assertStrictEquals } from "@std/assert";
+import { empty } from "@observable/empty";
 import { Observer, Subject } from "@observable/core";
 import { pipe } from "@observable/pipe";
 import { throwError } from "@observable/throw-error";
@@ -130,4 +131,19 @@ Deno.test("flat should flatten many inner, and outer throws", () => {
     ["next", "c"],
     ["throw", error],
   ]);
+});
+
+Deno.test("flat should return empty when given an empty array", () => {
+  // Arrange
+  const notifications: Array<ObserverNotification> = [];
+  const observable = flat([]);
+
+  // Act
+  pipe(observable, materialize()).subscribe(
+    new Observer((notification) => notifications.push(notification)),
+  );
+
+  // Assert
+  assertStrictEquals(observable, empty);
+  assertEquals(notifications, [["return"]]);
 });
