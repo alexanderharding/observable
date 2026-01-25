@@ -173,7 +173,7 @@ Functions that accept collections
 [`Map`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map), etc.)
 should accept any
 [iterable](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#the_iterable_protocol)
-rather than a specific collection type. This is _generally_ more flexible and improves performance.
+rather than a specific collection type. This is _generally_ more flexible and performant.
 
 ```ts
 // ✓ Good: Accepts any iterable
