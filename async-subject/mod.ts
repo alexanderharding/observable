@@ -5,7 +5,9 @@ import {
   ParameterTypeError,
 } from "@observable/internal";
 import { flat } from "@observable/flat";
+import { of } from "@observable/of";
 import { pipe } from "@observable/pipe";
+import { switchMap } from "@observable/switch-map";
 import { ignoreElements } from "@observable/ignore-elements";
 import { ReplaySubject } from "@observable/replay-subject";
 
@@ -20,9 +22,8 @@ export type AsyncSubject<Value = unknown> = Subject<Value>;
 export interface AsyncSubjectConstructor {
   /**
    * Creates and returns an object that acts as a [`Subject`](https://jsr.io/@observable/core/doc/~/Subject) that buffers the most recent
-   * [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed value until [`return`](https://jsr.io/@observable/core/doc/~/Observer.return) is called.
-   * Once [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)ed, [`next`](https://jsr.io/@observable/core/doc/~/Observer.next) will be replayed
-   * to late [`consumers`](https://jsr.io/@observable/core#consumer) upon [`subscription`](https://jsr.io/@observable/core/doc/~/Observable.subscribe).
+   * [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed value until immediately before [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)
+   * is called.
    * @example
    * ```ts
    * import { AsyncSubject } from "@observable/async-subject";
@@ -56,7 +57,6 @@ export interface AsyncSubjectConstructor {
    * });
    *
    * // Console output:
-   * // "next" 3
    * // "return"
    * ```
    */
@@ -69,10 +69,10 @@ export const AsyncSubject: AsyncSubjectConstructor = class {
   readonly [Symbol.toStringTag] = "AsyncSubject";
   readonly #subject = new ReplaySubject(1);
   readonly signal = this.#subject.signal;
-  readonly #observable = flat<unknown>([
-    pipe(this.#subject, ignoreElements()),
+  readonly #observable = pipe(
     this.#subject,
-  ]);
+    switchMap((value) => flat([pipe(this.#subject, ignoreElements()), of([value])])),
+  );
 
   constructor() {
     Object.freeze(this);
@@ -89,10 +89,8 @@ export const AsyncSubject: AsyncSubjectConstructor = class {
   }
 
   throw(value: unknown): void {
-    if (this instanceof AsyncSubject) {
-      this.#subject.next(undefined);
-      this.#subject.throw(value);
-    } else throw new InstanceofError("this", "AsyncSubject");
+    if (this instanceof AsyncSubject) this.#subject.throw(value);
+    else throw new InstanceofError("this", "AsyncSubject");
   }
 
   subscribe(observer: Observer): void {

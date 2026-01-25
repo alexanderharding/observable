@@ -1,12 +1,8 @@
 # [@observable/async-subject](https://jsr.io/@observable/async-subject)
 
 A variant of [`Subject`](https://jsr.io/@observable/core/doc/~/Subject) that buffers the most recent
-[`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed value until
-[`return`](https://jsr.io/@observable/core/doc/~/Observer.return) is called. Once
-[`return`](https://jsr.io/@observable/core/doc/~/Observer.return)ed,
-[`next`](https://jsr.io/@observable/core/doc/~/Observer.next) will be replayed to late
-[`consumers`](https://jsr.io/@observable/core#consumer) upon
-[`subscription`](https://jsr.io/@observable/core/doc/~/Observable.subscribe).
+[`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed value until immediately before
+[`return`](https://jsr.io/@observable/core/doc/~/Observer.return) is called.
 
 ## Build
 
@@ -55,7 +51,6 @@ subject.subscribe({
 });
 
 // Console output:
-// "next" 3
 // "return"
 ```
 

@@ -101,7 +101,7 @@ Deno.test("AsyncSubject should not emit if no value is nexted", () => {
   assertEquals(notifications, [["return"]]);
 });
 
-Deno.test("AsyncSubject should emit last value to late subscribers", () => {
+Deno.test("AsyncSubject should not emit last value to late subscribers", () => {
   // Arrange
   const subject = new AsyncSubject<string>();
   const notifications: Array<ObserverNotification<string>> = [];
@@ -115,7 +115,7 @@ Deno.test("AsyncSubject should emit last value to late subscribers", () => {
   );
 
   // Assert
-  assertEquals(notifications, [["next", "bar"], ["return"]]);
+  assertEquals(notifications, [["return"]]);
 });
 
 Deno.test(
@@ -254,7 +254,7 @@ Deno.test("AsyncSubject.return should pass through this subject", () => {
   assertEquals(notifications, [["next", "foo"], ["return"]]);
 });
 
-Deno.test("AsyncSubject.return should notify late subscribers", () => {
+Deno.test("AsyncSubject.return should not notify late subscribers of last value", () => {
   // Arrange
   const subject = new AsyncSubject<string>();
   const notifications: Array<ObserverNotification<string>> = [];
@@ -267,7 +267,7 @@ Deno.test("AsyncSubject.return should notify late subscribers", () => {
   );
 
   // Assert
-  assertEquals(notifications, [["next", "foo"], ["return"]]);
+  assertEquals(notifications, [["return"]]);
 });
 
 Deno.test(
