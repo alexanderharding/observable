@@ -60,6 +60,22 @@ subject.subscribe({
 // "next" 3
 // "next" 4
 // "next" 5
+
+subject.return();
+
+// Console output:
+// "return"
+// "return"
+
+subject.subscribe({
+  signal: controller.signal,
+  next: (value) => console.log("next", value),
+  return: () => console.log("return"),
+  throw: (value) => console.log("throw", value),
+});
+
+// Console output:
+// "return"
 ```
 
 # Glossary And Semantics

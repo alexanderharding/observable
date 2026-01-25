@@ -53,7 +53,6 @@ subject.subscribe({
 });
 
 // Console output:
-// "next" 1
 // "return"
 ```
 

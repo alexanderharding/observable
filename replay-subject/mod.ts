@@ -7,6 +7,7 @@ import {
 import { flat } from "@observable/flat";
 import { defer } from "@observable/defer";
 import { of } from "@observable/of";
+import { empty } from "@observable/empty";
 
 /**
  * Object type that acts as a variant of [`Subject`](https://jsr.io/@observable/core/doc/~/Subject).
@@ -63,6 +64,22 @@ export interface ReplaySubjectConstructor {
    * // "next" 3
    * // "next" 4
    * // "next" 5
+   *
+   * subject.return();
+   *
+   * // Console output:
+   * // "return"
+   * // "return"
+   *
+   * subject.subscribe({
+   *   signal: controller.signal,
+   *   next: (value) => console.log("next", value),
+   *   return: () => console.log("return"),
+   *   throw: (value) => console.log("throw", value),
+   * });
+   *
+   * // Console output:
+   * // "return"
    * ```
    */
   new <Value>(bufferSize: number): ReplaySubject<Value>;
@@ -92,6 +109,10 @@ export const ReplaySubject: ReplaySubjectConstructor = class {
     }
     Object.freeze(this);
     this.#bufferSize = Math.max(1, Math.floor(bufferSize));
+    this.signal.addEventListener("abort", () => {
+      this.#buffer.length = 0;
+      this.#bufferSnapshot = empty;
+    }, { once: true });
   }
 
   next(value: unknown): void {
