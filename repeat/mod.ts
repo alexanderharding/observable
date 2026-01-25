@@ -51,7 +51,7 @@ import { of } from "@observable/of";
  * ```
  */
 export function repeat<Value>(
-  notifier = of([undefined]),
+  notifier: Observable = of([undefined]),
 ): (source: Observable<Value>) => Observable<Value> {
   if (!isObservable(notifier)) throw new ParameterTypeError(0, "Observable");
   notifier = toObservable(notifier);
