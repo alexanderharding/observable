@@ -17,7 +17,7 @@ import { switchMap } from "@observable/switch-map";
  * import { exhaustMap } from "@observable/exhaust-map";
  * import { of } from "@observable/of";
  * import { pipe } from "@observable/pipe";
- * import { timer } from "@observable/timer";
+ * import { timeout } from "@observable/timeout";
  * import { map } from "@observable/map";
  *
  * const controller = new AbortController();
@@ -25,7 +25,7 @@ import { switchMap } from "@observable/switch-map";
  *
  * pipe(
  *   source,
- *   exhaustMap((value) => pipe(timer(100), map(() => value))),
+ *   exhaustMap((value) => pipe(timeout(100), map(() => value))),
  * ).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),

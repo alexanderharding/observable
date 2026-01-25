@@ -41,7 +41,7 @@
     "tap",
     "throttle",
     "throw-error",
-    "timer"
+    "timeout"
   ],
   "license": "MIT",
   "tasks": {

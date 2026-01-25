@@ -3,7 +3,7 @@ import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/i
 import { empty } from "@observable/empty";
 import { pipe } from "@observable/pipe";
 import { switchMap } from "@observable/switch-map";
-import { timer } from "@observable/timer";
+import { timeout } from "@observable/timeout";
 import { map } from "@observable/map";
 
 /**
@@ -52,12 +52,7 @@ export function debounce<Value>(
     }
     return pipe(
       source,
-      switchMap((value) =>
-        pipe(
-          timer(milliseconds),
-          map(() => value),
-        )
-      ),
+      switchMap((value) => pipe(timeout(milliseconds), map(() => value))),
     );
   };
 }
