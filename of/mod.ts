@@ -56,7 +56,7 @@ export function of<Value>(
   values: Iterable<Value>,
 ): Observable<Value>;
 export function of<Value>(
-  // Accepting any iterable is a design choice for performance (iterables are 
+  // Accepting any iterable is a design choice for performance (iterables are
   // lazily evaluated) and flexibility.
   values: Iterable<Value>,
 ): Observable<Value> {

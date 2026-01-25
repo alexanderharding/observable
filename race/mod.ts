@@ -52,7 +52,7 @@ export function race<Value>(
   sources: Iterable<Observable<Value>>,
 ): Observable<Value>;
 export function race<Value>(
-  // Accepting any iterable is a design choice for performance (iterables are 
+  // Accepting any iterable is a design choice for performance (iterables are
   // lazily evaluated) and flexibility.
   sources: Iterable<Observable<Value>>,
 ): Observable<Value> {
