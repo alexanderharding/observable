@@ -22,10 +22,10 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 
 ```ts
 import { share } from "@observable/share";
-import { timer } from "@observable/timer";
+import { timeout } from "@observable/timeout";
 import { pipe } from "@observable/pipe";
 
-const shared = pipe(timer(1_000), share());
+const shared = pipe(timeout(1_000), share());
 const controller = new AbortController();
 shared.subscribe({
   signal: controller.signal,

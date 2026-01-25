@@ -2,38 +2,38 @@ import { assertEquals, assertInstanceOf, assertStrictEquals, assertThrows } from
 import { empty } from "@observable/empty";
 import { never } from "@observable/never";
 import { Observer } from "@observable/core";
-import { timer } from "./mod.ts";
+import { timeout } from "./mod.ts";
 import { pipe } from "@observable/pipe";
 import { materialize, type ObserverNotification } from "@observable/materialize";
 
-Deno.test("timer should return never if the milliseconds is Infinity", () => {
+Deno.test("timeout should return never if the milliseconds is Infinity", () => {
   // Arrange
   const milliseconds = Infinity;
 
   // Act
-  const observable = timer(milliseconds);
+  const observable = timeout(milliseconds);
 
   // Assert
   assertStrictEquals(observable, never);
 });
 
-Deno.test("timer should setup a timeout", () => {
+Deno.test("timeout should setup a timeout", () => {
   // Arrange
   let overrode = true;
   const milliseconds = 1_000;
-  const timeout = Math.random();
+  const setTimeoutId = Math.random();
   const notifications: Array<ObserverNotification<0>> = [];
   const setTimeoutCalls: Array<Parameters<typeof setTimeout>> = [];
   const originalSetTimeout = globalThis.setTimeout;
   Object.defineProperty(globalThis, "setTimeout", {
     value: (...args: Parameters<typeof setTimeout>) => {
       setTimeoutCalls.push(args);
-      return overrode ? timeout : originalSetTimeout(...args);
+      return overrode ? setTimeoutId : originalSetTimeout(...args);
     },
   });
 
   // Act
-  pipe(timer(milliseconds), materialize()).subscribe(
+  pipe(timeout(milliseconds), materialize()).subscribe(
     new Observer((notification) => notifications.push(notification)),
   );
 
@@ -49,29 +49,29 @@ Deno.test("timer should setup a timeout", () => {
 });
 
 Deno.test(
-  "timer should clear timeout on unsubscription after the subscription is created",
+  "timeout should clear timeout on unsubscription after the subscription is created",
   () => {
     // Arrange
     let overrideGlobals = true;
     const milliseconds = 1_000;
-    const timeout = Math.random();
+    const setTimeoutId = Math.random();
     const notifications: Array<ObserverNotification<0>> = [];
     const setTimeoutCalls: Array<Parameters<typeof setTimeout>> = [];
     const clearTimeoutCalls: Array<Parameters<typeof clearTimeout>> = [];
     const originalSetTimeout = globalThis.setTimeout;
     const originalClearTimeout = globalThis.clearTimeout;
     const controller = new AbortController();
-    const materialized = pipe(timer(milliseconds), materialize());
+    const materialized = pipe(timeout(milliseconds), materialize());
     Object.defineProperty(globalThis, "setTimeout", {
       value: (...args: Parameters<typeof setTimeout>) => {
         setTimeoutCalls.push(args);
-        return overrideGlobals ? timeout : originalSetTimeout(...args);
+        return overrideGlobals ? setTimeoutId : originalSetTimeout(...args);
       },
     });
     Object.defineProperty(globalThis, "clearTimeout", {
       value: (...args: Parameters<typeof clearTimeout>) => {
         clearTimeoutCalls.push(args);
-        return overrideGlobals ? timeout : originalClearTimeout(...args);
+        return overrideGlobals ? setTimeoutId : originalClearTimeout(...args);
       },
     });
     // Act
@@ -86,7 +86,7 @@ Deno.test(
     // Assert
     assertStrictEquals(setTimeoutCalls.length, 1);
     assertEquals(notifications, []);
-    assertEquals(clearTimeoutCalls, [[timeout]]);
+    assertEquals(clearTimeoutCalls, [[setTimeoutId]]);
     const [[callback, delay]] = setTimeoutCalls;
     assertStrictEquals(delay, milliseconds);
     assertInstanceOf(callback, Function);
@@ -97,29 +97,29 @@ Deno.test(
 );
 
 Deno.test(
-  "timer should clear timeout on unsubscription before the subscription is created",
+  "timeout should clear timeout on unsubscription before the subscription is created",
   () => {
     // Arrange
     let overrideGlobals = true;
     const milliseconds = 1_000;
-    const timeout = Math.random();
+    const setTimeoutId = Math.random();
     const notifications: Array<ObserverNotification<0>> = [];
     const setTimeoutCalls: Array<Parameters<typeof setTimeout>> = [];
     const clearTimeoutCalls: Array<Parameters<typeof clearTimeout>> = [];
     const originalSetTimeout = globalThis.setTimeout;
     const originalClearTimeout = globalThis.clearTimeout;
     const controller = new AbortController();
-    const materialized = pipe(timer(milliseconds), materialize());
+    const materialized = pipe(timeout(milliseconds), materialize());
     Object.defineProperty(globalThis, "setTimeout", {
       value: (...args: Parameters<typeof setTimeout>) => {
         setTimeoutCalls.push(args);
-        return overrideGlobals ? timeout : originalSetTimeout(...args);
+        return overrideGlobals ? setTimeoutId : originalSetTimeout(...args);
       },
     });
     Object.defineProperty(globalThis, "clearTimeout", {
       value: (...args: Parameters<typeof clearTimeout>) => {
         clearTimeoutCalls.push(args);
-        return overrideGlobals ? timeout : originalClearTimeout(...args);
+        return overrideGlobals ? setTimeoutId : originalClearTimeout(...args);
       },
     });
     controller.abort();
@@ -140,26 +140,26 @@ Deno.test(
   },
 );
 
-Deno.test("timer should emit immediately if the milliseconds is 0", () => {
+Deno.test("timeout should emit immediately if the milliseconds is 0", () => {
   // Arrange
   let overrideGlobals = true;
-  const timeout = Math.random();
+  const setTimeoutId = Math.random();
   const notifications: Array<ObserverNotification<0>> = [];
   const setTimeoutCalls: Array<Parameters<typeof setTimeout>> = [];
   const clearTimeoutCalls: Array<Parameters<typeof clearTimeout>> = [];
   const originalSetTimeout = globalThis.setTimeout;
   const originalClearTimeout = globalThis.clearTimeout;
-  const materialized = pipe(timer(0), materialize());
+  const materialized = pipe(timeout(0), materialize());
   Object.defineProperty(globalThis, "setTimeout", {
     value: (...args: Parameters<typeof setTimeout>) => {
       setTimeoutCalls.push(args);
-      return overrideGlobals ? timeout : originalSetTimeout(...args);
+      return overrideGlobals ? setTimeoutId : originalSetTimeout(...args);
     },
   });
   Object.defineProperty(globalThis, "clearTimeout", {
     value: (...args: Parameters<typeof clearTimeout>) => {
       clearTimeoutCalls.push(args);
-      return overrideGlobals ? timeout : originalClearTimeout(...args);
+      return overrideGlobals ? setTimeoutId : originalClearTimeout(...args);
     },
   });
 
@@ -175,17 +175,17 @@ Deno.test("timer should emit immediately if the milliseconds is 0", () => {
   overrideGlobals = false;
 });
 
-Deno.test("timer should return empty if the milliseconds is NaN", () => {
+Deno.test("timeout should return empty if the milliseconds is NaN", () => {
   // Arrange / Act / Assert
-  assertStrictEquals(timer(NaN), empty);
+  assertStrictEquals(timeout(NaN), empty);
 });
 
 Deno.test(
-  "timer should throw an error if the milliseconds is not provided",
+  "timeout should throw an error if the milliseconds is not provided",
   () => {
     // Arrange / Act / Assert
     assertThrows(
-      () => timer(...([] as unknown as Parameters<typeof timer>)),
+      () => timeout(...([] as unknown as Parameters<typeof timeout>)),
       TypeError,
       "1 argument required but 0 present",
     );
@@ -193,11 +193,11 @@ Deno.test(
 );
 
 Deno.test(
-  "timer should throw an error if the milliseconds is a not of type 'Number'",
+  "timeout should throw an error if the milliseconds is a not of type 'Number'",
   () => {
     // Arrange / Act / Assert
     assertThrows(
-      () => timer("s" as unknown as number),
+      () => timeout("s" as unknown as number),
       TypeError,
       "Parameter 1 is not of type 'Number'",
     );

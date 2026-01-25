@@ -39,7 +39,7 @@ Deno.test("debounce should return empty if milliseconds is Infinity", () => {
   assertStrictEquals(result, empty);
 });
 
-Deno.test("debounce should emit value after timer expires", () => {
+Deno.test("debounce should emit value after timeout expires", () => {
   // Arrange
   let overrideGlobals = true;
   const notifications: Array<ObserverNotification<number>> = [];
