@@ -278,3 +278,63 @@ Deno.test(
     );
   },
 );
+
+Deno.test(
+  "ReplaySubject.constructor should be empty when count is negative",
+  () => {
+    // Arrange
+    const subject = new ReplaySubject<string>(-1);
+    const notifications: Array<ObserverNotification<string>> = [];
+
+    // Act
+    pipe(subject, materialize()).subscribe(
+      new Observer((notification) => notifications.push(notification)),
+    );
+
+    // Assert
+    assertStrictEquals(subject.signal.aborted, true);
+    assertEquals(notifications, [["return"]]);
+  },
+);
+
+Deno.test(
+  "ReplaySubject.constructor should be empty when count is NaN",
+  () => {
+    // Arrange
+    const subject = new ReplaySubject<string>(NaN);
+    const notifications: Array<ObserverNotification<string>> = [];
+
+    // Act
+    pipe(subject, materialize()).subscribe(
+      new Observer((notification) => notifications.push(notification)),
+    );
+
+    // Assert
+    assertStrictEquals(subject.signal.aborted, true);
+    assertEquals(notifications, [["return"]]);
+  },
+);
+
+Deno.test(
+  "ReplaySubject should not buffer when count is 0",
+  () => {
+    // Arrange
+    const subject = new ReplaySubject<string>(0);
+    const notifications: Array<ObserverNotification<string>> = [];
+
+    // Act
+    subject.next("first");
+    subject.next("second");
+    pipe(subject, materialize()).subscribe(
+      new Observer((notification) => notifications.push(notification)),
+    );
+    subject.next("third");
+    subject.return();
+
+    // Assert
+    assertEquals(notifications, [
+      ["next", "third"],
+      ["return"],
+    ]);
+  },
+);

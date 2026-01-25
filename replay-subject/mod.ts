@@ -7,6 +7,7 @@ import {
 import { flat } from "@observable/flat";
 import { defer } from "@observable/defer";
 import { of } from "@observable/of";
+import { empty } from "@observable/empty";
 
 /**
  * Object type that acts as a variant of [`Subject`](https://jsr.io/@observable/core/doc/~/Subject).
@@ -19,7 +20,7 @@ export type ReplaySubject<Value = unknown> = Subject<Value>;
 export interface ReplaySubjectConstructor {
   /**
    * Creates and returns an object that acts as a [`Subject`](https://jsr.io/@observable/core/doc/~/Subject) that replays
-   * buffered [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values upon
+   * {@linkcode count} buffered [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values upon
    * [`subscription`](https://jsr.io/@observable/core/doc/~/Observable.subscribe).
    * @example
    * ```ts
@@ -65,18 +66,18 @@ export interface ReplaySubjectConstructor {
    * // "next" 5
    * ```
    */
-  new <Value>(bufferSize: number): ReplaySubject<Value>;
+  new <Value>(count: number): ReplaySubject<Value>;
   readonly prototype: ReplaySubject;
 }
 
 export const ReplaySubject: ReplaySubjectConstructor = class {
   readonly [Symbol.toStringTag] = "ReplaySubject";
-  readonly #bufferSize: number;
+  readonly #count: number;
   /**
    * Tracking a known list of buffered values as an Observable, so we don't have to clone
    * them while iterating to prevent reentrant behaviors.
    */
-  #bufferSnapshot?: Observable;
+  #bufferSnapshot?: Observable = empty;
   readonly #buffer: Array<unknown> = [];
   readonly #subject = new Subject();
   readonly signal = this.#subject.signal;
@@ -85,24 +86,24 @@ export const ReplaySubject: ReplaySubjectConstructor = class {
     this.#subject,
   ]);
 
-  constructor(bufferSize: number) {
+  constructor(count: number) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-    if (typeof bufferSize !== "number") {
+    if (typeof count !== "number") {
       throw new ParameterTypeError(0, "Number");
     }
     Object.freeze(this);
-    this.#bufferSize = Math.max(1, Math.floor(bufferSize));
+    (this.#count = count) >= 0 ? this.#bufferSnapshot = undefined : this.return();
   }
 
   next(value: unknown): void {
     if (!(this instanceof ReplaySubject)) {
       throw new InstanceofError("this", "ReplaySubject");
     }
-    if (!this.signal.aborted) {
+    if (!this.signal.aborted && this.#count > 0) {
       // Add the next value to the buffer.
       const length = this.#buffer.push(value);
       // Trim the buffer, if needed.
-      if (length > this.#bufferSize) this.#buffer.shift();
+      if (length > this.#count) this.#buffer.shift();
       // Reset the buffer snapshot since it's now stale.
       this.#bufferSnapshot = undefined;
     }
