@@ -3,8 +3,8 @@ import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/i
 import {
   isObservable as isRxJsObservable,
   Observable as RxJsObservable,
-  Subscriber,
   type Observer as RxJsObserver,
+  Subscriber,
 } from "rxjs";
 
 /**
@@ -36,8 +36,8 @@ export function asObservable<Value>(): (source: RxJsObservable<Value>) => Observ
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isRxJsObservable(source)) throw new ParameterTypeError(0, "RxJsObservable");
     return new Observable((observer) => {
-      // Create a new subscriber to manually before subscribing to the source so we have precise 
-      // control over teardown timing which is crucial to prevent reentrancy issues. We'll swap 
+      // Create a new subscriber to manually before subscribing to the source so we have precise
+      // control over teardown timing which is crucial to prevent reentrancy issues. We'll swap
       // the deprecated Subscriber constructor with the new "operate" function when it lands in RxJS v8.
       const subscriber = new Subscriber(
         {
