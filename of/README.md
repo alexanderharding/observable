@@ -62,6 +62,61 @@ of([1, 2, 3]).subscribe({
 // "next" 2
 ```
 
+# AI Prompt
+
+Use the following prompt with AI assistants to help them understand this library:
+
+````
+You are helping me with code that uses @observable/of from the @observable library ecosystem.
+
+WHAT IT DOES:
+`of()` creates an Observable that emits values from an Iterable in order, then calls `return()`.
+
+CRITICAL DIFFERENCES FROM RxJS:
+- Takes a SINGLE Iterable argument — NOT variadic arguments
+- Observer uses `return`/`throw` — NOT `complete`/`error`
+- Unsubscription via `AbortController.abort()` — NOT `subscription.unsubscribe()`
+
+CORRECT USAGE:
+```ts
+import { of } from "@observable/of";
+
+const controller = new AbortController();
+
+// ✓ CORRECT: Pass an array (Iterable)
+of([1, 2, 3]).subscribe({
+  signal: controller.signal,
+  next: (value) => console.log(value),  // 1, 2, 3
+  return: () => console.log("done"),
+  throw: (error) => console.error(error),
+});
+
+// ✓ Also works with any Iterable
+of(new Set([1, 2, 3])).subscribe({ ... });
+of("abc").subscribe({ ... });  // 'a', 'b', 'c'
+```
+
+WRONG USAGE:
+```ts
+// ✗ WRONG: Variadic arguments don't work like RxJS
+of(1, 2, 3)  // This does NOT work!
+```
+
+EARLY UNSUBSCRIPTION:
+```ts
+const controller = new AbortController();
+of([1, 2, 3]).subscribe({
+  signal: controller.signal,
+  next(value) {
+    console.log(value);
+    if (value === 2) controller.abort();  // Stops after 2
+  },
+  return: () => console.log("done"),
+  throw: (error) => console.error(error),
+});
+```
+````
+
 # Glossary And Semantics
 
 [@observable/core](https://jsr.io/@observable/core#glossary-and-semantics)

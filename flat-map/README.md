@@ -54,6 +54,62 @@ pipe(source, flatMap((value) => observableLookup[value])).subscribe({
 // "return"
 ```
 
+# AI Prompt
+
+Use the following prompt with AI assistants to help them understand this library:
+
+````
+You are helping me with code that uses @observable/flat-map from the @observable library ecosystem.
+
+WHAT IT DOES:
+`flatMap(project)` projects each source value to an Observable and subscribes to them sequentially — waiting for each inner Observable to return before subscribing to the next. Also known as `concatMap` in RxJS.
+
+CRITICAL: This library is NOT RxJS. Key differences:
+- Observer uses `return`/`throw` — NOT `complete`/`error`
+- Unsubscription via `AbortController.abort()` — NOT `subscription.unsubscribe()`
+- `flatMap` is a standalone function used with `pipe()` — NOT a method on Observable
+- This is called `flatMap` (like `concatMap` in RxJS), NOT `flatMap` from RxJS which is `mergeMap`
+
+USAGE PATTERN:
+```ts
+import { flatMap } from "@observable/flat-map";
+import { of } from "@observable/of";
+import { pipe } from "@observable/pipe";
+
+const controller = new AbortController();
+
+const lookup = {
+  a: of([1, 2, 3]),
+  b: of([4, 5, 6]),
+  c: of([7, 8, 9]),
+};
+
+pipe(
+  of(["a", "b", "c"]),
+  flatMap((key) => lookup[key])
+).subscribe({
+  signal: controller.signal,
+  next: (value) => console.log(value),  // 1, 2, 3, 4, 5, 6, 7, 8, 9
+  return: () => console.log("done"),
+  throw: (error) => console.error(error),
+});
+```
+
+SEQUENTIAL EXECUTION:
+Each inner Observable returns before the next one starts:
+```ts
+pipe(
+  of(["file1", "file2", "file3"]),
+  flatMap((file) => uploadFile(file))  // Uploads one at a time
+).subscribe({ ... });
+```
+
+SEE ALSO:
+- `mergeMap` — subscribes to all inner Observables concurrently
+- `switchMap` — cancels previous inner Observable when new value arrives
+- `exhaustMap` — ignores new values while inner Observable is active
+````
+
 # Glossary And Semantics
 
 [@observable/core](https://jsr.io/@observable/core#glossary-and-semantics)

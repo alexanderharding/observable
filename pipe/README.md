@@ -44,6 +44,49 @@ pipe(
 // "return"
 ```
 
+# AI Prompt
+
+Use the following prompt with AI assistants to help them understand this library:
+
+````
+You are helping me with code that uses @observable/pipe from the @observable library ecosystem.
+
+WHAT IT DOES:
+`pipe()` is a utility that pipes a value through a series of unary functions. It's the core composition mechanism for building observation chains with operators.
+
+CRITICAL: This library is NOT RxJS. Key differences:
+- Observer uses `return`/`throw` — NOT `complete`/`error`
+- Unsubscription via `AbortController.abort()` — NOT `subscription.unsubscribe()`
+- Operators are standalone functions — NOT methods on Observable
+
+USAGE PATTERN:
+```ts
+import { pipe } from "@observable/pipe";
+import { of } from "@observable/of";
+import { map } from "@observable/map";
+import { filter } from "@observable/filter";
+
+const controller = new AbortController();
+
+pipe(
+  of([1, 2, 3, 4, 5]),
+  filter((value) => value % 2 === 0),
+  map((value) => value * 2),
+).subscribe({
+  signal: controller.signal,
+  next: (value) => console.log(value),
+  return: () => console.log("done"),
+  throw: (error) => console.error(error),
+});
+```
+
+KEY POINTS:
+- First argument is the initial value (typically an Observable)
+- Subsequent arguments are operator functions
+- Returns the result of piping through all functions
+- Essential for composing operators in this library
+````
+
 # Glossary And Semantics
 
 [@observable/core](https://jsr.io/@observable/core#glossary-and-semantics)
