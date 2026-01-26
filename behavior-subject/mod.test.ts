@@ -45,7 +45,7 @@ Deno.test("BehaviorSubject should be created with an initial value", () => {
 });
 
 Deno.test(
-  "BehaviorSubject.subscribe should emit latest value to subscribers",
+  "BehaviorSubject.subscribe should emit latest value to observers",
   () => {
     // Arrange
     const subject = new BehaviorSubject("initial");
@@ -62,7 +62,7 @@ Deno.test(
   },
 );
 
-Deno.test("BehaviorSubject.next should emit value to subscribers", () => {
+Deno.test("BehaviorSubject.next should emit value to observers", () => {
   // Arrange
   const subject = new BehaviorSubject("initial");
   const notifications: Array<ObserverNotification<string>> = [];
@@ -81,7 +81,7 @@ Deno.test("BehaviorSubject.next should emit value to subscribers", () => {
 });
 
 Deno.test(
-  "BehaviorSubject.next should store value for late subscribers",
+  "BehaviorSubject.next should store value for late observers",
   () => {
     // Arrange
     const subject = new BehaviorSubject("initial");
@@ -117,7 +117,7 @@ Deno.test("BehaviorSubject.throw should pass through this subject", () => {
   ]);
 });
 
-Deno.test("BehaviorSubject.throw should not notify late subscribers of current value", () => {
+Deno.test("BehaviorSubject.throw should not notify late observers of current value", () => {
   // Arrange
   const error = new Error("test error");
   const subject = new BehaviorSubject("initial");
@@ -151,7 +151,7 @@ Deno.test("BehaviorSubject.return should pass through this subject", () => {
   assertEquals(notifications, [["next", "initial"], ["return"]]);
 });
 
-Deno.test("BehaviorSubject.return should not notify late subscribers of current value", () => {
+Deno.test("BehaviorSubject.return should not notify late observers of current value", () => {
   // Arrange
   const subject = new BehaviorSubject("initial");
   const notifications: Array<ObserverNotification<string>> = [];

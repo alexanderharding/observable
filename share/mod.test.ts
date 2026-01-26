@@ -77,7 +77,7 @@ Deno.test("share should throw when source is not an Observable", () => {
   );
 });
 
-Deno.test("share should multicast values to all subscribers", () => {
+Deno.test("share should multicast values to all observers", () => {
   // Arrange
   const source = new Subject<number>();
   const shared = pipe(source, share());
@@ -100,7 +100,7 @@ Deno.test("share should multicast values to all subscribers", () => {
   assertEquals(notifications2, [["next", 1], ["next", 2], ["next", 3]]);
 });
 
-Deno.test("share should only subscribe to source once for multiple subscribers", () => {
+Deno.test("share should only subscribe to source once for multiple observers", () => {
   // Arrange
   let subscribeCount = 0;
   const source = defer(() => {
@@ -118,7 +118,7 @@ Deno.test("share should only subscribe to source once for multiple subscribers",
   assertStrictEquals(subscribeCount, 1);
 });
 
-Deno.test("share should not subscribe to source until first subscriber", () => {
+Deno.test("share should not subscribe to source until first observer", () => {
   // Arrange
   let subscribed = false;
   const source = defer(() => {
@@ -135,7 +135,7 @@ Deno.test("share should not subscribe to source until first subscriber", () => {
   assertStrictEquals(subscribed, true);
 });
 
-Deno.test("share should reset when all subscribers unsubscribe", () => {
+Deno.test("share should reset when all observers unsubscribe", () => {
   // Arrange
   let subscribeCount = 0;
   const source = defer(() => {
@@ -159,7 +159,7 @@ Deno.test("share should reset when all subscribers unsubscribe", () => {
   assertStrictEquals(subscribeCount, 2);
 });
 
-Deno.test("share should propagate throw to all subscribers", () => {
+Deno.test("share should propagate throw to all observers", () => {
   // Arrange
   const throwNotifier = new Subject<void>();
   const error = new Error("test error");
@@ -185,7 +185,7 @@ Deno.test("share should propagate throw to all subscribers", () => {
   assertEquals(notifications2, [["throw", error]]);
 });
 
-Deno.test("share should propagate return to all subscribers", () => {
+Deno.test("share should propagate return to all observers", () => {
   // Arrange
   const returnNotifier = new Subject<void>();
   const source = flat([
@@ -228,7 +228,7 @@ Deno.test("share should use custom connector", () => {
   assertStrictEquals(connectorCalled, true);
 });
 
-Deno.test("share with ReplaySubject should replay values to late subscribers", () => {
+Deno.test("share with ReplaySubject should replay values to late observers", () => {
   // Arrange
   const source = new Subject<number>();
   const shared = pipe(source, share(() => new ReplaySubject<number>(2)));
@@ -358,7 +358,7 @@ Deno.test("share should create new source subscription after source returns", ()
   assertEquals(notifications2, [["next", 2], ["return"]]);
 });
 
-Deno.test("share should not create new subject for second subscriber", () => {
+Deno.test("share should not create new subject for second observer", () => {
   // Arrange
   let connectionCount = 0;
   const connector = () => {
@@ -377,7 +377,7 @@ Deno.test("share should not create new subject for second subscriber", () => {
   assertStrictEquals(connectionCount, 1);
 });
 
-Deno.test("share should handle late subscriber joining during emission", () => {
+Deno.test("share should handle late observer joining during emission", () => {
   // Arrange
   const source = new Subject<number>();
   const shared = pipe(source, share());
@@ -400,7 +400,7 @@ Deno.test("share should handle late subscriber joining during emission", () => {
   assertEquals(notifications2, [["next", 2], ["next", 3]]);
 });
 
-Deno.test("share should handle subscriber unsubscribing during emission", () => {
+Deno.test("share should handle observer unsubscribing during emission", () => {
   // Arrange
   const source = new Subject<number>();
   const shared = pipe(source, share());

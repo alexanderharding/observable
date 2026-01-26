@@ -308,7 +308,7 @@ Deno.test("BroadcastSubject.throw should abort signal", () => {
 });
 
 Deno.test(
-  "BroadcastSubject.throw should abort signal before notifying subscribers",
+  "BroadcastSubject.throw should abort signal before notifying observers",
   () => {
     // Arrange
     const error = new Error("test error");
@@ -373,7 +373,7 @@ Deno.test("BroadcastSubject.return should close channel", () => {
 });
 
 Deno.test(
-  "BroadcastSubject.return should abort signal before notifying subscribers",
+  "BroadcastSubject.return should abort signal before notifying observers",
   () => {
     // Arrange
     const subject = new BroadcastSubject<string>("test");

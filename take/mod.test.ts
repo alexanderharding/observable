@@ -80,7 +80,7 @@ Deno.test(
   },
 );
 
-Deno.test("take should handle reentrant subscribers", () => {
+Deno.test("take should handle reentrant observers", () => {
   // Arrange
   const notifications: Array<ObserverNotification<number> | [type: "finalize"]> = [];
   const source = new Subject<number>();

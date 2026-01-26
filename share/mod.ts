@@ -8,7 +8,7 @@ import { defer } from "@observable/defer";
  * Shares a single [subscription](https://jsr.io/@observable/core#subscription) to the
  * [source](https://jsr.io/@observable/core#source)
  * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) and projects
- * it to all subscribers through a [`Subject`](https://jsr.io/@observable/core/doc/~/Subject). Resets when all
+ * it to all [consumers](https://jsr.io/@observable/core#consumer) through a [`Subject`](https://jsr.io/@observable/core/doc/~/Subject). Resets when all
  * [unsubscribe](https://jsr.io/@observable/core@0.3.0/doc/~/Observer.signal) or when the
  * [source](https://jsr.io/@observable/core#source)
  * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)
@@ -23,7 +23,7 @@ import { defer } from "@observable/defer";
  * const controller = new AbortController();
  * const shared = pipe(timeout(1_000), share());
  *
- * // Both subscribers share the same timeout — it only runs once.
+ * // Both consumers share the same timeout — it only runs once.
  * shared.subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
@@ -45,7 +45,7 @@ import { defer } from "@observable/defer";
  * ```
  *
  * @example
- * Using ReplaySubject to buffer values for subscribers that join mid-stream:
+ * Using ReplaySubject to buffer values for consumers that join mid-stream:
  * ```ts
  * import { share } from "@observable/share";
  * import { ReplaySubject } from "@observable/replay-subject";
@@ -66,7 +66,7 @@ import { defer } from "@observable/defer";
  * source.next(1);
  * source.next(2);
  *
- * // A second subscriber joins and receives the last buffered value (2) immediately.
+ * // A second consumer joins and receives the last buffered value (2) immediately.
  * shared.subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("2nd", value),

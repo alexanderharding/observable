@@ -2,8 +2,9 @@
 
 Shares a single [subscription](https://jsr.io/@observable/core#subscription) to the
 [source](https://jsr.io/@observable/core#source)
-[`Observable`](https://jsr.io/@observable/core/doc/~/Observable) projects it to all subscribers
-through a [`Subject`](https://jsr.io/@observable/core/doc/~/Subject). Resets when all
+[`Observable`](https://jsr.io/@observable/core/doc/~/Observable) and projects it to all
+[consumers](https://jsr.io/@observable/core#consumer) through a
+[`Subject`](https://jsr.io/@observable/core/doc/~/Subject). Resets when all
 [unsubscribe](https://jsr.io/@observable/core@0.3.0/doc/~/Observer.signal) or when the
 [source](https://jsr.io/@observable/core#source)
 [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)
