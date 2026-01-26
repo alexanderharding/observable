@@ -1,4 +1,4 @@
-import { assertEquals, assertInstanceOf, assertRejects, assertStrictEquals } from "@std/assert";
+import { assertEquals, assertRejects, assertStrictEquals } from "@std/assert";
 import { pipe } from "@observable/pipe";
 import { asPromise } from "./mod.ts";
 import { of } from "@observable/of";
