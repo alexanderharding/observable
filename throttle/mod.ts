@@ -1,4 +1,4 @@
-import { isObservable, type Observable } from "@observable/core";
+import { isObservable, type Observable, toObservable } from "@observable/core";
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 import { empty } from "@observable/empty";
 import { pipe } from "@observable/pipe";
@@ -7,6 +7,7 @@ import { flat } from "@observable/flat";
 import { of } from "@observable/of";
 import { timeout } from "@observable/timeout";
 import { ignoreElements } from "@observable/ignore-elements";
+import { take } from "@observable/take";
 
 /**
  * Throttles the emission of values from the [source](https://jsr.io/@observable/core#source)
@@ -51,9 +52,12 @@ export function throttle<Value>(
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
     if (milliseconds < 0 || Number.isNaN(milliseconds)) return empty;
+    if (milliseconds === Infinity) return pipe(source, take(1));
     return pipe(
       source,
-      exhaustMap((value) => flat([of([value]), pipe(timeout(milliseconds), ignoreElements())])),
+      milliseconds === 0
+        ? toObservable
+        : exhaustMap((value) => flat([of([value]), pipe(timeout(milliseconds), ignoreElements())])),
     );
   };
 }

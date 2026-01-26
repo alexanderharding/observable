@@ -228,7 +228,7 @@ Deno.test("throttle should emit all values immediately when milliseconds is 0", 
   ]);
 });
 
-Deno.test("throttle should work with Infinity milliseconds", () => {
+Deno.test("throttle should emit only first value and propagate return when milliseconds is Infinity", () => {
   // Arrange
   const notifications: Array<ObserverNotification<number>> = [];
   const source = of([1, 2, 3]);
@@ -240,5 +240,25 @@ Deno.test("throttle should work with Infinity milliseconds", () => {
   );
 
   // Assert
-  assertEquals(notifications, [["next", 1]]);
+  assertEquals(notifications, [["next", 1], ["return"]]);
+});
+
+Deno.test("throttle should emit only first value and propagate throw when milliseconds is Infinity", () => {
+  // Arrange
+  const error = new Error("test error");
+  const notifications: Array<ObserverNotification<number>> = [];
+  const source = new Observable<number>((observer) => {
+    observer.next(1);
+    observer.next(2);
+    observer.throw(error);
+  });
+  const materialized = pipe(source, throttle(Infinity), materialize());
+
+  // Act
+  materialized.subscribe(
+    new Observer((notification) => notifications.push(notification)),
+  );
+
+  // Assert - take(1) returns after first value, so throw is not propagated
+  assertEquals(notifications, [["next", 1], ["return"]]);
 });

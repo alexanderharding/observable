@@ -1,14 +1,16 @@
-import { isObservable, type Observable } from "@observable/core";
+import { isObservable, type Observable, toObservable } from "@observable/core";
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 import { empty } from "@observable/empty";
 import { pipe } from "@observable/pipe";
 import { switchMap } from "@observable/switch-map";
 import { timeout } from "@observable/timeout";
 import { map } from "@observable/map";
+import { ignoreElements } from "@observable/ignore-elements";
 
 /**
  * Debounces the emission of values from the [source](https://jsr.io/@observable/core#source)
- * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) by the specified number of {@linkcode milliseconds}.
+ * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) by the specified number of
+ * {@linkcode milliseconds}.
  * @example
  * ```ts
  * import { debounce } from "@observable/debounce";
@@ -43,16 +45,13 @@ export function debounce<Value>(
   return function debounceFn(source) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
-    if (
-      milliseconds < 0 ||
-      Number.isNaN(milliseconds) ||
-      milliseconds === Infinity
-    ) {
-      return empty;
-    }
+    if (milliseconds < 0 || Number.isNaN(milliseconds)) return empty;
+    if (milliseconds === Infinity) return pipe(source, ignoreElements());
     return pipe(
       source,
-      switchMap((value) => pipe(timeout(milliseconds), map(() => value))),
+      milliseconds === 0
+        ? toObservable
+        : switchMap((value) => pipe(timeout(milliseconds), map(() => value))),
     );
   };
 }
