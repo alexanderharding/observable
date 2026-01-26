@@ -9,6 +9,7 @@ import {
   Observable as RxJsObservable,
   of as rxJsOf,
   Subject as RxJsSubject,
+  Subscriber,
   throwError as rxJsThrowError,
 } from "rxjs";
 import { asObservable, asRxJsObservable } from "./mod.ts";
@@ -353,5 +354,105 @@ Deno.test(
     // Assert
     assertEquals(values, [1, 2, 3]);
     assertEquals(completed, true);
+  },
+);
+
+Deno.test(
+  "asRxJsObservable should abort source before calling complete to prevent reentrancy",
+  () => {
+    // Arrange
+    const events: Array<string> = [];
+    const source = new Observable<number>((observer) => {
+      observer.signal.addEventListener("abort", () => events.push("abort"), { once: true });
+      observer.next(1);
+      observer.return();
+    });
+    const rxjsObservable = pipe(source, asRxJsObservable());
+
+    // Act
+    rxjsObservable.subscribe({
+      complete: () => events.push("complete"),
+    });
+
+    // Assert
+    assertEquals(events, ["abort", "complete"]);
+  },
+);
+
+Deno.test(
+  "asRxJsObservable should abort source before calling error to prevent reentrancy",
+  () => {
+    // Arrange
+    const events: Array<string> = [];
+    const error = new Error("test");
+    const source = new Observable<number>((observer) => {
+      observer.signal.addEventListener("abort", () => events.push("abort"), { once: true });
+      observer.next(1);
+      observer.throw(error);
+    });
+    const rxjsObservable = pipe(source, asRxJsObservable());
+
+    // Act
+    rxjsObservable.subscribe({
+      error: () => events.push("error"),
+    });
+
+    // Assert
+    assertEquals(events, ["abort", "error"]);
+  },
+);
+
+Deno.test(
+  "asObservable should mark subscriber as closed during complete callback",
+  () => {
+    // Arrange
+    let subscriberClosedDuringComplete = false;
+    let capturedSubscriber: Subscriber<number> | null = null;
+    const rxjsObservable = new RxJsObservable<number>((subscriber) => {
+      capturedSubscriber = subscriber as Subscriber<number>;
+      subscriber.next(1);
+      subscriber.complete();
+    });
+    const observable = pipe(rxjsObservable, asObservable());
+
+    // Act
+    observable.subscribe(
+      new Observer({
+        return: () => {
+          subscriberClosedDuringComplete = capturedSubscriber?.closed ?? false;
+        },
+      }),
+    );
+
+    // Assert
+    assertEquals(subscriberClosedDuringComplete, true);
+  },
+);
+
+Deno.test(
+  "asObservable should mark subscriber as closed during error callback",
+  () => {
+    // Arrange
+    let subscriberClosedDuringError = false;
+    let capturedSubscriber: Subscriber<number> | null = null;
+    const error = new Error("test");
+    const rxjsObservable = new RxJsObservable<number>((subscriber) => {
+      capturedSubscriber = subscriber as Subscriber<number>;
+      subscriber.next(1);
+      subscriber.error(error);
+    });
+    const observable = pipe(rxjsObservable, asObservable());
+
+    // Act
+    observable.subscribe(
+      new Observer({
+        throw: () => {
+          subscriberClosedDuringError = capturedSubscriber?.closed ?? false;
+        },
+      }),
+    );
+
+    // Assert
+    assertEquals(subscriberClosedDuringError, true);
   },
 );
