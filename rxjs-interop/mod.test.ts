@@ -66,11 +66,7 @@ Deno.test("asObservable should handle unsubscription via abort signal", () => {
   // Arrange
   let rxjsUnsubscribed = false;
   const controller = new AbortController();
-  const rxjsObservable = new RxJsObservable<number>((subscriber) => {
-    return () => {
-      rxjsUnsubscribed = true;
-    };
-  });
+  const rxjsObservable = new RxJsObservable<number>(() => () => rxjsUnsubscribed = true);
 
   // Act
   pipe(rxjsObservable, asObservable()).subscribe(
@@ -214,8 +210,7 @@ Deno.test("asRxJsObservable should handle unsubscription", () => {
   });
 
   // Act
-  const subscription = pipe(source, asRxJsObservable()).subscribe();
-  subscription.unsubscribe();
+  pipe(source, asRxJsObservable()).subscribe().unsubscribe();
 
   // Assert
   assertEquals(sourceAborted, true);
