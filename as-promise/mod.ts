@@ -5,7 +5,14 @@ import { pipe } from "@observable/pipe";
 import { share } from "@observable/share";
 
 /**
- * Converts an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) to a {@linkcode Promise}.
+ * Projects an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) through a
+ * [`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise).
+ * Since [`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)s
+ * have no concept of [`return`](https://jsr.io/@observable/core/doc/~/Observer.return),
+ * this operator will reject with a [`TypeError`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypeError)
+ * if the [source](https://jsr.io/@observable/core#source) [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)
+ * [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s without
+ * [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ing a value.
  * @example
  * ```ts
  * import { asPromise } from "@observable/as-promise";
@@ -16,6 +23,48 @@ import { share } from "@observable/share";
  *
  * // Console output:
  * // 3
+ * ```
+ * @example
+ * ```ts
+ * import { asPromise } from "@observable/as-promise";
+ * import { throwError } from "@observable/throw-error";
+ * import { pipe } from "@observable/pipe";
+ *
+ * try {
+ *   console.log(await pipe(throwError(new Error("test")), asPromise()));
+ * } catch (error) {
+ *   console.log(error);
+ *   // Console output:
+ *   // Error: test
+ * }
+ * ```
+ * @example
+ * ```ts
+ * import { asPromise } from "@observable/as-promise";
+ * import { empty } from "@observable/empty";
+ * import { pipe } from "@observable/pipe";
+ *
+ * try {
+ *   console.log(await pipe(empty, asPromise()));
+ * } catch (error) {
+ *   console.log(error);
+ *   // Console output:
+ *   // TypeError: Cannot convert empty Observable to Promise
+ * }
+ * ```
+ * @example
+ * ```ts
+ * import { asPromise } from "@observable/as-promise";
+ * import { of } from "@observable/of";
+ * import { pipe } from "@observable/pipe";
+ *
+ * try {
+ *   console.log(await pipe(of([]), asPromise()));
+ * } catch (error) {
+ *   console.log(error);
+ *   // Console output:
+ *   // TypeError: Cannot convert empty Observable to Promise
+ * }
  * ```
  */
 export function asPromise<Value>(): (
