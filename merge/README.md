@@ -22,8 +22,6 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 ```ts
 import { merge } from "@observable/merge";
 import { Subject } from "@observable/core";
-import { of } from "@observable/of";
-import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
 const source1 = new Subject<number>();
@@ -40,10 +38,10 @@ merge([source1, source2, source3]).subscribe({
 source1.next(1); // "next" 1
 source2.next(2); // "next" 2
 source3.next(3); // "next" 3
-source1.return();
 source1.next(4); // "next" 4
-source2.return();
 source2.next(5); // "next" 5
+source1.return();
+source2.return();
 source3.return(); // "return"
 ```
 

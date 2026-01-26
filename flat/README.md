@@ -22,7 +22,6 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 ```ts
 import { flat } from "@observable/flat";
 import { of } from "@observable/of";
-import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
 

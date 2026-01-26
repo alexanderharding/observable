@@ -7,8 +7,9 @@ import {
 import { empty } from "@observable/empty";
 
 /**
- * Creates and returns an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) that emits a sequence of {@linkcode values} in order on
- * [`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe) and then [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s.
+ * Creates and returns an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) that emits a
+ * sequence of {@linkcode values} in order on [`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe)
+ * and then [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s.
  * @example
  * ```ts
  * import { of } from "@observable/of";
@@ -28,19 +29,23 @@ import { empty } from "@observable/empty";
  * // "next" 3
  * // "return"
  * ```
+ */
+export function of<const Values extends ReadonlyArray<unknown>>(
+  values: Values,
+): Observable<Values[number]>;
+/**
+ * Creates and returns an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) that emits a
+ * sequence of {@linkcode values} in order on [`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe)
+ * and then [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s.
  * @example
  * ```ts
  * import { of } from "@observable/of";
  *
- * let count = 0;
  * const controller = new AbortController();
  *
- * of([1, 2, 3]).subscribe({
+ * of(new Set([1, 1, 2, 2, 3, 3])).subscribe({
  *   signal: controller.signal,
- *   next(value) {
- *     console.log("next", value);
- *     if (value === 2) controller.abort();
- *   },
+ *   next: (value) => console.log("next", value),
  *   return: () => console.log("return"),
  *   throw: (value) => console.error("throw", value),
  * });
@@ -48,11 +53,10 @@ import { empty } from "@observable/empty";
  * // Console output:
  * // "next" 1
  * // "next" 2
+ * // "next" 3
+ * // "return"
  * ```
  */
-export function of<const Values extends ReadonlyArray<unknown>>(
-  values: Values,
-): Observable<Values[number]>;
 export function of<Value>(
   values: Iterable<Value>,
 ): Observable<Value>;
