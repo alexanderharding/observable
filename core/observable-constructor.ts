@@ -86,7 +86,10 @@ export interface ObservableConstructor {
    * ```ts
    * import { Observable } from "@observable/core";
    *
-   * const observable = new Observable<never>();
+   * const observable = new Observable<never>(() => {
+   *   // This observable intentionally never calls next, return, or throw.
+   *   // It represents an infinite stream with no values.
+   * });
    *
    * // Create a controller to trigger unsubscription if needed.
    * const controller = new AbortController();
@@ -98,7 +101,7 @@ export interface ObservableConstructor {
    *   throw: (value) => console.error("throw", value),
    * });
    *
-   * // no console output
+   * // No console output
    * ```
    */
   new <Value>(
