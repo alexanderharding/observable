@@ -1,0 +1,356 @@
+# @observable Project Rules
+
+This is a Deno monorepo implementing a **RxJS-inspired** Observable library, but it is **fundamentally different from RxJS** in many critical ways. Do NOT assume RxJS patterns apply here.
+
+---
+
+## Critical Differences From RxJS
+
+### 1. Observer Interface
+
+**This library uses `next`, `return`, and `throw` — NOT `next`, `complete`, and `error`.**
+
+```ts
+// ✓ CORRECT for this project
+interface Observer<Value> {
+  readonly signal: AbortSignal;
+  next(value: Value): void;
+  return(): void;      // <-- NOT "complete"
+  throw(value: unknown): void;  // <-- NOT "error"
+}
+
+// ✗ WRONG - this is RxJS, not this library
+interface RxJsObserver<T> {
+  next(value: T): void;
+  complete(): void;    // <-- WRONG for this library
+  error(err: any): void;  // <-- WRONG for this library
+}
+```
+
+### 2. Unsubscription via AbortController/AbortSignal
+
+**There is no `Subscription` object. Unsubscription is handled via `AbortSignal`.**
+
+```ts
+// ✓ CORRECT for this project
+const controller = new AbortController();
+observable.subscribe({
+  signal: controller.signal,  // <-- Consumer provides an AbortSignal
+  next: (value) => console.log(value),
+  return: () => console.log("done"),
+  throw: (error) => console.error(error),
+});
+// To unsubscribe:
+controller.abort();
+
+// ✗ WRONG - this is RxJS, not this library
+const subscription = observable.subscribe({...});
+subscription.unsubscribe();  // <-- This pattern does NOT exist here
+```
+
+### 3. subscribe() Returns void, Not Subscription
+
+```ts
+// ✓ CORRECT - subscribe returns void
+observable.subscribe(observer);
+
+// ✗ WRONG - there is no return value
+const sub = observable.subscribe(observer);  // sub is undefined
+```
+
+### 4. Producer Cleanup via signal.addEventListener
+
+```ts
+// ✓ CORRECT - cleanup via abort event listener
+new Observable((observer) => {
+  const timeoutId = setTimeout(() => {
+    observer.next(0);
+    observer.return();
+  }, 1000);
+  
+  observer.signal.addEventListener("abort", () => {
+    clearTimeout(timeoutId);
+  }, { once: true });
+});
+
+// ✗ WRONG - there is no teardown function return
+new Observable((observer) => {
+  const timeoutId = setTimeout(...);
+  return () => clearTimeout(timeoutId);  // <-- This does NOT work
+});
+```
+
+### 5. Operators Are Curried Functions
+
+Operators return functions that take a source Observable and return a new Observable. They are NOT methods on Observable.
+
+```ts
+// ✓ CORRECT - operators are standalone functions used with pipe()
+import { map } from "@observable/map";
+import { filter } from "@observable/filter";
+import { pipe } from "@observable/pipe";
+
+pipe(
+  of([1, 2, 3]),
+  filter((x) => x > 1),
+  map((x) => x * 2)
+).subscribe({...});
+
+// ✗ WRONG - operators are NOT methods on Observable
+of([1, 2, 3])
+  .filter((x) => x > 1)  // <-- This does NOT exist
+  .map((x) => x * 2)
+  .subscribe({...});
+```
+
+### 6. of() Takes an Iterable, Not Variadic Args
+
+```ts
+// ✓ CORRECT - of() takes a single Iterable argument
+of([1, 2, 3])
+of(new Set([1, 2, 3]))
+
+// ✗ WRONG - of() does NOT take variadic arguments like RxJS
+of(1, 2, 3)  // <-- This does NOT work
+```
+
+### 7. Correct Teardown Ordering (Fixed RxJS Bug)
+
+This library fixes a [known RxJS issue](https://github.com/ReactiveX/rxjs/issues/7443) that has persisted for nearly a decade. **Teardown (unsubscription) occurs BEFORE terminal notifications (`throw`/`return`) are delivered to the consumer.**
+
+```ts
+// In this library, the ordering is:
+// 1. Producer calls observer.return() or observer.throw()
+// 2. Observer is aborted (signal.aborted becomes true)
+// 3. THEN the return/throw handler is called
+
+// This prevents reentrancy issues where teardown logic
+// could interfere with notification delivery
+```
+
+This reversed ordering relative to RxJS ensures that:
+- Teardown logic runs before terminal notification handlers
+- Reentrancy issues are avoided
+- The observation chain is properly cleaned up before consumer handlers execute
+
+---
+
+## Observer Construction
+
+The `Observer` class can be constructed multiple ways:
+
+```ts
+// Empty observer (useful for side-effect subscriptions)
+new Observer()
+
+// Next function shorthand
+new Observer((value) => console.log(value))
+
+// Partial observer object
+new Observer({
+  next: (value) => console.log(value),
+  // return and throw are optional
+})
+
+// Full observer with consumer-controlled abort
+const controller = new AbortController();
+new Observer({
+  signal: controller.signal,
+  next: (value) => console.log(value),
+  return: () => console.log("done"),
+  throw: (error) => console.error(error),
+})
+```
+
+---
+
+## Operator Structure Pattern
+
+All operators follow this exact pattern:
+
+```ts
+import { isObservable, Observable, toObservable } from "@observable/core";
+import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
+
+export function operatorName<Value>(
+  // operator arguments (if any)
+): (source: Observable<Value>) => Observable<NewValue> {
+  // Validate arguments
+  if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
+  // More validation as needed...
+  
+  return function operatorNameFn(source) {
+    if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
+    if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
+    source = toObservable(source);
+    
+    return new Observable((observer) => {
+      source.subscribe({
+        signal: observer.signal,
+        next: (value) => {
+          // Transform/filter/handle value
+          observer.next(transformedValue);
+        },
+        return: () => observer.return(),
+        throw: (value) => observer.throw(value),
+      });
+    });
+  };
+}
+```
+
+---
+
+## Project Structure
+
+```
+observable/
+├── core/           # Observable, Observer, Subject, type guards
+├── internal/       # Shared utilities (errors, type checks, etc.)
+├── pipe/           # Composition utility
+├── [operator]/     # Each operator is its own package
+│   ├── deno.json   # Package configuration
+│   ├── mod.ts      # Main module
+│   ├── mod.test.ts # Tests
+│   └── README.md   # Documentation
+```
+
+Each package is a Deno workspace member with its own `deno.json`.
+
+---
+
+## Import Patterns
+
+```ts
+// Core types and classes
+import { Observable, Observer, Subject, isObservable, isObserver, toObservable, toObserver } from "@observable/core";
+
+// Internal utilities (only for library code, not consumers)
+import { MinimumArgumentsRequiredError, ParameterTypeError, InstanceofError, noop, isIterable, isObject, isNil, identity } from "@observable/internal";
+
+// Operators
+import { map } from "@observable/map";
+import { filter } from "@observable/filter";
+import { pipe } from "@observable/pipe";
+// etc.
+```
+
+---
+
+## Coding Standards
+
+### Immutability
+All classes, instances, and prototypes MUST be frozen:
+
+```ts
+export const Example: ExampleConstructor = class {
+  constructor() {
+    Object.freeze(this);
+  }
+};
+Object.freeze(Example);
+Object.freeze(Example.prototype);
+```
+
+### Runtime Validation
+All public functions MUST validate arguments:
+
+```ts
+function example(value: string): void {
+  if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
+  if (typeof value !== "string") throw new ParameterTypeError(0, "String");
+}
+```
+
+Methods MUST validate `this`:
+
+```ts
+next(value: unknown): void {
+  if (!(this instanceof Observer)) throw new InstanceofError("this", "Observer");
+  // ...
+}
+```
+
+### Symbol.toStringTag
+All classes MUST implement `Symbol.toStringTag`:
+
+```ts
+readonly [Symbol.toStringTag] = "Observable";
+```
+
+### Class Declaration Pattern
+Use expression-based class definitions with interface merging:
+
+```ts
+interface Example {
+  foo(): void;
+}
+
+interface ExampleConstructor {
+  new (): Example;
+  readonly prototype: Example;
+}
+
+const Example: ExampleConstructor = class {
+  readonly [Symbol.toStringTag] = "Example";
+  
+  constructor() {
+    Object.freeze(this);
+  }
+  
+  foo(): void {
+    // implementation
+  }
+};
+
+Object.freeze(Example);
+Object.freeze(Example.prototype);
+```
+
+### Testing Pattern
+Use Arrange/Act/Assert with Deno.test:
+
+```ts
+Deno.test("should describe expected behavior", () => {
+  // Arrange
+  const input = [...];
+  
+  // Act
+  const result = fn(input);
+  
+  // Assert
+  assertEquals(result, expected);
+});
+```
+
+---
+
+## Terminology
+
+| Term | Definition |
+|------|------------|
+| **Consumer** | System receiving notifications from a producer |
+| **Producer** | Source of values being pushed to consumers |
+| **Subscription** | Contract where consumer observes producer values |
+| **Notification** | Producer pushing `next`, `throw`, or `return` to consumer |
+| **Cold Observable** | Creates new producer per subscription (unicast) |
+| **Hot Observable** | Producer exists outside subscription (multicast) |
+| **Source** | Observable supplying values to another Observable |
+| **Operator** | Factory function creating an operator function |
+| **Operator Function** | Function: Observable → Observable |
+
+---
+
+## Common Mistakes to Avoid
+
+1. ❌ Using `complete()` instead of `return()`
+2. ❌ Using `error()` instead of `throw()`
+3. ❌ Expecting `subscribe()` to return a Subscription
+4. ❌ Returning a teardown function from Observable constructor
+5. ❌ Calling operators as methods on Observable
+6. ❌ Passing variadic arguments to `of()` instead of an Iterable
+7. ❌ Using RxJS-style `unsubscribe()` instead of `controller.abort()`
+8. ❌ Assuming `Subscriber` class exists (it doesn't)
+9. ❌ Forgetting to check `observer.signal.aborted` before operations
+10. ❌ Missing argument validation in public functions
+11. ❌ Assuming RxJS teardown ordering (this library aborts BEFORE terminal notification handlers run)
