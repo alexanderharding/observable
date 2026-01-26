@@ -40,6 +40,49 @@ pipe(of([1, 2, 2, 3, 1, 3]), distinct()).subscribe({
 // return
 ```
 
+# AI Prompt
+
+Use the following prompt with AI assistants to help them understand this library:
+
+````
+You are helping me with code that uses @observable/distinct from the @observable library ecosystem.
+
+WHAT IT DOES:
+`distinct()` only emits values that have never been emitted before (across the entire stream). Uses a Set internally to track seen values.
+
+CRITICAL: This library is NOT RxJS. Key differences:
+- Observer uses `return`/`throw` — NOT `complete`/`error`
+- Unsubscription via `AbortController.abort()` — NOT `subscription.unsubscribe()`
+- `distinct` is a standalone function used with `pipe()` — NOT a method on Observable
+
+USAGE PATTERN:
+```ts
+import { distinct } from "@observable/distinct";
+import { of } from "@observable/of";
+import { pipe } from "@observable/pipe";
+
+const controller = new AbortController();
+
+pipe(
+  of([1, 2, 2, 3, 1, 3, 4]),
+  distinct()
+).subscribe({
+  signal: controller.signal,
+  next: (value) => console.log(value),  // 1, 2, 3, 4
+  return: () => console.log("done"),
+  throw: (error) => console.error(error),
+});
+```
+
+BEHAVIOR:
+- First occurrence of each value is emitted
+- Subsequent duplicates are filtered out
+- Comparison is based on value identity (like Set behavior)
+
+SEE ALSO:
+- `distinctUntilChanged()` — only filters consecutive duplicates
+````
+
 # Glossary And Semantics
 
 [@observable/core](https://jsr.io/@observable/core#glossary-and-semantics)

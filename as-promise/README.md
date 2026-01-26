@@ -80,6 +80,59 @@ try {
 }
 ```
 
+# AI Prompt
+
+Use the following prompt with AI assistants to help them understand this library:
+
+````
+You are helping me with code that uses @observable/as-promise from the @observable library ecosystem.
+
+WHAT IT DOES:
+`asPromise()` converts an Observable to a Promise that resolves with the LAST emitted value. Rejects if the source throws, or if the source returns without emitting any value.
+
+CRITICAL: This library is NOT RxJS. Key differences:
+- Observer uses `return`/`throw` — NOT `complete`/`error`
+- Unsubscription via `AbortController.abort()` — NOT `subscription.unsubscribe()`
+- `asPromise` is a standalone function used with `pipe()` — NOT a method on Observable
+
+USAGE PATTERN:
+```ts
+import { asPromise } from "@observable/as-promise";
+import { of } from "@observable/of";
+import { pipe } from "@observable/pipe";
+
+const result = await pipe(of([1, 2, 3]), asPromise());
+console.log(result);  // 3 (last value)
+```
+
+ERROR HANDLING:
+```ts
+import { throwError } from "@observable/throw-error";
+
+try {
+  await pipe(throwError(new Error("test")), asPromise());
+} catch (error) {
+  console.error(error);  // Error: test
+}
+```
+
+EMPTY OBSERVABLE REJECTION:
+```ts
+import { empty } from "@observable/empty";
+
+try {
+  await pipe(empty, asPromise());
+} catch (error) {
+  console.error(error);  // TypeError: Cannot convert empty Observable to Promise
+}
+```
+
+IMPORTANT:
+- Resolves with the LAST value, not the first
+- Rejects with TypeError if Observable returns without emitting
+- Rejects with the thrown value if Observable throws
+````
+
 # Glossary And Semantics
 
 [@observable/core](https://jsr.io/@observable/core#glossary-and-semantics)

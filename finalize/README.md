@@ -44,6 +44,72 @@ pipe(of([1, 2, 3]), finalize(() => console.log("finalized"))).subscribe({
 // "finalized"
 ```
 
+# AI Prompt
+
+Use the following prompt with AI assistants to help them understand this library:
+
+````
+You are helping me with code that uses @observable/finalize from the @observable library ecosystem.
+
+WHAT IT DOES:
+`finalize(callback)` calls the callback when the subscription ends for ANY reason — `return()`, `throw()`, or unsubscription via `abort()`. Always runs as a side-effect AFTER the terminal event.
+
+CRITICAL: This library is NOT RxJS. Key differences:
+- Observer uses `return`/`throw` — NOT `complete`/`error`
+- Unsubscription via `AbortController.abort()` — NOT `subscription.unsubscribe()`
+- `finalize` is a standalone function used with `pipe()` — NOT a method on Observable
+
+USAGE PATTERN:
+```ts
+import { finalize } from "@observable/finalize";
+import { of } from "@observable/of";
+import { pipe } from "@observable/pipe";
+
+const controller = new AbortController();
+
+pipe(
+  of([1, 2, 3]),
+  finalize(() => console.log("finalized"))
+).subscribe({
+  signal: controller.signal,
+  next: (value) => console.log(value),
+  return: () => console.log("return"),
+  throw: (error) => console.error("throw", error),
+});
+// Output:
+// 1
+// 2
+// 3
+// "return"
+// "finalized"
+```
+
+CLEANUP ON UNSUBSCRIPTION:
+```ts
+pipe(
+  interval(1000),
+  finalize(() => console.log("Cleaned up!"))
+).subscribe({
+  signal: controller.signal,
+  next: (value) => console.log(value),
+  ...
+});
+
+controller.abort();  // Triggers: "Cleaned up!"
+```
+
+COMMON USE — Resource cleanup:
+```ts
+pipe(
+  webSocketConnection,
+  finalize(() => {
+    console.log("Closing connection...");
+    socket.close();
+  })
+).subscribe({ ... });
+```
+````
+
 # Glossary And Semantics
 
 [@observable/core](https://jsr.io/@observable/core#glossary-and-semantics)

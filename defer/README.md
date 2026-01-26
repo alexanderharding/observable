@@ -57,6 +57,65 @@ observable.subscribe({
 // "return"
 ```
 
+# AI Prompt
+
+Use the following prompt with AI assistants to help them understand this library:
+
+````
+You are helping me with code that uses @observable/defer from the @observable library ecosystem.
+
+WHAT IT DOES:
+`defer(factory)` creates an Observable that calls a factory function on each subscription to create a new Observable. Useful for lazy evaluation and per-subscription state.
+
+CRITICAL: This library is NOT RxJS. Key differences:
+- Observer uses `return`/`throw` — NOT `complete`/`error`
+- Unsubscription via `AbortController.abort()` — NOT `subscription.unsubscribe()`
+
+USAGE PATTERN:
+```ts
+import { defer } from "@observable/defer";
+import { of } from "@observable/of";
+
+const controller = new AbortController();
+let values = [1, 2, 3];
+
+const deferred = defer(() => of(values));
+
+deferred.subscribe({
+  signal: controller.signal,
+  next: (value) => console.log(value),  // 1, 2, 3
+  return: () => console.log("done"),
+  throw: (error) => console.error(error),
+});
+
+values = [4, 5, 6];
+
+deferred.subscribe({
+  signal: controller.signal,
+  next: (value) => console.log(value),  // 4, 5, 6
+  return: () => console.log("done"),
+  throw: (error) => console.error(error),
+});
+```
+
+LAZY EVALUATION:
+The factory is called at subscription time, not creation time:
+```ts
+const deferred = defer(() => {
+  console.log("Factory called!");  // Only when subscribed
+  return of([Date.now()]);
+});
+// Factory not called yet...
+deferred.subscribe({ ... });  // "Factory called!"
+```
+
+USE CASES:
+- Fresh timestamp/random values per subscription
+- Per-subscription state initialization
+- Lazy resource allocation
+- Conditional Observable creation
+````
+
 # Glossary And Semantics
 
 [@observable/core](https://jsr.io/@observable/core#glossary-and-semantics)

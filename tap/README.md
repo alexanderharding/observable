@@ -52,6 +52,65 @@ pipe(
 // "return"
 ```
 
+# AI Prompt
+
+Use the following prompt with AI assistants to help them understand this library:
+
+````
+You are helping me with code that uses @observable/tap from the @observable library ecosystem.
+
+WHAT IT DOES:
+`tap()` performs side-effects on the source Observable without modifying the values. Useful for debugging, logging, or triggering external actions.
+
+CRITICAL: This library is NOT RxJS. Key differences:
+- Observer uses `return`/`throw` — NOT `complete`/`error`
+- Unsubscription via `AbortController.abort()` — NOT `subscription.unsubscribe()`
+- `tap` is a standalone function used with `pipe()` — NOT a method on Observable
+
+USAGE PATTERN:
+```ts
+import { tap } from "@observable/tap";
+import { of } from "@observable/of";
+import { pipe } from "@observable/pipe";
+
+const controller = new AbortController();
+
+pipe(
+  of([1, 2, 3]),
+  tap({
+    signal: controller.signal,
+    next: (value) => console.log("tapped:", value),
+    return: () => console.log("tap return"),
+    throw: (error) => console.error("tap error:", error),
+  }),
+).subscribe({
+  signal: controller.signal,
+  next: (value) => console.log("received:", value),
+  return: () => console.log("done"),
+  throw: (error) => console.error(error),
+});
+```
+
+TAP HAS ITS OWN SIGNAL:
+The tap observer can have its own AbortController, allowing you to stop tapping without stopping the subscription:
+```ts
+const tapController = new AbortController();
+const subscriptionController = new AbortController();
+
+pipe(
+  source,
+  tap({
+    signal: tapController.signal,  // Independent control
+    next: (value) => { if (value === 2) tapController.abort(); },
+  }),
+).subscribe({
+  signal: subscriptionController.signal,
+  next: (value) => console.log(value),  // Still receives all values
+  ...
+});
+```
+````
+
 # Glossary And Semantics
 
 [@observable/core](https://jsr.io/@observable/core#glossary-and-semantics)

@@ -354,3 +354,30 @@ Deno.test("should describe expected behavior", () => {
 9. ❌ Forgetting to check `observer.signal.aborted` before operations
 10. ❌ Missing argument validation in public functions
 11. ❌ Assuming RxJS teardown ordering (this library aborts BEFORE terminal notification handlers run)
+
+---
+
+## Documentation Style Guidelines
+
+### Terminology
+- ✅ Say Observables "return" — NOT "complete"
+- ✅ Say Observables "throw" — NOT "error"
+- ✅ "The source returns" — NOT "The source completes"
+- ✅ "After the Observable returns" — NOT "After the Observable completes"
+
+### Variable Naming
+- ❌ Do NOT use Finnish notation (the `$` suffix for Observables)
+- ✅ Use descriptive names: `source`, `notifier`, `input`, `result`
+- ❌ Avoid: `source$`, `input$`, `click$`, `destroy$`
+
+### Examples
+```ts
+// ✓ CORRECT variable naming
+const source = new Subject<number>();
+const notifier = new Subject<void>();
+const controller = new AbortController();
+
+// ✗ WRONG - Finnish notation
+const source$ = new Subject<number>();
+const click$ = fromEvent(button, "click");
+```

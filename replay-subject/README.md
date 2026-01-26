@@ -78,6 +78,70 @@ subject.subscribe({
 // "return"
 ```
 
+# AI Prompt
+
+Use the following prompt with AI assistants to help them understand this library:
+
+````
+You are helping me with code that uses @observable/replay-subject from the @observable library ecosystem.
+
+WHAT IT DOES:
+`ReplaySubject` is a Subject that buffers the last N emitted values and replays them to new subscribers upon subscription.
+
+CRITICAL: This library is NOT RxJS. Key differences:
+- Observer uses `return`/`throw` — NOT `complete`/`error`
+- Unsubscription via `AbortController.abort()` — NOT `subscription.unsubscribe()`
+- Subject uses `next()`, `return()`, `throw()` — NOT `next()`, `complete()`, `error()`
+
+USAGE PATTERN:
+```ts
+import { ReplaySubject } from "@observable/replay-subject";
+
+const subject = new ReplaySubject<number>(3);  // Buffer size of 3
+const controller = new AbortController();
+
+subject.next(1);  // Buffered
+subject.next(2);  // Buffered
+subject.next(3);  // Buffered
+subject.next(4);  // Buffered (1 is trimmed)
+
+subject.subscribe({
+  signal: controller.signal,
+  next: (value) => console.log(value),  // 2, 3, 4
+  return: () => console.log("done"),
+  throw: (error) => console.error(error),
+});
+
+subject.next(5);  // logs: 5 (also buffered, 2 is trimmed)
+```
+
+NEW SUBSCRIBER GETS BUFFER:
+```ts
+// Later subscriber
+subject.subscribe({
+  signal: controller.signal,
+  next: (value) => console.log("New:", value),  // 3, 4, 5
+  ...
+});
+```
+
+AFTER RETURN:
+New subscribers to a ReplaySubject that has already returned receive only `return()`:
+```ts
+subject.return();
+subject.subscribe({
+  next: (value) => console.log(value),  // Never called
+  return: () => console.log("done"),     // Called immediately
+  ...
+});
+```
+
+SEE ALSO:
+- `Subject` — no replay, only future values
+- `BehaviorSubject` — requires initial value, replays current value
+- `AsyncSubject` — emits last value only on return
+````
+
 # Glossary And Semantics
 
 [@observable/core](https://jsr.io/@observable/core#glossary-and-semantics)
