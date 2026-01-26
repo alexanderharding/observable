@@ -28,15 +28,39 @@ Deno.test("debounce should return empty if milliseconds is NaN", () => {
   assertStrictEquals(result, empty);
 });
 
-Deno.test("debounce should return empty if milliseconds is Infinity", () => {
+Deno.test("debounce should ignore values but propagate return when milliseconds is Infinity", () => {
   // Arrange
+  const notifications: Array<ObserverNotification<number>> = [];
   const source = of([1, 2, 3]);
+  const materialized = pipe(source, debounce(Infinity), materialize());
 
   // Act
-  const result = pipe(source, debounce(Infinity));
+  materialized.subscribe(
+    new Observer((notification) => notifications.push(notification)),
+  );
 
   // Assert
-  assertStrictEquals(result, empty);
+  assertEquals(notifications, [["return"]]);
+});
+
+Deno.test("debounce should ignore values but propagate throw when milliseconds is Infinity", () => {
+  // Arrange
+  const error = new Error("test error");
+  const notifications: Array<ObserverNotification<number>> = [];
+  const source = new Observable<number>((observer) => {
+    observer.next(1);
+    observer.next(2);
+    observer.throw(error);
+  });
+  const materialized = pipe(source, debounce(Infinity), materialize());
+
+  // Act
+  materialized.subscribe(
+    new Observer((notification) => notifications.push(notification)),
+  );
+
+  // Assert
+  assertEquals(notifications, [["throw", error]]);
 });
 
 Deno.test("debounce should emit value after timeout expires", () => {
