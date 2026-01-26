@@ -26,7 +26,12 @@ export function asPromise<Value>(): (
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
     const { resolve, reject, promise } = Promise.withResolvers<Value>();
     pipe(source, share(() => new AsyncSubject())).subscribe(
-      new Observer<Value>({ next: resolve, throw: reject }),
+      new Observer<Value>({
+        next: resolve,
+        // Reject on return to avoid hanging promises if the source is empty.
+        return: () => reject(new TypeError("Cannot convert empty Observable to Promise")),
+        throw: reject,
+      }),
     );
     return promise;
   };

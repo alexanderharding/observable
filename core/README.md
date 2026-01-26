@@ -267,8 +267,21 @@ type Customer = Readonly<Record<"email" | "name", string>>;
 // No errors! It's that easy
 class CustomerService implements Observable<Customer> {
   readonly #customer = new Observable<Customer>(async (observer) => {
-    const response = await fetch("https://www.example.com/api/customer");
-    return await response.json();
+    try {
+      const response = await fetch("https://www.example.com/api/customer", {
+        signal: observer.signal,
+      });
+      observer.next(await response.json());
+      observer.return();
+    } catch (error) {
+      if (error instanceof DOMException && error.name === "AbortError") {
+        // The consumer has likely unsubscribed which should not be treated
+        // as an error in Observables. Though we probably don't need to,
+        // we'll return the observer just in-case the AbortError was not a
+        // result of unsubscription.
+        observer.return();
+      } else observer.throw(error);
+    }
   });
 
   subscribe(observer: Observer<Customer>): void {

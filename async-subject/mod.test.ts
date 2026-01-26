@@ -101,7 +101,7 @@ Deno.test("AsyncSubject should not emit if no value is nexted", () => {
   assertEquals(notifications, [["return"]]);
 });
 
-Deno.test("AsyncSubject should not emit last value to late subscribers", () => {
+Deno.test("AsyncSubject should not emit last value to late observers", () => {
   // Arrange
   const subject = new AsyncSubject<string>();
   const notifications: Array<ObserverNotification<string>> = [];
@@ -119,7 +119,7 @@ Deno.test("AsyncSubject should not emit last value to late subscribers", () => {
 });
 
 Deno.test(
-  "AsyncSubject should not emit to late subscribers if no value was nexted",
+  "AsyncSubject should not emit to late observers if no value was nexted",
   () => {
     // Arrange
     const subject = new AsyncSubject<string>();
@@ -169,7 +169,7 @@ Deno.test("AsyncSubject.throw should pass through this subject", () => {
   assertEquals(notifications, [["throw", error]]);
 });
 
-Deno.test("AsyncSubject.throw should notify late subscribers", () => {
+Deno.test("AsyncSubject.throw should notify late observers", () => {
   // Arrange
   let overrideGlobals = true;
   const error = new Error("test error");
@@ -254,7 +254,7 @@ Deno.test("AsyncSubject.return should pass through this subject", () => {
   assertEquals(notifications, [["next", "foo"], ["return"]]);
 });
 
-Deno.test("AsyncSubject.return should not notify late subscribers of last value", () => {
+Deno.test("AsyncSubject.return should not notify late observers of last value", () => {
   // Arrange
   const subject = new AsyncSubject<string>();
   const notifications: Array<ObserverNotification<string>> = [];

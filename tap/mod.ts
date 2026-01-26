@@ -24,7 +24,7 @@ import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/i
  *   tap({
  *     signal: tapController.signal,
  *     next(value) {
- *       if (value === 2) controller.abort();
+ *       if (value === 2) tapController.abort();
  *       console.log("tap next", value);
  *     },
  *     return: () => console.log("tap return"),

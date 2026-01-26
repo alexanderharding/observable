@@ -68,7 +68,7 @@ Deno.test(
 );
 
 Deno.test(
-  "ReplaySubject.subscribe should emit buffered values to subscribers",
+  "ReplaySubject.subscribe should emit buffered values to observers",
   () => {
     // Arrange
     const subject = new ReplaySubject<string>(2);
@@ -115,7 +115,7 @@ Deno.test(
 );
 
 Deno.test(
-  "ReplaySubject.subscribe should not emit buffered values to late subscribers",
+  "ReplaySubject.subscribe should not emit buffered values to late observers",
   () => {
     // Arrange
     const subject = new ReplaySubject<string>(2);
@@ -136,7 +136,7 @@ Deno.test(
   },
 );
 
-Deno.test("ReplaySubject.next should emit values to subscribers", () => {
+Deno.test("ReplaySubject.next should emit values to observers", () => {
   // Arrange
   const subject = new ReplaySubject<string>(2);
   const notifications: Array<ObserverNotification<string>> = [];
@@ -155,7 +155,7 @@ Deno.test("ReplaySubject.next should emit values to subscribers", () => {
   ]);
 });
 
-Deno.test("ReplaySubject.next should store values for late subscribers", () => {
+Deno.test("ReplaySubject.next should store values for late observers", () => {
   // Arrange
   const subject = new ReplaySubject<string>(2);
   const notifications: Array<ObserverNotification<string>> = [];
@@ -196,7 +196,7 @@ Deno.test("ReplaySubject.throw should pass through this subject", () => {
   ]);
 });
 
-Deno.test("ReplaySubject.throw should not notify late subscribers of buffered values", () => {
+Deno.test("ReplaySubject.throw should not notify late observers of buffered values", () => {
   // Arrange
   const error = new Error("test error");
   const subject = new ReplaySubject<string>(2);
@@ -232,7 +232,7 @@ Deno.test("ReplaySubject.return should pass through this subject", () => {
   assertEquals(notifications, [["next", "foo"], ["return"]]);
 });
 
-Deno.test("ReplaySubject.return should not notify late subscribers of buffered values", () => {
+Deno.test("ReplaySubject.return should not notify late observers of buffered values", () => {
   // Arrange
   const subject = new ReplaySubject<string>(2);
   const notifications: Array<ObserverNotification<string>> = [];

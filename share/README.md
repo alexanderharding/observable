@@ -1,9 +1,15 @@
 # [@observable/share](https://jsr.io/@observable/share)
 
-Converts an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) to an
-[`Observable`](https://jsr.io/@observable/core/doc/~/Observable) that shares a single subscription
-to the [source](https://jsr.io/@observable/core#source)
-[`Observable`](https://jsr.io/@observable/core/doc/~/Observable).
+Shares a single [subscription](https://jsr.io/@observable/core#subscription) to the
+[source](https://jsr.io/@observable/core#source)
+[`Observable`](https://jsr.io/@observable/core/doc/~/Observable) and projects it to all
+[consumers](https://jsr.io/@observable/core#consumer) through a
+[`Subject`](https://jsr.io/@observable/core/doc/~/Subject). Resets when all
+[unsubscribe](https://jsr.io/@observable/core@0.3.0/doc/~/Observer.signal) or when the
+[source](https://jsr.io/@observable/core#source)
+[`Observable`](https://jsr.io/@observable/core/doc/~/Observable)
+[`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s or
+[`throw`](https://jsr.io/@observable/core/doc/~/Observer.throw)s.
 
 ## Build
 

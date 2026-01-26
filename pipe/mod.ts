@@ -859,7 +859,7 @@ export function pipe<
   fn24: (value: W) => X,
   fn25: (value: X) => Y,
   fn26: (value: Y) => Z,
-  ...fns: ReadonlyArray<(value: P) => unknown>
+  ...fns: ReadonlyArray<(value: Z) => unknown>
 ): unknown;
 export function pipe<Value>(
   source: Value,
