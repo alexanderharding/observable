@@ -9,7 +9,7 @@ import {
   Observable as RxJsObservable,
   of as rxJsOf,
   Subject as RxJsSubject,
-  Subscriber,
+  type Subscriber,
   throwError as rxJsThrowError,
 } from "rxjs";
 import { asObservable, asRxJsObservable } from "./mod.ts";
