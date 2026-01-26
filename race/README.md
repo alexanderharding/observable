@@ -41,7 +41,6 @@ source1.next(2);
 source3.next(3);
 source1.return();
 source2.next(4); // "next" 4
-source2.return();
 source3.next(5);
 source2.return(); // "return"
 ```
