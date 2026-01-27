@@ -1,7 +1,7 @@
 # [@observable/drop](https://jsr.io/@observable/drop)
 
-Drops the first {@linkcode count} of [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed
-values from the [source](https://jsr.io/@observable/core#source)
+Drops the first count of [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values from
+the [source](https://jsr.io/@observable/core#source)
 [`Observable`](https://jsr.io/@observable/core/doc/~/Observable).
 
 ## Build

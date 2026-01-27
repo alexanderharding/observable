@@ -1,7 +1,7 @@
 # [@observable/take](https://jsr.io/@observable/take)
 
-Takes the first {@linkcode count} [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed
-values from the [source](https://jsr.io/@observable/core#source)
+Takes the first count of [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values from
+the [source](https://jsr.io/@observable/core#source)
 [`Observable`](https://jsr.io/@observable/core/doc/~/Observable).
 
 ## Build

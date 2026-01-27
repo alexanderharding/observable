@@ -2,11 +2,9 @@ import { Observable, toObservable } from "@observable/core";
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 
 /**
- * Creates an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) that, on
- * [`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe), calls an
- * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) {@linkcode factory} to
- * get an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) for each
- * [`Observer`](https://jsr.io/@observable/core/doc/~/Observer).
+ * Calls an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) factory
+ * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) for each
+ * [subscription](https://jsr.io/@observable/core#subscription).
  * @example
  * ```ts
  * import { defer } from "@observable/defer";
