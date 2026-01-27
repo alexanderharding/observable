@@ -1,12 +1,7 @@
 # [@observable/finalize](https://jsr.io/@observable/finalize)
 
-The [producer](https://jsr.io/@observable/core#producer) is notifying the
-[consumer](https://jsr.io/@observable/core#consumer) that it's done
-[`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ing values for any reason, and will
-send no more values. Finalization, if it occurs, will always happen as a side-effect _after_
-[`return`](https://jsr.io/@observable/core/doc/~/Observer.return),
-[`throw`](https://jsr.io/@observable/core/doc/~/Observer.throw), or
-[`unsubscribe`](https://jsr.io/@observable/core/doc/~/Observer.signal) (whichever comes last).
+The [consumer](https://jsr.io/@observable/core#consumer) is telling the
+[producer](https://jsr.io/@observable/core#producer) it's no longer interested in receiving values.
 
 ## Build
 
@@ -40,8 +35,8 @@ pipe(of([1, 2, 3]), finalize(() => console.log("finalized"))).subscribe({
 // "next" 1
 // "next" 2
 // "next" 3
-// "return"
 // "finalized"
+// "return"
 ```
 
 # AI Prompt
@@ -52,7 +47,7 @@ Use the following prompt with AI assistants to help them understand this library
 You are helping me with code that uses @observable/finalize from the @observable library ecosystem.
 
 WHAT IT DOES:
-`finalize(callback)` calls the callback when the subscription ends for ANY reason — `return()`, `throw()`, or unsubscription via `abort()`. Always runs as a side-effect AFTER the terminal event.
+`finalize(teardown)` calls the teardown function when the subscription ends for ANY reason — `return()`, `throw()`, or unsubscription via `abort()`. Teardown runs BEFORE the terminal notification is delivered.
 
 CRITICAL: This library is NOT RxJS. Key differences:
 - Observer uses `return`/`throw` — NOT `complete`/`error`
@@ -80,8 +75,8 @@ pipe(
 // 1
 // 2
 // 3
-// "return"
 // "finalized"
+// "return"
 ```
 
 CLEANUP ON UNSUBSCRIPTION:

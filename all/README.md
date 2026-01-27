@@ -1,11 +1,14 @@
 # [@observable/all](https://jsr.io/@observable/all)
 
-Creates and returns an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) whose
-[`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values are calculated from the
-latest [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values of each of its
-[sources](https://jsr.io/@observable/core#source). If any of the
-[sources](https://jsr.io/@observable/core#source) are empty, the returned
-[`Observable`](https://jsr.io/@observable/core/doc/~/Observable) will also be empty.
+Calculates [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values from the latest
+[`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed value of each
+[source](https://jsr.io/@observable/core#source)
+[`Observable`](https://jsr.io/@observable/core/doc/~/Observable). If any of the
+[sources](https://jsr.io/@observable/core#source)
+[`return`](https://jsr.io/@observable/core/doc/~/Observer.return) without
+[`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ing a value, the returned
+[`Observable`](https://jsr.io/@observable/core/doc/~/Observable) will also
+[`return`](https://jsr.io/@observable/core/doc/~/Observer.return).
 
 ## Build
 

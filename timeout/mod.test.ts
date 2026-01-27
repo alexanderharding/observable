@@ -22,7 +22,7 @@ Deno.test("timeout should setup a timeout", () => {
   let overrode = true;
   const milliseconds = 1_000;
   const setTimeoutId = Math.random();
-  const notifications: Array<ObserverNotification<0>> = [];
+  const notifications: Array<ObserverNotification<void>> = [];
   const setTimeoutCalls: Array<Parameters<typeof setTimeout>> = [];
   const originalSetTimeout = globalThis.setTimeout;
   Object.defineProperty(globalThis, "setTimeout", {
@@ -44,7 +44,7 @@ Deno.test("timeout should setup a timeout", () => {
   assertStrictEquals(delay, milliseconds);
   assertInstanceOf(callback, Function);
   callback();
-  assertEquals(notifications, [["next", 0], ["return"]]);
+  assertEquals(notifications, [["next", undefined], ["return"]]);
   overrode = false;
 });
 
@@ -55,7 +55,7 @@ Deno.test(
     let overrideGlobals = true;
     const milliseconds = 1_000;
     const setTimeoutId = Math.random();
-    const notifications: Array<ObserverNotification<0>> = [];
+    const notifications: Array<ObserverNotification<void>> = [];
     const setTimeoutCalls: Array<Parameters<typeof setTimeout>> = [];
     const clearTimeoutCalls: Array<Parameters<typeof clearTimeout>> = [];
     const originalSetTimeout = globalThis.setTimeout;
@@ -103,7 +103,7 @@ Deno.test(
     let overrideGlobals = true;
     const milliseconds = 1_000;
     const setTimeoutId = Math.random();
-    const notifications: Array<ObserverNotification<0>> = [];
+    const notifications: Array<ObserverNotification<void>> = [];
     const setTimeoutCalls: Array<Parameters<typeof setTimeout>> = [];
     const clearTimeoutCalls: Array<Parameters<typeof clearTimeout>> = [];
     const originalSetTimeout = globalThis.setTimeout;
@@ -144,7 +144,7 @@ Deno.test("timeout should emit immediately if the milliseconds is 0", () => {
   // Arrange
   let overrideGlobals = true;
   const setTimeoutId = Math.random();
-  const notifications: Array<ObserverNotification<0>> = [];
+  const notifications: Array<ObserverNotification<void>> = [];
   const setTimeoutCalls: Array<Parameters<typeof setTimeout>> = [];
   const clearTimeoutCalls: Array<Parameters<typeof clearTimeout>> = [];
   const originalSetTimeout = globalThis.setTimeout;
@@ -169,7 +169,7 @@ Deno.test("timeout should emit immediately if the milliseconds is 0", () => {
   );
 
   // Assert
-  assertEquals(notifications, [["next", 0], ["return"]]);
+  assertEquals(notifications, [["next", undefined], ["return"]]);
   assertEquals(setTimeoutCalls, []);
   assertEquals(clearTimeoutCalls, []);
   overrideGlobals = false;

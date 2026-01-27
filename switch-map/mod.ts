@@ -6,10 +6,12 @@ import { takeUntil } from "@observable/take-until";
 import { mergeMap } from "@observable/merge-map";
 
 /**
- * {@linkcode project|Projects} each [source](https://jsr.io/@observable/core#source) value to an
- * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) which is merged in the output
- * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable), emitting values only from the most
- * recently {@linkcode project|projected} [`Observable`](https://jsr.io/@observable/core/doc/~/Observable).
+ * {@linkcode project|Projects} each [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed
+ * value from the [source](https://jsr.io/@observable/core#source)
+ * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) to an inner
+ * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable), [subscribing](https://jsr.io/@observable/core/doc/~/Observable.subscribe) only to the most
+ * recently {@linkcode project|projected} inner [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)
+ * and canceling any previous inner [subscription](https://jsr.io/@observable/core#subscription).
  * @example
  * ```ts
  * import { BehaviorSubject } from "@observable/behavior-subject";

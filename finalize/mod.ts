@@ -2,8 +2,8 @@ import { isObservable, Observable, toObservable } from "@observable/core";
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 
 /**
- * The [producer](https://jsr.io/@observable/core#producer) is notifying the [consumer](https://jsr.io/@observable/core#consumer)
- * that it's done [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ing, values for any reason, and will send no more values.
+ * The [consumer](https://jsr.io/@observable/core#consumer) is telling the [producer](https://jsr.io/@observable/core#producer)
+ * it's no longer interested in receiving {@linkcode Value|values}.
  * @example
  * ```ts
  * import { finalize } from "@observable/finalize";

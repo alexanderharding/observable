@@ -1,8 +1,8 @@
 # [@observable/materialize](https://jsr.io/@observable/materialize)
 
-Represents all of the notifications from the [source](https://jsr.io/@observable/core#source) as
-[`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values marked with their original
-types within notification entries. This is especially useful for testing, debugging, and logging.
+Projects all of the [`Observer`](https://jsr.io/@observable/core/doc/~/Observer)
+[notification](https://jsr.io/@observable/core#notification) as
+[`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values.
 
 ## Build
 

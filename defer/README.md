@@ -1,10 +1,8 @@
 # [@observable/defer](https://jsr.io/@observable/defer)
 
-Creates an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) that, on
-[`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe), calls an
-[`Observable`](https://jsr.io/@observable/core/doc/~/Observable) factory to get an
+Calls an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) factory
 [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) for each
-[`Observer`](https://jsr.io/@observable/core/doc/~/Observer).
+[subscription](https://jsr.io/@observable/core#subscription).
 
 ## Build
 

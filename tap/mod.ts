@@ -9,7 +9,8 @@ import {
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 
 /**
- * Used to perform side-effects on the [source](https://jsr.io/@observable/core#source).
+ * Performs side-effects on the [source](https://jsr.io/@observable/core#source)
+ * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable).
  * @example
  * ```ts
  * import { tap } from "@observable/tap";

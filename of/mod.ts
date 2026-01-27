@@ -7,9 +7,9 @@ import {
 import { empty } from "@observable/empty";
 
 /**
- * Creates and returns an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) that emits a
- * sequence of {@linkcode values} in order on [`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe)
- * and then [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s.
+ * [`Next`](https://jsr.io/@observable/core/doc/~/Observer.next)s a sequence of {@linkcode values}
+ * in order on [`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe) and then
+ * [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s.
  * @example
  * ```ts
  * import { of } from "@observable/of";
@@ -34,9 +34,9 @@ export function of<const Values extends ReadonlyArray<unknown>>(
   values: Values,
 ): Observable<Values[number]>;
 /**
- * Creates and returns an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) that emits a
- * sequence of {@linkcode values} in order on [`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe)
- * and then [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s.
+ * [`Next`](https://jsr.io/@observable/core/doc/~/Observer.next)s a sequence of {@linkcode values}
+ * in order on [`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe) and then
+ * [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s.
  * @example
  * ```ts
  * import { of } from "@observable/of";

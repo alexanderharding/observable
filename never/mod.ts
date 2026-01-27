@@ -2,8 +2,7 @@ import { Observable } from "@observable/core";
 import { noop } from "@observable/internal";
 
 /**
- * An [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) that does nothing on
- * [`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe).
+ * Does nothing on [`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe).
  * @example
  * ```ts
  * import { never } from "@observable/never";

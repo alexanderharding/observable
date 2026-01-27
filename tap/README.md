@@ -1,6 +1,7 @@
 # [@observable/tap](https://jsr.io/@observable/tap)
 
-Used to perform side-effects on the [source](https://jsr.io/@observable/core#source).
+Performs side-effects on the [source](https://jsr.io/@observable/core#source)
+[`Observable`](https://jsr.io/@observable/core/doc/~/Observable).
 
 ## Build
 
@@ -30,7 +31,7 @@ pipe(
   tap({
     signal: tapController.signal,
     next(value) {
-      if (value === 2) controller.abort();
+      if (value === 2) tapController.abort();
       console.log("tap next", value);
     },
     return: () => console.log("tap return"),

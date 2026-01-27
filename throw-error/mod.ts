@@ -1,10 +1,8 @@
 import { Observable } from "@observable/core";
 
 /**
- * Creates an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) that will [`throw`](https://jsr.io/@observable/core/doc/~/Observer.throw) the
- * given `value` immediately upon [`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe).
- *
- * @param value The value to [`throw`](https://jsr.io/@observable/core/doc/~/Observer.throw).
+ * [`Throw`](https://jsr.io/@observable/core/doc/~/Observer.throw)s the given {@linkcode value} immediately upon
+ * [`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe).
  * @example
  * ```ts
  * import { throwError } from "@observable/throw-error";

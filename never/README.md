@@ -1,7 +1,6 @@
 # [@observable/never](https://jsr.io/@observable/never)
 
-An [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) that does nothing on
-[`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe).
+Does nothing on [`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe).
 
 ## Build
 

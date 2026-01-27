@@ -15,7 +15,7 @@ const noValue = Symbol("Flag indicating that no value has been emitted yet");
 
 /**
  * Only [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s values from the [source](https://jsr.io/@observable/core#source)
- * that are distinct from the previous value according to a specified {@linkcode comparator}
+ * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) that are distinct from the previous value according to a specified {@linkcode comparator}
  * or `Object.is` if one is not provided.
  * @example
  * ```ts

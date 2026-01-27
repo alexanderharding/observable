@@ -11,9 +11,8 @@ import { mergeMap } from "@observable/merge-map";
 import { empty } from "@observable/empty";
 
 /**
- * Creates and returns an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) which concurrently
- * [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s all values from every given
- * [source](https://jsr.io/@observable/core#source).
+ * Concurrently [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s all values from every given
+ * [source](https://jsr.io/@observable/core#source) [`Observable`](https://jsr.io/@observable/core/doc/~/Observable).
  * @example
  * ```ts
  * import { merge } from "@observable/merge";
@@ -45,9 +44,8 @@ export function merge<const Values extends ReadonlyArray<unknown>>(
   sources: Readonly<{ [Key in keyof Values]: Observable<Values[Key]> }>,
 ): Observable<Values[number]>;
 /**
- * Creates and returns an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) which concurrently
- * [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s all values from every given
- * [source](https://jsr.io/@observable/core#source).
+ * Concurrently [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s all values from every given
+ * [source](https://jsr.io/@observable/core#source) [`Observable`](https://jsr.io/@observable/core/doc/~/Observable).
  * @example
  * ```ts
  * import { merge } from "@observable/merge";
