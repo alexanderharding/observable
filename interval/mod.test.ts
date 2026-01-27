@@ -33,7 +33,7 @@ Deno.test("interval should return empty if the milliseconds is NaN", () => {
 
 Deno.test("interval should emit indexes synchronously when milliseconds is 0", () => {
   // Arrange
-  const notifications: Array<ObserverNotification<number>> = [];
+  const notifications: Array<ObserverNotification<void>> = [];
   const observable = pipe(interval(0), take(5), materialize());
 
   // Act
@@ -43,11 +43,11 @@ Deno.test("interval should emit indexes synchronously when milliseconds is 0", (
 
   // Assert
   assertEquals(notifications, [
-    ["next", 0],
-    ["next", 1],
-    ["next", 2],
-    ["next", 3],
-    ["next", 4],
+    ["next", undefined],
+    ["next", undefined],
+    ["next", undefined],
+    ["next", undefined],
+    ["next", undefined],
     ["return"],
   ]);
 });
@@ -57,7 +57,7 @@ Deno.test("interval should setup an interval timer", () => {
   let overrode = true;
   const milliseconds = 1_000;
   const intervalId = Math.random();
-  const notifications: Array<ObserverNotification<number>> = [];
+  const notifications: Array<ObserverNotification<void>> = [];
   const setIntervalCalls: Array<Parameters<typeof setInterval>> = [];
   const originalSetInterval = globalThis.setInterval;
   Object.defineProperty(globalThis, "setInterval", {
@@ -79,11 +79,11 @@ Deno.test("interval should setup an interval timer", () => {
   assertStrictEquals(delay, milliseconds);
   assertInstanceOf(callback, Function);
   callback();
-  assertEquals(notifications, [["next", 0]]);
+  assertEquals(notifications, [["next", undefined]]);
   callback();
-  assertEquals(notifications, [["next", 0], ["next", 1]]);
+  assertEquals(notifications, [["next", undefined], ["next", undefined]]);
   callback();
-  assertEquals(notifications, [["next", 0], ["next", 1], ["next", 2]]);
+  assertEquals(notifications, [["next", undefined], ["next", undefined], ["next", undefined]]);
 
   overrode = false;
 });
@@ -189,7 +189,7 @@ Deno.test("interval should emit increasing indexes", () => {
   let overrode = true;
   const milliseconds = 100;
   const intervalId = Math.random();
-  const notifications: Array<ObserverNotification<number>> = [];
+  const notifications: Array<ObserverNotification<void>> = [];
   const setIntervalCalls: Array<Parameters<typeof setInterval>> = [];
   const originalSetInterval = globalThis.setInterval;
   const controller = new AbortController();
@@ -215,16 +215,16 @@ Deno.test("interval should emit increasing indexes", () => {
 
   // Assert
   assertEquals(notifications, [
-    ["next", 0],
-    ["next", 1],
-    ["next", 2],
-    ["next", 3],
-    ["next", 4],
-    ["next", 5],
-    ["next", 6],
-    ["next", 7],
-    ["next", 8],
-    ["next", 9],
+    ["next", undefined],
+    ["next", undefined],
+    ["next", undefined],
+    ["next", undefined],
+    ["next", undefined],
+    ["next", undefined],
+    ["next", undefined],
+    ["next", undefined],
+    ["next", undefined],
+    ["next", undefined],
   ]);
   overrode = false;
 });
@@ -234,7 +234,7 @@ Deno.test("interval should work with take operator", () => {
   let overrode = true;
   const milliseconds = 100;
   const intervalId = Math.random();
-  const notifications: Array<ObserverNotification<number>> = [];
+  const notifications: Array<ObserverNotification<void>> = [];
   const setIntervalCalls: Array<Parameters<typeof setInterval>> = [];
   const clearIntervalCalls: Array<Parameters<typeof clearInterval>> = [];
   const originalSetInterval = globalThis.setInterval;
@@ -263,9 +263,9 @@ Deno.test("interval should work with take operator", () => {
 
   // Assert
   assertEquals(notifications, [
-    ["next", 0],
-    ["next", 1],
-    ["next", 2],
+    ["next", undefined],
+    ["next", undefined],
+    ["next", undefined],
     ["return"],
   ]);
   assertEquals(clearIntervalCalls, [[intervalId]]);

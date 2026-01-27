@@ -8,7 +8,8 @@ import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/i
 const notThrown = Symbol("Flag indicating that a value is not thrown.");
 
 /**
- * Converts an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) to a {@linkcode AsyncIterable}.
+ * Projects an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) through a
+ * [`AsyncIterable`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#the_async_iterator_and_async_iterable_protocols).
  * @example
  * ```ts
  * import { asAsyncIterable } from "@observable/as-async-iterable";

@@ -2,8 +2,9 @@ import { isObservable, Observable, toObservable } from "@observable/core";
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 
 /**
- * {@linkcode project|Projects} each {@linkcode In|value} from the [source](https://jsr.io/@observable/core#source)
- * to a new {@linkcode Out|value}.
+ * {@linkcode project|Projects} each [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed
+ * {@linkcode In|value} from the [source](https://jsr.io/@observable/core#source)
+ * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) to a new {@linkcode Out|value}.
  * @example
  * ```ts
  * import { map } from "@observable/map";

@@ -1,8 +1,8 @@
 # [@observable/merge](https://jsr.io/@observable/merge)
 
-Creates and returns an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) which
-concurrently [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s all values from every
-given [source](https://jsr.io/@observable/core#source).
+Concurrently [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s all values from every
+given [source](https://jsr.io/@observable/core#source)
+[`Observable`](https://jsr.io/@observable/core/doc/~/Observable).
 
 ## Build
 

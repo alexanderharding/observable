@@ -5,8 +5,8 @@ import { pipe } from "@observable/pipe";
 import { filter } from "@observable/filter";
 
 /**
- * Drops the first {@linkcode count} values [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed
- * by the [source](https://jsr.io/@observable/core#source).
+ * Drops the first {@linkcode count} of [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed
+ * values from the [source](https://jsr.io/@observable/core#source) [`Observable`](https://jsr.io/@observable/core/doc/~/Observable).
  * @example
  * ```ts
  * import { drop } from "@observable/drop";

@@ -1,9 +1,7 @@
 # [@observable/timeout](https://jsr.io/@observable/timeout)
 
-Creates an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) that
-[`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s a successful execution code (`0`)
-after a specified number of milliseconds and then
-[`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s.
+[`Next`](https://jsr.io/@observable/core/doc/~/Observer.next)s a `void` value after a specified
+number of milliseconds and then [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s.
 
 ## Build
 
@@ -32,7 +30,7 @@ timeout(1_000).subscribe({
 });
 
 // Console output (after 1 second):
-// "next" 0
+// "next" undefined
 // "return"
 ```
 
@@ -50,7 +48,7 @@ timeout(0).subscribe({
 });
 
 // Console output (synchronously):
-// "next" 0
+// "next" undefined
 // "return"
 ```
 
@@ -81,7 +79,7 @@ Use the following prompt with AI assistants to help them understand this library
 You are helping me with code that uses @observable/timeout from the @observable library ecosystem.
 
 WHAT IT DOES:
-`timeout(ms)` creates an Observable that emits `0` after the specified delay, then returns. Like a single-shot timer.
+`timeout(ms)` creates an Observable that emits `undefined` (void) after the specified delay, then returns. Like a single-shot timer.
 
 CRITICAL: This library is NOT RxJS. Key differences:
 - Observer uses `return`/`throw` — NOT `complete`/`error`
@@ -96,7 +94,7 @@ const controller = new AbortController();
 
 timeout(1_000).subscribe({
   signal: controller.signal,
-  next: (value) => console.log(value),  // 0 (after 1 second)
+  next: () => console.log("tick"),  // undefined (after 1 second)
   return: () => console.log("done"),    // Called after emission
   throw: (error) => console.error(error),
 });
@@ -105,7 +103,7 @@ timeout(1_000).subscribe({
 EDGE CASES:
 ```ts
 // 0ms timeout emits synchronously
-timeout(0).subscribe({ ... });  // Emits 0 immediately
+timeout(0).subscribe({ ... });  // Emits undefined immediately
 
 // Negative values return immediately without emitting
 timeout(-1).subscribe({

@@ -8,9 +8,9 @@ import { map } from "@observable/map";
 import { ignoreElements } from "@observable/ignore-elements";
 
 /**
- * Debounces the emission of values from the [source](https://jsr.io/@observable/core#source)
- * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) by the specified number of
- * {@linkcode milliseconds}.
+ * Debounces the [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values from the
+ * [source](https://jsr.io/@observable/core#source) [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)
+ * by the specified number of {@linkcode milliseconds}.
  * @example
  * ```ts
  * import { debounce } from "@observable/debounce";

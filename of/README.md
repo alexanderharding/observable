@@ -1,7 +1,6 @@
 # [@observable/of](https://jsr.io/@observable/of)
 
-Creates and returns an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) that emits a
-sequence of values in order on
+[`Next`](https://jsr.io/@observable/core/doc/~/Observer.next)s a sequence of values in order on
 [`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe) and then
 [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s.
 

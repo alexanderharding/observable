@@ -1,6 +1,7 @@
 # [@observable/as-async-iterable](https://jsr.io/@observable/as-async-iterable)
 
-Converts an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) to an `AsyncIterable`.
+Projects an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) through a
+[`AsyncIterable`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#the_async_iterator_and_async_iterable_protocols).
 
 ## Build
 

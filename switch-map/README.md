@@ -1,9 +1,12 @@
 # [@observable/switch-map](https://jsr.io/@observable/switch-map)
 
-Projects each [source](https://jsr.io/@observable/core#source) value to an
-[`Observable`](https://jsr.io/@observable/core/doc/~/Observable) which is merged in the output
-[`Observable`](https://jsr.io/@observable/core/doc/~/Observable), emitting values only from the most
-recently projected [`Observable`](https://jsr.io/@observable/core/doc/~/Observable).
+Projects each [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed value from the
+[source](https://jsr.io/@observable/core#source)
+[`Observable`](https://jsr.io/@observable/core/doc/~/Observable) to an inner
+[`Observable`](https://jsr.io/@observable/core/doc/~/Observable),
+[subscribing](https://jsr.io/@observable/core/doc/~/Observable.subscribe) only to the most recently
+projected inner [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) and canceling any
+previous inner [subscription](https://jsr.io/@observable/core#subscription).
 
 ## Build
 

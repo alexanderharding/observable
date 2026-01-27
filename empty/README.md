@@ -1,7 +1,6 @@
 # [@observable/empty](https://jsr.io/@observable/empty)
 
-An [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) that calls
-[`return`](https://jsr.io/@observable/core/doc/~/Observer.return) immediately on
+[`Return`](https://jsr.io/@observable/core/doc/~/Observer.return)s immediately on
 [`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe).
 
 ## Build

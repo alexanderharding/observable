@@ -2,10 +2,8 @@ import { isObservable, Observable, type Observer, toObservable } from "@observab
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 
 /**
- * Represents any type of [`Observer`](https://jsr.io/@observable/core/doc/~/Observer) notification
- * ([`next`](https://jsr.io/@observable/core/doc/~/Observer.next),
- * [`return`](https://jsr.io/@observable/core/doc/~/Observer.return), or
- * [`throw`](https://jsr.io/@observable/core/doc/~/Observer.throw)).
+ * Represents any type of [`Observer`](https://jsr.io/@observable/core/doc/~/Observer)
+ * [notification](https://jsr.io/@observable/core#notification).
  */
 export type ObserverNotification<Value = unknown> = Readonly<
   | [type: Extract<"next", keyof Observer>, value: Value]
@@ -14,11 +12,8 @@ export type ObserverNotification<Value = unknown> = Readonly<
 >;
 
 /**
- * Represents all of the {@linkcode ObserverNotification|notifications} from the
- * [source](https://jsr.io/@observable/core#source) as
- * [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values
- * marked with their original types within {@linkcode ObserverNotification|notification} entries.
- * This is especially useful for testing, debugging, and logging.
+ * Projects all of the [`Observer`](https://jsr.io/@observable/core/doc/~/Observer) [notification](https://jsr.io/@observable/core#notification)
+ * as [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values.
  * @example
  * ```ts
  * import { materialize } from "@observable/materialize";

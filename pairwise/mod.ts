@@ -12,8 +12,8 @@ import { filter } from "@observable/filter";
 const noValue = Symbol("Flag indicating that no value has been emitted yet");
 
 /**
- * Emits pairs of consecutive values from the [source](https://jsr.io/@observable/core#source)
- * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable).
+ * [`Next`](https://jsr.io/@observable/core/doc/~/Observer.next)s pairs of consecutive values
+ * from the [source](https://jsr.io/@observable/core#source) [`Observable`](https://jsr.io/@observable/core/doc/~/Observable).
  * @example
  * ```ts
  * import { pairwise } from "@observable/pairwise";
