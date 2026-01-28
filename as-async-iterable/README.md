@@ -20,10 +20,10 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 
 ```ts
 import { asAsyncIterable } from "@observable/as-async-iterable";
-import { of } from "@observable/of";
+import { ofIterable } from "@observable/of-iterable";
 import { pipe } from "@observable/pipe";
 
-for await (const value of pipe(of([1, 2, 3]), asAsyncIterable())) {
+for await (const value of pipe([1, 2, 3], ofIterable(), asAsyncIterable())) {
   console.log(value);
 }
 
@@ -51,10 +51,10 @@ CRITICAL: This library is NOT RxJS. Key differences:
 USAGE PATTERN:
 ```ts
 import { asAsyncIterable } from "@observable/as-async-iterable";
-import { of } from "@observable/of";
+import { ofIterable } from "@observable/of-iterable";
 import { pipe } from "@observable/pipe";
 
-for await (const value of pipe(of([1, 2, 3]), asAsyncIterable())) {
+for await (const value of pipe([1, 2, 3], ofIterable(), asAsyncIterable())) {
   console.log(value);
 }
 // Output:

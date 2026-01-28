@@ -2,13 +2,13 @@ import { assertEquals, assertStrictEquals, assertThrows } from "@std/assert";
 import { Observable, Observer, Subject } from "@observable/core";
 import { empty } from "@observable/empty";
 import { pipe } from "@observable/pipe";
-import { of } from "@observable/of";
+import { ofIterable } from "@observable/of-iterable";
 import { materialize, type ObserverNotification } from "@observable/materialize";
 import { debounce } from "./mod.ts";
 
 Deno.test("debounce should return empty if milliseconds is negative", () => {
   // Arrange
-  const source = of([1, 2, 3]);
+  const source = pipe([1, 2, 3], ofIterable());
 
   // Act
   const result = pipe(source, debounce(-1));
@@ -19,7 +19,7 @@ Deno.test("debounce should return empty if milliseconds is negative", () => {
 
 Deno.test("debounce should return empty if milliseconds is NaN", () => {
   // Arrange
-  const source = of([1, 2, 3]);
+  const source = pipe([1, 2, 3], ofIterable());
 
   // Act
   const result = pipe(source, debounce(NaN));
@@ -31,7 +31,7 @@ Deno.test("debounce should return empty if milliseconds is NaN", () => {
 Deno.test("debounce should ignore values but propagate return when milliseconds is Infinity", () => {
   // Arrange
   const notifications: Array<ObserverNotification<number>> = [];
-  const source = of([1, 2, 3]);
+  const source = pipe([1, 2, 3], ofIterable());
   const materialized = pipe(source, debounce(Infinity), materialize());
 
   // Act

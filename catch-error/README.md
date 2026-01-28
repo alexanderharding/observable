@@ -22,13 +22,13 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 ```ts
 import { catchError } from "@observable/catch-error";
 import { throwError } from "@observable/throw-error";
-import { of } from "@observable/of";
+import { ofIterable } from "@observable/of-iterable";
 import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
 pipe(
   throwError(new Error("error")),
-  catchError(() => of(["fallback"])),
+  catchError(() => pipe(["fallback"], ofIterable())),
 ).subscribe({
   signal: controller.signal,
   next: (value) => console.log("next", value),
@@ -60,14 +60,14 @@ USAGE PATTERN:
 ```ts
 import { catchError } from "@observable/catch-error";
 import { throwError } from "@observable/throw-error";
-import { of } from "@observable/of";
+import { ofIterable } from "@observable/of-iterable";
 import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
 
 pipe(
   throwError(new Error("something went wrong")),
-  catchError((error) => of(["fallback value"]))
+  catchError((error) => pipe(["fallback value"], ofIterable()))
 ).subscribe({
   signal: controller.signal,
   next: (value) => console.log(value),  // "fallback value"
@@ -83,7 +83,7 @@ pipe(
   catchError((error) => {
     console.error("Caught:", error);
     // Return a fallback Observable
-    return of(["default"]);
+    return pipe(["default"], ofIterable());
   })
 ).subscribe({ ... });
 ```
@@ -96,7 +96,7 @@ pipe(
   someObservable,
   catchError((error) => {
     if (error instanceof RecoverableError) {
-      return of(["recovered"]);
+      return pipe(["recovered"], ofIterable());
     }
     // Re-throw unrecoverable errors
     return throwError(error);

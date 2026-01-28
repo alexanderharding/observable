@@ -29,10 +29,10 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 
 ```ts
 import { asPromise } from "@observable/as-promise";
-import { of } from "@observable/of";
+import { ofIterable } from "@observable/of-iterable";
 import { pipe } from "@observable/pipe";
 
-console.log(await pipe(of([1, 2, 3]), asPromise()));
+console.log(await pipe([1, 2, 3], ofIterable(), asPromise()));
 
 // Console output:
 // 3
@@ -68,11 +68,11 @@ try {
 
 ```ts
 import { asPromise } from "@observable/as-promise";
-import { of } from "@observable/of";
+import { ofIterable } from "@observable/of-iterable";
 import { pipe } from "@observable/pipe";
 
 try {
-  console.log(await pipe(of([]), asPromise()));
+  console.log(await pipe([], ofIterable(), asPromise()));
 } catch (error) {
   console.log(error);
   // Console output:
@@ -98,10 +98,10 @@ CRITICAL: This library is NOT RxJS. Key differences:
 USAGE PATTERN:
 ```ts
 import { asPromise } from "@observable/as-promise";
-import { of } from "@observable/of";
+import { ofIterable } from "@observable/of-iterable";
 import { pipe } from "@observable/pipe";
 
-const result = await pipe(of([1, 2, 3]), asPromise());
+const result = await pipe([1, 2, 3], ofIterable(), asPromise());
 console.log(result);  // 3 (last value)
 ```
 

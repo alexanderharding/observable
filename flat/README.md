@@ -22,11 +22,16 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 
 ```ts
 import { flat } from "@observable/flat";
-import { of } from "@observable/of";
+import { ofIterable } from "@observable/of-iterable";
+import { pipe } from "@observable/pipe";
+
+const source1 = pipe([1, 2, 3], ofIterable());
+const source2 = pipe([4, 5, 6], ofIterable());
+const source3 = pipe([7, 8, 9], ofIterable());
 
 const controller = new AbortController();
 
-flat([of([1, 2, 3]), of([4, 5, 6]), of([7, 8, 9])]).subscribe({
+flat([source1, source2, source3]).subscribe({
   signal: controller.signal,
   next: (value) => console.log("next", value),
   return: () => console.log("return"),
@@ -64,15 +69,16 @@ CRITICAL: This library is NOT RxJS. Key differences:
 USAGE PATTERN:
 ```ts
 import { flat } from "@observable/flat";
-import { of } from "@observable/of";
+import { ofIterable } from "@observable/of-iterable";
+import { pipe } from "@observable/pipe";
+
+const source1 = pipe([1, 2, 3], ofIterable());
+const source2 = pipe([4, 5, 6], ofIterable());
+const source3 = pipe([7, 8, 9], ofIterable());
 
 const controller = new AbortController();
 
-flat([
-  of([1, 2, 3]),
-  of([4, 5, 6]),
-  of([7, 8, 9])
-]).subscribe({
+flat([source1, source2, source3]).subscribe({
   signal: controller.signal,
   next: (value) => console.log(value),  // 1, 2, 3, 4, 5, 6, 7, 8, 9
   return: () => console.log("done"),

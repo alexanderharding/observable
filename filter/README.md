@@ -20,11 +20,11 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 
 ```ts
 import { filter } from "@observable/filter";
-import { of } from "@observable/of";
+import { ofIterable } from "@observable/of-iterable";
 import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
-pipe(of([1, 2, 3, 4, 5]), filter((value) => value % 2 === 0)).subscribe({
+pipe([1, 2, 3, 4, 5], ofIterable(), filter((value) => value % 2 === 0)).subscribe({
   signal: controller.signal,
   next: (value) => console.log("next", value),
   return: () => console.log("return"),
@@ -55,13 +55,13 @@ CRITICAL: This library is NOT RxJS. Key differences:
 USAGE PATTERN:
 ```ts
 import { filter } from "@observable/filter";
-import { of } from "@observable/of";
+import { ofIterable } from "@observable/of-iterable";
 import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
 
 pipe(
-  of([1, 2, 3, 4, 5]),
+  pipe([1, 2, 3, 4, 5], ofIterable()),
   filter((value) => value % 2 === 0)
 ).subscribe({
   signal: controller.signal,
@@ -74,14 +74,14 @@ pipe(
 WRONG USAGE:
 ```ts
 // ✗ WRONG: filter is NOT a method on Observable
-of([1, 2, 3]).filter(x => x > 1)  // This does NOT work!
+pipe([1, 2, 3], ofIterable()).filter(x => x > 1)  // This does NOT work!
 ```
 
 TYPE NARROWING:
 The predicate can be a type guard for type narrowing:
 ```ts
 pipe(
-  of([1, "a", 2, "b"]),
+  pipe([1, "a", 2, "b"], ofIterable()),
   filter((x): x is number => typeof x === "number"),
 ).subscribe({ ... });  // TypeScript knows values are numbers
 ```

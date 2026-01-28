@@ -1,6 +1,7 @@
 import { isObservable, Observable, toObservable } from "@observable/core";
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
-import { of } from "@observable/of";
+import { ofIterable } from "@observable/of-iterable";
+import { pipe } from "@observable/pipe";
 
 /**
  * Re-[`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe)s to the
@@ -13,12 +14,12 @@ import { of } from "@observable/of";
  * @example
  * ```ts
  * import { repeat } from "@observable/repeat";
- * import { of } from "@observable/of";
+ * import { ofIterable } from "@observable/of-iterable";
  * import { pipe } from "@observable/pipe";
  * import { empty } from "@observable/empty";
  * import { defer } from "@observable/defer";
  *
- * const source = of([1, 2, 3]);
+ * const source = pipe([1, 2, 3], ofIterable());
  * const controller = new AbortController();
  * const repeated = defer(() => {
  *   let count = 0;
@@ -26,7 +27,7 @@ import { of } from "@observable/of";
  *     source,
  *     repeat(defer(() => {
  *      console.log("notifier subscribed");
- *      return ++count === 2 ? empty : of([undefined]);
+ *      return ++count === 2 ? empty : pipe([undefined], ofIterable());
  *     })),
  *   );
  * });
@@ -51,7 +52,7 @@ import { of } from "@observable/of";
  * ```
  */
 export function repeat<Value>(
-  notifier: Observable = of([undefined]),
+  notifier: Observable = pipe([undefined], ofIterable()),
 ): (source: Observable<Value>) => Observable<Value> {
   if (!isObservable(notifier)) throw new ParameterTypeError(0, "Observable");
   notifier = toObservable(notifier);

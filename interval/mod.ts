@@ -1,14 +1,15 @@
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 import { Observable } from "@observable/core";
 import { defer } from "@observable/defer";
-import { of } from "@observable/of";
+import { ofIterable } from "@observable/of-iterable";
+import { pipe } from "@observable/pipe";
 import { empty } from "@observable/empty";
 import { never } from "@observable/never";
 
 /**
  * @internal Do NOT export.
  */
-const infiniteVoid = defer(() => of(generateInfiniteVoid()));
+const infiniteVoid = defer(() => pipe(generateInfiniteVoid(), ofIterable()));
 
 /**
  * Repeatedly [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ing a `void` value with a

@@ -5,7 +5,7 @@ import { throwError } from "@observable/throw-error";
 import { pipe } from "@observable/pipe";
 import { tap } from "./mod.ts";
 import { empty } from "@observable/empty";
-import { of } from "@observable/of";
+import { ofIterable } from "@observable/of-iterable";
 
 Deno.test("tap should pump next notifications to the provided observer", () => {
   // Arrange
@@ -88,7 +88,8 @@ Deno.test(
 
     // Act
     pipe(
-      of([1, 2, 3]),
+      [1, 2, 3],
+      ofIterable(),
       materialize(),
       tap(
         new Observer({
@@ -122,7 +123,8 @@ Deno.test("tap should handle source unsubscribe", () => {
 
   // Act
   pipe(
-    of([1, 2, 3]),
+    [1, 2, 3],
+    ofIterable(),
     materialize(),
     tap(new Observer((notification) => notifications.push([1, notification]))),
   ).subscribe(

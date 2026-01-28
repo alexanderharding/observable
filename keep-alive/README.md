@@ -19,11 +19,11 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 
 ```ts
 import { keepAlive } from "@observable/keep-alive";
-import { of } from "@observable/of";
+import { ofIterable } from "@observable/of-iterable";
 import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
-pipe(of([1, 2, 3]), keepAlive()).subscribe({
+pipe([1, 2, 3], ofIterable(), keepAlive()).subscribe({
   signal: controller.signal,
   next: (value) => {
     console.log("next", value);
@@ -58,13 +58,13 @@ CRITICAL: This library is NOT RxJS. Key differences:
 USAGE PATTERN:
 ```ts
 import { keepAlive } from "@observable/keep-alive";
-import { of } from "@observable/of";
+import { ofIterable } from "@observable/of-iterable";
 import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
 
 pipe(
-  of([1, 2, 3]),
+  pipe([1, 2, 3], ofIterable()),
   keepAlive()
 ).subscribe({
   signal: controller.signal,
