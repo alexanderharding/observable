@@ -64,7 +64,8 @@ import { pipe } from "@observable/pipe";
 const controller = new AbortController();
 
 pipe(
-  pipe([1, 2, 3], ofIterable()),
+  [1, 2, 3],
+  ofIterable(),
   map((value) => value * 2)
 ).subscribe({
   signal: controller.signal,
@@ -83,7 +84,8 @@ pipe([1, 2, 3], ofIterable()).map(x => x * 2)  // This does NOT work!
 CHAINING WITH OTHER OPERATORS:
 ```ts
 pipe(
-  pipe([1, 2, 3, 4, 5], ofIterable()),
+  [1, 2, 3, 4, 5],
+  ofIterable(),
   filter((x) => x % 2 === 0),
   map((x) => x * 10),
 ).subscribe({ ... });  // 20, 40

@@ -64,7 +64,8 @@ import { pipe } from "@observable/pipe";
 const controller = new AbortController();
 
 pipe(
-  pipe([1, 1, 1, 2, 2, 3, 1], ofIterable()),  // Note: 1 repeats at end
+  [1, 1, 1, 2, 2, 3, 1],  // Note: 1 repeats at end
+  ofIterable(),
   distinctUntilChanged()
 ).subscribe({
   signal: controller.signal,
@@ -77,7 +78,8 @@ pipe(
 WITH CUSTOM COMPARATOR:
 ```ts
 pipe(
-  pipe([{ id: 1 }, { id: 1 }, { id: 2 }], ofIterable()),
+  [{ id: 1 }, { id: 1 }, { id: 2 }],
+  ofIterable(),
   distinctUntilChanged((a, b) => a.id === b.id)
 ).subscribe({ ... });  // { id: 1 }, { id: 2 }
 ```

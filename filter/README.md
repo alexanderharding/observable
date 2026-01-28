@@ -61,7 +61,8 @@ import { pipe } from "@observable/pipe";
 const controller = new AbortController();
 
 pipe(
-  pipe([1, 2, 3, 4, 5], ofIterable()),
+  [1, 2, 3, 4, 5],
+  ofIterable(),
   filter((value) => value % 2 === 0)
 ).subscribe({
   signal: controller.signal,
@@ -81,7 +82,8 @@ TYPE NARROWING:
 The predicate can be a type guard for type narrowing:
 ```ts
 pipe(
-  pipe([1, "a", 2, "b"], ofIterable()),
+  [1, "a", 2, "b"],
+  ofIterable(),
   filter((x): x is number => typeof x === "number"),
 ).subscribe({ ... });  // TypeScript knows values are numbers
 ```

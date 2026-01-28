@@ -100,7 +100,8 @@ import { ofIterable } from "@observable/of-iterable";
 import { pipe } from "@observable/pipe";
 
 const rxjsObservable = pipe(
-  pipe([1, 2, 3], ofIterable()),      // @observable Observable (Iterable of)
+  [1, 2, 3],
+  ofIterable(),
   asRxJsObservable()  // Convert to RxJS
 );
 

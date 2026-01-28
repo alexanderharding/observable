@@ -62,7 +62,8 @@ import { pipe } from "@observable/pipe";
 const controller = new AbortController();
 
 pipe(
-  pipe([1, 2, 3, 4, 5], ofIterable()),
+  [1, 2, 3, 4, 5],
+  ofIterable(),
   take(2)
 ).subscribe({
   signal: controller.signal,

@@ -27,7 +27,8 @@ const subscriptionController = new AbortController();
 const tapController = new AbortController();
 
 pipe(
-  pipe([1, 2, 3], ofIterable()),
+  [1, 2, 3],
+  ofIterable(),
   tap({
     signal: tapController.signal,
     next(value) {
@@ -77,7 +78,8 @@ import { pipe } from "@observable/pipe";
 const controller = new AbortController();
 
 pipe(
-  pipe([1, 2, 3], ofIterable()),
+  [1, 2, 3],
+  ofIterable(),
   tap({
     signal: controller.signal,
     next: (value) => console.log("tapped:", value),

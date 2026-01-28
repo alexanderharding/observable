@@ -28,7 +28,8 @@ import { filter } from "@observable/filter";
 const controller = new AbortController();
 
 pipe(
-  pipe([1, 2, 3, 4, 5], ofIterable()),
+  [1, 2, 3, 4, 5],
+  ofIterable(),
   filter((value) => value % 2 === 0),
   map((value) => value * 2),
 ).subscribe({
@@ -69,7 +70,8 @@ import { filter } from "@observable/filter";
 const controller = new AbortController();
 
 pipe(
-  pipe([1, 2, 3, 4, 5], ofIterable()),
+  [1, 2, 3, 4, 5],
+  ofIterable(),
   filter((value) => value % 2 === 0),
   map((value) => value * 2),
 ).subscribe({

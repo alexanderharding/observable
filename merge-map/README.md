@@ -31,7 +31,8 @@ const observableLookup = {
   3: pipe([7, 8, 9], ofIterable()),
 } as const;
 pipe(
-  pipe([1, 2, 3], ofIterable()),
+  [1, 2, 3],
+  ofIterable(),
   mergeMap((value) => observableLookup[value]),
 ).subscribe({
   signal: controller.signal,
@@ -83,7 +84,8 @@ const lookup = {
 };
 
 pipe(
-  pipe([1, 2, 3], ofIterable()),
+  [1, 2, 3],
+  ofIterable(),
   mergeMap((key) => lookup[key])
 ).subscribe({
   signal: controller.signal,
@@ -97,7 +99,8 @@ CONCURRENT EXECUTION:
 All inner Observables run at the same time:
 ```ts
 pipe(
-  pipe(["url1", "url2", "url3"], ofIterable()),
+  ["url1", "url2", "url3"],
+  ofIterable(),
   mergeMap((url) => fetchData(url))  // All requests fire immediately
 ).subscribe({ ... });
 ```
