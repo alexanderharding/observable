@@ -15,6 +15,7 @@
     "drop",
     "empty",
     "exhaust-map",
+    "fetch",
     "filter",
     "finalize",
     "flat",
