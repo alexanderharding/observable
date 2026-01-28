@@ -11,7 +11,7 @@ import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/i
  * import { pipe } from "@observable/pipe";
  *
  * const controller = new AbortController();
- * pipe([1, 2, 3, 4, 5], ofIterable()), filter((value) => value % 2 === 0)).subscribe({
+ * pipe([1, 2, 3, 4, 5], ofIterable(), filter((value) => value % 2 === 0)).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
  *   return: () => console.log("return"),

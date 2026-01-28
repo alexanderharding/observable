@@ -16,7 +16,7 @@ const notThrown = Symbol("Flag indicating that a value is not thrown.");
  * import { ofIterable } from "@observable/of-iterable";
  * import { pipe } from "@observable/pipe";
  *
- * for await (const value of pipe([1, 2, 3], ofIterable()), asAsyncIterable())) {
+ * for await (const value of pipe([1, 2, 3], ofIterable(), asAsyncIterable())) {
  *   console.log(value);
  * }
  *

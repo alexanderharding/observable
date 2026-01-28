@@ -21,7 +21,7 @@ const noValue = Symbol("Flag indicating that no value has been emitted yet");
  * import { pipe } from "@observable/pipe";
  *
  * const controller = new AbortController();
- * pipe([1, 2, 3, 4], ofIterable()), pairwise()).subscribe({
+ * pipe([1, 2, 3, 4], ofIterable(), pairwise()).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
  *   return: () => console.log("return"),

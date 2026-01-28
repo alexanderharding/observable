@@ -24,7 +24,7 @@ const noValue = Symbol("Flag indicating that no value has been emitted yet");
  * import { pipe } from "@observable/pipe";
  *
  * const controller = new AbortController();
- * pipe([1, 1, 1, 2, 2, 3], ofIterable()), distinctUntilChanged()).subscribe({
+ * pipe([1, 1, 1, 2, 2, 3], ofIterable(), distinctUntilChanged()).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log(value),
  *   return: () => console.log("return"),

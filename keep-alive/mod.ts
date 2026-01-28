@@ -12,7 +12,7 @@ const { signal: noopSignal } = new AbortController();
  * import { pipe } from "@observable/pipe";
  *
  * const controller = new AbortController();
- * pipe([1, 2, 3], ofIterable()), keepAlive()).subscribe({
+ * pipe([1, 2, 3], ofIterable(), keepAlive()).subscribe({
  *   signal: controller.signal,
  *   next: (value) => {
  *     console.log("next", value);

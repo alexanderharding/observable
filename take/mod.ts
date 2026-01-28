@@ -12,7 +12,7 @@ import { empty } from "@observable/empty";
  * import { pipe } from "@observable/pipe";
  *
  * const controller = new AbortController();
- * pipe([1, 2, 3, 4, 5], ofIterable()), take(2)).subscribe({
+ * pipe([1, 2, 3, 4, 5], ofIterable(), take(2)).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
  *   return: () => console.log("return"),
