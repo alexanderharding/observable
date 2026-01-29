@@ -30,6 +30,7 @@
     "merge-map",
     "never",
     "of-iterable",
+    "of-promise",
     "pairwise",
     "pipe",
     "race",
