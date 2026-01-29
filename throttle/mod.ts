@@ -4,7 +4,7 @@ import { empty } from "@observable/empty";
 import { pipe } from "@observable/pipe";
 import { exhaustMap } from "@observable/exhaust-map";
 import { flat } from "@observable/flat";
-import { of } from "@observable/of";
+import { ofIterable } from "@observable/of-iterable";
 import { timeout } from "@observable/timeout";
 import { ignoreElements } from "@observable/ignore-elements";
 import { take } from "@observable/take";
@@ -58,7 +58,9 @@ export function throttle<Value>(
       source,
       milliseconds === 0
         ? toObservable
-        : exhaustMap((value) => flat([of([value]), pipe(timeout(milliseconds), ignoreElements())])),
+        : exhaustMap((value) =>
+          flat([pipe([value], ofIterable()), pipe(timeout(milliseconds), ignoreElements())])
+        ),
     );
   };
 }

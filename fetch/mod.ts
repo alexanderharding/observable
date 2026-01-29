@@ -1,5 +1,9 @@
 import { Observable } from "@observable/core";
 import { MinimumArgumentsRequiredError } from "@observable/internal";
+import { pipe } from "@observable/pipe";
+import { catchError } from "@observable/catch-error";
+import { empty } from "@observable/empty";
+import { throwError } from "@observable/throw-error";
 
 /**
  * Uses [the Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) to
@@ -60,33 +64,38 @@ export function fetch(
   init?: Omit<RequestInit, "signal">,
 ): Observable<Response> {
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-  return new Observable(
-    async (observer) => {
-      const unsubscribeListenerController = new AbortController();
-      const activeFetchController = new AbortController();
-      observer.signal.addEventListener(
-        "abort",
-        () => activeFetchController.abort(observer.signal.reason),
-        { once: true, signal: unsubscribeListenerController.signal },
-      );
-      try {
-        const response = await globalThis.fetch(
-          input,
-          { ...init, signal: activeFetchController.signal },
+  return pipe(
+    new Observable(
+      async (observer) => {
+        const unsubscribeListenerController = new AbortController();
+        const activeFetchController = new AbortController();
+        observer.signal.addEventListener(
+          "abort",
+          () => activeFetchController.abort(observer.signal.reason),
+          { once: true, signal: unsubscribeListenerController.signal },
         );
-        // Once the response is received, we no longer want to abort the fetch request on teardown.
-        // Aborting in such circumstances would also abort subsequent methods (like `json()`).
-        unsubscribeListenerController.abort();
-        observer.next(response);
-        observer.return();
-      } catch (value) {
-        if (value instanceof DOMException && value.name === "AbortError") {
-          // The consumer has unsubscribed which should not be treated
-          // as an error in Observables.
-          return;
+        try {
+          const response = await globalThis.fetch(
+            input,
+            { ...init, signal: activeFetchController.signal },
+          );
+          // Once the response is received, we no longer want to abort the fetch request on teardown.
+          // Aborting in such circumstances would also abort subsequent methods (like `json()`).
+          unsubscribeListenerController.abort();
+          observer.next(response);
+          observer.return();
+        } catch (value) {
+          observer.throw(value);
         }
-        observer.throw(value);
+      },
+    ),
+    catchError((value) => {
+      if (value instanceof DOMException && value.name === "AbortError") {
+        // The consumer has unsubscribed which should not be treated
+        // as an error in Observables.
+        return empty;
       }
-    },
+      return throwError(value);
+    }),
   );
 }

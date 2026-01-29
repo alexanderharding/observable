@@ -14,14 +14,14 @@ import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/i
  * @example
  * ```ts
  * import { tap } from "@observable/tap";
- * import { of } from "@observable/of";
+ * import { ofIterable } from "@observable/of-iterable";
  * import { pipe } from "@observable/pipe";
  *
  * const subscriptionController = new AbortController();
  * const tapController = new AbortController();
  *
  * pipe(
- *   of([1, 2, 3]),
+ *   pipe([1, 2, 3], ofIterable()),
  *   tap({
  *     signal: tapController.signal,
  *     next(value) {

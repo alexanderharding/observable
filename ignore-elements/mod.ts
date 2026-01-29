@@ -7,11 +7,11 @@ import { MinimumArgumentsRequiredError, noop, ParameterTypeError } from "@observ
  * @example
  * ```ts
  * import { ignoreElements } from "@observable/ignore-elements";
- * import { of } from "@observable/of";
+ * import { ofIterable } from "@observable/of-iterable";
  * import { pipe } from "@observable/pipe";
  *
  * const controller = new AbortController();
- * pipe(of([1, 2, 3, 4, 5]), ignoreElements()).subscribe({
+ * pipe([1, 2, 3, 4, 5], ofIterable(), ignoreElements()).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
  *   return: () => console.log("return"),

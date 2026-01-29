@@ -80,8 +80,11 @@ pipe(
 
 COMMON USE — Default case:
 ```ts
+import { ofIterable } from "@observable/of-iterable";
+import { pipe } from "@observable/pipe";
+
 const getObservable = (condition: boolean) =>
-  condition ? of([1, 2, 3]) : empty;
+  condition ? pipe([1, 2, 3], ofIterable()) : empty;
 ```
 
 SEE ALSO:

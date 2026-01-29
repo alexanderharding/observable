@@ -29,7 +29,7 @@
     "merge",
     "merge-map",
     "never",
-    "of",
+    "of-iterable",
     "pairwise",
     "pipe",
     "race",

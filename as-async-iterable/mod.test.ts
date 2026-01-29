@@ -2,7 +2,7 @@ import { assertEquals, assertRejects, assertStrictEquals, assertThrows } from "@
 import { Observable, type Observer } from "@observable/core";
 import { pipe } from "@observable/pipe";
 import { asAsyncIterable } from "./mod.ts";
-import { of } from "@observable/of";
+import { ofIterable } from "@observable/of-iterable";
 import { throwError } from "@observable/throw-error";
 import { empty } from "@observable/empty";
 
@@ -45,7 +45,7 @@ Deno.test("asAsyncIterable should throw when source is not an Observable", () =>
 
 Deno.test("asAsyncIterable should iterate all values from synchronous observable", async () => {
   // Arrange
-  const source = of([1, 2, 3]);
+  const source = pipe([1, 2, 3], ofIterable());
   const iterable = pipe(source, asAsyncIterable());
   const values: number[] = [];
 
@@ -140,7 +140,7 @@ Deno.test("asAsyncIterable should abort subscription on iterator return", async 
 
 Deno.test("asAsyncIterable should return done after observable returns", async () => {
   // Arrange
-  const source = of([1, 2]);
+  const source = pipe([1, 2], ofIterable());
   const iterable = pipe(source, asAsyncIterable());
   const iterator = iterable[Symbol.asyncIterator]();
 

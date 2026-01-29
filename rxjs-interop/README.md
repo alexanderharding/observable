@@ -41,11 +41,11 @@ observable.subscribe({
 
 ```ts
 import { asRxJsObservable } from "@observable/rxjs-interop";
-import { of } from "@observable/of";
+import { ofIterable } from "@observable/of-iterable";
 import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
-const observable = pipe(of([1, 2, 3]), asRxJsObservable());
+const observable = pipe([1, 2, 3], ofIterable(), asRxJsObservable());
 const subscription = observable.subscribe({
   next: (value) => console.log("next", value),
   complete: () => console.log("complete"),
@@ -72,7 +72,7 @@ Provides utilities to convert between RxJS Observables and @observable Observabl
 KEY DIFFERENCES BETWEEN THE LIBRARIES:
 - @observable uses `return`/`throw` — RxJS uses `complete`/`error`
 - @observable uses `AbortController` — RxJS uses `Subscription`
-- @observable's `of()` takes an Iterable — RxJS's `of()` takes variadic args
+- @observable's `ofIterable()` is an operator used with `pipe()` — RxJS's `of()` is a standalone factory with variadic args
 
 USAGE — RxJS to @observable:
 ```ts
@@ -96,11 +96,12 @@ pipe(
 USAGE — @observable to RxJS:
 ```ts
 import { asRxJsObservable } from "@observable/rxjs-interop";
-import { of } from "@observable/of";
+import { ofIterable } from "@observable/of-iterable";
 import { pipe } from "@observable/pipe";
 
 const rxjsObservable = pipe(
-  of([1, 2, 3]),      // @observable Observable (Iterable of)
+  [1, 2, 3],
+  ofIterable(),
   asRxJsObservable()  // Convert to RxJS
 );
 

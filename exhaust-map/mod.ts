@@ -15,13 +15,13 @@ import { switchMap } from "@observable/switch-map";
  * @example
  * ```ts
  * import { exhaustMap } from "@observable/exhaust-map";
- * import { of } from "@observable/of";
+ * import { ofIterable } from "@observable/of-iterable";
  * import { pipe } from "@observable/pipe";
  * import { timeout } from "@observable/timeout";
  * import { map } from "@observable/map";
  *
  * const controller = new AbortController();
- * const source = of([1, 2, 3]);
+ * const source = pipe([1, 2, 3], ofIterable());
  *
  * pipe(
  *   source,

@@ -27,10 +27,15 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 
 ```ts
 import { all } from "@observable/all";
-import { of } from "@observable/of";
+import { ofIterable } from "@observable/of-iterable";
+import { pipe } from "@observable/pipe";
+
+const source1 = pipe([1, 2, 3], ofIterable());
+const source2 = pipe([4, 5, 6], ofIterable());
+const source3 = pipe([7, 8, 9], ofIterable());
 
 const controller = new AbortController();
-all([of([1, 2, 3]), of([4, 5, 6]), of([7, 8, 9])]).subscribe({
+all([source1, source2, source3]).subscribe({
   signal: controller.signal,
   next: (value) => console.log("next", value),
   return: () => console.log("return"),
@@ -48,11 +53,15 @@ all([of([1, 2, 3]), of([4, 5, 6]), of([7, 8, 9])]).subscribe({
 
 ```ts
 import { all } from "@observable/all";
-import { of } from "@observable/of";
+import { ofIterable } from "@observable/of-iterable";
+import { pipe } from "@observable/pipe";
 import { empty } from "@observable/empty";
 
+const source1 = pipe([1, 2, 3], ofIterable());
+const source2 = pipe([7, 8, 9], ofIterable());
+
 const controller = new AbortController();
-all([of([1, 2, 3]), empty, of([7, 8, 9])]).subscribe({
+all([source1, empty, source2]).subscribe({
   signal: controller.signal,
   next: (value) => console.log("next", value),
   return: () => console.log("return"),
@@ -81,15 +90,16 @@ CRITICAL: This library is NOT RxJS. Key differences:
 USAGE PATTERN:
 ```ts
 import { all } from "@observable/all";
-import { of } from "@observable/of";
+import { ofIterable } from "@observable/of-iterable";
+import { pipe } from "@observable/pipe";
+
+const source1 = pipe([1, 2, 3], ofIterable());
+const source2 = pipe([4, 5, 6], ofIterable());
+const source3 = pipe([7, 8, 9], ofIterable());
 
 const controller = new AbortController();
 
-all([
-  of([1, 2, 3]),
-  of([4, 5, 6]),
-  of([7, 8, 9])
-]).subscribe({
+all([source1, source2, source3]).subscribe({
   signal: controller.signal,
   next: (value) => console.log(value),
   return: () => console.log("done"),
@@ -107,7 +117,10 @@ EMPTY SOURCE BEHAVIOR:
 ```ts
 import { empty } from "@observable/empty";
 
-all([of([1, 2, 3]), empty, of([7, 8, 9])]).subscribe({
+const source1 = pipe([1, 2, 3], ofIterable());
+const source2 = pipe([7, 8, 9], ofIterable());
+
+all([source1, empty, source2]).subscribe({
   next: (value) => console.log(value),  // Never called!
   return: () => console.log("done"),    // Called immediately
   ...

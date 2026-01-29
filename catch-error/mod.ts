@@ -9,13 +9,13 @@ import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/i
  * ```ts
  * import { catchError } from "@observable/catch-error";
  * import { throwError } from "@observable/throw-error";
- * import { of } from "@observable/of";
+ * import { ofIterable } from "@observable/of-iterable";
  * import { pipe } from "@observable/pipe";
  *
  * const controller = new AbortController();
  * pipe(
  *   throwError(new Error("error")),
- *   catchError(() => of(["fallback"])),
+ *   catchError(() => pipe(["fallback"], ofIterable())),
  * ).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),

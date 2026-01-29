@@ -12,11 +12,11 @@ import { filter } from "@observable/filter";
  * @example
  * ```ts
  * import { distinct } from "@observable/distinct";
- * import { of } from "@observable/of";
+ * import { ofIterable } from "@observable/of-iterable";
  * import { pipe } from "@observable/pipe";
  *
  * const controller = new AbortController();
- * pipe(of([1, 2, 2, 3, 1, 3]), distinct()).subscribe({
+ * pipe([1, 2, 2, 3, 1, 3], ofIterable(), distinct()).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
  *   return: () => console.log("return"),

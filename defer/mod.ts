@@ -8,11 +8,12 @@ import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/i
  * @example
  * ```ts
  * import { defer } from "@observable/defer";
- * import { of } from "@observable/of";
+ * import { ofIterable } from "@observable/of-iterable";
+ * import { pipe } from "@observable/pipe";
  *
  * const controller = new AbortController();
  * let values = [1, 2, 3];
- * const observable = defer(() => of(values));
+ * const observable = defer(() => pipe(values, ofIterable()));
  *
  * observable.subscribe({
  *   signal: controller.signal,

@@ -1,6 +1,6 @@
 import { assertEquals, assertInstanceOf, assertThrows } from "@std/assert";
 import { Observable, Observer, Subject } from "@observable/core";
-import { of } from "@observable/of";
+import { ofIterable } from "@observable/of-iterable";
 import { pipe } from "@observable/pipe";
 import { throwError } from "@observable/throw-error";
 import { materialize, type ObserverNotification } from "@observable/materialize";
@@ -157,7 +157,7 @@ Deno.test(
     // Arrange
     const values: Array<number> = [];
     let completed = false;
-    const observable = of([1, 2, 3]);
+    const observable = pipe([1, 2, 3], ofIterable());
 
     // Act
     pipe(observable, asRxJsObservable()).subscribe({
@@ -270,7 +270,7 @@ Deno.test(
   "asRxJsObservable should return an RxJS Observable instance",
   () => {
     // Arrange
-    const observable = of([1, 2, 3]);
+    const observable = pipe([1, 2, 3], ofIterable());
 
     // Act
     const result = pipe(observable, asRxJsObservable());
@@ -315,7 +315,7 @@ Deno.test(
   () => {
     // Arrange
     const notifications: Array<ObserverNotification<number>> = [];
-    const source = of([1, 2, 3]);
+    const source = pipe([1, 2, 3], ofIterable());
 
     // Act
     pipe(

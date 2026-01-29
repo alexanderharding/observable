@@ -21,12 +21,12 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 
 ```ts
 import { map } from "@observable/map";
-import { of } from "@observable/of";
+import { ofIterable } from "@observable/of-iterable";
 import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
 
-pipe(of([1, 2, 3]), map((value) => value * 2)).subscribe({
+pipe([1, 2, 3], ofIterable(), map((value) => value * 2)).subscribe({
   signal: controller.signal,
   next: (value) => console.log("next", value),
   return: () => console.log("return"),
@@ -58,13 +58,14 @@ CRITICAL: This library is NOT RxJS. Key differences:
 USAGE PATTERN:
 ```ts
 import { map } from "@observable/map";
-import { of } from "@observable/of";
+import { ofIterable } from "@observable/of-iterable";
 import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
 
 pipe(
-  of([1, 2, 3]),
+  [1, 2, 3],
+  ofIterable(),
   map((value) => value * 2)
 ).subscribe({
   signal: controller.signal,
@@ -77,13 +78,14 @@ pipe(
 WRONG USAGE:
 ```ts
 // ✗ WRONG: map is NOT a method on Observable
-of([1, 2, 3]).map(x => x * 2)  // This does NOT work!
+pipe([1, 2, 3], ofIterable()).map(x => x * 2)  // This does NOT work!
 ```
 
 CHAINING WITH OTHER OPERATORS:
 ```ts
 pipe(
-  of([1, 2, 3, 4, 5]),
+  [1, 2, 3, 4, 5],
+  ofIterable(),
   filter((x) => x % 2 === 0),
   map((x) => x * 10),
 ).subscribe({ ... });  // 20, 40

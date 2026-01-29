@@ -5,7 +5,7 @@ import {
   ParameterTypeError,
 } from "@observable/internal";
 import { flat } from "@observable/flat";
-import { of } from "@observable/of";
+import { ofIterable } from "@observable/of-iterable";
 import { pipe } from "@observable/pipe";
 import { switchMap } from "@observable/switch-map";
 import { ignoreElements } from "@observable/ignore-elements";
@@ -77,7 +77,9 @@ export const AsyncSubject: AsyncSubjectConstructor = class {
   readonly signal = this.#subject.signal;
   readonly #observable = pipe(
     this.#subject,
-    switchMap((value) => flat([pipe(this.#subject, ignoreElements()), of([value])])),
+    switchMap((value) =>
+      flat([pipe(this.#subject, ignoreElements()), pipe([value], ofIterable())])
+    ),
   );
 
   constructor() {

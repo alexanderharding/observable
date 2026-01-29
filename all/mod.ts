@@ -2,7 +2,7 @@ import { type Observable, Observer, Subject } from "@observable/core";
 import { MinimumArgumentsRequiredError, noop, ParameterTypeError } from "@observable/internal";
 import { defer } from "@observable/defer";
 import { empty } from "@observable/empty";
-import { of } from "@observable/of";
+import { ofIterable } from "@observable/of-iterable";
 import { pipe } from "@observable/pipe";
 import { tap } from "@observable/tap";
 import { map } from "@observable/map";
@@ -19,10 +19,15 @@ import { takeUntil } from "@observable/take-until";
  * @example
  * ```ts
  * import { all } from "@observable/all";
- * import { of } from "@observable/of";
+ * import { ofIterable } from "@observable/of-iterable";
+ * import { pipe } from "@observable/pipe";
+ *
+ * const source1 = pipe([1, 2, 3], ofIterable());
+ * const source2 = pipe([4, 5, 6], ofIterable());
+ * const source3 = pipe([7, 8, 9], ofIterable());
  *
  * const controller = new AbortController();
- * all([of([1, 2, 3]), of([4, 5, 6]), of([7, 8, 9])]).subscribe({
+ * all([source1, source2, source3]).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
  *   return: () => console.log("return"),
@@ -38,11 +43,15 @@ import { takeUntil } from "@observable/take-until";
  * @example
  * ```ts
  * import { all } from "@observable/all";
- * import { of } from "@observable/of";
+ * import { ofIterable } from "@observable/of-iterable";
+ * import { pipe } from "@observable/pipe";
  * import { empty } from "@observable/empty";
  *
+ * const source1 = pipe([1, 2, 3], ofIterable());
+ * const source2 = pipe([7, 8, 9], ofIterable());
+ *
  * const controller = new AbortController();
- * all([of([1, 2, 3]), empty, of([7, 8, 9])]).subscribe({
+ * all([source1, empty, source2]).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
  *   return: () => console.log("return"),
@@ -71,7 +80,8 @@ export function all(
     const values: Array<unknown> = [];
     const emptySourceNotifier = new Subject<void>();
     return pipe(
-      of(sources),
+      sources,
+      ofIterable<Observable>(),
       mergeMap((source, index) => {
         let isEmpty = true;
         return pipe(

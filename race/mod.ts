@@ -6,7 +6,7 @@ import {
   ParameterTypeError,
 } from "@observable/internal";
 import { defer } from "@observable/defer";
-import { of } from "@observable/of";
+import { ofIterable } from "@observable/of-iterable";
 import { pipe } from "@observable/pipe";
 import { tap } from "@observable/tap";
 import { mergeMap } from "@observable/merge-map";
@@ -93,7 +93,8 @@ export function race<Value>(
   return defer(() => {
     const finished = new AsyncSubject<number>();
     return pipe(
-      of(sources),
+      sources,
+      ofIterable(),
       takeUntil(finished),
       mergeMap((source, index) => {
         const controller = new AbortController();

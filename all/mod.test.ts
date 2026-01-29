@@ -5,7 +5,7 @@ import { flat } from "@observable/flat";
 import { defer } from "@observable/defer";
 import { empty } from "@observable/empty";
 import { never } from "@observable/never";
-import { of } from "@observable/of";
+import { ofIterable } from "@observable/of-iterable";
 import { pipe } from "@observable/pipe";
 import { all } from "./mod.ts";
 import { ReplaySubject } from "@observable/replay-subject";
@@ -15,9 +15,9 @@ Deno.test(
   () => {
     // Arrange
     const notifications: Array<ObserverNotification<ReadonlyArray<unknown>>> = [];
-    const source1 = of([1, 2, 3]);
-    const source2 = of([4, 5, 6]);
-    const source3 = of([7, 8, 9]);
+    const source1 = pipe([1, 2, 3], ofIterable());
+    const source2 = pipe([4, 5, 6], ofIterable());
+    const source3 = pipe([7, 8, 9], ofIterable());
     const observable = all([source1, source2, source3]);
 
     // Act
@@ -43,7 +43,7 @@ Deno.test(
     const notifications: Array<ObserverNotification<ReadonlyArray<unknown>>> = [];
     const source1 = defer(() => {
       deferCalls.push(1);
-      return flat([of([1, 2, 3]), never]);
+      return flat([pipe([1, 2, 3], ofIterable()), never]);
     });
     const source2 = defer(() => {
       deferCalls.push(2);
@@ -51,7 +51,7 @@ Deno.test(
     });
     const source3 = defer(() => {
       deferCalls.push(3);
-      return of([7, 8, 9]);
+      return pipe([7, 8, 9], ofIterable());
     });
     const observable = all([source1, source2, source3]);
 
@@ -70,10 +70,10 @@ Deno.test("all should handle reentrancy", () => {
   // Arrange
   const notifications: Array<ObserverNotification<ReadonlyArray<unknown>>> = [];
   const source1 = new ReplaySubject<number>(3);
-  const source2 = of([4, 5, 6]);
-  const source3 = of([7, 8, 9]);
+  const source2 = pipe([4, 5, 6], ofIterable());
+  const source3 = pipe([7, 8, 9], ofIterable());
   const observable = all([source1, source2, source3]);
-  flat([of([1, 2, 3]), never]).subscribe(source1);
+  flat([pipe([1, 2, 3], ofIterable()), never]).subscribe(source1);
 
   // Act
   pipe(observable, materialize()).subscribe(

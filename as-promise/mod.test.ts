@@ -1,7 +1,7 @@
 import { assertEquals, assertRejects, assertStrictEquals } from "@std/assert";
 import { pipe } from "@observable/pipe";
 import { asPromise } from "./mod.ts";
-import { of } from "@observable/of";
+import { ofIterable } from "@observable/of-iterable";
 import { throwError } from "@observable/throw-error";
 import { empty } from "@observable/empty";
 
@@ -23,7 +23,7 @@ Deno.test("asPromise should pump throw values right through the Promise", async 
 
 Deno.test("asPromise should pump last next value through the Promise", async () => {
   // Arrange
-  const source = of([1, 2, 3]);
+  const source = pipe([1, 2, 3], ofIterable());
 
   // Act
   const value = await pipe(

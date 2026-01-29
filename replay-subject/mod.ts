@@ -6,7 +6,8 @@ import {
 } from "@observable/internal";
 import { flat } from "@observable/flat";
 import { defer } from "@observable/defer";
-import { of } from "@observable/of";
+import { ofIterable } from "@observable/of-iterable";
+import { pipe } from "@observable/pipe";
 import { empty } from "@observable/empty";
 
 /**
@@ -104,7 +105,7 @@ export const ReplaySubject: ReplaySubjectConstructor = class {
   readonly #subject = new Subject();
   readonly signal = this.#subject.signal;
   readonly #observable = flat([
-    defer(() => (this.#bufferSnapshot ??= of(this.#buffer.slice()))),
+    defer(() => (this.#bufferSnapshot ??= pipe(this.#buffer.slice(), ofIterable()))),
     this.#subject,
   ]);
 

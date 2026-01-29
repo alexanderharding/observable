@@ -8,12 +8,12 @@ import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/i
  * @example
  * ```ts
  * import { map } from "@observable/map";
- * import { of } from "@observable/of";
+ * import { ofIterable } from "@observable/of-iterable";
  * import { pipe } from "@observable/pipe";
  *
  * const controller = new AbortController();
  *
- * pipe(of([1, 2, 3]), map((value) => value * 2)).subscribe({
+ * pipe([1, 2, 3], ofIterable(), map((value) => value * 2)).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
  *   return: () => console.log("return"),

@@ -20,14 +20,15 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 
 ```ts
 import { tap } from "@observable/tap";
-import { of } from "@observable/of";
+import { ofIterable } from "@observable/of-iterable";
 import { pipe } from "@observable/pipe";
 
 const subscriptionController = new AbortController();
 const tapController = new AbortController();
 
 pipe(
-  of([1, 2, 3]),
+  [1, 2, 3],
+  ofIterable(),
   tap({
     signal: tapController.signal,
     next(value) {
@@ -71,13 +72,14 @@ CRITICAL: This library is NOT RxJS. Key differences:
 USAGE PATTERN:
 ```ts
 import { tap } from "@observable/tap";
-import { of } from "@observable/of";
+import { ofIterable } from "@observable/of-iterable";
 import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
 
 pipe(
-  of([1, 2, 3]),
+  [1, 2, 3],
+  ofIterable(),
   tap({
     signal: controller.signal,
     next: (value) => console.log("tapped:", value),
