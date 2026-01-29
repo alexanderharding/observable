@@ -29,6 +29,7 @@
     "merge",
     "merge-map",
     "never",
+    "of-async-iterable",
     "of-iterable",
     "of-promise",
     "pairwise",
