@@ -1,9 +1,10 @@
 import { Observable } from "@observable/core";
-import { MinimumArgumentsRequiredError } from "@observable/internal";
-import { pipe } from "@observable/pipe";
-import { catchError } from "@observable/catch-error";
-import { empty } from "@observable/empty";
-import { throwError } from "@observable/throw-error";
+import {
+  isObject,
+  isURL,
+  MinimumArgumentsRequiredError,
+  ParameterTypeError,
+} from "@observable/internal";
 
 /**
  * Uses [the Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) to
@@ -30,21 +31,15 @@ import { throwError } from "@observable/throw-error";
  * import { Observable } from "@observable/core";
  * import { switchMap } from "@observable/switch-map";
  * import { pipe } from "@observable/pipe";
+ * import { ofPromise } from "@observable/of-promise";
  *
  * const controller = new AbortController();
- * const response = fetch("https://www.example.com/api/data");
+ * const response = fetch("https://www.example.com/api/data", {
+ *   headers: { "Content-Type": "application/json" }
+ * });
  * const data = pipe(
  *   response,
- *   switchMap((response) =>
- *     new Observable(async (observer) => {
- *       try {
- *         observer.next(await response.json());
- *         observer.return();
- *       } catch (value) {
- *         observer.throw(value);
- *       }
- *     })
- *   ),
+ *   switchMap((response) => pipe(response.json(), ofPromise())),
  * );
  *
  * data.subscribe({
@@ -60,42 +55,41 @@ import { throwError } from "@observable/throw-error";
  * ```
  */
 export function fetch(
-  input: RequestInfo | URL,
+  input: string | URL,
   init?: Omit<RequestInit, "signal">,
 ): Observable<Response> {
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-  return pipe(
-    new Observable(
-      async (observer) => {
-        const unsubscribeListenerController = new AbortController();
-        const activeFetchController = new AbortController();
-        observer.signal.addEventListener(
-          "abort",
-          () => activeFetchController.abort(observer.signal.reason),
-          { once: true, signal: unsubscribeListenerController.signal },
+  if (typeof input !== "string" && !isURL(input)) throw new ParameterTypeError(0, "(String | URL)");
+  // Normally we'd check the entire RequestInit interface, but it's complex and we don't need to be
+  // that strict here. We'll still minor type checking though.
+  if (typeof init !== "undefined" && !isObject(init)) throw new ParameterTypeError(1, "Object");
+  return new Observable(
+    async (observer) => {
+      const unsubscribeListenerController = new AbortController();
+      const activeFetchController = new AbortController();
+      observer.signal.addEventListener(
+        "abort",
+        () => activeFetchController.abort(observer.signal.reason),
+        { once: true, signal: unsubscribeListenerController.signal },
+      );
+      try {
+        const response = await globalThis.fetch(
+          input,
+          { ...init, signal: activeFetchController.signal },
         );
-        try {
-          const response = await globalThis.fetch(
-            input,
-            { ...init, signal: activeFetchController.signal },
-          );
-          // Once the response is received, we no longer want to abort the fetch request on teardown.
-          // Aborting in such circumstances would also abort subsequent methods (like `json()`).
-          unsubscribeListenerController.abort();
-          observer.next(response);
-          observer.return();
-        } catch (value) {
-          observer.throw(value);
+        // Once the response is received, we no longer want to abort the fetch request on teardown.
+        // Aborting in such circumstances would also abort subsequent methods (like `json()`).
+        unsubscribeListenerController.abort();
+        observer.next(response);
+        observer.return();
+      } catch (value) {
+        if (value instanceof DOMException && value.name === "AbortError") {
+          // The consumer has unsubscribed which should not be treated
+          // as an error in Observables.
+          return;
         }
-      },
-    ),
-    catchError((value) => {
-      if (value instanceof DOMException && value.name === "AbortError") {
-        // The consumer has unsubscribed which should not be treated
-        // as an error in Observables.
-        return empty;
+        observer.throw(value);
       }
-      return throwError(value);
-    }),
+    },
   );
 }
