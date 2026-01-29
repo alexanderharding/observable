@@ -8,3 +8,7 @@ export { isAbortSignal } from "./is-abort-signal.ts";
 export { isObject } from "./is-object.ts";
 export { isNil } from "./is-nil.ts";
 export { identity } from "./identity.ts";
+export { pickOne } from "./pick-one.ts";
+export { isAsyncIterable } from "./is-async-iterable.ts";
+export { isPromiseLike } from "./is-promise-like.ts";
+export { isURL } from "./is-url.ts";
