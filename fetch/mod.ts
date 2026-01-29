@@ -61,7 +61,7 @@ export function fetch(
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
   if (typeof input !== "string" && !isURL(input)) throw new ParameterTypeError(0, "(String | URL)");
   // Normally we'd check the entire RequestInit interface, but it's complex and we don't need to be
-  // that strict here. We'll still minor type checking though.
+  // that strict here. We'll still do minor type checking though.
   if (typeof init !== "undefined" && !isObject(init)) throw new ParameterTypeError(1, "Object");
   return new Observable(
     async (observer) => {
