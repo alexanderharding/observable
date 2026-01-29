@@ -116,4 +116,3 @@ Deno.test("ofPromise should work with PromiseLike objects", async () => {
     ["return"],
   ]);
 });
-
