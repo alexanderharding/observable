@@ -36,24 +36,18 @@ fetch("https://www.example.com/api/data").subscribe({
 
 ```ts
 import { fetch } from "@observable/fetch";
+import { Observable } from "@observable/core";
 import { switchMap } from "@observable/switch-map";
 import { pipe } from "@observable/pipe";
-import { Observable } from "@observable/core";
+import { ofPromise } from "@observable/of-promise";
 
 const controller = new AbortController();
-const response = fetch("https://www.example.com/api/data");
+const response = fetch("https://www.example.com/api/data", {
+  headers: { "Content-Type": "application/json" },
+});
 const data = pipe(
   response,
-  switchMap((response) =>
-    new Observable(async (observer) => {
-      try {
-        observer.next(await response.json());
-        observer.return();
-      } catch (value) {
-        observer.throw(value);
-      }
-    })
-  ),
+  switchMap((response) => pipe(response.json(), ofPromise())),
 );
 
 data.subscribe({
@@ -103,24 +97,18 @@ controller.abort();
 PARSING RESPONSE BODY:
 ```ts
 import { fetch } from "@observable/fetch";
+import { Observable } from "@observable/core";
 import { switchMap } from "@observable/switch-map";
 import { pipe } from "@observable/pipe";
-import { Observable } from "@observable/core";
+import { ofPromise } from "@observable/of-promise";
 
 const controller = new AbortController();
 
 pipe(
-  fetch("https://api.example.com/data"),
-  switchMap((response) =>
-    new Observable(async (observer) => {
-      try {
-        observer.next(await response.json());
-        observer.return();
-      } catch (value) {
-        observer.throw(value);
-      }
-    })
-  ),
+  fetch("https://api.example.com/data", {
+    headers: { "Content-Type": "application/json" }
+  }),
+  switchMap((response) => pipe(response.json(), ofPromise())),
 ).subscribe({
   signal: controller.signal,
   next: (data) => console.log(data),  // Parsed JSON

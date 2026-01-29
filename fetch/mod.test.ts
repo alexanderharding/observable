@@ -267,3 +267,186 @@ Deno.test("fetch should not start the request when already aborted", async () =>
 
   Object.defineProperty(globalThis, "fetch", { value: originalFetch, configurable: true });
 });
+
+Deno.test("fetch should throw an error if input is not a string or URL", () => {
+  // Arrange / Act / Assert
+  assertThrows(
+    () => fetch(123 as unknown as string),
+    TypeError,
+    "Parameter 1 is not of type '(String | URL)'",
+  );
+
+  assertThrows(
+    () => fetch(null as unknown as string),
+    TypeError,
+    "Parameter 1 is not of type '(String | URL)'",
+  );
+
+  assertThrows(
+    () => fetch({} as unknown as string),
+    TypeError,
+    "Parameter 1 is not of type '(String | URL)'",
+  );
+
+  assertThrows(
+    () => fetch(true as unknown as string),
+    TypeError,
+    "Parameter 1 is not of type '(String | URL)'",
+  );
+});
+
+Deno.test("fetch should throw an error if init is not an object", () => {
+  // Arrange / Act / Assert
+  assertThrows(
+    () => fetch("https://example.com", "invalid" as unknown as RequestInit),
+    TypeError,
+    "Parameter 2 is not of type 'Object'",
+  );
+
+  assertThrows(
+    () => fetch("https://example.com", 123 as unknown as RequestInit),
+    TypeError,
+    "Parameter 2 is not of type 'Object'",
+  );
+
+  assertThrows(
+    () => fetch("https://example.com", true as unknown as RequestInit),
+    TypeError,
+    "Parameter 2 is not of type 'Object'",
+  );
+});
+
+Deno.test("fetch should accept a URL-like object as input", async () => {
+  // Arrange
+  const notifications: Array<ObserverNotification<Response>> = [];
+  const mockResponse = new Response("", { status: 200 });
+  const fetchCalls: Array<Parameters<typeof globalThis.fetch>> = [];
+  const originalFetch = globalThis.fetch;
+  Object.defineProperty(globalThis, "fetch", {
+    value: (...args: Parameters<typeof globalThis.fetch>) => {
+      fetchCalls.push(args);
+      return Promise.resolve(mockResponse);
+    },
+    configurable: true,
+  });
+  const urlLike: URL = {
+    href: "https://example.com/api",
+    origin: "https://example.com",
+    protocol: "https:",
+    username: "",
+    password: "",
+    host: "example.com",
+    hostname: "example.com",
+    port: "",
+    pathname: "/api",
+    search: "",
+    searchParams: new URLSearchParams(),
+    hash: "",
+    toString: () => "https://example.com/api",
+    toJSON: () => "https://example.com/api",
+  };
+
+  // Act
+  pipe(fetch(urlLike), materialize()).subscribe(
+    new Observer((notification) => notifications.push(notification)),
+  );
+  await Promise.resolve();
+
+  // Assert
+  assertEquals(fetchCalls.length, 1);
+  assertEquals(fetchCalls[0][0], urlLike);
+  assertEquals(notifications, [["next", mockResponse], ["return"]]);
+
+  Object.defineProperty(globalThis, "fetch", { value: originalFetch, configurable: true });
+});
+
+Deno.test("fetch should accept undefined as init", async () => {
+  // Arrange
+  const notifications: Array<ObserverNotification<Response>> = [];
+  const mockResponse = new Response("", { status: 200 });
+  const fetchCalls: Array<Parameters<typeof globalThis.fetch>> = [];
+  const originalFetch = globalThis.fetch;
+  Object.defineProperty(globalThis, "fetch", {
+    value: (...args: Parameters<typeof globalThis.fetch>) => {
+      fetchCalls.push(args);
+      return Promise.resolve(mockResponse);
+    },
+    configurable: true,
+  });
+
+  // Act
+  pipe(fetch("https://example.com/api", undefined), materialize()).subscribe(
+    new Observer((notification) => notifications.push(notification)),
+  );
+  await Promise.resolve();
+
+  // Assert
+  assertEquals(fetchCalls.length, 1);
+  assertEquals(notifications, [["next", mockResponse], ["return"]]);
+
+  Object.defineProperty(globalThis, "fetch", { value: originalFetch, configurable: true });
+});
+
+Deno.test("fetch should pass abort reason when unsubscribed with reason", async () => {
+  // Arrange
+  const controller = new AbortController();
+  const abortReasons: Array<unknown> = [];
+  const originalFetch = globalThis.fetch;
+  Object.defineProperty(globalThis, "fetch", {
+    value: (_url: RequestInfo | URL, init?: RequestInit) => {
+      if (init?.signal) {
+        init.signal.addEventListener("abort", () => {
+          abortReasons.push(init.signal?.reason);
+        });
+      }
+      return new Promise(() => {
+        // Never resolves
+      });
+    },
+    configurable: true,
+  });
+  const customReason = new Error("Custom abort reason");
+
+  // Act
+  fetch("https://example.com/api").subscribe(
+    new Observer({
+      signal: controller.signal,
+      next: () => {},
+    }),
+  );
+  controller.abort(customReason);
+  await Promise.resolve();
+
+  // Assert
+  assertEquals(abortReasons.length, 1);
+  assertEquals(abortReasons[0], customReason);
+
+  Object.defineProperty(globalThis, "fetch", { value: originalFetch, configurable: true });
+});
+
+Deno.test("fetch should throw an error if input is undefined", () => {
+  // Arrange / Act / Assert
+  assertThrows(
+    () => fetch(undefined as unknown as string),
+    TypeError,
+    "Parameter 1 is not of type '(String | URL)'",
+  );
+});
+
+Deno.test("fetch should throw an error if input is an array", () => {
+  // Arrange / Act / Assert
+  assertThrows(
+    () => fetch([] as unknown as string),
+    TypeError,
+    "Parameter 1 is not of type '(String | URL)'",
+  );
+});
+
+Deno.test("fetch should throw an error if init is null", () => {
+  // Arrange / Act / Assert
+  assertThrows(
+    () => fetch("https://example.com", null as unknown as RequestInit),
+    TypeError,
+    "Parameter 2 is not of type 'Object'",
+  );
+});
