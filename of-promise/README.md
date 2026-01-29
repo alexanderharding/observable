@@ -54,20 +54,18 @@ pipe(Promise.reject(new Error("test")), ofPromise()).subscribe({
 
 Use the following prompt with AI assistants to help them understand this library:
 
-> You are helping me with code that uses @observable/of-promise from the @observable library
-> ecosystem.
->
-> WHAT IT DOES: `ofPromise()` converts a Promise/PromiseLike into an Observable that emits the
-> resolved value, then calls `return()`. If the promise rejects, it calls `throw()` with the error.
->
-> CRITICAL: This library is NOT RxJS. Key differences:
->
-> - Observer uses `return`/`throw` — NOT `complete`/`error`
-> - Unsubscription via `AbortController.abort()` — NOT `subscription.unsubscribe()`
-> - `ofPromise` is an operator function used with `pipe()` — NOT a standalone factory
+````
+You are helping me with code that uses @observable/of-promise from the @observable library ecosystem.
 
-### Usage Pattern
+WHAT IT DOES:
+`ofPromise()` converts a Promise/PromiseLike into an Observable that emits the resolved value, then calls `return()`. If the promise rejects, it calls `throw()` with the error.
 
+CRITICAL DIFFERENCES FROM RxJS:
+- Observer uses `return`/`throw` — NOT `complete`/`error`
+- Unsubscription via `AbortController.abort()` — NOT `subscription.unsubscribe()`
+- `ofPromise` is an operator function used with `pipe()` — NOT a standalone factory
+
+USAGE PATTERN:
 ```ts
 import { ofPromise } from "@observable/of-promise";
 import { pipe } from "@observable/pipe";
@@ -80,8 +78,7 @@ pipe(fetch("/api/data"), ofPromise()).subscribe({
 });
 ```
 
-### Error Handling
-
+ERROR HANDLING:
 ```ts
 pipe(
   Promise.reject(new Error("failed")),
@@ -93,6 +90,7 @@ pipe(
   throw: (error) => console.error("Caught:", error), // Caught: Error: failed
 });
 ```
+````
 
 ## Glossary And Semantics
 
