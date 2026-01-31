@@ -1,8 +1,7 @@
 # [@observable/defer](https://jsr.io/@observable/defer)
 
-Calls an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) factory
-[`Observable`](https://jsr.io/@observable/core/doc/~/Observable) for each
-[subscription](https://jsr.io/@observable/core#subscription).
+Calls an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) `connector` function for
+each [subscription](https://jsr.io/@observable/core#subscription).
 
 ## Build
 

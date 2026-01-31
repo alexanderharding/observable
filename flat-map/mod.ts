@@ -87,10 +87,12 @@ export function flatMap<In, Out>(
           signal: observer.signal,
           next: (value) => observer.next(value),
           return() {
-            if (queue.length) processNextValue(queue.shift()!);
-            else {
+            try {
+              if (queue.length) return processNextValue(queue.shift()!);
               activeInnerSubscription = false;
               if (outerSubscriptionHasReturned) observer.return();
+            } catch (value) {
+              observer.throw(value);
             }
           },
           throw: (value) => observer.throw(value),

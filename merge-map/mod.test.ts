@@ -362,3 +362,58 @@ Deno.test(
     ]);
   },
 );
+
+Deno.test(
+  "mergeMap should propagate asObservable error when project returns non-observable",
+  () => {
+    // Arrange
+    const source = new Subject<number>();
+    const notifications: Array<ObserverNotification<unknown>> = [];
+    const materialized = pipe(
+      source,
+      // deno-lint-ignore no-explicit-any
+      mergeMap(() => "not an observable" as any),
+      materialize(),
+    );
+
+    // Act
+    materialized.subscribe(
+      new Observer((notification) => notifications.push(notification)),
+    );
+    source.next(1);
+
+    // Assert
+    assertEquals(notifications.length, 1);
+    assertEquals(notifications[0][0], "throw");
+    assertEquals(
+      (notifications[0][1] as TypeError).message,
+      "Parameter 1 is not of type 'Observable'",
+    );
+  },
+);
+
+Deno.test(
+  "mergeMap should propagate error when project throws synchronously",
+  () => {
+    // Arrange
+    const projectError = new Error("project threw");
+    const source = new Subject<number>();
+    const notifications: Array<ObserverNotification<unknown>> = [];
+    const materialized = pipe(
+      source,
+      mergeMap((): never => {
+        throw projectError;
+      }),
+      materialize(),
+    );
+
+    // Act
+    materialized.subscribe(
+      new Observer((notification) => notifications.push(notification)),
+    );
+    source.next(1);
+
+    // Assert
+    assertEquals(notifications, [["throw", projectError]]);
+  },
+);
