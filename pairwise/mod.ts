@@ -14,7 +14,7 @@ const noValue = Symbol("Flag indicating that no value has been emitted yet");
 /**
  * Object type that represents a pair of consecutive values.
  */
-export type Pair<Value> = Readonly<[previous: Value, current: Value]>;
+export type Pair<Value = unknown> = Readonly<[previous: Value, current: Value]>;
 
 /**
  * [`Next`](https://jsr.io/@observable/core/doc/~/Observer.next)s {@linkcode Pair|pair}s of consecutive values
