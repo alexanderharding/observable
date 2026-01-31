@@ -1,10 +1,11 @@
-import { Observable, toObservable } from "@observable/core";
+import { Observable } from "@observable/core";
+import { asObservable } from "@observable/as-observable";
+import { pipe } from "@observable/pipe";
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 
 /**
- * Calls an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) factory
- * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) for each
- * [subscription](https://jsr.io/@observable/core#subscription).
+ * Calls an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) {@linkcode getter} function
+ * for each [subscription](https://jsr.io/@observable/core#subscription).
  * @example
  * ```ts
  * import { defer } from "@observable/defer";
@@ -43,11 +44,9 @@ import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/i
  * // "return"
  */
 export function defer<Value>(
-  factory: () => Observable<Value>,
+  getter: () => Observable<Value>,
 ): Observable<Value> {
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-  if (typeof factory !== "function") {
-    throw new ParameterTypeError(0, "Function");
-  }
-  return new Observable((observer) => toObservable(factory()).subscribe(observer));
+  if (typeof getter !== "function") throw new ParameterTypeError(0, "Function");
+  return new Observable((observer) => pipe(getter(), asObservable()).subscribe(observer));
 }

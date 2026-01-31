@@ -1,4 +1,5 @@
-import { isObservable, type Observable, toObservable } from "@observable/core";
+import { isObservable, type Observable } from "@observable/core";
+import { asObservable } from "@observable/as-observable";
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 import { empty } from "@observable/empty";
 import { pipe } from "@observable/pipe";
@@ -54,13 +55,12 @@ export function throttle<Value>(
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
     if (milliseconds < 0 || Number.isNaN(milliseconds)) return empty;
     if (milliseconds === Infinity) return pipe(source, take(1));
+    if (milliseconds === 0) return pipe(source, asObservable());
     return pipe(
       source,
-      milliseconds === 0
-        ? toObservable
-        : exhaustMap((value) =>
-          flat([pipe([value], ofIterable()), pipe(timeout(milliseconds), ignoreElements())])
-        ),
+      exhaustMap((value) =>
+        flat([pipe([value], ofIterable()), pipe(timeout(milliseconds), ignoreElements())])
+      ),
     );
   };
 }

@@ -1,4 +1,5 @@
-import { isObservable, type Observable, toObservable } from "@observable/core";
+import { isObservable, type Observable } from "@observable/core";
+import { asObservable } from "@observable/as-observable";
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 import { pipe } from "@observable/pipe";
 import { map } from "@observable/map";
@@ -49,7 +50,7 @@ export function distinctUntilChanged<Value>(
   return function distinctUntilChangedFn(source) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
-    source = toObservable(source);
+    source = pipe(source, asObservable());
     return pipe(
       flat([pipe([noValue], ofIterable()), source]),
       pairwise(),

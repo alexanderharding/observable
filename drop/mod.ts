@@ -1,4 +1,5 @@
-import { isObservable, type Observable, toObservable } from "@observable/core";
+import { isObservable, type Observable } from "@observable/core";
+import { asObservable } from "@observable/as-observable";
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 import { empty } from "@observable/empty";
 import { pipe } from "@observable/pipe";
@@ -37,9 +38,7 @@ export function drop<Value>(
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
     if (count < 0 || Number.isNaN(count) || count === Infinity) return empty;
-    return pipe(
-      source,
-      count === 0 ? toObservable : filter((_, index) => index >= count),
-    );
+    if (count === 0) return pipe(source, asObservable());
+    return pipe(source, filter((_, index) => index >= count));
   };
 }
