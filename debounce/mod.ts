@@ -4,7 +4,7 @@ import { empty } from "@observable/empty";
 import { pipe } from "@observable/pipe";
 import { switchMap } from "@observable/switch-map";
 import { timeout } from "@observable/timeout";
-import { ignoreElements } from "@observable/ignore-elements";
+import { drop } from "@observable/drop";
 import { asObservable } from "@observable/as-observable";
 import { flat } from "@observable/flat";
 import { ofIterable } from "@observable/of-iterable";
@@ -48,12 +48,12 @@ export function debounce<Value>(
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
     if (milliseconds < 0 || Number.isNaN(milliseconds)) return empty;
-    if (milliseconds === Infinity) return pipe(source, ignoreElements());
+    if (milliseconds === Infinity) return pipe(source, drop(Infinity));
     if (milliseconds === 0) return pipe(source, asObservable());
     return pipe(
       source,
       switchMap((value) =>
-        flat([pipe(timeout(milliseconds), ignoreElements()), pipe([value], ofIterable())])
+        flat([pipe(timeout(milliseconds), drop<never>(Infinity)), pipe([value], ofIterable())])
       ),
     );
   };

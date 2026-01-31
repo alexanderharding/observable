@@ -4,11 +4,11 @@ import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/i
 import { empty } from "@observable/empty";
 import { pipe } from "@observable/pipe";
 import { exhaustMap } from "@observable/exhaust-map";
+import { filter } from "@observable/filter";
 import { flat } from "@observable/flat";
 import { ofIterable } from "@observable/of-iterable";
 import { timeout } from "@observable/timeout";
-import { ignoreElements } from "@observable/ignore-elements";
-import { take } from "@observable/take";
+import { drop } from "@observable/drop";
 
 /**
  * Throttles the [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values from the
@@ -54,12 +54,12 @@ export function throttle<Value>(
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
     if (milliseconds < 0 || Number.isNaN(milliseconds)) return empty;
-    if (milliseconds === Infinity) return pipe(source, take(1));
+    if (milliseconds === Infinity) return pipe(source, filter((_, index) => index === 0));
     if (milliseconds === 0) return pipe(source, asObservable());
     return pipe(
       source,
       exhaustMap((value) =>
-        flat([pipe([value], ofIterable()), pipe(timeout(milliseconds), ignoreElements())])
+        flat([pipe([value], ofIterable()), pipe(timeout(milliseconds), drop<never>(Infinity))])
       ),
     );
   };

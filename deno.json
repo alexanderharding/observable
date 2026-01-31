@@ -21,7 +21,6 @@
     "finalize",
     "flat",
     "flat-map",
-    "ignore-elements",
     "internal",
     "interval",
     "keep-alive",

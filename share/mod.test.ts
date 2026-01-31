@@ -8,10 +8,6 @@ import { materialize, type ObserverNotification } from "@observable/materialize"
 import { ReplaySubject } from "@observable/replay-subject";
 import { defer } from "@observable/defer";
 import { never } from "@observable/never";
-import { flat } from "@observable/flat";
-import { take } from "@observable/take";
-import { ignoreElements } from "@observable/ignore-elements";
-import { empty } from "@observable/empty";
 
 Deno.test("share should not throw when called with no connector argument", () => {
   // Arrange / Act / Assert
@@ -161,13 +157,9 @@ Deno.test("share should reset when all observers unsubscribe", () => {
 
 Deno.test("share should propagate throw to all observers", () => {
   // Arrange
-  const throwNotifier = new Subject<void>();
+  const throwNotifier = new Subject<never>();
   const error = new Error("test error");
-  const source = flat([
-    pipe(throwNotifier, take(1), ignoreElements()),
-    throwError(error),
-  ]);
-  const shared = pipe(source, share());
+  const shared = pipe(throwNotifier, share());
   const notifications1: Array<ObserverNotification<number>> = [];
   const notifications2: Array<ObserverNotification<number>> = [];
 
@@ -178,7 +170,7 @@ Deno.test("share should propagate throw to all observers", () => {
   pipe(shared, materialize()).subscribe(
     new Observer((notification) => notifications2.push(notification)),
   );
-  throwNotifier.next();
+  throwNotifier.throw(error);
 
   // Assert
   assertEquals(notifications1, [["throw", error]]);
@@ -187,12 +179,8 @@ Deno.test("share should propagate throw to all observers", () => {
 
 Deno.test("share should propagate return to all observers", () => {
   // Arrange
-  const returnNotifier = new Subject<void>();
-  const source = flat([
-    pipe(returnNotifier, take(1), ignoreElements()),
-    empty,
-  ]);
-  const shared = pipe(source, share());
+  const returnNotifier = new Subject<never>();
+  const shared = pipe(returnNotifier, share());
   const notifications1: Array<ObserverNotification<never>> = [];
   const notifications2: Array<ObserverNotification<never>> = [];
 
@@ -203,7 +191,7 @@ Deno.test("share should propagate return to all observers", () => {
   pipe(shared, materialize()).subscribe(
     new Observer((notification) => notifications2.push(notification)),
   );
-  returnNotifier.next();
+  returnNotifier.return();
 
   // Assert
   assertEquals(notifications1, [["return"]]);

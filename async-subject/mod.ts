@@ -8,7 +8,7 @@ import { flat } from "@observable/flat";
 import { ofIterable } from "@observable/of-iterable";
 import { pipe } from "@observable/pipe";
 import { switchMap } from "@observable/switch-map";
-import { ignoreElements } from "@observable/ignore-elements";
+import { drop } from "@observable/drop";
 import { ReplaySubject } from "@observable/replay-subject";
 
 /**
@@ -78,7 +78,7 @@ export const AsyncSubject: AsyncSubjectConstructor = class {
   readonly #observable = pipe(
     this.#subject,
     switchMap((value) =>
-      flat([pipe(this.#subject, ignoreElements()), pipe([value], ofIterable())])
+      flat([pipe(this.#subject, drop<never>(Infinity)), pipe([value], ofIterable())])
     ),
   );
 
