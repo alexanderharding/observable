@@ -305,3 +305,130 @@ Deno.test("catchError should emit multiple values from recovery observable", () 
     ["return"],
   ]);
 });
+
+Deno.test("catchError should propagate asObservable error when handleError returns non-observable", () => {
+  // Arrange
+  const originalError = new Error("original");
+  const notifications: Array<ObserverNotification<unknown>> = [];
+  const source = throwError(originalError);
+  const materialized = pipe(
+    source,
+    // deno-lint-ignore no-explicit-any
+    catchError(() => "not an observable" as any),
+    materialize(),
+  );
+
+  // Act
+  materialized.subscribe(
+    new Observer((notification) => notifications.push(notification)),
+  );
+
+  // Assert
+  assertEquals(notifications.length, 1);
+  assertEquals(notifications[0][0], "throw");
+  assertEquals(
+    (notifications[0][1] as TypeError).message,
+    "Parameter 1 is not of type 'Observable'",
+  );
+});
+
+Deno.test("catchError should propagate error when handleError throws synchronously", () => {
+  // Arrange
+  const originalError = new Error("original");
+  const handlerError = new Error("handler threw");
+  const notifications: Array<ObserverNotification<unknown>> = [];
+  const source = throwError(originalError);
+  const materialized = pipe(
+    source,
+    catchError((): never => {
+      throw handlerError;
+    }),
+    materialize(),
+  );
+
+  // Act
+  materialized.subscribe(
+    new Observer((notification) => notifications.push(notification)),
+  );
+
+  // Assert
+  assertEquals(notifications, [["throw", handlerError]]);
+});
+
+Deno.test("catchError should propagate asObservable error when handleError returns null", () => {
+  // Arrange
+  const originalError = new Error("original");
+  const notifications: Array<ObserverNotification<unknown>> = [];
+  const source = throwError(originalError);
+  const materialized = pipe(
+    source,
+    // deno-lint-ignore no-explicit-any
+    catchError(() => null as any),
+    materialize(),
+  );
+
+  // Act
+  materialized.subscribe(
+    new Observer((notification) => notifications.push(notification)),
+  );
+
+  // Assert
+  assertEquals(notifications.length, 1);
+  assertEquals(notifications[0][0], "throw");
+  assertEquals(
+    (notifications[0][1] as TypeError).message,
+    "Parameter 1 is not of type 'Observable'",
+  );
+});
+
+Deno.test("catchError should propagate asObservable error when handleError returns undefined", () => {
+  // Arrange
+  const originalError = new Error("original");
+  const notifications: Array<ObserverNotification<unknown>> = [];
+  const source = throwError(originalError);
+  const materialized = pipe(
+    source,
+    // deno-lint-ignore no-explicit-any
+    catchError(() => undefined as any),
+    materialize(),
+  );
+
+  // Act
+  materialized.subscribe(
+    new Observer((notification) => notifications.push(notification)),
+  );
+
+  // Assert
+  assertEquals(notifications.length, 1);
+  assertEquals(notifications[0][0], "throw");
+  assertEquals(
+    (notifications[0][1] as TypeError).message,
+    "Parameter 1 is not of type 'Observable'",
+  );
+});
+
+Deno.test("catchError should propagate asObservable error when handleError returns plain object", () => {
+  // Arrange
+  const originalError = new Error("original");
+  const notifications: Array<ObserverNotification<unknown>> = [];
+  const source = throwError(originalError);
+  const materialized = pipe(
+    source,
+    // deno-lint-ignore no-explicit-any
+    catchError(() => ({ foo: "bar" }) as any),
+    materialize(),
+  );
+
+  // Act
+  materialized.subscribe(
+    new Observer((notification) => notifications.push(notification)),
+  );
+
+  // Assert
+  assertEquals(notifications.length, 1);
+  assertEquals(notifications[0][0], "throw");
+  assertEquals(
+    (notifications[0][1] as TypeError).message,
+    "Parameter 1 is not of type 'Observable'",
+  );
+});

@@ -31,12 +31,10 @@ import { pipe } from "@observable/pipe";
  * ```
  */
 export function catchError<Value, ResolvedValue>(
-  resolver: (value: unknown) => Observable<ResolvedValue>,
+  handler: (value: unknown) => Observable<ResolvedValue>,
 ): (source: Observable<Value>) => Observable<Value | ResolvedValue> {
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-  if (typeof resolver !== "function") {
-    throw new ParameterTypeError(0, "Function");
-  }
+  if (typeof handler !== "function") throw new ParameterTypeError(0, "Function");
   return function catchErrorFn(source) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
@@ -46,7 +44,13 @@ export function catchError<Value, ResolvedValue>(
         signal: observer.signal,
         next: (value) => observer.next(value),
         return: () => observer.return(),
-        throw: (value) => pipe(resolver(value), asObservable()).subscribe(observer),
+        throw(value) {
+          try {
+            pipe(handler(value), asObservable()).subscribe(observer);
+          } catch (error) {
+            observer.throw(error);
+          }
+        },
       })
     );
   };

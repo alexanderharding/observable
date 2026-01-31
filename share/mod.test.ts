@@ -442,3 +442,47 @@ Deno.test("share should work with observable-like sources", () => {
     ["return"],
   ]);
 });
+
+Deno.test("share should propagate asObservable error when connector returns non-observable", () => {
+  // Arrange
+  const source = new Subject<number>();
+  const shared = pipe(
+    source,
+    share(() => "not a subject" as unknown as Subject<number>),
+  );
+  const notifications: Array<ObserverNotification<unknown>> = [];
+
+  // Act
+  pipe(shared, materialize()).subscribe(
+    new Observer((notification) => notifications.push(notification)),
+  );
+
+  // Assert
+  assertEquals(notifications.length, 1);
+  assertEquals(notifications[0][0], "throw");
+  assertEquals(
+    (notifications[0][1] as TypeError).message,
+    "Parameter 1 is not of type 'Observable'",
+  );
+});
+
+Deno.test("share should propagate error when connector throws synchronously", () => {
+  // Arrange
+  const connectorError = new Error("connector threw");
+  const source = new Subject<number>();
+  const shared = pipe(
+    source,
+    share((): never => {
+      throw connectorError;
+    }),
+  );
+  const notifications: Array<ObserverNotification<unknown>> = [];
+
+  // Act
+  pipe(shared, materialize()).subscribe(
+    new Observer((notification) => notifications.push(notification)),
+  );
+
+  // Assert
+  assertEquals(notifications, [["throw", connectorError]]);
+});

@@ -4,7 +4,7 @@ import { pipe } from "@observable/pipe";
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 
 /**
- * Calls an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) {@linkcode getter} function
+ * Calls an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) {@linkcode connector} function
  * for each [subscription](https://jsr.io/@observable/core#subscription).
  * @example
  * ```ts
@@ -44,9 +44,9 @@ import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/i
  * // "return"
  */
 export function defer<Value>(
-  getter: () => Observable<Value>,
+  connector: () => Observable<Value>,
 ): Observable<Value> {
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-  if (typeof getter !== "function") throw new ParameterTypeError(0, "Function");
-  return new Observable((observer) => pipe(getter(), asObservable()).subscribe(observer));
+  if (typeof connector !== "function") throw new ParameterTypeError(0, "Function");
+  return new Observable((observer) => pipe(connector(), asObservable()).subscribe(observer));
 }

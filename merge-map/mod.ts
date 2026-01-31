@@ -46,7 +46,6 @@ export function mergeMap<In, Out>(
   if (typeof project !== "function") {
     throw new ParameterTypeError(0, "Function");
   }
-
   return function mergeMapFn(source) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
