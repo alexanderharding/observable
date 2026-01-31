@@ -5,8 +5,6 @@ import { pipe } from "@observable/pipe";
 import { ofIterable } from "@observable/of-iterable";
 import { materialize, type ObserverNotification } from "@observable/materialize";
 import { throttle } from "./mod.ts";
-import { flat } from "@observable/flat";
-import { throwError } from "@observable/throw-error";
 
 Deno.test("throttle should return empty if milliseconds is negative", () => {
   // Arrange
