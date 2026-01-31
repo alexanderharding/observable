@@ -1,16 +1,13 @@
-# [@observable/as-promise](https://jsr.io/@observable/as-promise)
+# [@observable/as-observable](https://jsr.io/@observable/as-observable)
 
-Projects an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) through a
-[`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise).
-Since
-[`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)s
-have no concept of [`return`](https://jsr.io/@observable/core/doc/~/Observer.return), this operator
-will reject with a
-[`TypeError`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypeError)
-if the [source](https://jsr.io/@observable/core#source)
-[`Observable`](https://jsr.io/@observable/core/doc/~/Observable)
-[`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s without
-[`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ing a value.
+Converts a custom [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) to a proper
+[`Observable`](https://jsr.io/@observable/core/doc/~/Observable). If the
+[source](https://jsr.io/@observable/core#source) is already an instanceof
+[`Observable`](https://jsr.io/@observable/core/doc/~/Observable) (which means it has
+[`Observable.prototype`](https://jsr.io/@observable/core/doc/~/ObservableConstructor.prototype) in
+its prototype chain), it's returned directly. Otherwise, a new
+[`Observable`](https://jsr.io/@observable/core/doc/~/Observable) object is created that wraps the
+original [source](https://jsr.io/@observable/core#source).
 
 ## Build
 
@@ -28,56 +25,33 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 ## Examples
 
 ```ts
-import { asPromise } from "@observable/as-promise";
-import { ofIterable } from "@observable/of-iterable";
+import { Observable } from "@observable/core";
+import { asObservable } from "@observable/as-observable";
 import { pipe } from "@observable/pipe";
 
-console.log(await pipe([1, 2, 3], ofIterable(), asPromise()));
+const observableInstance = new Observable((observer) => {
+  // Implementation omitted for brevity.
+});
+const result = pipe(observableInstance, asObservable());
 
-// Console output:
-// 3
+result === observableInstance; // true
+result instanceof Observable; // true
 ```
 
 ```ts
-import { asPromise } from "@observable/as-promise";
-import { throwError } from "@observable/throw-error";
+import { Observable } from "@observable/core";
+import { asObservable } from "@observable/as-observable";
 import { pipe } from "@observable/pipe";
 
-try {
-  console.log(await pipe(throwError(new Error("test")), asPromise()));
-} catch (error) {
-  console.log(error);
-  // Console output:
-  // Error: test
-}
-```
+const customObservable: Observable = {
+  subscribe(observer) {
+    // Implementation omitted for brevity.
+  },
+};
+const result = pipe(customObservable, asObservable());
 
-```ts
-import { asPromise } from "@observable/as-promise";
-import { empty } from "@observable/empty";
-import { pipe } from "@observable/pipe";
-
-try {
-  console.log(await pipe(empty, asPromise()));
-} catch (error) {
-  console.log(error);
-  // Console output:
-  // TypeError: Cannot convert empty Observable to Promise
-}
-```
-
-```ts
-import { asPromise } from "@observable/as-promise";
-import { ofIterable } from "@observable/of-iterable";
-import { pipe } from "@observable/pipe";
-
-try {
-  console.log(await pipe([], ofIterable(), asPromise()));
-} catch (error) {
-  console.log(error);
-  // Console output:
-  // TypeError: Cannot convert empty Observable to Promise
-}
+result === customObservable; // false
+result instanceof Observable; // true
 ```
 
 # AI Prompt
@@ -85,52 +59,54 @@ try {
 Use the following prompt with AI assistants to help them understand this library:
 
 ````
-You are helping me with code that uses @observable/as-promise from the @observable library ecosystem.
+You are helping me with code that uses @observable/as-observable from the @observable library ecosystem.
 
 WHAT IT DOES:
-`asPromise()` converts an Observable to a Promise that resolves with the LAST emitted value. Rejects if the source throws, or if the source returns without emitting any value.
+`asObservable()` converts a custom Observable (one that satisfies the Observable interface but isn't an instance of Observable) to a proper Observable instance. If the source is already an `instanceof Observable`, it returns it directly. Otherwise, it creates a new Observable that wraps the original source.
 
 CRITICAL: This library is NOT RxJS. Key differences:
 - Observer uses `return`/`throw` — NOT `complete`/`error`
 - Unsubscription via `AbortController.abort()` — NOT `subscription.unsubscribe()`
-- `asPromise` is a standalone function used with `pipe()` — NOT a method on Observable
+- `asObservable` is a standalone function used with `pipe()` — NOT a method on Observable
 
-USAGE PATTERN:
+USAGE PATTERN (source is already an Observable instance):
 ```ts
-import { asPromise } from "@observable/as-promise";
-import { ofIterable } from "@observable/of-iterable";
+import { Observable } from "@observable/core";
+import { asObservable } from "@observable/as-observable";
 import { pipe } from "@observable/pipe";
 
-const result = await pipe([1, 2, 3], ofIterable(), asPromise());
-console.log(result);  // 3 (last value)
+const observableInstance = new Observable((observer) => {
+  observer.next(1);
+  observer.return();
+});
+const result = pipe(observableInstance, asObservable());
+
+result === observableInstance;  // true (returned directly)
+result instanceof Observable;   // true
 ```
 
-ERROR HANDLING:
+USAGE PATTERN (custom Observable object):
 ```ts
-import { throwError } from "@observable/throw-error";
+import { Observable } from "@observable/core";
+import { asObservable } from "@observable/as-observable";
+import { pipe } from "@observable/pipe";
 
-try {
-  await pipe(throwError(new Error("test")), asPromise());
-} catch (error) {
-  console.error(error);  // Error: test
-}
-```
+const customObservable: Observable<number> = {
+  subscribe(observer) {
+    observer.next(1);
+    observer.return();
+  },
+};
+const result = pipe(customObservable, asObservable());
 
-EMPTY OBSERVABLE REJECTION:
-```ts
-import { empty } from "@observable/empty";
-
-try {
-  await pipe(empty, asPromise());
-} catch (error) {
-  console.error(error);  // TypeError: Cannot convert empty Observable to Promise
-}
+result === customObservable;    // false (wrapped in new Observable)
+result instanceof Observable;   // true
 ```
 
 IMPORTANT:
-- Resolves with the LAST value, not the first
-- Rejects with TypeError if Observable returns without emitting
-- Rejects with the thrown value if Observable throws
+- Returns source directly if it's already an `instanceof Observable`
+- Wraps source in a new Observable if it only satisfies the interface
+- Useful for ensuring you have a true Observable instance with prototype methods
 ````
 
 # Glossary And Semantics
