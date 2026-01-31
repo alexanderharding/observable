@@ -1,6 +1,6 @@
-import { assertEquals, assertStrictEquals } from "@std/assert";
+import { assertEquals, assertStrictEquals, assertThrows } from "@std/assert";
 import { Observable, Observer, Subject } from "@observable/core";
-import { noop } from "@observable/internal";
+import { MinimumArgumentsRequiredError, noop, ParameterTypeError } from "@observable/internal";
 import { empty } from "@observable/empty";
 import { never } from "@observable/never";
 import { ofIterable } from "@observable/of-iterable";
@@ -8,6 +8,24 @@ import { pipe } from "@observable/pipe";
 import { materialize, type ObserverNotification } from "@observable/materialize";
 import { take } from "./mod.ts";
 import { finalize } from "@observable/finalize";
+
+Deno.test("take should throw if no arguments are provided", () => {
+  // Act & Assert
+  assertThrows(
+    // @ts-expect-error: Testing invalid arguments
+    () => take(),
+    MinimumArgumentsRequiredError,
+  );
+});
+
+Deno.test("take should throw if count is not a number", () => {
+  // Act & Assert
+  assertThrows(
+    // @ts-expect-error: Testing invalid arguments
+    () => take("not a number"),
+    ParameterTypeError,
+  );
+});
 
 Deno.test(
   "take should return an empty observable if the count is equal to 0",

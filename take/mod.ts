@@ -30,6 +30,8 @@ import { pipe } from "@observable/pipe";
 export function take<Value>(
   count: number,
 ): (source: Observable<Value>) => Observable<Value> {
+  if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
+  if (typeof count !== "number") throw new ParameterTypeError(0, "Number");
   return function takeFn(source) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
