@@ -1,11 +1,13 @@
-import { isObservable, type Observable, toObservable } from "@observable/core";
+import { isObservable, type Observable } from "@observable/core";
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 import { empty } from "@observable/empty";
 import { pipe } from "@observable/pipe";
 import { switchMap } from "@observable/switch-map";
 import { timeout } from "@observable/timeout";
-import { map } from "@observable/map";
 import { ignoreElements } from "@observable/ignore-elements";
+import { asObservable } from "@observable/as-observable";
+import { flat } from "@observable/flat";
+import { ofIterable } from "@observable/of-iterable";
 
 /**
  * Debounces the [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values from the
@@ -47,11 +49,12 @@ export function debounce<Value>(
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
     if (milliseconds < 0 || Number.isNaN(milliseconds)) return empty;
     if (milliseconds === Infinity) return pipe(source, ignoreElements());
+    if (milliseconds === 0) return pipe(source, asObservable());
     return pipe(
       source,
-      milliseconds === 0
-        ? toObservable
-        : switchMap((value) => pipe(timeout(milliseconds), map(() => value))),
+      switchMap((value) =>
+        flat([pipe(timeout(milliseconds), ignoreElements()), pipe([value], ofIterable())])
+      ),
     );
   };
 }

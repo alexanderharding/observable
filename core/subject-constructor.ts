@@ -61,12 +61,12 @@ export interface SubjectConstructor {
    * @example
    * Advanced
    * ```ts
-   * import { Subject, toObservable } from "@observable/core";
+   * import { Subject, Observable } from "@observable/core";
    *
    * class Authenticator {
    *   readonly #events = new Subject<Event>();
    *   // Hide the Observer from the public API by exposing the Subject as an Observable.
-   *   readonly events = toObservable(this.#events);
+   *   readonly events = new Observable((observer) => this.#events.subscribe(observer));
    *
    *   [Symbol.dispose]() {
    *     this.#events.return(); // Cleanup resources.

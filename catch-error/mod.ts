@@ -1,5 +1,7 @@
-import { isObservable, Observable, toObservable } from "@observable/core";
+import { isObservable, Observable } from "@observable/core";
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
+import { asObservable } from "@observable/as-observable";
+import { pipe } from "@observable/pipe";
 
 /**
  * Catches errors from the [source](https://jsr.io/@observable/core#source)
@@ -38,13 +40,13 @@ export function catchError<Value, ResolvedValue>(
   return function catchErrorFn(source) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
-    source = toObservable(source);
+    source = pipe(source, asObservable());
     return new Observable((observer) =>
       source.subscribe({
         signal: observer.signal,
         next: (value) => observer.next(value),
         return: () => observer.return(),
-        throw: (value) => toObservable(resolver(value)).subscribe(observer),
+        throw: (value) => pipe(resolver(value), asObservable()).subscribe(observer),
       })
     );
   };

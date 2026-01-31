@@ -1,4 +1,5 @@
-import { isObservable, type Observable, Subject, toObservable } from "@observable/core";
+import { isObservable, type Observable, Subject } from "@observable/core";
+import { asObservable } from "@observable/as-observable";
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 import { defer } from "@observable/defer";
 import { pipe } from "@observable/pipe";
@@ -42,7 +43,7 @@ export function switchMap<In, Out>(
   return function switchMapFn(source) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
-    source = toObservable(source);
+    source = pipe(source, asObservable());
     return defer(() => {
       const switching = new Subject<void>();
       return pipe(

@@ -1,4 +1,5 @@
-import { isObservable, Observable, Subject, toObservable } from "@observable/core";
+import { isObservable, Observable, Subject } from "@observable/core";
+import { asObservable } from "@observable/as-observable";
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 import { pipe } from "@observable/pipe";
 import { finalize } from "@observable/finalize";
@@ -99,14 +100,14 @@ export function share<Value>(
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
     let activeSubscriptions = 0;
     let connection: Observable<Value> | undefined;
-    source = toObservable(source);
+    source = pipe(source, asObservable());
     return pipe(
       defer(() => {
         ++activeSubscriptions;
         if (isObservable(connection)) return connection;
         return new Observable((observer) => {
           const subject = connector();
-          (connection = toObservable(subject)).subscribe(observer);
+          (connection = pipe(subject, asObservable())).subscribe(observer);
           source.subscribe(subject);
         });
       }),

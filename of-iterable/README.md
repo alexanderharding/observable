@@ -4,7 +4,7 @@ Projects an
 [`Iterable`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols)
 through an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)
 [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ing each value in order, then
-[`return`](https://jsr.io/@observable/core/doc/~/Observer.return)ing.
+[`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s.
 
 ## Build
 

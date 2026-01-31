@@ -1,9 +1,10 @@
 import { Observable, Observer } from "@observable/core";
 import { assertEquals, assertInstanceOf, assertStrictEquals } from "@std/assert";
-import { toObservable } from "./to-observable.ts";
+import { asObservable } from "./mod.ts";
+import { pipe } from "@observable/pipe";
 
 Deno.test(
-  "toObservable should convert a custom observable to a proper observable",
+  "asObservable should convert a custom observable to a proper observable",
   () => {
     // Arrange
     const observer = new Observer();
@@ -19,7 +20,7 @@ Deno.test(
     };
 
     // Act
-    const observable = toObservable(custom);
+    const observable = pipe(custom, asObservable());
     observable.subscribe(observer);
 
     // Assert
@@ -29,7 +30,7 @@ Deno.test(
 );
 
 Deno.test(
-  "toObservable should return the same observer if it is already a proper observer",
+  "asObservable should return the same observer if it is already a proper observer",
   () => {
     // Arrange
     const expected = new Observable<number>((observer) => {
@@ -39,7 +40,7 @@ Deno.test(
     });
 
     // Act
-    const actual = toObservable(expected);
+    const actual = pipe(expected, asObservable());
 
     // Assert
     assertStrictEquals(actual, expected);

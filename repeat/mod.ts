@@ -1,4 +1,5 @@
-import { isObservable, Observable, toObservable } from "@observable/core";
+import { isObservable, Observable } from "@observable/core";
+import { asObservable } from "@observable/as-observable";
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 import { ofIterable } from "@observable/of-iterable";
 import { pipe } from "@observable/pipe";
@@ -55,11 +56,11 @@ export function repeat<Value>(
   notifier: Observable = pipe([undefined], ofIterable()),
 ): (source: Observable<Value>) => Observable<Value> {
   if (!isObservable(notifier)) throw new ParameterTypeError(0, "Observable");
-  notifier = toObservable(notifier);
+  notifier = pipe(notifier, asObservable());
   return function repeatFn(source) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
-    source = toObservable(source);
+    source = pipe(source, asObservable());
     return new Observable((observer) => {
       subscribeToSource();
 

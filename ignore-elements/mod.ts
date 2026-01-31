@@ -1,5 +1,7 @@
-import { isObservable, Observable, toObservable } from "@observable/core";
-import { MinimumArgumentsRequiredError, noop, ParameterTypeError } from "@observable/internal";
+import { isObservable, type Observable } from "@observable/core";
+import { pipe } from "@observable/pipe";
+import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
+import { drop } from "@observable/drop";
 
 /**
  * Ignores all [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values from the
@@ -28,14 +30,6 @@ export function ignoreElements<Value>(): (
   return function ignoreElementsFn(source) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
-    source = toObservable(source);
-    return new Observable((observer) =>
-      source.subscribe({
-        signal: observer.signal,
-        next: noop,
-        return: () => observer.return(),
-        throw: (value) => observer.throw(value),
-      })
-    );
+    return pipe(source, drop(Infinity));
   };
 }
