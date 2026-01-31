@@ -37,7 +37,7 @@ export function drop<Value>(
   return function dropFn(source) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
-    if (count < 0 || Number.isNaN(count) || count === Infinity) return empty;
+    if (count < 0 || Number.isNaN(count)) return empty;
     if (count === 0) return pipe(source, asObservable());
     return pipe(source, filter((_, index) => index >= count));
   };

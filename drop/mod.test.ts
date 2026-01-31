@@ -42,15 +42,19 @@ Deno.test("drop should return empty if the count is NaN", () => {
   assertStrictEquals(result, empty);
 });
 
-Deno.test("drop should return the empty if the count is Infinity", () => {
+Deno.test("drop should ignore all elements if the count is Infinity", () => {
   // Arrange
   const source = pipe([1, 2, 3], ofIterable());
+  const notifications: Array<ObserverNotification<number>> = [];
+  const materialized = pipe(source, drop(Infinity), materialize());
 
   // Act
-  const result = pipe(source, drop(Infinity));
+  materialized.subscribe(
+    new Observer((notification) => notifications.push(notification)),
+  );
 
   // Assert
-  assertStrictEquals(result, empty);
+  assertEquals(notifications, [["return"]]);
 });
 
 Deno.test(
