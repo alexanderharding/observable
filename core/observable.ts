@@ -4,8 +4,7 @@ import {
   ParameterTypeError,
 } from "@observable/internal";
 import { isObserver } from "./is-observer.ts";
-import type { Observer } from "./observer.ts";
-import { toObserver } from "./to-observer.ts";
+import { Observer } from "./observer.ts";
 import type { ObservableConstructor } from "./observable-constructor.ts";
 
 /**
@@ -45,7 +44,7 @@ export const Observable: ObservableConstructor = class {
     if (!(this instanceof Observable)) throw new InstanceofError("this", stringTag);
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObserver(observer)) throw new ParameterTypeError(0, "Observer");
-    observer = toObserver(observer);
+    observer = observer instanceof Observer ? observer : new Observer(observer);
     if (observer.signal.aborted) return;
     try {
       this.#subscribe(observer);

@@ -1,11 +1,4 @@
-import {
-  isObservable,
-  isObserver,
-  Observable,
-  type Observer,
-  toObservable,
-  toObserver,
-} from "@observable/core";
+import { isObservable, isObserver, Observable, Observer, toObservable } from "@observable/core";
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 
 /**
@@ -52,7 +45,7 @@ export function tap<Value>(
 ): (source: Observable<Value>) => Observable<Value> {
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
   if (!isObserver(observer)) throw new ParameterTypeError(0, "Observer");
-  const tapObserver = toObserver(observer);
+  const tapObserver = observer instanceof Observer ? observer : new Observer(observer);
   return function tapFn(source) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
