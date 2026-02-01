@@ -68,9 +68,9 @@ const namespace = "394068c9-9d2c-45cb-81d2-a09197594a9d";
  */
 const stringTag = "BroadcastSubject";
 
-export const BroadcastSubject: BroadcastSubjectConstructor = class {
+export const BroadcastSubject: BroadcastSubjectConstructor = class<Value> {
   readonly [Symbol.toStringTag] = stringTag;
-  readonly #subject = new Subject();
+  readonly #subject = new Subject<Value>();
   readonly signal = this.#subject.signal;
   readonly #channel: BroadcastChannel;
 
@@ -78,7 +78,7 @@ export const BroadcastSubject: BroadcastSubjectConstructor = class {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (typeof name !== "string") throw new ParameterTypeError(0, "String");
     Object.freeze(this);
-    this.#channel = new BroadcastChannel(`${namespace}:${name}`);
+    this.#channel = new BroadcastChannel(`${name}:${namespace}`);
     this.signal.addEventListener("abort", () => this.#channel.close(), {
       once: true,
     });
@@ -86,7 +86,7 @@ export const BroadcastSubject: BroadcastSubjectConstructor = class {
     this.#channel.onmessageerror = (event) => this.#subject.throw(event);
   }
 
-  next(value: unknown): void {
+  next(value: Value): void {
     if (!(this instanceof BroadcastSubject)) throw new InstanceofError("this", stringTag);
     try {
       this.#channel.postMessage(value);
@@ -105,7 +105,7 @@ export const BroadcastSubject: BroadcastSubjectConstructor = class {
     else throw new InstanceofError("this", stringTag);
   }
 
-  subscribe(observer: Observer): void {
+  subscribe(observer: Observer<Value>): void {
     if (!(this instanceof BroadcastSubject)) throw new InstanceofError("this", stringTag);
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObserver(observer)) throw new ParameterTypeError(0, "Observer");
