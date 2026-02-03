@@ -9,7 +9,7 @@ import {
 import type { SubjectConstructor } from "./subject-constructor.ts";
 
 /**
- * Object interface that implements both the {@linkcode Observer} and {@linkcode Observable} interfaces.
+ * Object type that is an {@linkcode Observer} and an {@linkcode Observable}.
  */
 export type Subject<Value = unknown> = Observer<Value> & Observable<Value>;
 
