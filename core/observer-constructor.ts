@@ -5,13 +5,13 @@ import type { Observer } from "./observer.ts";
  */
 export interface ObserverConstructor {
   /**
-   * Creates and return a object that provides a standard way to [`consume`](https://jsr.io/@observable/core#consumer) a sequence of values
-   * (either finite or infinite).
+   * Creates and return an object that provides a standard way to [consume](https://jsr.io/@observable/core#consumer)
+   * a sequence of values (either finite or infinite).
    * ```ts
    * import { Observer } from "@observable/core";
    *
    * const observer = new Observer<0>({
-   *   next: (value) => console.log(value),
+   *   next: (value) => console.log("next", value),
    *   return: () => console.log("return"),
    *   throw: (value) => console.log("throw", value),
    * });
@@ -23,10 +23,12 @@ export interface ObserverConstructor {
    *   observer.next(0);
    *   observer.throw(new Error("Should not be thrown"));
    * }, 100);
-   * observer.signal.addEventListener("abort", () => clearTimeout(timeout));
+   * observer.signal.addEventListener("abort", () => clearTimeout(timeout), {
+   *   once: true,
+   * });
    *
-   * // Output (after 100ms):
-   * // 0
+   * // Console output (after 100ms):
+   * // "next" 0
    * // "return"
    * ```
    */

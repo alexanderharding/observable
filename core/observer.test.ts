@@ -1,7 +1,29 @@
-import { noop } from "@observable/internal";
+import { MinimumArgumentsRequiredError, noop } from "@observable/internal";
 import { Observer } from "./observer.ts";
 import { assertEquals, assertInstanceOf, assertStrictEquals, assertThrows } from "@std/assert";
 import { isObserver } from "./is-observer.ts";
+
+Deno.test("Observer should allow empty next when created with void type", () => {
+  // Arrange
+  const nextCalls: Array<Parameters<Observer<void>["next"]>> = [];
+  const throwCalls: Array<Parameters<Observer<void>["throw"]>> = [];
+  const returnCalls: Array<Parameters<Observer<void>["return"]>> = [];
+  const observer = new Observer<void>({
+    next: (...args) => nextCalls.push(args),
+    return: (...args) => returnCalls.push(args),
+    throw: (...args) => throwCalls.push(args),
+  });
+
+  // Act
+  observer.next();
+  observer.return();
+
+  // Assert
+  assertStrictEquals(observer.signal.aborted, true);
+  assertEquals(nextCalls, [[undefined]]);
+  assertEquals(returnCalls, [[]]);
+  assertEquals(throwCalls, []);
+});
 
 Deno.test("Observer.constructor should create with undefined", () => {
   // Arrange / Act / Assert
@@ -213,6 +235,15 @@ Deno.test("Observer.next should throw with incorrect 'this' binding", () => {
     () => new Observer().next.call(null, 1),
     TypeError,
     "'this' is not instanceof 'Observer'",
+  );
+});
+
+Deno.test("Observer.throw should throw if called with no arguments", () => {
+  // Arrange / Act / Assert
+  assertThrows(
+    () => new Observer().throw(...([] as unknown as Parameters<Observer["throw"]>)),
+    MinimumArgumentsRequiredError,
+    "1 argument required but 0 present",
   );
 });
 
