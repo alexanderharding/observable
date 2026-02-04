@@ -11,6 +11,7 @@
     "core",
     "debounce",
     "defer",
+    "delay",
     "distinct",
     "distinct-until-changed",
     "drop",
