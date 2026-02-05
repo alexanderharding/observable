@@ -1,10 +1,10 @@
-import { isObservable, type Observable, Observer } from "@observable/core";
-import { MinimumArgumentsRequiredError, noop, ParameterTypeError } from "@observable/internal";
+import { isObservable, type Observable } from "@observable/core";
+import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 import { defer } from "@observable/defer";
 import { pipe } from "@observable/pipe";
-import { tap } from "@observable/tap";
 import { filter } from "@observable/filter";
 import { switchMap } from "@observable/switch-map";
+import { finalize } from "@observable/finalize";
 
 /**
  * {@linkcode project|Projects} each [source](https://jsr.io/@observable/core#source) value to an
@@ -55,14 +55,7 @@ export function exhaustMap<In, Out>(
         filter(() => !activeInnerSubscription),
         switchMap((value, index) => {
           activeInnerSubscription = true;
-          return pipe(
-            project(value, index),
-            tap(new Observer({ return: processReturn, throw: noop })),
-          );
-
-          function processReturn(): void {
-            activeInnerSubscription = false;
-          }
+          return pipe(project(value, index), finalize(() => activeInnerSubscription = false));
         }),
       );
     });

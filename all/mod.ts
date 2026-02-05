@@ -1,14 +1,15 @@
-import { type Observable, Observer, Subject } from "@observable/core";
-import { MinimumArgumentsRequiredError, noop, ParameterTypeError } from "@observable/internal";
+import { type Observable, Subject } from "@observable/core";
+import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 import { defer } from "@observable/defer";
 import { empty } from "@observable/empty";
 import { ofIterable } from "@observable/of-iterable";
 import { pipe } from "@observable/pipe";
-import { tap } from "@observable/tap";
+import { forEach } from "@observable/for-each";
 import { map } from "@observable/map";
 import { mergeMap } from "@observable/merge-map";
 import { filter } from "@observable/filter";
 import { takeUntil } from "@observable/take-until";
+import { finalize } from "@observable/finalize";
 
 /**
  * Calculates [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values from the latest
@@ -86,24 +87,13 @@ export function all(
         let isEmpty = true;
         return pipe(
           source,
-          tap(
-            new Observer({
-              next: processNextValue,
-              return: processReturn,
-              throw: noop,
-            }),
-          ),
+          forEach((value) => {
+            if (isEmpty) receivedFirstValueCount++;
+            isEmpty = false;
+            values[index] = value;
+          }),
+          finalize(() => isEmpty && emptySourceNotifier.next()),
         );
-
-        function processNextValue(value: unknown): void {
-          if (isEmpty) receivedFirstValueCount++;
-          isEmpty = false;
-          values[index] = value;
-        }
-
-        function processReturn(): void {
-          if (isEmpty) emptySourceNotifier.next();
-        }
       }),
       filter(() => receivedFirstValueCount === expectedFirstValueCount),
       map(() => values.slice()),

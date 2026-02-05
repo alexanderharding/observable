@@ -22,6 +22,7 @@
     "finalize",
     "flat",
     "flat-map",
+    "for-each",
     "internal",
     "interval",
     "keep-alive",
@@ -45,7 +46,6 @@
     "switch-map",
     "take",
     "take-until",
-    "tap",
     "throttle",
     "throw-error",
     "timeout"
