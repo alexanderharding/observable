@@ -122,6 +122,28 @@ Deno.test("repeat should work with Subject as notifier", () => {
   ]);
 });
 
+Deno.test("repeat should repeat indefinitely with default notifier", () => {
+  // Arrange
+  const notifications: Array<ObserverNotification<number>> = [];
+  const source = pipe([1], ofIterable());
+  const materialized = pipe(source, repeat(), take(5), materialize());
+
+  // Act
+  materialized.subscribe(
+    new Observer((notification) => notifications.push(notification)),
+  );
+
+  // Assert
+  assertEquals(notifications, [
+    ["next", 1],
+    ["next", 1],
+    ["next", 1],
+    ["next", 1],
+    ["next", 1],
+    ["return"],
+  ]);
+});
+
 Deno.test("repeat should honor unsubscribe during source", () => {
   // Arrange
   const controller = new AbortController();
