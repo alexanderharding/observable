@@ -1,18 +1,16 @@
-import { type Observable, Observer } from "@observable/core";
+import { type Observable, Subject } from "@observable/core";
 import {
   isIterable,
   MinimumArgumentsRequiredError,
-  noop,
   ParameterTypeError,
 } from "@observable/internal";
 import { defer } from "@observable/defer";
 import { ofIterable } from "@observable/of-iterable";
 import { pipe } from "@observable/pipe";
-import { tap } from "@observable/tap";
+import { forEach } from "@observable/for-each";
 import { mergeMap } from "@observable/merge-map";
 import { takeUntil } from "@observable/take-until";
 import { filter } from "@observable/filter";
-import { AsyncSubject } from "@observable/async-subject";
 import { empty } from "@observable/empty";
 
 /**
@@ -91,28 +89,21 @@ export function race<Value>(
   if (!isIterable(sources)) throw new ParameterTypeError(0, "Iterable");
   if (Array.isArray(sources) && !sources.length) return empty;
   return defer(() => {
-    const finished = new AsyncSubject<number>();
+    const finished = new Subject<number>();
     return pipe(
       sources,
       ofIterable(),
       takeUntil(finished),
-      mergeMap((source, index) => {
-        const controller = new AbortController();
-        const { signal } = controller;
-        const observer = new Observer<Value>({ signal, next: finish, throw: noop });
-        const lost = pipe(finished, filter(isLoser));
-        return pipe(source, tap(observer), takeUntil(lost));
-
-        function finish(): void {
-          controller.abort();
-          finished.next(index);
-          finished.return();
-        }
-
-        function isLoser(winnerIndex: number): boolean {
-          return winnerIndex !== index;
-        }
-      }),
+      mergeMap((source, index) =>
+        pipe(
+          source,
+          forEach(() => {
+            finished.next(index);
+            finished.return();
+          }),
+          takeUntil(pipe(finished, filter((winnerIndex) => winnerIndex !== index))),
+        )
+      ),
     );
   });
 }

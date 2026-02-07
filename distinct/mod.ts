@@ -1,9 +1,9 @@
-import { isObservable, type Observable, Observer } from "@observable/core";
+import { isObservable, type Observable } from "@observable/core";
 import { asObservable } from "@observable/as-observable";
-import { MinimumArgumentsRequiredError, noop, ParameterTypeError } from "@observable/internal";
+import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 import { defer } from "@observable/defer";
 import { pipe } from "@observable/pipe";
-import { tap } from "@observable/tap";
+import { forEach } from "@observable/for-each";
 import { filter } from "@observable/filter";
 
 /**
@@ -43,7 +43,7 @@ export function distinct<Value>(): (
       return pipe(
         source,
         filter((value) => !values.has(value)),
-        tap(new Observer({ next: (value) => values.add(value), throw: noop })),
+        forEach((value) => values.add(value)),
       );
     });
   };
