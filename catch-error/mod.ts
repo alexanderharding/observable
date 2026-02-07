@@ -4,9 +4,10 @@ import { asObservable } from "@observable/as-observable";
 import { pipe } from "@observable/pipe";
 
 /**
- * Catches errors from the [source](https://jsr.io/@observable/core#source)
- * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) and returns a new
- * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) with the resolved value.
+ * {@linkcode project|Projects} each [`throw`](https://jsr.io/@observable/core/doc/~/Observer.throw)n
+ * value from the [source](https://jsr.io/@observable/core#source)
+ * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) to a new
+ * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable).
  * @example
  * ```ts
  * import { catchError } from "@observable/catch-error";
@@ -30,11 +31,11 @@ import { pipe } from "@observable/pipe";
  * // "return"
  * ```
  */
-export function catchError<Value, ResolvedValue>(
-  handler: (value: unknown) => Observable<ResolvedValue>,
-): (source: Observable<Value>) => Observable<Value | ResolvedValue> {
+export function catchError<Value, ProjectedValue>(
+  project: (error: unknown) => Observable<ProjectedValue>,
+): (source: Observable<Value>) => Observable<Value | ProjectedValue> {
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-  if (typeof handler !== "function") throw new ParameterTypeError(0, "Function");
+  if (typeof project !== "function") throw new ParameterTypeError(0, "Function");
   return function catchErrorFn(source) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
@@ -46,7 +47,7 @@ export function catchError<Value, ResolvedValue>(
         return: () => observer.return(),
         throw(value) {
           try {
-            pipe(handler(value), asObservable()).subscribe(observer);
+            pipe(project(value), asObservable()).subscribe(observer);
           } catch (error) {
             observer.throw(error);
           }

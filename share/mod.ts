@@ -90,28 +90,28 @@ import { defer } from "@observable/defer";
  * ```
  */
 export function share<Value>(
-  connector = (): Subject<NoInfer<Value>> => new Subject(),
+  factory: () => Subject<NoInfer<Value>> = () => new Subject(),
 ): (source: Observable<Value>) => Observable<Value> {
-  if (typeof connector !== "function") {
+  if (typeof factory !== "function") {
     throw new ParameterTypeError(0, "Function");
   }
   return function shareFn(source) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
     let activeSubscriptions = 0;
-    let connection: Observable<Value> | undefined;
+    let shared: Observable<Value> | undefined;
     source = pipe(source, asObservable());
     return pipe(
       defer(() => {
         ++activeSubscriptions;
-        if (isObservable(connection)) return connection;
+        if (isObservable(shared)) return shared;
         return new Observable((observer) => {
-          const subject = connector();
-          (connection = pipe(subject, asObservable())).subscribe(observer);
+          const subject = factory();
+          (shared = pipe(subject, asObservable())).subscribe(observer);
           source.subscribe(subject);
         });
       }),
-      finalize(() => --activeSubscriptions === 0 && (connection = undefined)),
+      finalize(() => --activeSubscriptions === 0 && (shared = undefined)),
     );
   };
 }
