@@ -1,9 +1,9 @@
 # [@observable/scan](https://jsr.io/@observable/scan)
 
-Applies an `accumulator` function over each [source](https://jsr.io/@observable/core#source)
+Reduces the [source](https://jsrio/@observable/core#source)
 [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)'s
-[`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed value, and
-[`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s each intermediate accumulated value.
+[`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values to a single value, and
+[`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s each intermediate reduced value.
 
 ## Build
 

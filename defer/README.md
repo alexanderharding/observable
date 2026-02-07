@@ -1,7 +1,7 @@
 # [@observable/defer](https://jsr.io/@observable/defer)
 
-Calls an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) `connector` function for
-each [subscription](https://jsr.io/@observable/core#subscription).
+Creates a new [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) for each
+[`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe).
 
 ## Build
 

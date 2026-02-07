@@ -8,12 +8,10 @@ import { AsyncSubject } from "@observable/async-subject";
 import { defer } from "@observable/defer";
 
 /**
- * Applies an {@linkcode accumulator} function over each
- * [source](https://jsr.io/@observable/core#source)
+ * {@linkcode reducer|Reduces} the [source](https://jsrio/@observable/core#source)
  * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)'s
- * [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed value,
- * and [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s only
- * the final accumulated value (if any) when the [source](https://jsr.io/@observable/core#source)
+ * [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values to a single
+ * value when the [source](https://jsr.io/@observable/core#source)
  * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)
  * [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s.
  * @example
@@ -37,15 +35,15 @@ import { defer } from "@observable/defer";
  * ```
  */
 export function reduce<In, Out>(
-  accumulator: (previous: Out, current: In, index: number) => Out,
+  reducer: (previous: Out, current: In, index: number) => Out,
   seed: Out,
 ): (source: Observable<In>) => Observable<Out> {
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-  if (typeof accumulator !== "function") throw new ParameterTypeError(0, "Function");
+  if (typeof reducer !== "function") throw new ParameterTypeError(0, "Function");
   return function reduceFn(source) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
     source = pipe(source, asObservable());
-    return defer(() => pipe(source, scan(accumulator, seed), share(() => new AsyncSubject())));
+    return defer(() => pipe(source, scan(reducer, seed), share(() => new AsyncSubject())));
   };
 }

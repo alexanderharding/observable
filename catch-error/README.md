@@ -1,8 +1,9 @@
 # [@observable/catch-error](https://jsr.io/@observable/catch-error)
 
-Catches errors from the [source](https://jsr.io/@observable/core#source)
-[`Observable`](https://jsr.io/@observable/core/doc/~/Observable) and returns a new
-[`Observable`](https://jsr.io/@observable/core/doc/~/Observable) with the resolved value.
+Projects each [`throw`](https://jsr.io/@observable/core/doc/~/Observer.throw)n value from the
+[source](https://jsr.io/@observable/core#source)
+[`Observable`](https://jsr.io/@observable/core/doc/~/Observable) to a new
+[`Observable`](https://jsr.io/@observable/core/doc/~/Observable).
 
 ## Build
 

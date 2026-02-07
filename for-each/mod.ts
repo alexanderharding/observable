@@ -4,7 +4,7 @@ import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/i
 import { map } from "@observable/map";
 
 /**
- * Performs a {@linkcode next|side-effect} for each [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed value
+ * Performs a {@linkcode callback|side-effect} for each [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed value
  * from the [source](https://jsr.io/@observable/core#source) [`Observable`](https://jsr.io/@observable/core/doc/~/Observable).
  * @example
  * ```ts
@@ -36,17 +36,17 @@ import { map } from "@observable/map";
  * ```
  */
 export function forEach<Value>(
-  next: (value: Value, index: number) => void,
+  callback: (value: Value, index: number) => void,
 ): (source: Observable<Value>) => Observable<Value> {
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-  if (typeof next !== "function") throw new ParameterTypeError(0, "Function");
+  if (typeof callback !== "function") throw new ParameterTypeError(0, "Function");
   return function forEachFn(source) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
     return pipe(
       source,
       map((value, index) => {
-        next(value, index);
+        callback(value, index);
         return value;
       }),
     );
