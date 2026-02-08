@@ -161,7 +161,7 @@ Deno.test("expand should handle async inner observables", () => {
   ]);
 });
 
-Deno.test("expand should handle concurrent inner subscriptions", () => {
+Deno.test("expand should handle concurrent inner observations", () => {
   // Arrange
   const notifications: Array<ObserverNotification<string>> = [];
   const innerA = new Subject<string>();
@@ -362,7 +362,7 @@ Deno.test("expand should return immediately when source is empty", () => {
   assertEquals(notifications, [["return"]]);
 });
 
-Deno.test("expand should handle unsubscription", () => {
+Deno.test("expand should handle abort", () => {
   // Arrange
   let sourceAborted = false;
   let innerAborted = false;
@@ -396,7 +396,7 @@ Deno.test("expand should handle unsubscription", () => {
   assertEquals(innerAborted, true);
 });
 
-Deno.test("expand should not return until all inner subscriptions return", () => {
+Deno.test("expand should not return until all inner observations return", () => {
   // Arrange
   const notifications: Array<ObserverNotification<number>> = [];
   const inner1 = new Subject<number>();
@@ -482,7 +482,7 @@ Deno.test("expand should handle branching expansion (multiple values from inner)
   ]);
 });
 
-Deno.test("expand should have unique index counter per subscriber", () => {
+Deno.test("expand should have unique index counter per consumer", () => {
   // Arrange
   const indices1: number[] = [];
   const indices2: number[] = [];
@@ -508,7 +508,7 @@ Deno.test("expand should have unique index counter per subscriber", () => {
   assertEquals(indices2, [0, 1, 2, 3]);
 });
 
-Deno.test("expand should reset index for each new subscriber", () => {
+Deno.test("expand should reset index for each new consumer", () => {
   // Arrange
   const allIndices1: number[] = [];
   const allIndices2: number[] = [];
@@ -537,22 +537,22 @@ Deno.test("expand should reset index for each new subscriber", () => {
   assertEquals(allIndices2, [0, 1, 2]);
 });
 
-Deno.test("expand should have independent index counters for separate subscriptions to same observable", () => {
+Deno.test("expand should have independent index counters for separate observations to same observable", () => {
   // Arrange
-  const subscription1Indices: number[] = [];
-  const subscription2Indices: number[] = [];
+  const observation1Indices: number[] = [];
+  const observation2Indices: number[] = [];
   const source = pipe([1], ofIterable<number>());
   const wrapperObservable1 = pipe(
     source,
     expand((value, index) => {
-      subscription1Indices.push(index);
+      observation1Indices.push(index);
       return value < 3 ? pipe([value + 1], ofIterable()) : empty;
     }),
   );
   const wrapperObservable2 = pipe(
     source,
     expand((value, index) => {
-      subscription2Indices.push(index);
+      observation2Indices.push(index);
       return value < 3 ? pipe([value + 1], ofIterable()) : empty;
     }),
   );
@@ -562,11 +562,11 @@ Deno.test("expand should have independent index counters for separate subscripti
   wrapperObservable2.subscribe(new Observer());
 
   // Assert
-  assertEquals(subscription1Indices, [0, 1, 2]);
-  assertEquals(subscription2Indices, [0, 1, 2]);
+  assertEquals(observation1Indices, [0, 1, 2]);
+  assertEquals(observation2Indices, [0, 1, 2]);
 });
 
-Deno.test("expand should share index counter across all recursion levels within single subscription", () => {
+Deno.test("expand should share index counter across all recursion levels within single observation", () => {
   // Arrange
   const indicesWithValues: Array<[number, number]> = [];
   const source = pipe([1, 10], ofIterable<number>());

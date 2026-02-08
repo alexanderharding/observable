@@ -144,7 +144,7 @@ Deno.test("repeat should repeat indefinitely with default notifier", () => {
   ]);
 });
 
-Deno.test("repeat should honor unsubscribe during source", () => {
+Deno.test("repeat should honor abort during source", () => {
   // Arrange
   const controller = new AbortController();
   const notifications: Array<ObserverNotification<number>> = [];
@@ -169,7 +169,7 @@ Deno.test("repeat should honor unsubscribe during source", () => {
   assertEquals(notifications, [["next", 1], ["next", 2]]);
 });
 
-Deno.test("repeat should honor unsubscribe during notifier", () => {
+Deno.test("repeat should honor abort during notifier", () => {
   // Arrange
   const controller = new AbortController();
   const notifications: Array<ObserverNotification<number>> = [];
@@ -260,7 +260,7 @@ Deno.test("repeat should only use first emission from notifier per repeat cycle"
 Deno.test("repeat should work with defer notifier for controlled repetition", () => {
   // Arrange
   const notifications: Array<ObserverNotification<number>> = [];
-  const notifierSubscriptions: number[] = [];
+  const notifierObservations: number[] = [];
   const source = pipe([1, 2, 3], ofIterable());
   const repeated = defer(() => {
     let count = 0;
@@ -268,7 +268,7 @@ Deno.test("repeat should work with defer notifier for controlled repetition", ()
       source,
       repeat(
         defer(() => {
-          notifierSubscriptions.push(++count);
+          notifierObservations.push(++count);
           return count === 2 ? empty : pipe([undefined], ofIterable());
         }),
       ),
@@ -291,7 +291,7 @@ Deno.test("repeat should work with defer notifier for controlled repetition", ()
     ["next", 3],
     ["return"],
   ]);
-  assertEquals(notifierSubscriptions, [1, 2]);
+  assertEquals(notifierObservations, [1, 2]);
 });
 
 Deno.test("repeat should pass through return for empty source", () => {

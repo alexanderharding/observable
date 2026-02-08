@@ -12,7 +12,7 @@ import { mergeMap } from "@observable/merge-map";
  * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) to an inner
  * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable), [subscribing](https://jsr.io/@observable/core/doc/~/Observable.subscribe) only to the most
  * recently {@linkcode project|projected} inner [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)
- * and canceling any previous inner [subscription](https://jsr.io/@observable/core#subscription).
+ * and canceling any previous inner [observation](https://jsr.io/@observable/core#observation).
  * @example
  * ```ts
  * import { BehaviorSubject } from "@observable/behavior-subject";

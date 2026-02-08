@@ -63,7 +63,7 @@ Deno.test(
   },
 );
 
-Deno.test("materialize should honor unsubscription", () => {
+Deno.test("materialize should honor abort", () => {
   // Arrange
   const controller = new AbortController();
   const source = pipe([1, 2], ofIterable());

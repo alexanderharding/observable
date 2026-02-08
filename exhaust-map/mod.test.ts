@@ -481,7 +481,7 @@ Deno.test("exhaustMap should handle outer throwError", () => {
 });
 
 Deno.test(
-  "exhaustMap should stop listening to a synchronous observable when unsubscribed",
+  "exhaustMap should stop listening to a synchronous observable when aborted",
   () => {
     // Arrange
     const sideEffects: Array<number> = [];
@@ -511,7 +511,7 @@ Deno.test(
 );
 
 Deno.test(
-  "exhaustMap should stop listening to a synchronous observable when unsubscribed via controller",
+  "exhaustMap should stop listening to a synchronous observable when aborted via controller",
   () => {
     // Arrange
     const controller = new AbortController();
@@ -638,7 +638,7 @@ Deno.test(
 );
 
 Deno.test(
-  "exhaustMap should exhaust cold observables, outer is unsubscribed early",
+  "exhaustMap should exhaust cold observables, outer is aborted early",
   () => {
     // Arrange
     const controller = new AbortController();

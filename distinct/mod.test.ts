@@ -111,7 +111,7 @@ Deno.test("distinct should pump throws right through itself", () => {
   ]);
 });
 
-Deno.test("distinct should honor unsubscribe", () => {
+Deno.test("distinct should honor abort", () => {
   // Arrange
   const controller = new AbortController();
   const notifications: Array<ObserverNotification<number>> = [];
@@ -234,7 +234,7 @@ Deno.test("distinct should use reference equality for objects", () => {
   ]);
 });
 
-Deno.test("distinct should reset state for each subscription", () => {
+Deno.test("distinct should reset state for each observation", () => {
   // Arrange
   const notifications1: Array<ObserverNotification<number>> = [];
   const notifications2: Array<ObserverNotification<number>> = [];

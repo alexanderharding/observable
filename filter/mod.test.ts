@@ -54,7 +54,7 @@ Deno.test("filter should pump throws right through itself", () => {
   ]);
 });
 
-Deno.test("filter should honor unsubscribe", () => {
+Deno.test("filter should honor abort", () => {
   // Arrange
   const controller = new AbortController();
   const notifications: Array<ObserverNotification<number>> = [];

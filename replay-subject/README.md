@@ -2,7 +2,7 @@
 
 A variant of [`Subject`](https://jsr.io/@observable/core/doc/~/Subject) that replays buffered
 [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values upon
-[`subscription`](https://jsr.io/@observable/core/doc/~/Observable.subscribe).
+[`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe).
 
 ## Build
 
@@ -86,7 +86,7 @@ Use the following prompt with AI assistants to help them understand this library
 You are helping me with code that uses @observable/replay-subject from the @observable library ecosystem.
 
 WHAT IT DOES:
-`ReplaySubject` is a Subject that buffers the last N emitted values and replays them to new subscribers upon subscription.
+`ReplaySubject` is a Subject that buffers the last N emitted values and replays them to new consumers upon observation.
 
 CRITICAL: This library is NOT RxJS. Key differences:
 - Observer uses `return`/`throw` — NOT `complete`/`error`
@@ -115,9 +115,9 @@ subject.subscribe({
 subject.next(5);  // logs: 5 (also buffered, 2 is trimmed)
 ```
 
-NEW SUBSCRIBER GETS BUFFER:
+NEW CONSUMER GETS BUFFER:
 ```ts
-// Later subscriber
+// Later consumer
 subject.subscribe({
   signal: controller.signal,
   next: (value) => console.log("New:", value),  // 3, 4, 5
@@ -126,7 +126,7 @@ subject.subscribe({
 ```
 
 AFTER RETURN:
-New subscribers to a ReplaySubject that has already returned receive only `return()`:
+New consumers of a ReplaySubject that has already returned receive only `return()`:
 ```ts
 subject.return();
 subject.subscribe({

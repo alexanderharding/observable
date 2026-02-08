@@ -58,7 +58,7 @@ import { pipe } from "@observable/pipe";
 
 for await (const value of pipe(interval(100), asAsyncIterable())) {
   console.log(value);
-  if (value === 5) break; // Unsubscribes from the source Observable
+  if (value === 5) break; // Aborts the source observation
 }
 
 // Console output:
@@ -92,7 +92,7 @@ Use the following prompt with AI assistants to help them understand this library
 You are helping me with code that uses @observable/as-async-iterable from the @observable library ecosystem.
 
 WHAT IT DOES:
-`asAsyncIterable()` converts an Observable to an AsyncIterable, allowing you to use `for await...of` loops. The subscription starts lazily when iteration begins.
+`asAsyncIterable()` converts an Observable to an AsyncIterable, allowing you to use `for await...of` loops. The observation starts lazily when iteration begins.
 
 CRITICAL: This library is NOT RxJS. Key differences:
 - Observer uses `return`/`throw` — NOT `complete`/`error`
@@ -128,20 +128,20 @@ try {
 ```
 
 BREAKING OUT OF LOOP:
-Breaking out of the loop will unsubscribe from the Observable:
+Breaking out of the loop will abort the observation:
 ```ts
 import { interval } from "@observable/interval";
 
 for await (const value of pipe(interval(100), asAsyncIterable())) {
   console.log(value);
-  if (value === 5) break;  // Unsubscribes from interval
+  if (value === 5) break;  // Aborts the interval
 }
 ```
 
 IMPORTANT:
-- Subscription starts LAZILY when iteration begins
+- Observation starts LAZILY when iteration begins
 - Yields ALL values, not just the last one (unlike asPromise)
-- Breaking out of the loop unsubscribes from the source
+- Breaking out of the loop aborts the source
 - Thrown errors from the Observable are rethrown in the loop
 ````
 

@@ -89,7 +89,7 @@ Deno.test("fetch should throw when the fetch request fails", async () => {
   Object.defineProperty(globalThis, "fetch", { value: originalFetch, configurable: true });
 });
 
-Deno.test("fetch should abort the request on unsubscription", async () => {
+Deno.test("fetch should abort the request on observer abort", async () => {
   // Arrange
   const controller = new AbortController();
   const notifications: Array<ObserverNotification<Response>> = [];
@@ -190,7 +190,7 @@ Deno.test("fetch should not abort the response after it is received", async () =
   assertEquals(receivedResponse, mockResponse);
   assertEquals(abortSignals.length, 1);
   // After response is received, the abort signal should not be aborted
-  // even if we abort the subscription
+  // even if we abort the observation
   assertEquals(abortSignals[0].aborted, false);
 
   Object.defineProperty(globalThis, "fetch", { value: originalFetch, configurable: true });
@@ -387,7 +387,7 @@ Deno.test("fetch should accept undefined as init", async () => {
   Object.defineProperty(globalThis, "fetch", { value: originalFetch, configurable: true });
 });
 
-Deno.test("fetch should pass abort reason when unsubscribed with reason", async () => {
+Deno.test("fetch should pass abort reason when aborted with reason", async () => {
   // Arrange
   const controller = new AbortController();
   const abortReasons: Array<unknown> = [];

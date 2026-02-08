@@ -1,15 +1,16 @@
 # [@observable/share](https://jsr.io/@observable/share)
 
-Shares a single [subscription](https://jsr.io/@observable/core#subscription) to the
+Shares a single [consumer](https://jsr.io/@observable/core#consumer) of the
 [source](https://jsr.io/@observable/core#source)
-[`Observable`](https://jsr.io/@observable/core/doc/~/Observable) and projects it to all
-[consumers](https://jsr.io/@observable/core#consumer) through a
-[`Subject`](https://jsr.io/@observable/core/doc/~/Subject). Resets when all
-[unsubscribe](https://jsr.io/@observable/core@0.3.0/doc/~/Observer.signal) or when the
-[source](https://jsr.io/@observable/core#source)
-[`Observable`](https://jsr.io/@observable/core/doc/~/Observable)
-[`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s or
-[`throw`](https://jsr.io/@observable/core/doc/~/Observer.throw)s.
+[`Observable`](https://jsr.io/@observable/core/doc/~/Observable), forwarding
+[`notifications`](https://jsr.io/@observable/core#notification) to all
+[consumers](https://jsr.io/@observable/core#consumer) of the output
+[`Observable`](https://jsr.io/@observable/core/doc/~/Observable) through a
+[`Subject`](https://jsr.io/@observable/core/doc/~/Subject) created by a factory function. Resets on
+[`return`](https://jsr.io/@observable/core/doc/~/Observer.return),
+[`throw`](https://jsr.io/@observable/core/doc/~/Observer.throw), or when on all
+[consumers](https://jsr.io/@observable/core#consumer)
+[abort](https://jsr.io/@observable/core/doc/~/Observer.signal).
 
 ## Build
 
@@ -61,7 +62,7 @@ Use the following prompt with AI assistants to help them understand this library
 You are helping me with code that uses @observable/share from the @observable library ecosystem.
 
 WHAT IT DOES:
-`share()` multicasts a source Observable through a Subject, sharing a single subscription among multiple subscribers. Resets when all subscribers unsubscribe or when the source returns/throws.
+`share()` multicasts a source Observable through a Subject, sharing a single observation among multiple consumers. Resets when all consumers abort or when the source returns/throws.
 
 CRITICAL: This library is NOT RxJS. Key differences:
 - Observer uses `return`/`throw` — NOT `complete`/`error`
@@ -77,7 +78,7 @@ import { pipe } from "@observable/pipe";
 const shared = pipe(timeout(1_000), share());
 const controller = new AbortController();
 
-// Both subscribers share the same source subscription
+// Both consumers share the same source observation
 shared.subscribe({
   signal: controller.signal,
   next: (value) => console.log("A:", value),
@@ -100,12 +101,12 @@ shared.subscribe({
 ```
 
 HOT VS COLD:
-- Without `share()`: Each subscriber creates a new subscription (cold)
-- With `share()`: All subscribers share one subscription (hot)
+- Without `share()`: Each consumer creates a new observation (cold)
+- With `share()`: All consumers share one observation (hot)
 
 RESET BEHAVIOR:
-The shared subscription resets when:
-- All subscribers unsubscribe
+The shared observation resets when:
+- All consumers abort
 - The source returns (`return()`)
 - The source throws (`throw()`)
 

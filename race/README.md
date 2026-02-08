@@ -53,7 +53,7 @@ Use the following prompt with AI assistants to help them understand this library
 You are helping me with code that uses @observable/race from the @observable library ecosystem.
 
 WHAT IT DOES:
-`race(sources)` creates an Observable that mirrors the first source Observable to emit or throw a value. All other sources are unsubscribed once a winner is determined.
+`race(sources)` creates an Observable that mirrors the first source Observable to emit or throw a value. All other sources are aborted once a winner is determined.
 
 CRITICAL: This library is NOT RxJS. Key differences:
 - Observer uses `return`/`throw` — NOT `complete`/`error`

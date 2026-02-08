@@ -1,6 +1,6 @@
 # [@observable/keep-alive](https://jsr.io/@observable/keep-alive)
 
-Ignores [`unsubscribe`](https://jsr.io/@observable/core/doc/~/Observer.signal) indefinitely.
+Ignores [`abort`](https://jsr.io/@observable/core/doc/~/Observer.signal) indefinitely.
 
 ## Build
 
@@ -48,7 +48,7 @@ Use the following prompt with AI assistants to help them understand this library
 You are helping me with code that uses @observable/keep-alive from the @observable library ecosystem.
 
 WHAT IT DOES:
-`keepAlive()` ignores unsubscription signals (`abort()`), keeping the source subscription alive until the source naturally returns or throws.
+`keepAlive()` ignores abort signals (`abort()`), keeping the source observation alive until the source naturally returns or throws.
 
 CRITICAL: This library is NOT RxJS. Key differences:
 - Observer uses `return`/`throw` — NOT `complete`/`error`
@@ -83,7 +83,7 @@ pipe(
 WARNING:
 Use with caution! This prevents normal cleanup:
 - `controller.abort()` has no effect
-- Subscription continues until source returns
+- Observation continues until source returns
 - Could cause memory leaks if source never returns
 
 COMMON USE — Critical operations:

@@ -131,7 +131,7 @@ Deno.test("share should not subscribe to source until first observer", () => {
   assertStrictEquals(subscribed, true);
 });
 
-Deno.test("share should reset when all observers unsubscribe", () => {
+Deno.test("share should reset when all observers abort", () => {
   // Arrange
   let subscribeCount = 0;
   const source = defer(() => {
@@ -240,7 +240,7 @@ Deno.test("share with ReplaySubject should replay values to late observers", () 
   assertEquals(notifications2, [["next", 2], ["next", 3], ["next", 4]]);
 });
 
-Deno.test("share should reset connection when all unsubscribe", () => {
+Deno.test("share should reset connection when all abort", () => {
   // Arrange
   let subscribeCount = 0;
   const source = defer(() => {
@@ -299,7 +299,7 @@ Deno.test("share should handle synchronous source throw", () => {
   assertEquals(notifications, [["throw", error]]);
 });
 
-Deno.test("share should create new subject after reset via unsubscribe", () => {
+Deno.test("share should create new subject after reset via abort", () => {
   // Arrange
   let connectionCount = 0;
   const connector = () => {
@@ -320,7 +320,7 @@ Deno.test("share should create new subject after reset via unsubscribe", () => {
   assertStrictEquals(connectionCount, 2);
 });
 
-Deno.test("share should create new source subscription after source returns", () => {
+Deno.test("share should create new source observation after source returns", () => {
   // Arrange
   let sourceSubscribeCount = 0;
   const source = defer(() => {
@@ -388,7 +388,7 @@ Deno.test("share should handle late observer joining during emission", () => {
   assertEquals(notifications2, [["next", 2], ["next", 3]]);
 });
 
-Deno.test("share should handle observer unsubscribing during emission", () => {
+Deno.test("share should handle observer aborting during emission", () => {
   // Arrange
   const source = new Subject<number>();
   const shared = pipe(source, share());

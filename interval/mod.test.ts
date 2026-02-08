@@ -88,7 +88,7 @@ Deno.test("interval should setup an interval timer", () => {
   overrode = false;
 });
 
-Deno.test("interval should clear interval on unsubscription", () => {
+Deno.test("interval should clear interval on abort", () => {
   // Arrange
   let overrideGlobals = true;
   const milliseconds = 1_000;
@@ -124,7 +124,7 @@ Deno.test("interval should clear interval on unsubscription", () => {
 });
 
 Deno.test(
-  "interval should clear interval on unsubscription before subscription is created",
+  "interval should clear interval on abort before observation is created",
   () => {
     // Arrange
     let overrideGlobals = true;

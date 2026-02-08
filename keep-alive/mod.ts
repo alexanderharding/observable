@@ -6,7 +6,7 @@ import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/i
 const { signal: noopSignal } = new AbortController();
 
 /**
- * Ignores [`unsubscribe`](https://jsr.io/@observable/core/doc/~/Observer.signal) indefinitely.
+ * Ignores [`abort`](https://jsr.io/@observable/core/doc/~/Observer.signal) indefinitely.
  * @example
  * ```ts
  * import { keepAlive } from "@observable/keep-alive";

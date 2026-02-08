@@ -6,7 +6,7 @@ Projects each [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed va
 [`Observable`](https://jsr.io/@observable/core/doc/~/Observable),
 [subscribing](https://jsr.io/@observable/core/doc/~/Observable.subscribe) only to the most recently
 projected inner [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) and canceling any
-previous inner [subscription](https://jsr.io/@observable/core#subscription).
+previous inner [observation](https://jsr.io/@observable/core#observation).
 
 ## Build
 
@@ -85,7 +85,7 @@ pipe(
 ```
 
 CANCELLATION BEHAVIOR:
-When a new source value arrives, the previous inner Observable is automatically unsubscribed:
+When a new source value arrives, the previous inner Observable is automatically aborted:
 ```ts
 pipe(
   searchInput,

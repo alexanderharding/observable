@@ -97,7 +97,7 @@ Deno.test("scan should pump returns through itself", () => {
   assertEquals(notifications, [["return"]]);
 });
 
-Deno.test("scan should handle unsubscribe", () => {
+Deno.test("scan should handle abort", () => {
   // Arrange
   let sourceAborted = false;
   const controller = new AbortController();
@@ -165,7 +165,7 @@ Deno.test("scan should work with different input and output types", () => {
   ]);
 });
 
-Deno.test("scan should reset state per subscription when using defer", () => {
+Deno.test("scan should reset state per observation when using defer", () => {
   // Arrange
   const notifications1: Array<ObserverNotification<number>> = [];
   const notifications2: Array<ObserverNotification<number>> = [];

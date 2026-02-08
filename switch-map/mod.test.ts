@@ -113,7 +113,7 @@ Deno.test("switchMap should raise error when projection throws", () => {
 });
 
 Deno.test(
-  "should switch inner cold observables, outer is unsubscribed early",
+  "should switch inner cold observables, outer is aborted early",
   () => {
     // Arrange
     const controller = new AbortController();
@@ -513,13 +513,11 @@ Deno.test("switchMap should handle outer throw", () => {
 });
 
 Deno.test(
-  "switchMap should stop listening to a synchronous observable when unsubscribed",
+  "switchMap should stop listening to a synchronous observable when aborted",
   () => {
     // Arrange
     const sideEffects: Array<number> = [];
     const synchronousObservable = new Observable<number>((observer) => {
-      // This will check to see if the observer was closed on each loop
-      // when the unsubscribe hits (from the `take`), it should be closed
       for (let i = 0; !observer.signal.aborted && i < 10; i++) {
         sideEffects.push(i);
         observer.next(i);
@@ -545,7 +543,7 @@ Deno.test(
 );
 
 Deno.test(
-  "switchMap should unsubscribe previous inner sub when getting synchronously reentrance during subscribing the inner sub",
+  "switchMap should abort previous inner observation when getting synchronously reentrance during subscribing the inner observation",
   () => {
     // Arrange
     const e = new Subject<number>();
@@ -575,7 +573,7 @@ Deno.test(
 );
 
 Deno.test(
-  "switchMap should stop listening to a synchronous observable when unsubscribed",
+  "switchMap should stop listening to a synchronous observable when aborted",
   () => {
     // Arrange
     const controller = new AbortController();

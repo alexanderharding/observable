@@ -93,7 +93,7 @@ Deno.test("pairwise should pump throws right through itself", () => {
   ]);
 });
 
-Deno.test("pairwise should honor unsubscribe", () => {
+Deno.test("pairwise should honor abort", () => {
   // Arrange
   const controller = new AbortController();
   const notifications: Array<ObserverNotification<readonly [number, number]>> = [];
@@ -171,7 +171,7 @@ Deno.test("pairwise should work with Subject", () => {
   ]);
 });
 
-Deno.test("pairwise should reset state for each subscription", () => {
+Deno.test("pairwise should reset state for each observation", () => {
   // Arrange
   const notifications1: Array<ObserverNotification<readonly [number, number]>> = [];
   const notifications2: Array<ObserverNotification<readonly [number, number]>> = [];

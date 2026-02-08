@@ -25,7 +25,7 @@ export interface ObservableConstructor {
    *   observer.return();
    * });
    *
-   * // Optionally create a controller to trigger unsubscription if needed.
+   * // Optionally create a controller to abort observer if needed.
    * const controller = new AbortController();
    *
    * observable.subscribe({
@@ -54,7 +54,7 @@ export interface ObservableConstructor {
    *     observer.return();
    *   }, 1_000);
    *
-   *   // Add an abort listener to handle unsubscription by canceling the producer.
+   *   // Add an abort listener to handle abort by canceling the producer.
    *   observer.signal.addEventListener(
    *     "abort",
    *     () => clearTimeout(producer),
@@ -62,7 +62,7 @@ export interface ObservableConstructor {
    *   );
    * });
    *
-   * // Create a controller to trigger unsubscription if needed.
+   * // Create a controller to abort observer if needed.
    * const controller = new AbortController();
    *
    * observable.subscribe({
@@ -85,7 +85,7 @@ export interface ObservableConstructor {
    *   // It represents an infinite stream with no values.
    * });
    *
-   * // Create a controller to trigger unsubscription if needed.
+   * // Create a controller to abort observer if needed.
    * const controller = new AbortController();
    *
    * observable.subscribe({

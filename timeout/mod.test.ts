@@ -49,7 +49,7 @@ Deno.test("timeout should setup a timeout", () => {
 });
 
 Deno.test(
-  "timeout should clear timeout on unsubscription after the subscription is created",
+  "timeout should clear timeout on abort after the observation is created",
   () => {
     // Arrange
     let overrideGlobals = true;
@@ -97,7 +97,7 @@ Deno.test(
 );
 
 Deno.test(
-  "timeout should clear timeout on unsubscription before the subscription is created",
+  "timeout should clear timeout on abort before the observation is created",
   () => {
     // Arrange
     let overrideGlobals = true;

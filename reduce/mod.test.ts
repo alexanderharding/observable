@@ -93,7 +93,7 @@ Deno.test("reduce should return without emitting if source is empty", () => {
   assertEquals(notifications, [["return"]]);
 });
 
-Deno.test("reduce should handle unsubscribe", () => {
+Deno.test("reduce should handle abort", () => {
   // Arrange
   const controller = new AbortController();
   const values: Array<number> = [];
@@ -109,7 +109,7 @@ Deno.test("reduce should handle unsubscribe", () => {
     reduce((previous, current) => previous + current, 0),
   );
 
-  // Act - abort before subscription can complete processing
+  // Act - abort before observation can complete processing
   reduced.subscribe(
     new Observer({
       signal: controller.signal,
@@ -191,7 +191,7 @@ Deno.test("reduce should emit single value for source with one item", () => {
   ]);
 });
 
-Deno.test("reduce should reset state per subscription", () => {
+Deno.test("reduce should reset state per observation", () => {
   // Arrange
   const notifications1: Array<ObserverNotification<number>> = [];
   const notifications2: Array<ObserverNotification<number>> = [];

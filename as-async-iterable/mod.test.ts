@@ -113,7 +113,7 @@ Deno.test("asAsyncIterable should handle throw after some values", async () => {
   assertEquals(values, [1, 2]);
 });
 
-Deno.test("asAsyncIterable should abort subscription on iterator return", async () => {
+Deno.test("asAsyncIterable should abort observation on iterator return", async () => {
   // Arrange
   let subscriptionAborted = false;
   const source = new Observable<number>((observer) => {
@@ -177,7 +177,7 @@ Deno.test("asAsyncIterable should handle async observable emissions", async () =
   assertEquals(values, [1, 2, 3]);
 });
 
-Deno.test("asAsyncIterable return method should abort subscription and return done", async () => {
+Deno.test("asAsyncIterable return method should abort observation and return done", async () => {
   // Arrange
   let subscriptionAborted = false;
   const source = new Observable<number>((observer) => {
@@ -188,7 +188,7 @@ Deno.test("asAsyncIterable return method should abort subscription and return do
   const iterable = pipe(source, asAsyncIterable());
   const iterator = iterable[Symbol.asyncIterator]();
 
-  // Start the subscription by calling next (it will wait since source doesn't emit)
+  // Start the observation by calling next (it will wait since source doesn't emit)
   iterator.next();
 
   // Act
@@ -199,7 +199,7 @@ Deno.test("asAsyncIterable return method should abort subscription and return do
   assertStrictEquals(subscriptionAborted, true);
 });
 
-Deno.test("asAsyncIterable throw method should abort subscription and reject", async () => {
+Deno.test("asAsyncIterable throw method should abort observation and reject", async () => {
   // Arrange
   let subscriptionAborted = false;
   const error = new Error("iterator throw");
@@ -211,7 +211,7 @@ Deno.test("asAsyncIterable throw method should abort subscription and reject", a
   const iterable = pipe(source, asAsyncIterable());
   const iterator = iterable[Symbol.asyncIterator]();
 
-  // Start the subscription
+  // Start the observation
   iterator.next();
 
   // Act / Assert
@@ -232,7 +232,7 @@ Deno.test("asAsyncIterable should buffer values when emitted faster than consume
   const iterable = pipe(source, asAsyncIterable());
   const iterator = iterable[Symbol.asyncIterator]();
 
-  // Start iteration to activate subscription
+  // Start iteration to activate observation
   const nextPromise = iterator.next();
 
   // Emit multiple values before consuming
@@ -320,7 +320,7 @@ Deno.test("asAsyncIterable should reject all pending promises on throw", async (
   await assertRejects(async () => await promise2, Error, "observable error");
 });
 
-Deno.test("asAsyncIterable should only start subscription on first next call", async () => {
+Deno.test("asAsyncIterable should only start observation on first next call", async () => {
   // Arrange
   let subscribed = false;
   const source = new Observable<number>((observer) => {

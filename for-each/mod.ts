@@ -12,14 +12,14 @@ import { map } from "@observable/map";
  * import { ofIterable } from "@observable/of-iterable";
  * import { pipe } from "@observable/pipe";
  *
- * const activeSubscriptionController = new AbortController();
+ * const activeObserverController = new AbortController();
  *
  * pipe(
  *   [1, 2, 3],
  *   ofIterable(),
  *   forEach((value) => console.log("forEach next", value)),
  * ).subscribe({
- *   signal: activeSubscriptionController.signal,
+ *   signal: activeObserverController.signal,
  *   next: (value) => console.log("next", value),
  *   return: () => console.log("return"),
  *   throw: (value) => console.log("throw", value),

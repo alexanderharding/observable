@@ -2,7 +2,7 @@
 
 A lightweight, [RxJS](https://rxjs.dev/)-inspired implementation of the
 [Observer pattern](https://refactoring.guru/design-patterns/observer) in JavaScript. Features
-[`Observable`](https://jsr.io/@observable/core/doc/~/Observable)'s with
+[`Observable`](https://jsr.io/@observable/core/doc/~/Observable)s with
 [`AbortController`](https://developer.mozilla.org/en-US/docs/Web/API/AbortController)-based
 [unsubscription](https://jsr.io/@observable/core/doc/~/Observer.signal), supporting both synchronous
 and asynchronous [producers](#producer).
@@ -33,7 +33,7 @@ const observable = new Observable<0>((observer) => {
     // The producer is done, notify return.
     observer.return();
   }, 1_000);
-  // Add an abort listener to handle unsubscription by canceling the producer.
+  // Add an abort listener to handle abort by canceling the producer.
   observer.signal.addEventListener("abort", () => clearTimeout(producer), {
     once: true,
   });
@@ -42,11 +42,11 @@ const observable = new Observable<0>((observer) => {
 
 # Glossary And Semantics
 
-When discussing and documenting [`Observable`](https://jsr.io/@observable/core/~/Observable)s, it's
-important to have a common language and a known set of rules around what is going on. This document
-is an attempt to standardize these things so we can try to control the language in our docs, and
-hopefully other publications about this library, so we can discuss reactive programming with this
-library on consistent terms.
+When discussing and documenting [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)s,
+it's important to have a common language and a known set of rules around what is going on. This
+document is an attempt to standardize these things so we can try to control the language in our
+docs, and hopefully other publications about this library, so we can discuss reactive programming
+with this library on consistent terms.
 
 While not all of the documentation for this library reflects this terminology, it's a goal to ensure
 it does, and to ensure the language and names around the library use this document as a source of
@@ -70,11 +70,6 @@ This can be a wide variety of things, from a
 to a simple iteration over an
 [`Array`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array).
 
-### Subscription
-
-A contract where a [consumer](#consumer) is [observing](#observation) values pushed by a
-[producer](#producer).
-
 ## Major Actions
 
 There are specific actions and events that occur between [major entities](#major-entities) in the
@@ -90,8 +85,8 @@ A [consumer](#consumer) reacting to [producer](#producer) [notifications](#notif
 When an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) uses another
 [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) as a [producer](#producer), an
 "observation chain" is set up. That is a chain of [observation](#observation) such that multiple
-[observers](#observation) are notifying each other in a unidirectional way toward the final
-[consumer](#consumer).
+[`Observer`](https://jsr.io/@observable/core/doc/~/Observer)s are notifying each other in a
+unidirectional way toward the final [consumer](#consumer).
 
 ### Notification
 
@@ -108,28 +103,29 @@ in [push-based](#push) reactive systems.
 
 ### Cold
 
-An [`Observable`](https://jsr.io/@observable/core/~/Observable) is "cold" when it creates a new
-[producer](#producer) during [`subscribe`](https://jsr.io/@observable/core/~/Observable.subscribe)
-for every new [subscription](#subscription). As a result, "cold"
-[`Observable`](https://jsr.io/@observable/core/~/Observable)s are _always_ [unicast](#unicast),
+An [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) is "cold" when it creates a new
+[producer](#producer) during
+[`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe) for every new
+[consumer](#consumer). As a result, "cold"
+[`Observable`](https://jsr.io/@observable/core/doc/~/Observable)s are _always_ [unicast](#unicast),
 being one [producer](#producer) [observed](#observation) by one [consumer](#consumer). Cold
-[`Observable`](https://jsr.io/@observable/core/~/Observable)s can be made [hot](#hot) but not the
-other way around.
+[`Observable`](https://jsr.io/@observable/core/doc/~/Observable)s can be made [hot](#hot) but not
+the other way around.
 
 ### Hot
 
-An [`Observable`](https://jsr.io/@observable/core/~/Observable) is "hot", when its
+An [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) is "hot", when its
 [producer](#producer) was created outside of the context of the
-[`subscribe`](https://jsr.io/@observable/core/~/Observable.subscribe) action. This means that the
-"hot" [`Observable`](https://jsr.io/@observable/core/~/Observable) is almost always
+[`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe). This means that the "hot"
+[`Observable`](https://jsr.io/@observable/core/doc/~/Observable) is almost always
 [multicast](#multicast). It is possible that a "hot"
-[`Observable`](https://jsr.io/@observable/core/~/Observable) is still _technically_
-[unicast](#unicast), if it is engineered to only allow one [subscription](#subscription) at a time,
-however, there is no straightforward mechanism for this in the library, and the scenario is an
-unlikely one. For the purposes of discussion, all "hot"
-[`Observable`](https://jsr.io/@observable/core/~/Observable)s can be assumed to be
-[multicast](#multicast). Hot [`Observable`](https://jsr.io/@observable/core/~/Observable)s cannot be
-made [cold](#cold).
+[`Observable`](https://jsr.io/@observable/core/doc/~/Observable) is still _technically_
+[unicast](#unicast), if it is engineered to only allow one [consumer](#consumer) at a time, however,
+there is no straightforward mechanism for this in the library, and the scenario is an unlikely one.
+For the purposes of discussion, all "hot"
+[`Observable`](https://jsr.io/@observable/core/doc/~/Observable)s can be assumed to be
+[multicast](#multicast). Hot [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)s
+cannot be made [cold](#cold).
 
 ### Multicast
 
@@ -175,19 +171,19 @@ less. [Operator functions](#operator-function) are created by [operators](#opera
 
 An action taken while handling a [notification](#notification), as set up by an
 [operator](#operator) and/or [operator function](#operator-function). During
-[subscription](#subscription) to that
+[observation](#observation) of that
 [`Observable`](https://jsr.io/@observable/core/doc/~/Observable), [operations](#operation) are
 performed in an order dictated by the [observation chain](#observation-chain).
 
 ### Stream
 
 A "stream" or "streaming" in the case of
-[`observables`](https://jsr.io/@observable/core/doc/~/Observable), refers to the collection of
-[operations](#operation), as they are processed during a [subscription](#subscription). This is not
-to be confused with node Streams, and the word "stream", on its own, should be used sparingly in
+[`Observable`](https://jsr.io/@observable/core/doc/~/Observable)s, refers to the collection of
+[operations](#operation), as they are processed during [observation](#observation). This is not to
+be confused with node Streams, and the word "stream", on its own, should be used sparingly in
 documentation and articles. Instead, prefer [observation chain](#observation-chain),
-[operations](#operation), or [subscription](#subscription). "Streaming" is less ambiguous, and is
-fine to use given this defined meaning.
+[operations](#operation), or [consumer](#consumer). "Streaming" is less ambiguous, and is fine to
+use given this defined meaning.
 
 ### Source
 
@@ -195,7 +191,7 @@ An [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) that will su
 another [`Observable`](https://jsr.io/@observable/core/doc/~/Observable). This [source](#source),
 will be the [producer](#producer) for the resulting
 [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) and all of its
-[subscriptions](#subscriptions). Sources may generally be any type of
+[consumers](#consumer). Sources may generally be any type of
 [`Observable`](https://jsr.io/@observable/core/doc/~/Observable).
 
 ### Notifier
@@ -211,10 +207,11 @@ some action. The action should only occur on a
 
 ### Unhandled Errors
 
-An "unhandled error" is any [`throw`](https://jsr.io/@observable/core/doc/~/Observer.throw)n value
+An "unhandled error" is any
+[`throw`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/throw)n value
 that is not handled by a [consumer](#consumer)-provided function, which is generally provided during
-the [`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe) action by constructing
-a new [`Observer`](https://jsr.io/@observable/core/doc/~/Observer). If no
+[`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe) by constructing a new
+[`Observer`](https://jsr.io/@observable/core/doc/~/Observer). If no
 [`throw handler`](https://jsr.io/@observable/core/doc/~/Observer.throw) was provided, this library
 will assume the error is "unhandled" and rethrow it on a new callstack to prevent
 ["producer interference"](#producer-interference).
@@ -332,7 +329,7 @@ interface Observer<Value> {
 }
 ```
 
-SUBSCRIPTION PATTERN:
+OBSERVATION PATTERN:
 ```ts
 const controller = new AbortController();
 observable.subscribe({
@@ -341,7 +338,7 @@ observable.subscribe({
   return: () => console.log("done"),
   throw: (error) => console.error(error),
 });
-// To unsubscribe:
+// To abort:
 controller.abort();
 ```
 

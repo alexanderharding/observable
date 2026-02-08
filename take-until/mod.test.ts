@@ -108,7 +108,7 @@ Deno.test("takeUntil should propagate throws from notifier", () => {
   assertEquals(notifications, [["throw", error]]);
 });
 
-Deno.test("takeUntil should honor unsubscribe", () => {
+Deno.test("takeUntil should honor abort", () => {
   // Arrange
   const controller = new AbortController();
   const notifications: Array<ObserverNotification<number>> = [];

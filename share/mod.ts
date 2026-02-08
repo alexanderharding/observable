@@ -6,16 +6,17 @@ import { finalize } from "@observable/finalize";
 import { defer } from "@observable/defer";
 
 /**
- * Shares a single [subscription](https://jsr.io/@observable/core#subscription) to the
+ * Shares a single [consumer](https://jsr.io/@observable/core#consumer) of the
  * [source](https://jsr.io/@observable/core#source)
- * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) and projects
- * it to all [consumers](https://jsr.io/@observable/core#consumer) through a
- * [`Subject`](https://jsr.io/@observable/core/doc/~/Subject). Resets when all
- * [unsubscribe](https://jsr.io/@observable/core@0.3.0/doc/~/Observer.signal) or when the
- * [source](https://jsr.io/@observable/core#source)
- * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)
- * [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s or
- * [`throw`](https://jsr.io/@observable/core/doc/~/Observer.throw)s.
+ * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable), forwarding
+ * [`notifications`](https://jsr.io/@observable/core#notification) to all
+ * [consumers](https://jsr.io/@observable/core#consumer) of the output
+ * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) through a
+ * [`Subject`](https://jsr.io/@observable/core/doc/~/Subject) created by a
+ * {@linkcode factory} function. Resets on [`return`](https://jsr.io/@observable/core/doc/~/Observer.return),
+ * [`throw`](https://jsr.io/@observable/core/doc/~/Observer.throw), or when on all
+ * [consumers](https://jsr.io/@observable/core#consumer)
+ * [abort](https://jsr.io/@observable/core/doc/~/Observer.signal).
  * @example
  * ```ts
  * import { share } from "@observable/share";
@@ -98,12 +99,12 @@ export function share<Value>(
   return function shareFn(source) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
-    let activeSubscriptions = 0;
+    let activeObservers = 0;
     let shared: Observable<Value> | undefined;
     source = pipe(source, asObservable());
     return pipe(
       defer(() => {
-        ++activeSubscriptions;
+        ++activeObservers;
         if (isObservable(shared)) return shared;
         return new Observable((observer) => {
           const subject = factory();
@@ -111,7 +112,7 @@ export function share<Value>(
           source.subscribe(subject);
         });
       }),
-      finalize(() => --activeSubscriptions === 0 && (shared = undefined)),
+      finalize(() => --activeObservers === 0 && (shared = undefined)),
     );
   };
 }

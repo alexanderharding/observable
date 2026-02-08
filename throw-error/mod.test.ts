@@ -5,7 +5,7 @@ import { materialize, type ObserverNotification } from "@observable/materialize"
 import { pipe } from "@observable/pipe";
 
 Deno.test(
-  "throwError should push an error to the observer immediately upon subscription",
+  "throwError should push an error to the observer immediately upon observation",
   () => {
     // Arrange
     const error = new Error(Math.random().toString());

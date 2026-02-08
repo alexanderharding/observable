@@ -6,7 +6,7 @@ import { keepAlive } from "./mod.ts";
 import { ofIterable } from "@observable/of-iterable";
 import { forEach } from "@observable/for-each";
 
-Deno.test("keepAlive should ignore unsubscribe indefinitely", () => {
+Deno.test("keepAlive should ignore abort indefinitely", () => {
   // Arrange
   const controller = new AbortController();
   const tapNotifications: Array<ObserverNotification<number>> = [];
