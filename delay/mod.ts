@@ -1,11 +1,12 @@
-import { isObservable, type Observable, toObservable } from "@observable/core";
+import { isObservable, type Observable } from "@observable/core";
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 import { empty } from "@observable/empty";
 import { pipe } from "@observable/pipe";
 import { mergeMap } from "@observable/merge-map";
 import { timeout } from "@observable/timeout";
 import { map } from "@observable/map";
-import { never } from "@observable/never";
+import { asObservable } from "@observable/as-observable";
+import { drop } from "@observable/drop";
 
 /**
  * Delays the [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ing of values from the
@@ -43,12 +44,8 @@ export function delay<Value>(
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
     if (milliseconds < 0 || Number.isNaN(milliseconds)) return empty;
-    if (milliseconds === Infinity) return never;
-    return pipe(
-      source,
-      milliseconds === 0
-        ? toObservable
-        : mergeMap((value) => pipe(timeout(milliseconds), map(() => value))),
-    );
+    if (milliseconds === Infinity) return pipe(source, drop<never>(Infinity));
+    if (milliseconds === 0) return pipe(source, asObservable());
+    return pipe(source, mergeMap((value) => pipe(timeout(milliseconds), map(() => value))));
   };
 }
