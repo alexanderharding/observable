@@ -7,12 +7,13 @@ import { takeUntil } from "@observable/take-until";
 import { mergeMap } from "@observable/merge-map";
 
 /**
- * {@linkcode project|Projects} each [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed
- * value from the [source](https://jsr.io/@observable/core#source)
- * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) to an inner
- * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable), [subscribing](https://jsr.io/@observable/core/doc/~/Observable.subscribe) only to the most
- * recently {@linkcode project|projected} inner [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)
- * and canceling any previous inner [observation](https://jsr.io/@observable/core#observation).
+ * {@linkcode project|Projects} each [source](https://jsr.io/@observable/core#source)
+ * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)'s
+ * [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed value to an
+ * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) which is merged in the output
+ * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable), switching to latest
+ * {@linkcode project|projected} [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) and
+ * [`abort`](https://jsr.io/@observable/core/doc/~/Observer.signal)ing the previous one.
  * @example
  * ```ts
  * import { BehaviorSubject } from "@observable/behavior-subject";
