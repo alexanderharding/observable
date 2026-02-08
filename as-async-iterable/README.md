@@ -58,7 +58,7 @@ import { pipe } from "@observable/pipe";
 
 for await (const value of pipe(interval(100), asAsyncIterable())) {
   console.log(value);
-  if (value === 5) break; // Aborts the source observation
+  if (value === 5) break;
 }
 
 // Console output:
