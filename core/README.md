@@ -182,8 +182,8 @@ A "stream" or "streaming" in the case of
 [operations](#operation), as they are processed during [observation](#observation). This is not to
 be confused with node Streams, and the word "stream", on its own, should be used sparingly in
 documentation and articles. Instead, prefer [observation chain](#observation-chain),
-[operations](#operation), or [consumer](#consumer). "Streaming" is less ambiguous, and is fine to
-use given this defined meaning.
+[operations](#operation), or [observation](#observation). "Streaming" is less ambiguous, and is fine
+to use given this defined meaning.
 
 ### Source
 
