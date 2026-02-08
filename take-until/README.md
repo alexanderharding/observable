@@ -2,7 +2,8 @@
 
 Takes [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values from the
 [source](https://jsr.io/@observable/core#source) until
-[notified](https://jsr.io/@observable/core#notifier) to stop.
+[notified](https://jsr.io/@observable/core#notifier) to
+[`return`](https://jsr.io/@observable/core/doc/~/Observer.return).
 
 ## Build
 

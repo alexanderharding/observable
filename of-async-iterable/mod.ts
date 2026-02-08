@@ -7,9 +7,8 @@ import {
 
 /**
  * Projects an [`AsyncIterable`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#the_async_iterator_and_async_iterable_protocols)
- * through an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)
- * [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ing each value in order, then
- * [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s.
+ * to an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) that [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s
+ * each value in order, then [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s.
  * @example
  * ```ts
  * import { ofAsyncIterable } from "@observable/of-async-iterable";

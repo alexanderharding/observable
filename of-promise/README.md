@@ -2,7 +2,7 @@
 
 Projects a
 [`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)
-through an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable).
+to an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable).
 
 ## Build
 

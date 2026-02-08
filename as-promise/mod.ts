@@ -5,21 +5,22 @@ import { pipe } from "@observable/pipe";
 import { share } from "@observable/share";
 
 /**
- * Projects an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) through a
- * [`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise).
- * Since [`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)s
- * have no concept of [`return`](https://jsr.io/@observable/core/doc/~/Observer.return),
- * this operator will reject with a [`TypeError`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypeError)
+ * Projects the [source](https://jsr.io/@observable/core#source) [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)
+ * to a [`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)
+ * that resolves with the last [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed value on
+ * [`return`](https://jsr.io/@observable/core/doc/~/Observer.return), rejects with a
+ * [`throw`](https://jsr.io/@observable/core/doc/~/Observer.throw)n value, or rejects with a
+ * [`TypeError`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypeError)
  * if the [source](https://jsr.io/@observable/core#source) [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)
- * [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s without
- * [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ing a value.
+ * [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s without [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ing
+ * a value.
  * @example
  * ```ts
  * import { asPromise } from "@observable/as-promise";
  * import { ofIterable } from "@observable/of-iterable";
  * import { pipe } from "@observable/pipe";
  *
- *  console.log(await pipe([1, 2, 3], ofIterable(), asPromise()));
+ * console.log(await pipe([1, 2, 3], ofIterable(), asPromise()));
  *
  * // Console output:
  * // 3

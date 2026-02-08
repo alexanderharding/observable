@@ -1,11 +1,11 @@
 # [@observable/as-promise](https://jsr.io/@observable/as-promise)
 
-Projects an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) through a
-[`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise).
-Since
-[`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)s
-have no concept of [`return`](https://jsr.io/@observable/core/doc/~/Observer.return), this operator
-will reject with a
+Projects the [source](https://jsr.io/@observable/core#source)
+[`Observable`](https://jsr.io/@observable/core/doc/~/Observable) to a
+[`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)
+that resolves with the last [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed value on
+[`return`](https://jsr.io/@observable/core/doc/~/Observer.return), rejects with a
+[`throw`](https://jsr.io/@observable/core/doc/~/Observer.throw)n value, or rejects with a
 [`TypeError`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypeError)
 if the [source](https://jsr.io/@observable/core#source)
 [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)

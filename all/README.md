@@ -8,7 +8,8 @@ Calculates [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed value
 [`return`](https://jsr.io/@observable/core/doc/~/Observer.return) without
 [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ing a value, the returned
 [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) will also
-[`return`](https://jsr.io/@observable/core/doc/~/Observer.return).
+[`return`](https://jsr.io/@observable/core/doc/~/Observer.return) without
+[`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ing a value.
 
 ## Build
 

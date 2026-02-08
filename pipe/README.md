@@ -1,6 +1,6 @@
 # [@observable/pipe](https://jsr.io/@observable/pipe)
 
-A utility to pipe a value through a series of unary functions. Though this is not specific to to
+A utility to pipe a value through a series of unary functions. Though this is not specific to
 [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)s, it's a core component in
 composing [observation chains](https://jsr.io/@observable/core#observation-chain).
 

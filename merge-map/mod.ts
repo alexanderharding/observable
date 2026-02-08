@@ -5,8 +5,8 @@ import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/i
 
 /**
  * {@linkcode project|Projects} each [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed
- * value from the [source](https://jsr.io/@observable/core#source)
- * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)s.
+ * value to an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) which is merged in the output
+ * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable).
  * @example
  * ```ts
  * import { mergeMap } from "@observable/merge-map";

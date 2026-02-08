@@ -6,7 +6,7 @@ import { MinimumArgumentsRequiredError, noop, ParameterTypeError } from "@observ
 /**
  * Takes [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values from the
  * [source](https://jsr.io/@observable/core#source) until [notified](https://jsr.io/@observable/core#notifier)
- * to not.
+ * to [`return`](https://jsr.io/@observable/core/doc/~/Observer.return).
  * @example
  * ```ts
  * import { Subject } from "@observable/core";
