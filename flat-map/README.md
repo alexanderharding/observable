@@ -1,6 +1,8 @@
 # [@observable/flat-map](https://jsr.io/@observable/flat-map)
 
-Projects each [source](https://jsr.io/@observable/core#source) value to an
+Projects each [source](https://jsr.io/@observable/core#source)
+[`Observable`](https://jsr.io/@observable/core/doc/~/Observable)'s
+[`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed value to an
 [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) which is merged in the output
 [`Observable`](https://jsr.io/@observable/core/doc/~/Observable), in a serialized fashion waiting
 for each one to [`return`](https://jsr.io/@observable/core/doc/~/Observer.return) before merging the
