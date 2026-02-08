@@ -190,7 +190,7 @@ Deno.test("fetch should not abort the response after it is received", async () =
   assertEquals(receivedResponse, mockResponse);
   assertEquals(abortSignals.length, 1);
   // After response is received, the abort signal should not be aborted
-  // even if we abort observation
+  // even if we abort the Observer
   assertEquals(abortSignals[0].aborted, false);
 
   Object.defineProperty(globalThis, "fetch", { value: originalFetch, configurable: true });

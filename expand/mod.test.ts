@@ -566,7 +566,7 @@ Deno.test("expand should have independent index counters for separate observatio
   assertEquals(observation2Indices, [0, 1, 2]);
 });
 
-Deno.test("expand should share index counter across all recursion levels within single observation", () => {
+Deno.test("expand should share index counter across all recursion levels within single Observer", () => {
   // Arrange
   const indicesWithValues: Array<[number, number]> = [];
   const source = pipe([1, 10], ofIterable<number>());

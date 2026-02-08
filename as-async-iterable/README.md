@@ -128,7 +128,7 @@ try {
 ```
 
 BREAKING OUT OF LOOP:
-Breaking out of the loop will abort observation:
+Breaking out of the loop will abort the Observer:
 ```ts
 import { interval } from "@observable/interval";
 

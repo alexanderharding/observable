@@ -38,7 +38,7 @@ Use the following prompt with AI assistants to help them understand this library
 You are helping me with code that uses @observable/never from the @observable library ecosystem.
 
 WHAT IT DOES:
-`never` is an Observable constant that does nothing — never emits values, never returns, never throws. Observation stays open indefinitely until aborted.
+`never` is an Observable constant that does nothing — never emits values, never returns, never throws. The Observer stays active indefinitely until aborted.
 
 CRITICAL: This library is NOT RxJS. Key differences:
 - Observer uses `return`/`throw` — NOT `complete`/`error`

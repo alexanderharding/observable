@@ -543,7 +543,7 @@ Deno.test(
 );
 
 Deno.test(
-  "switchMap should abort previous inner observation when getting synchronously reentrance during subscribing the inner observation",
+  "switchMap should abort previous inner Observer when getting synchronous reentrance during subscribing the inner Observable",
   () => {
     // Arrange
     const e = new Subject<number>();

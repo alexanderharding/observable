@@ -62,7 +62,7 @@ Use the following prompt with AI assistants to help them understand this library
 You are helping me with code that uses @observable/share from the @observable library ecosystem.
 
 WHAT IT DOES:
-`share()` multicasts a source Observable through a Subject, sharing a single observation among multiple consumers. Resets when all consumers abort or when the source returns/throws.
+`share()` multicasts a source Observable through a Subject, sharing a single source Observer among multiple consumers. Resets when all consumers abort or when the source returns/throws.
 
 CRITICAL: This library is NOT RxJS. Key differences:
 - Observer uses `return`/`throw` — NOT `complete`/`error`
@@ -78,7 +78,7 @@ import { pipe } from "@observable/pipe";
 const shared = pipe(timeout(1_000), share());
 const controller = new AbortController();
 
-// Both consumers share the same source observation
+// Both consumers share the same source Observer
 shared.subscribe({
   signal: controller.signal,
   next: (value) => console.log("A:", value),
@@ -101,11 +101,11 @@ shared.subscribe({
 ```
 
 HOT VS COLD:
-- Without `share()`: Each consumer creates a new observation (cold)
-- With `share()`: All consumers share one observation (hot)
+- Without `share()`: Each consumer creates a new source Observer (cold)
+- With `share()`: All consumers share one source Observer (hot)
 
 RESET BEHAVIOR:
-The shared observation resets when:
+The shared source Observer resets when:
 - All consumers abort
 - The source returns (`return()`)
 - The source throws (`throw()`)

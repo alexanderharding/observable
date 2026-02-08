@@ -124,7 +124,7 @@ Deno.test("interval should clear interval on abort", () => {
 });
 
 Deno.test(
-  "interval should clear interval on abort before observation is created",
+  "interval should clear interval on abort before the Observer is created",
   () => {
     // Arrange
     let overrideGlobals = true;

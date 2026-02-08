@@ -320,7 +320,7 @@ Deno.test("share should create new subject after reset via abort", () => {
   assertStrictEquals(connectionCount, 2);
 });
 
-Deno.test("share should create new source observation after source returns", () => {
+Deno.test("share should create new source Observer after source returns", () => {
   // Arrange
   let sourceSubscribeCount = 0;
   const source = defer(() => {

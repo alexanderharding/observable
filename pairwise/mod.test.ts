@@ -171,7 +171,7 @@ Deno.test("pairwise should work with Subject", () => {
   ]);
 });
 
-Deno.test("pairwise should reset state for each observation", () => {
+Deno.test("pairwise should reset state for each consumer", () => {
   // Arrange
   const notifications1: Array<ObserverNotification<readonly [number, number]>> = [];
   const notifications2: Array<ObserverNotification<readonly [number, number]>> = [];

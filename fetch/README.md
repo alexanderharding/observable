@@ -75,7 +75,7 @@ WHAT IT DOES:
 CRITICAL: This library is NOT RxJS. Key differences:
 - Observer uses `return`/`throw` — NOT `complete`/`error`
 - Unsubscription via `AbortController.abort()` — NOT `subscription.unsubscribe()`
-- Aborting the observation will abort the in-flight fetch request
+- Aborting the Observer will abort the in-flight fetch request
 
 USAGE PATTERN:
 ```ts

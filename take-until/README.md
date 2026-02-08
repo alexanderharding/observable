@@ -81,7 +81,7 @@ pipe(
 
 source.next(1);  // logs: 1
 source.next(2);  // logs: 2
-notifier.next(); // logs: "done" — observation returns
+notifier.next(); // logs: "done" — the Observer returns
 source.next(3);  // not logged
 ```
 
