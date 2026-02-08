@@ -212,7 +212,7 @@ An "unhandled error" is any
 that is not handled by a [consumer](#consumer)-provided function, which is generally provided during
 [`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe) by constructing a new
 [`Observer`](https://jsr.io/@observable/core/doc/~/Observer). If no
-[`throw handler`](https://jsr.io/@observable/core/doc/~/Observer.throw) was provided, this library
+[`throw`](https://jsr.io/@observable/core/doc/~/Observer.throw) handler was provided, this library
 will assume the error is "unhandled" and rethrow it on a new callstack to prevent
 ["producer interference"](#producer-interference).
 
