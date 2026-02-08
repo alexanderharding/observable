@@ -54,7 +54,7 @@ export interface ObservableConstructor {
    *     observer.return();
    *   }, 1_000);
    *
-   *   // Add an abort listener to handle abort by canceling the producer.
+   *   // Add an abort listener to cancel the producer.
    *   observer.signal.addEventListener(
    *     "abort",
    *     () => clearTimeout(producer),

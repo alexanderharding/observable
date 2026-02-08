@@ -33,7 +33,7 @@ const observable = new Observable<0>((observer) => {
     // The producer is done, notify return.
     observer.return();
   }, 1_000);
-  // Add an abort listener to handle abort by canceling the producer.
+  // Add an abort listener to cancel the producer.
   observer.signal.addEventListener("abort", () => clearTimeout(producer), {
     once: true,
   });
