@@ -4,7 +4,7 @@ Only [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s values from 
 [source](https://jsr.io/@observable/core#source)
 [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) that are distinct from the previous
 [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed value according to a specified
-{@linkcode comparator} or
+comparator function or
 [`Object.is`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/is)
 if one is not provided.
 
