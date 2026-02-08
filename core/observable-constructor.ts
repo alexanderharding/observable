@@ -25,7 +25,7 @@ export interface ObservableConstructor {
    *   observer.return();
    * });
    *
-   * // Optionally create a controller to abort observer if needed.
+   * // Create a controller to abort the observation if needed.
    * const controller = new AbortController();
    *
    * observable.subscribe({
@@ -62,7 +62,7 @@ export interface ObservableConstructor {
    *   );
    * });
    *
-   * // Create a controller to abort observer if needed.
+   * // Create a controller to abort the observation if needed.
    * const controller = new AbortController();
    *
    * observable.subscribe({
@@ -85,7 +85,7 @@ export interface ObservableConstructor {
    *   // It represents an infinite stream with no values.
    * });
    *
-   * // Create a controller to abort observer if needed.
+   * // Create a controller to abort the observation if needed.
    * const controller = new AbortController();
    *
    * observable.subscribe({
