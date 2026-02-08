@@ -1,17 +1,19 @@
-import { isObservable, Observable, toObservable } from "@observable/core";
+import { isObservable, Observable } from "@observable/core";
+import { asObservable } from "@observable/as-observable";
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
+import { pipe } from "@observable/pipe";
 
 /**
- * The [producer](https://jsr.io/@observable/core#producer) is notifying the [consumer](https://jsr.io/@observable/core#consumer)
- * that it's done [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ing, values for any reason, and will send no more values.
+ * The [consumer](https://jsr.io/@observable/core#consumer) is telling the [producer](https://jsr.io/@observable/core#producer)
+ * it's no longer interested in receiving {@linkcode Value|values}.
  * @example
  * ```ts
  * import { finalize } from "@observable/finalize";
- * import { of } from "@observable/of";
+ * import { ofIterable } from "@observable/of-iterable";
  * import { pipe } from "@observable/pipe";
  *
  * const controller = new AbortController();
- * pipe(of([1, 2, 3]), finalize(() => console.log("finalized"))).subscribe({
+ * pipe([1, 2, 3], ofIterable(), finalize(() => console.log("finalized"))).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
  *   return: () => console.log("return"),
@@ -30,11 +32,11 @@ import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/i
  * import { finalize } from "@observable/finalize";
  * import { throwError } from "@observable/throw-error";
  * import { pipe } from "@observable/pipe";
- * import { of } from "@observable/of";
+ * import { ofIterable } from "@observable/of-iterable";
  * import { flat } from "@observable/flat";
  *
  * const controller = new AbortController();
- * const source = flat([of([1, 2, 3]), throwError(new Error("error"))]);
+ * const source = flat([pipe([1, 2, 3], ofIterable()), throwError(new Error("error"))]);
  * pipe(source, finalize(() => console.log("finalized"))).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
@@ -60,7 +62,7 @@ export function finalize<Value>(
   return function finalizeFn(source) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
-    source = toObservable(source);
+    source = pipe(source, asObservable());
     return new Observable((observer) => {
       observer.signal.addEventListener("abort", () => teardown(), {
         once: true,

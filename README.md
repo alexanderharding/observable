@@ -194,6 +194,44 @@ Functions should be pure wherever possible:
 - **No side effects** — No mutations, I/O, or external state changes
 - **Referentially transparent** — Can be replaced with its return value
 
+### Function Parameter Naming
+
+Function parameters should use descriptive names that convey their role. The following conventions
+are preferred (but not strictly enforced):
+
+| Name           | Purpose                                        | Signature                            |
+| -------------- | ---------------------------------------------- | ------------------------------------ |
+| **predicate**  | Tests a condition, returns boolean             | `(value) => boolean`                 |
+| **project**    | Transforms an input value into an output       | `(value) => newValue`                |
+| **reducer**    | Accumulates values over time                   | `(previous, current) => accumulated` |
+| **comparator** | Compares two values for equality               | `(a, b) => boolean`                  |
+| **callback**   | Called for side effects, returns void          | `(value) => void`                    |
+| **factory**    | Zero-argument function that produces something | `() => something`                    |
+
+```ts
+// predicate — "should this pass through?"
+filter((x) => x > 5);
+
+// project — "transform this into that"
+map((x) => x * 2);
+switchMap((id) => fetchUser(id));
+
+// reducer — "combine previous + current"
+scan((total, value) => total + value, 0);
+
+// comparator — "are these the same?"
+distinctUntilChanged((a, b) => a.id === b.id);
+
+// callback — "do something with each value"
+forEach((value) => console.log(value));
+
+// factory — "create something on demand"
+defer(() => of([Date.now()]));
+
+// notifier — "signal me when to stop"
+takeUntil(destroy);
+```
+
 ### Documentation
 
 All public APIs **must have JSDoc documentation** including:

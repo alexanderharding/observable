@@ -1,21 +1,24 @@
-import { isObservable, Observable, toObservable } from "@observable/core";
+import { isObservable, Observable } from "@observable/core";
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
+import { asObservable } from "@observable/as-observable";
+import { pipe } from "@observable/pipe";
 
 /**
- * Catches errors from the [source](https://jsr.io/@observable/core#source)
- * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) and returns a new
- * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) with the resolved value.
+ * {@linkcode project|Projects} each [`throw`](https://jsr.io/@observable/core/doc/~/Observer.throw)n
+ * value from the [source](https://jsr.io/@observable/core#source)
+ * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) to a new
+ * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable).
  * @example
  * ```ts
  * import { catchError } from "@observable/catch-error";
  * import { throwError } from "@observable/throw-error";
- * import { of } from "@observable/of";
+ * import { ofIterable } from "@observable/of-iterable";
  * import { pipe } from "@observable/pipe";
  *
  * const controller = new AbortController();
  * pipe(
  *   throwError(new Error("error")),
- *   catchError(() => of(["fallback"])),
+ *   catchError(() => pipe(["fallback"], ofIterable())),
  * ).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
@@ -28,23 +31,27 @@ import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/i
  * // "return"
  * ```
  */
-export function catchError<Value, ResolvedValue>(
-  resolver: (value: unknown) => Observable<ResolvedValue>,
-): (source: Observable<Value>) => Observable<Value | ResolvedValue> {
+export function catchError<Value, ProjectedValue>(
+  project: (error: unknown) => Observable<ProjectedValue>,
+): (source: Observable<Value>) => Observable<Value | ProjectedValue> {
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-  if (typeof resolver !== "function") {
-    throw new ParameterTypeError(0, "Function");
-  }
+  if (typeof project !== "function") throw new ParameterTypeError(0, "Function");
   return function catchErrorFn(source) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
-    source = toObservable(source);
+    source = pipe(source, asObservable());
     return new Observable((observer) =>
       source.subscribe({
         signal: observer.signal,
         next: (value) => observer.next(value),
         return: () => observer.return(),
-        throw: (value) => toObservable(resolver(value)).subscribe(observer),
+        throw(value) {
+          try {
+            pipe(project(value), asObservable()).subscribe(observer);
+          } catch (error) {
+            observer.throw(error);
+          }
+        },
       })
     );
   };

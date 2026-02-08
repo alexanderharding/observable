@@ -1,11 +1,12 @@
-import { isObservable, type Observable, toObservable } from "@observable/core";
+import { isObservable, type Observable } from "@observable/core";
+import { asObservable } from "@observable/as-observable";
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 import { pipe } from "@observable/pipe";
 import { map } from "@observable/map";
 import { filter } from "@observable/filter";
 import { pairwise } from "@observable/pairwise";
 import { flat } from "@observable/flat";
-import { of } from "@observable/of";
+import { ofIterable } from "@observable/of-iterable";
 
 /**
  * Flag indicating that no value has been emitted yet.
@@ -14,17 +15,19 @@ import { of } from "@observable/of";
 const noValue = Symbol("Flag indicating that no value has been emitted yet");
 
 /**
- * Only [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s values from the [source](https://jsr.io/@observable/core#source)
- * that are distinct from the previous value according to a specified {@linkcode comparator}
- * or `Object.is` if one is not provided.
+ * Only [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s values from the
+ * [source](https://jsr.io/@observable/core#source) [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)
+ * that are distinct from the previous [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed value according
+ * to a specified {@linkcode comparator} function or [`Object.is`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/is)
+ * if one is not provided.
  * @example
  * ```ts
  * import { distinctUntilChanged } from "@observable/distinct-until-changed";
- * import { of } from "@observable/of";
+ * import { ofIterable } from "@observable/of-iterable";
  * import { pipe } from "@observable/pipe";
  *
  * const controller = new AbortController();
- * pipe(of([1, 1, 1, 2, 2, 3]), distinctUntilChanged()).subscribe({
+ * pipe([1, 1, 1, 2, 2, 3], ofIterable(), distinctUntilChanged()).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log(value),
  *   return: () => console.log("return"),
@@ -49,9 +52,9 @@ export function distinctUntilChanged<Value>(
   return function distinctUntilChangedFn(source) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
-    source = toObservable(source);
+    source = pipe(source, asObservable());
     return pipe(
-      flat([of([noValue]), source]),
+      flat([pipe([noValue], ofIterable()), source]),
       pairwise(),
       filter(isDistinct),
       map(([_, current]) => current),

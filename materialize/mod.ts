@@ -1,11 +1,11 @@
-import { isObservable, Observable, type Observer, toObservable } from "@observable/core";
+import { isObservable, Observable, type Observer } from "@observable/core";
+import { asObservable } from "@observable/as-observable";
+import { pipe } from "@observable/pipe";
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 
 /**
- * Represents any type of [`Observer`](https://jsr.io/@observable/core/doc/~/Observer) notification
- * ([`next`](https://jsr.io/@observable/core/doc/~/Observer.next),
- * [`return`](https://jsr.io/@observable/core/doc/~/Observer.return), or
- * [`throw`](https://jsr.io/@observable/core/doc/~/Observer.throw)).
+ * Represents any type of [`Observer`](https://jsr.io/@observable/core/doc/~/Observer)
+ * [notification](https://jsr.io/@observable/core#notification).
  */
 export type ObserverNotification<Value = unknown> = Readonly<
   | [type: Extract<"next", keyof Observer>, value: Value]
@@ -14,19 +14,16 @@ export type ObserverNotification<Value = unknown> = Readonly<
 >;
 
 /**
- * Represents all of the {@linkcode ObserverNotification|notifications} from the
- * [source](https://jsr.io/@observable/core#source) as
- * [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values
- * marked with their original types within {@linkcode ObserverNotification|notification} entries.
- * This is especially useful for testing, debugging, and logging.
+ * Projects all of the [`Observer`](https://jsr.io/@observable/core/doc/~/Observer) [notification](https://jsr.io/@observable/core#notification)
+ * as [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values.
  * @example
  * ```ts
  * import { materialize } from "@observable/materialize";
- * import { of } from "@observable/of";
+ * import { ofIterable } from "@observable/of-iterable";
  * import { pipe } from "@observable/pipe";
  *
  * const controller = new AbortController();
- * pipe(of([1, 2, 3]), materialize()).subscribe({
+ * pipe([1, 2, 3], ofIterable(), materialize()).subscribe({
  *  signal: controller.signal,
  *  next: (value) => console.log(value),
  *  return: () => console.log("return"),
@@ -63,10 +60,10 @@ export type ObserverNotification<Value = unknown> = Readonly<
  * ```ts
  * import { materialize, ObserverNotification } from "@observable/materialize";
  * import { pipe } from "@observable/pipe";
- * import { of } from "@observable/of";
+ * import { ofIterable } from "@observable/of-iterable";
  * import { Observer } from "@observable/core";
  *
- * const observable = of([1, 2, 3]);
+ * const observable = pipe([1, 2, 3], ofIterable());
  *
  * describe("observable", () => {
  *  let activeSubscriptionController: AbortController;
@@ -104,7 +101,7 @@ export function materialize<Value>(): (
   return function materializeFn(source) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
-    source = toObservable(source);
+    source = pipe(source, asObservable());
     return new Observable((observer) =>
       source.subscribe({
         signal: observer.signal,

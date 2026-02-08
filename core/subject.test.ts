@@ -164,7 +164,7 @@ Deno.test(
     subject.next(3);
     subject.next(4);
 
-    // First subscriber joins
+    // First observer joins
     subject.subscribe(
       new Observer({
         next: (value) => notifications.push([1, ["next", value]]),
@@ -175,7 +175,7 @@ Deno.test(
     );
     subject.next(5);
 
-    // Second subscriber joins
+    // Second observer joins
     subject.subscribe(
       new Observer({
         next: (value) => notifications.push([2, ["next", value]]),
@@ -187,16 +187,16 @@ Deno.test(
     subject.next(6);
     subject.next(7);
 
-    // First subscriber leaves
+    // First observer leaves
     controller1.abort();
     subject.next(8);
 
-    // Second subscriber leaves
+    // Second observer leaves
     controller2.abort();
     subject.next(9);
     subject.next(10);
 
-    // Third subscriber joins and leaves
+    // Third observer joins and leaves
     subject.subscribe(
       new Observer({
         next: (value) => notifications.push([3, ["next", value]]),
@@ -239,7 +239,7 @@ Deno.test(
     subject.next(3);
     subject.next(4);
 
-    // First subscriber joins
+    // First observer joins
     subject.subscribe(
       new Observer({
         next: (value) => notifications.push([1, ["next", value]]),
@@ -250,7 +250,7 @@ Deno.test(
     );
     subject.next(5);
 
-    // Second subscriber joins
+    // Second observer joins
     subject.subscribe(
       new Observer({
         next: (value) => notifications.push([2, ["next", value]]),
@@ -262,16 +262,16 @@ Deno.test(
     subject.next(6);
     subject.next(7);
 
-    // First subscriber leaves
+    // First observer leaves
     controller1.abort();
 
     // Subject returns
     subject.return();
 
-    // Second subscriber leaves
+    // Second observer leaves
     controller2.abort();
 
-    // Third subscriber joins and leaves after completion
+    // Third observer joins and leaves after completion
     subject.subscribe(
       new Observer({
         next: (value) => notifications.push([3, ["next", value]]),
@@ -314,7 +314,7 @@ Deno.test(
     subject.next(3);
     subject.next(4);
 
-    // First subscriber joins
+    // First observer joins
     subject.subscribe(
       new Observer({
         next: (value) => notifications.push([1, ["next", value]]),
@@ -325,7 +325,7 @@ Deno.test(
     );
     subject.next(5);
 
-    // Second subscriber joins
+    // Second observer joins
     subject.subscribe(
       new Observer({
         next: (value) => notifications.push([2, ["next", value]]),
@@ -337,16 +337,16 @@ Deno.test(
     subject.next(6);
     subject.next(7);
 
-    // First subscriber leaves
+    // First observer leaves
     controller1.abort();
 
     // Subject errors
     subject.throw(testError);
 
-    // Second subscriber leaves
+    // Second observer leaves
     controller2.abort();
 
-    // Third subscriber joins and leaves after error
+    // Third observer joins and leaves after error
     subject.subscribe(
       new Observer({
         next: (value) => notifications.push([3, ["next", value]]),
@@ -423,7 +423,7 @@ Deno.test(
 );
 
 Deno.test(
-  "Subject should disallow new subscriber once subject has been returned",
+  "Subject should disallow new observers once subject has been returned",
   () => {
     // Arrange
     const subject = new Subject<number>();

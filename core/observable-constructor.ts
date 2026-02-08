@@ -6,11 +6,9 @@ import type { Observer } from "./observer.ts";
  */
 export interface ObservableConstructor {
   /**
-   * Creates and returns an object that acts as a template for connecting a [producer](https://jsr.io/@observable/core#producer)
-   * to a [consumer](https://jsr.io/@observable/core#consumer) via a {@linkcode Observable.subscribe|subscribe} action.
-   * @param subscribe The function called for each {@linkcode Observable.subscribe|subscribe} action.
+   * Creates and returns an object that acts as a template for a [consumer](https://jsr.io/@observable/core#consumer)
+   * to [observe](https://jsr.io/@observable/core#observation) a [producer](https://jsr.io/@observable/core#producer).
    * @example
-   * Creating an observable with a synchronous producer.
    * ```ts
    * import { Observable } from "@observable/core";
    *
@@ -43,20 +41,18 @@ export interface ObservableConstructor {
    * // "next" 3
    * // "return"
    * ```
-   *
    * @example
-   * Creating an observable with an asynchronous producer.
    * ```ts
    * import { Observable } from "@observable/core";
    *
-   * const observable = new Observable<0>((observer) => {
-   *   // Create a timeout as our producer to next a successful execution code (0) after 1 second.
+   * const observable = new Observable<void>((observer) => {
+   *   // Create a timeout as our producer to next after 1 second.
    *   const producer = setTimeout(() => {
    *     // A value has been produced, notify next.
-   *     observer.next(0);
+   *     observer.next();
    *     // The producer is done, notify return.
    *     observer.return();
-   *   }, 1000);
+   *   }, 1_000);
    *
    *   // Add an abort listener to handle unsubscription by canceling the producer.
    *   observer.signal.addEventListener(
@@ -76,17 +72,18 @@ export interface ObservableConstructor {
    *   throw: (value) => console.error("throw", value),
    * });
    *
-   * // Console output (asynchronously):
-   * // "next" 0
+   * // Console output (after 1 second):
+   * // "next" undefined
    * // "return"
    * ```
-   *
    * @example
-   * Creating an observable with no producer.
    * ```ts
    * import { Observable } from "@observable/core";
    *
-   * const observable = new Observable<never>();
+   * const observable = new Observable<never>(() => {
+   *   // This Observable intentionally never calls next, return, or throw.
+   *   // It represents an infinite stream with no values.
+   * });
    *
    * // Create a controller to trigger unsubscription if needed.
    * const controller = new AbortController();
@@ -98,7 +95,7 @@ export interface ObservableConstructor {
    *   throw: (value) => console.error("throw", value),
    * });
    *
-   * // no console output
+   * // No console output
    * ```
    */
   new <Value>(

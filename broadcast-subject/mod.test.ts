@@ -1,5 +1,5 @@
 import { Observer } from "@observable/core";
-import { of } from "@observable/of";
+import { ofIterable } from "@observable/of-iterable";
 import { BroadcastSubject } from "./mod.ts";
 import { assertEquals, assertInstanceOf, assertStrictEquals, assertThrows } from "@std/assert";
 import { noop } from "@observable/internal";
@@ -108,7 +108,7 @@ Deno.test(
   "BroadcastSubject should be an Observer which can be given to Observable.subscribe",
   () => {
     // Arrange
-    const source = of([1, 2, 3, 4, 5]);
+    const source = pipe([1, 2, 3, 4, 5], ofIterable());
     const subject = new BroadcastSubject<number>("test");
     const notifications: Array<ObserverNotification<number>> = [];
     const postMessageCalls: Array<Parameters<BroadcastChannel["postMessage"]>> = [];
@@ -308,7 +308,7 @@ Deno.test("BroadcastSubject.throw should abort signal", () => {
 });
 
 Deno.test(
-  "BroadcastSubject.throw should abort signal before notifying subscribers",
+  "BroadcastSubject.throw should abort signal before notifying observers",
   () => {
     // Arrange
     const error = new Error("test error");
@@ -373,7 +373,7 @@ Deno.test("BroadcastSubject.return should close channel", () => {
 });
 
 Deno.test(
-  "BroadcastSubject.return should abort signal before notifying subscribers",
+  "BroadcastSubject.return should abort signal before notifying observers",
   () => {
     // Arrange
     const subject = new BroadcastSubject<string>("test");

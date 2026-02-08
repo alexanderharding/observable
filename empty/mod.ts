@@ -1,8 +1,10 @@
 import { Observable } from "@observable/core";
 
 /**
- * An [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) that calls [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)
- * immediately on [`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe).
+ * Immediately [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s the
+ * [`Observer`](https://jsr.io/@observable/core/doc/~/Observer) on
+ * [`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe) without
+ * [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ing a value.
  * @example
  * ```ts
  * import { empty } from "@observable/empty";

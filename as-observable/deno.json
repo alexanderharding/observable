@@ -1,0 +1,7 @@
+{
+  "name": "@observable/as-observable",
+  "version": "0.2.0",
+  "license": "MIT",
+  "exports": "./mod.ts",
+  "publish": { "exclude": ["*.test.ts"] }
+}

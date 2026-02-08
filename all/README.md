@@ -1,11 +1,15 @@
 # [@observable/all](https://jsr.io/@observable/all)
 
-Creates and returns an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) whose
-[`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values are calculated from the
-latest [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values of each of its
-[sources](https://jsr.io/@observable/core#source). If any of the
-[sources](https://jsr.io/@observable/core#source) are empty, the returned
-[`Observable`](https://jsr.io/@observable/core/doc/~/Observable) will also be empty.
+Calculates [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values from the latest
+[`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed value of each
+[source](https://jsr.io/@observable/core#source)
+[`Observable`](https://jsr.io/@observable/core/doc/~/Observable). If any of the
+[sources](https://jsr.io/@observable/core#source)
+[`return`](https://jsr.io/@observable/core/doc/~/Observer.return) without
+[`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ing a value, the returned
+[`Observable`](https://jsr.io/@observable/core/doc/~/Observable) will also
+[`return`](https://jsr.io/@observable/core/doc/~/Observer.return) without
+[`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ing a value.
 
 ## Build
 
@@ -24,10 +28,15 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 
 ```ts
 import { all } from "@observable/all";
-import { of } from "@observable/of";
+import { ofIterable } from "@observable/of-iterable";
+import { pipe } from "@observable/pipe";
+
+const source1 = pipe([1, 2, 3], ofIterable());
+const source2 = pipe([4, 5, 6], ofIterable());
+const source3 = pipe([7, 8, 9], ofIterable());
 
 const controller = new AbortController();
-all([of([1, 2, 3]), of([4, 5, 6]), of([7, 8, 9])]).subscribe({
+all([source1, source2, source3]).subscribe({
   signal: controller.signal,
   next: (value) => console.log("next", value),
   return: () => console.log("return"),
@@ -45,11 +54,15 @@ all([of([1, 2, 3]), of([4, 5, 6]), of([7, 8, 9])]).subscribe({
 
 ```ts
 import { all } from "@observable/all";
-import { of } from "@observable/of";
+import { ofIterable } from "@observable/of-iterable";
+import { pipe } from "@observable/pipe";
 import { empty } from "@observable/empty";
 
+const source1 = pipe([1, 2, 3], ofIterable());
+const source2 = pipe([7, 8, 9], ofIterable());
+
 const controller = new AbortController();
-all([of([1, 2, 3]), empty, of([7, 8, 9])]).subscribe({
+all([source1, empty, source2]).subscribe({
   signal: controller.signal,
   next: (value) => console.log("next", value),
   return: () => console.log("return"),
@@ -59,6 +72,67 @@ all([of([1, 2, 3]), empty, of([7, 8, 9])]).subscribe({
 // Console output:
 // "return"
 ```
+
+# AI Prompt
+
+Use the following prompt with AI assistants to help them understand this library:
+
+````
+You are helping me with code that uses @observable/all from the @observable library ecosystem.
+
+WHAT IT DOES:
+`all(sources)` creates an Observable that emits arrays containing the latest value from each source. Only starts emitting once ALL sources have emitted at least once. If any source is empty, the result is empty.
+
+CRITICAL: This library is NOT RxJS. Key differences:
+- Observer uses `return`/`throw` — NOT `complete`/`error`
+- Unsubscription via `AbortController.abort()` — NOT `subscription.unsubscribe()`
+- Similar to RxJS `combineLatest`
+
+USAGE PATTERN:
+```ts
+import { all } from "@observable/all";
+import { ofIterable } from "@observable/of-iterable";
+import { pipe } from "@observable/pipe";
+
+const source1 = pipe([1, 2, 3], ofIterable());
+const source2 = pipe([4, 5, 6], ofIterable());
+const source3 = pipe([7, 8, 9], ofIterable());
+
+const controller = new AbortController();
+
+all([source1, source2, source3]).subscribe({
+  signal: controller.signal,
+  next: (value) => console.log(value),
+  return: () => console.log("done"),
+  throw: (error) => console.error(error),
+});
+
+// Output:
+// [3, 6, 7]  — all sources have emitted, combining latest
+// [3, 6, 8]
+// [3, 6, 9]
+// "done"
+```
+
+EMPTY SOURCE BEHAVIOR:
+```ts
+import { empty } from "@observable/empty";
+
+const source1 = pipe([1, 2, 3], ofIterable());
+const source2 = pipe([7, 8, 9], ofIterable());
+
+all([source1, empty, source2]).subscribe({
+  next: (value) => console.log(value),  // Never called!
+  return: () => console.log("done"),    // Called immediately
+  ...
+});
+// Output: "done" (because one source is empty)
+```
+
+SEE ALSO:
+- `merge` — emits individual values from all sources
+- `race` — mirrors only the first source to emit
+````
 
 # Glossary And Semantics
 

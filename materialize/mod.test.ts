@@ -1,6 +1,6 @@
 import { assertEquals } from "@std/assert";
 import { Observer } from "@observable/core";
-import { of } from "@observable/of";
+import { ofIterable } from "@observable/of-iterable";
 import { pipe } from "@observable/pipe";
 import { throwError } from "@observable/throw-error";
 import { materialize, type ObserverNotification } from "./mod.ts";
@@ -9,7 +9,7 @@ Deno.test(
   "materialize should emit the notifications from a source observable that returns",
   () => {
     // Arrange
-    const source = of([1, 2, 3]);
+    const source = pipe([1, 2, 3], ofIterable());
     const nextCalls: Array<
       Parameters<Observer<ObserverNotification<number>>["next"]>
     > = [];
@@ -66,7 +66,7 @@ Deno.test(
 Deno.test("materialize should honor unsubscription", () => {
   // Arrange
   const controller = new AbortController();
-  const source = of([1, 2]);
+  const source = pipe([1, 2], ofIterable());
   const nextCalls: Array<ObserverNotification<number>> = [];
   const returnCalls: Array<Parameters<Observer["return"]>> = [];
   const throwCalls: Array<Parameters<Observer["throw"]>> = [];

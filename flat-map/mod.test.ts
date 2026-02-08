@@ -4,6 +4,7 @@ import { pipe } from "@observable/pipe";
 import { flatMap } from "./mod.ts";
 import { map } from "@observable/map";
 import { materialize, type ObserverNotification } from "@observable/materialize";
+import { ofIterable } from "@observable/of-iterable";
 
 Deno.test("flatMap should flatten many inners", () => {
   // Arrange
@@ -215,3 +216,92 @@ Deno.test("flatMap should flatten many inner, and outer throws", () => {
     ["throw", error],
   ]);
 });
+
+Deno.test(
+  "flatMap should propagate asObservable error when project returns non-observable",
+  () => {
+    // Arrange
+    const source = new Subject<number>();
+    const notifications: Array<ObserverNotification<unknown>> = [];
+    const observable = pipe(
+      source,
+      flatMap(() => "not an observable" as unknown as Observable<number>),
+      materialize(),
+    );
+
+    // Act
+    observable.subscribe(
+      new Observer((notification) => notifications.push(notification)),
+    );
+    source.next(1);
+
+    // Assert
+    assertEquals(notifications.length, 1);
+    assertEquals(notifications[0][0], "throw");
+    assertEquals(
+      (notifications[0][1] as TypeError).message,
+      "Parameter 1 is not of type 'Observable'",
+    );
+  },
+);
+
+Deno.test(
+  "flatMap should propagate asObservable error when project returns non-observable after first value",
+  () => {
+    // Arrange
+    const source = pipe(["a", "b"], ofIterable());
+    const notifications: Array<ObserverNotification<number>> = [];
+    const observableLookup = {
+      a: new Subject<number>(),
+      b: "not an observable" as unknown as Observable<number>,
+    } as const;
+    const observable = pipe(
+      source,
+      flatMap((value) => observableLookup[value]),
+      materialize(),
+    );
+
+    // Act
+    observable.subscribe(
+      new Observer((notification) => notifications.push(notification)),
+    );
+    observableLookup.a.next(0);
+    observableLookup.a.return();
+
+    // Assert
+    assertEquals(notifications.length, 2);
+    assertEquals(notifications[0][0], "next");
+    assertEquals(notifications[0][1], 0);
+    assertEquals(notifications[1][0], "throw");
+    assertEquals(
+      (notifications[1][1] as TypeError).message,
+      "Parameter 1 is not of type 'Observable'",
+    );
+  },
+);
+
+Deno.test(
+  "flatMap should propagate error when project throws synchronously",
+  () => {
+    // Arrange
+    const projectError = new Error("project threw");
+    const source = new Subject<number>();
+    const notifications: Array<ObserverNotification<unknown>> = [];
+    const observable = pipe(
+      source,
+      flatMap((): never => {
+        throw projectError;
+      }),
+      materialize(),
+    );
+
+    // Act
+    observable.subscribe(
+      new Observer((notification) => notifications.push(notification)),
+    );
+    source.next(1);
+
+    // Assert
+    assertEquals(notifications, [["throw", projectError]]);
+  },
+);

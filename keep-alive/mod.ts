@@ -1,4 +1,6 @@
-import { isObservable, Observable, toObservable } from "@observable/core";
+import { isObservable, Observable } from "@observable/core";
+import { asObservable } from "@observable/as-observable";
+import { pipe } from "@observable/pipe";
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 
 const { signal: noopSignal } = new AbortController();
@@ -8,11 +10,11 @@ const { signal: noopSignal } = new AbortController();
  * @example
  * ```ts
  * import { keepAlive } from "@observable/keep-alive";
- * import { of } from "@observable/of";
+ * import { ofIterable } from "@observable/of-iterable";
  * import { pipe } from "@observable/pipe";
  *
  * const controller = new AbortController();
- * pipe(of([1, 2, 3]), keepAlive()).subscribe({
+ * pipe([1, 2, 3], ofIterable(), keepAlive()).subscribe({
  *   signal: controller.signal,
  *   next: (value) => {
  *     console.log("next", value);
@@ -35,7 +37,7 @@ export function keepAlive<Value>(): (
   return function keepAliveFn(source) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
-    source = toObservable(source);
+    source = pipe(source, asObservable());
     return new Observable((observer) =>
       source.subscribe({
         signal: noopSignal,

@@ -2,13 +2,13 @@ import { assertEquals, assertStrictEquals, assertThrows } from "@std/assert";
 import { Observable, Observer, Subject } from "@observable/core";
 import { empty } from "@observable/empty";
 import { pipe } from "@observable/pipe";
-import { of } from "@observable/of";
+import { ofIterable } from "@observable/of-iterable";
 import { materialize, type ObserverNotification } from "@observable/materialize";
 import { debounce } from "./mod.ts";
 
 Deno.test("debounce should return empty if milliseconds is negative", () => {
   // Arrange
-  const source = of([1, 2, 3]);
+  const source = pipe([1, 2, 3], ofIterable());
 
   // Act
   const result = pipe(source, debounce(-1));
@@ -19,7 +19,7 @@ Deno.test("debounce should return empty if milliseconds is negative", () => {
 
 Deno.test("debounce should return empty if milliseconds is NaN", () => {
   // Arrange
-  const source = of([1, 2, 3]);
+  const source = pipe([1, 2, 3], ofIterable());
 
   // Act
   const result = pipe(source, debounce(NaN));
@@ -28,15 +28,39 @@ Deno.test("debounce should return empty if milliseconds is NaN", () => {
   assertStrictEquals(result, empty);
 });
 
-Deno.test("debounce should return empty if milliseconds is Infinity", () => {
+Deno.test("debounce should ignore values but propagate return when milliseconds is Infinity", () => {
   // Arrange
-  const source = of([1, 2, 3]);
+  const notifications: Array<ObserverNotification<number>> = [];
+  const source = pipe([1, 2, 3], ofIterable());
+  const materialized = pipe(source, debounce(Infinity), materialize());
 
   // Act
-  const result = pipe(source, debounce(Infinity));
+  materialized.subscribe(
+    new Observer((notification) => notifications.push(notification)),
+  );
 
   // Assert
-  assertStrictEquals(result, empty);
+  assertEquals(notifications, [["return"]]);
+});
+
+Deno.test("debounce should ignore values but propagate throw when milliseconds is Infinity", () => {
+  // Arrange
+  const error = new Error("test error");
+  const notifications: Array<ObserverNotification<number>> = [];
+  const source = new Observable<number>((observer) => {
+    observer.next(1);
+    observer.next(2);
+    observer.throw(error);
+  });
+  const materialized = pipe(source, debounce(Infinity), materialize());
+
+  // Act
+  materialized.subscribe(
+    new Observer((notification) => notifications.push(notification)),
+  );
+
+  // Assert
+  assertEquals(notifications, [["throw", error]]);
 });
 
 Deno.test("debounce should emit value after timeout expires", () => {

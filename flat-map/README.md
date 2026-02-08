@@ -1,6 +1,8 @@
 # [@observable/flat-map](https://jsr.io/@observable/flat-map)
 
-Projects each [source](https://jsr.io/@observable/core#source) value to an
+Projects each [source](https://jsr.io/@observable/core#source)
+[`Observable`](https://jsr.io/@observable/core/doc/~/Observable)'s
+[`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed value to an
 [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) which is merged in the output
 [`Observable`](https://jsr.io/@observable/core/doc/~/Observable), in a serialized fashion waiting
 for each one to [`return`](https://jsr.io/@observable/core/doc/~/Observer.return) before merging the
@@ -23,15 +25,15 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 
 ```ts
 import { flatMap } from "@observable/flat-map";
-import { of } from "@observable/of";
+import { ofIterable } from "@observable/of-iterable";
 import { pipe } from "@observable/pipe";
 
-const source = of(["a", "b", "c"]);
+const source = pipe(["a", "b", "c"], ofIterable());
 const controller = new AbortController();
 const observableLookup = {
-  a: of([1, 2, 3]),
-  b: of([4, 5, 6]),
-  c: of([7, 8, 9]),
+  a: pipe([1, 2, 3], ofIterable()),
+  b: pipe([4, 5, 6], ofIterable()),
+  c: pipe([7, 8, 9], ofIterable()),
 } as const;
 
 pipe(source, flatMap((value) => observableLookup[value])).subscribe({
@@ -53,6 +55,64 @@ pipe(source, flatMap((value) => observableLookup[value])).subscribe({
 // "next" 9
 // "return"
 ```
+
+# AI Prompt
+
+Use the following prompt with AI assistants to help them understand this library:
+
+````
+You are helping me with code that uses @observable/flat-map from the @observable library ecosystem.
+
+WHAT IT DOES:
+`flatMap(project)` projects each source value to an Observable and subscribes to them sequentially — waiting for each inner Observable to return before subscribing to the next. Also known as `concatMap` in RxJS.
+
+CRITICAL: This library is NOT RxJS. Key differences:
+- Observer uses `return`/`throw` — NOT `complete`/`error`
+- Unsubscription via `AbortController.abort()` — NOT `subscription.unsubscribe()`
+- `flatMap` is a standalone function used with `pipe()` — NOT a method on Observable
+- This is called `flatMap` (like `concatMap` in RxJS), NOT `flatMap` from RxJS which is `mergeMap`
+
+USAGE PATTERN:
+```ts
+import { flatMap } from "@observable/flat-map";
+import { ofIterable } from "@observable/of-iterable";
+import { pipe } from "@observable/pipe";
+
+const controller = new AbortController();
+
+const lookup = {
+  a: pipe([1, 2, 3], ofIterable()),
+  b: pipe([4, 5, 6], ofIterable()),
+  c: pipe([7, 8, 9], ofIterable()),
+};
+
+pipe(
+  ["a", "b", "c"],
+  ofIterable(),
+  flatMap((key) => lookup[key])
+).subscribe({
+  signal: controller.signal,
+  next: (value) => console.log(value),  // 1, 2, 3, 4, 5, 6, 7, 8, 9
+  return: () => console.log("done"),
+  throw: (error) => console.error(error),
+});
+```
+
+SEQUENTIAL EXECUTION:
+Each inner Observable returns before the next one starts:
+```ts
+pipe(
+  ["file1", "file2", "file3"],
+  ofIterable(),
+  flatMap((file) => uploadFile(file))  // Uploads one at a time
+).subscribe({ ... });
+```
+
+SEE ALSO:
+- `mergeMap` — subscribes to all inner Observables concurrently
+- `switchMap` — cancels previous inner Observable when new value arrives
+- `exhaustMap` — ignores new values while inner Observable is active
+````
 
 # Glossary And Semantics
 

@@ -1,20 +1,20 @@
-import { Observable, toObservable } from "@observable/core";
+import { Observable } from "@observable/core";
+import { asObservable } from "@observable/as-observable";
+import { pipe } from "@observable/pipe";
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 
 /**
- * Creates an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) that, on
- * [`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe), calls an
- * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) {@linkcode factory} to
- * get an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) for each
- * [`Observer`](https://jsr.io/@observable/core/doc/~/Observer).
+ * {@linkcode factory|Creates} a new [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)
+ * for each [`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe).
  * @example
  * ```ts
  * import { defer } from "@observable/defer";
- * import { of } from "@observable/of";
+ * import { ofIterable } from "@observable/of-iterable";
+ * import { pipe } from "@observable/pipe";
  *
  * const controller = new AbortController();
  * let values = [1, 2, 3];
- * const observable = defer(() => of(values));
+ * const observable = defer(() => pipe(values, ofIterable()));
  *
  * observable.subscribe({
  *   signal: controller.signal,
@@ -47,8 +47,6 @@ export function defer<Value>(
   factory: () => Observable<Value>,
 ): Observable<Value> {
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-  if (typeof factory !== "function") {
-    throw new ParameterTypeError(0, "Function");
-  }
-  return new Observable((observer) => toObservable(factory()).subscribe(observer));
+  if (typeof factory !== "function") throw new ParameterTypeError(0, "Function");
+  return new Observable((observer) => pipe(factory(), asObservable()).subscribe(observer));
 }

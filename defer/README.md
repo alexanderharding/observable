@@ -1,10 +1,7 @@
 # [@observable/defer](https://jsr.io/@observable/defer)
 
-Creates an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) that, on
-[`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe), calls an
-[`Observable`](https://jsr.io/@observable/core/doc/~/Observable) factory to get an
-[`Observable`](https://jsr.io/@observable/core/doc/~/Observable) for each
-[`Observer`](https://jsr.io/@observable/core/doc/~/Observer).
+Creates a new [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) for each
+[`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe).
 
 ## Build
 
@@ -23,11 +20,12 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 
 ```ts
 import { defer } from "@observable/defer";
-import { of } from "@observable/of";
+import { ofIterable } from "@observable/of-iterable";
+import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
 let values = [1, 2, 3];
-const observable = defer(() => of(values));
+const observable = defer(() => pipe(values, ofIterable()));
 
 observable.subscribe({
   signal: controller.signal,
@@ -56,6 +54,66 @@ observable.subscribe({
 // "next" 6
 // "return"
 ```
+
+# AI Prompt
+
+Use the following prompt with AI assistants to help them understand this library:
+
+````
+You are helping me with code that uses @observable/defer from the @observable library ecosystem.
+
+WHAT IT DOES:
+`defer(factory)` creates an Observable that calls a factory function on each subscription to create a new Observable. Useful for lazy evaluation and per-subscription state.
+
+CRITICAL: This library is NOT RxJS. Key differences:
+- Observer uses `return`/`throw` — NOT `complete`/`error`
+- Unsubscription via `AbortController.abort()` — NOT `subscription.unsubscribe()`
+
+USAGE PATTERN:
+```ts
+import { defer } from "@observable/defer";
+import { ofIterable } from "@observable/of-iterable";
+import { pipe } from "@observable/pipe";
+
+const controller = new AbortController();
+let values = [1, 2, 3];
+
+const deferred = defer(() => pipe(values, ofIterable()));
+
+deferred.subscribe({
+  signal: controller.signal,
+  next: (value) => console.log(value),  // 1, 2, 3
+  return: () => console.log("done"),
+  throw: (error) => console.error(error),
+});
+
+values = [4, 5, 6];
+
+deferred.subscribe({
+  signal: controller.signal,
+  next: (value) => console.log(value),  // 4, 5, 6
+  return: () => console.log("done"),
+  throw: (error) => console.error(error),
+});
+```
+
+LAZY EVALUATION:
+The factory is called at subscription time, not creation time:
+```ts
+const deferred = defer(() => {
+  console.log("Factory called!");  // Only when subscribed
+  return pipe([Date.now()], ofIterable());
+});
+// Factory not called yet...
+deferred.subscribe({ ... });  // "Factory called!"
+```
+
+USE CASES:
+- Fresh timestamp/random values per subscription
+- Per-subscription state initialization
+- Lazy resource allocation
+- Conditional Observable creation
+````
 
 # Glossary And Semantics
 

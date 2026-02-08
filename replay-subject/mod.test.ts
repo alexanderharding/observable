@@ -1,7 +1,7 @@
 import { assertEquals, assertStrictEquals, assertThrows } from "@std/assert";
 import { Observer } from "@observable/core";
 import { noop } from "@observable/internal";
-import { of } from "@observable/of";
+import { ofIterable } from "@observable/of-iterable";
 import { pipe } from "@observable/pipe";
 import { materialize, type ObserverNotification } from "@observable/materialize";
 import { ReplaySubject } from "./mod.ts";
@@ -46,7 +46,7 @@ Deno.test(
   () => {
     // Arrange
     const notifications: Array<ObserverNotification<number>> = [];
-    const source = of([1, 2, 3, 4, 5]);
+    const source = pipe([1, 2, 3, 4, 5], ofIterable());
     const subject = new ReplaySubject<number>(Infinity);
 
     // Act
@@ -68,7 +68,7 @@ Deno.test(
 );
 
 Deno.test(
-  "ReplaySubject.subscribe should emit buffered values to subscribers",
+  "ReplaySubject.subscribe should emit buffered values to observers",
   () => {
     // Arrange
     const subject = new ReplaySubject<string>(2);
@@ -115,7 +115,7 @@ Deno.test(
 );
 
 Deno.test(
-  "ReplaySubject.subscribe should emit buffered values to late subscribers",
+  "ReplaySubject.subscribe should not emit buffered values to late observers",
   () => {
     // Arrange
     const subject = new ReplaySubject<string>(2);
@@ -131,14 +131,12 @@ Deno.test(
 
     // Assert
     assertEquals(notifications, [
-      ["next", "first"],
-      ["next", "second"],
       ["return"],
     ]);
   },
 );
 
-Deno.test("ReplaySubject.next should emit values to subscribers", () => {
+Deno.test("ReplaySubject.next should emit values to observers", () => {
   // Arrange
   const subject = new ReplaySubject<string>(2);
   const notifications: Array<ObserverNotification<string>> = [];
@@ -157,7 +155,7 @@ Deno.test("ReplaySubject.next should emit values to subscribers", () => {
   ]);
 });
 
-Deno.test("ReplaySubject.next should store values for late subscribers", () => {
+Deno.test("ReplaySubject.next should store values for late observers", () => {
   // Arrange
   const subject = new ReplaySubject<string>(2);
   const notifications: Array<ObserverNotification<string>> = [];
@@ -198,7 +196,7 @@ Deno.test("ReplaySubject.throw should pass through this subject", () => {
   ]);
 });
 
-Deno.test("ReplaySubject.throw should notify late subscribers", () => {
+Deno.test("ReplaySubject.throw should not notify late observers of buffered values", () => {
   // Arrange
   const error = new Error("test error");
   const subject = new ReplaySubject<string>(2);
@@ -214,7 +212,6 @@ Deno.test("ReplaySubject.throw should notify late subscribers", () => {
 
   // Assert
   assertEquals(notifications, [
-    ["next", "foo"],
     ["throw", error],
   ]);
 });
@@ -235,7 +232,7 @@ Deno.test("ReplaySubject.return should pass through this subject", () => {
   assertEquals(notifications, [["next", "foo"], ["return"]]);
 });
 
-Deno.test("ReplaySubject.return should notify late subscribers", () => {
+Deno.test("ReplaySubject.return should not notify late observers of buffered values", () => {
   // Arrange
   const subject = new ReplaySubject<string>(2);
   const notifications: Array<ObserverNotification<string>> = [];
@@ -248,7 +245,7 @@ Deno.test("ReplaySubject.return should notify late subscribers", () => {
   );
 
   // Assert
-  assertEquals(notifications, [["next", "foo"], ["return"]]);
+  assertEquals(notifications, [["return"]]);
 });
 
 Deno.test(

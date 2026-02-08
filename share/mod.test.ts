@@ -2,16 +2,12 @@ import { assertEquals, assertStrictEquals, assertThrows } from "@std/assert";
 import { Observer, Subject } from "@observable/core";
 import { pipe } from "@observable/pipe";
 import { share } from "./mod.ts";
-import { of } from "@observable/of";
+import { ofIterable } from "@observable/of-iterable";
 import { throwError } from "@observable/throw-error";
 import { materialize, type ObserverNotification } from "@observable/materialize";
 import { ReplaySubject } from "@observable/replay-subject";
 import { defer } from "@observable/defer";
 import { never } from "@observable/never";
-import { flat } from "@observable/flat";
-import { take } from "@observable/take";
-import { ignoreElements } from "@observable/ignore-elements";
-import { empty } from "@observable/empty";
 
 Deno.test("share should not throw when called with no connector argument", () => {
   // Arrange / Act / Assert
@@ -77,7 +73,7 @@ Deno.test("share should throw when source is not an Observable", () => {
   );
 });
 
-Deno.test("share should multicast values to all subscribers", () => {
+Deno.test("share should multicast values to all observers", () => {
   // Arrange
   const source = new Subject<number>();
   const shared = pipe(source, share());
@@ -100,7 +96,7 @@ Deno.test("share should multicast values to all subscribers", () => {
   assertEquals(notifications2, [["next", 1], ["next", 2], ["next", 3]]);
 });
 
-Deno.test("share should only subscribe to source once for multiple subscribers", () => {
+Deno.test("share should only subscribe to source once for multiple observers", () => {
   // Arrange
   let subscribeCount = 0;
   const source = defer(() => {
@@ -118,12 +114,12 @@ Deno.test("share should only subscribe to source once for multiple subscribers",
   assertStrictEquals(subscribeCount, 1);
 });
 
-Deno.test("share should not subscribe to source until first subscriber", () => {
+Deno.test("share should not subscribe to source until first observer", () => {
   // Arrange
   let subscribed = false;
   const source = defer(() => {
     subscribed = true;
-    return of([1]);
+    return pipe([1], ofIterable());
   });
   const shared = pipe(source, share());
   assertStrictEquals(subscribed, false);
@@ -135,7 +131,7 @@ Deno.test("share should not subscribe to source until first subscriber", () => {
   assertStrictEquals(subscribed, true);
 });
 
-Deno.test("share should reset when all subscribers unsubscribe", () => {
+Deno.test("share should reset when all observers unsubscribe", () => {
   // Arrange
   let subscribeCount = 0;
   const source = defer(() => {
@@ -159,15 +155,11 @@ Deno.test("share should reset when all subscribers unsubscribe", () => {
   assertStrictEquals(subscribeCount, 2);
 });
 
-Deno.test("share should propagate throw to all subscribers", () => {
+Deno.test("share should propagate throw to all observers", () => {
   // Arrange
-  const throwNotifier = new Subject<void>();
+  const throwNotifier = new Subject<never>();
   const error = new Error("test error");
-  const source = flat([
-    pipe(throwNotifier, take(1), ignoreElements()),
-    throwError(error),
-  ]);
-  const shared = pipe(source, share());
+  const shared = pipe(throwNotifier, share());
   const notifications1: Array<ObserverNotification<number>> = [];
   const notifications2: Array<ObserverNotification<number>> = [];
 
@@ -178,21 +170,17 @@ Deno.test("share should propagate throw to all subscribers", () => {
   pipe(shared, materialize()).subscribe(
     new Observer((notification) => notifications2.push(notification)),
   );
-  throwNotifier.next();
+  throwNotifier.throw(error);
 
   // Assert
   assertEquals(notifications1, [["throw", error]]);
   assertEquals(notifications2, [["throw", error]]);
 });
 
-Deno.test("share should propagate return to all subscribers", () => {
+Deno.test("share should propagate return to all observers", () => {
   // Arrange
-  const returnNotifier = new Subject<void>();
-  const source = flat([
-    pipe(returnNotifier, take(1), ignoreElements()),
-    empty,
-  ]);
-  const shared = pipe(source, share());
+  const returnNotifier = new Subject<never>();
+  const shared = pipe(returnNotifier, share());
   const notifications1: Array<ObserverNotification<never>> = [];
   const notifications2: Array<ObserverNotification<never>> = [];
 
@@ -203,7 +191,7 @@ Deno.test("share should propagate return to all subscribers", () => {
   pipe(shared, materialize()).subscribe(
     new Observer((notification) => notifications2.push(notification)),
   );
-  returnNotifier.next();
+  returnNotifier.return();
 
   // Assert
   assertEquals(notifications1, [["return"]]);
@@ -218,7 +206,7 @@ Deno.test("share should use custom connector", () => {
     connectorCalled = true;
     return customSubject;
   };
-  const source = of([1, 2, 3]);
+  const source = pipe([1, 2, 3], ofIterable());
   const shared = pipe(source, share(connector));
 
   // Act
@@ -228,7 +216,7 @@ Deno.test("share should use custom connector", () => {
   assertStrictEquals(connectorCalled, true);
 });
 
-Deno.test("share with ReplaySubject should replay values to late subscribers", () => {
+Deno.test("share with ReplaySubject should replay values to late observers", () => {
   // Arrange
   const source = new Subject<number>();
   const shared = pipe(source, share(() => new ReplaySubject<number>(2)));
@@ -277,7 +265,7 @@ Deno.test("share should reset connection when all unsubscribe", () => {
 
 Deno.test("share should handle synchronous source return", () => {
   // Arrange
-  const source = of([1, 2, 3]);
+  const source = pipe([1, 2, 3], ofIterable());
   const shared = pipe(source, share());
   const notifications: Array<ObserverNotification<number>> = [];
 
@@ -337,7 +325,7 @@ Deno.test("share should create new source subscription after source returns", ()
   let sourceSubscribeCount = 0;
   const source = defer(() => {
     sourceSubscribeCount++;
-    return of([sourceSubscribeCount]);
+    return pipe([sourceSubscribeCount], ofIterable());
   });
   const shared = pipe(source, share());
   const notifications1: Array<ObserverNotification<number>> = [];
@@ -358,7 +346,7 @@ Deno.test("share should create new source subscription after source returns", ()
   assertEquals(notifications2, [["next", 2], ["return"]]);
 });
 
-Deno.test("share should not create new subject for second subscriber", () => {
+Deno.test("share should not create new subject for second observer", () => {
   // Arrange
   let connectionCount = 0;
   const connector = () => {
@@ -377,7 +365,7 @@ Deno.test("share should not create new subject for second subscriber", () => {
   assertStrictEquals(connectionCount, 1);
 });
 
-Deno.test("share should handle late subscriber joining during emission", () => {
+Deno.test("share should handle late observer joining during emission", () => {
   // Arrange
   const source = new Subject<number>();
   const shared = pipe(source, share());
@@ -400,7 +388,7 @@ Deno.test("share should handle late subscriber joining during emission", () => {
   assertEquals(notifications2, [["next", 2], ["next", 3]]);
 });
 
-Deno.test("share should handle subscriber unsubscribing during emission", () => {
+Deno.test("share should handle observer unsubscribing during emission", () => {
   // Arrange
   const source = new Subject<number>();
   const shared = pipe(source, share());
@@ -453,4 +441,48 @@ Deno.test("share should work with observable-like sources", () => {
     ["next", 2],
     ["return"],
   ]);
+});
+
+Deno.test("share should propagate asObservable error when connector returns non-observable", () => {
+  // Arrange
+  const source = new Subject<number>();
+  const shared = pipe(
+    source,
+    share(() => "not a subject" as unknown as Subject<number>),
+  );
+  const notifications: Array<ObserverNotification<unknown>> = [];
+
+  // Act
+  pipe(shared, materialize()).subscribe(
+    new Observer((notification) => notifications.push(notification)),
+  );
+
+  // Assert
+  assertEquals(notifications.length, 1);
+  assertEquals(notifications[0][0], "throw");
+  assertEquals(
+    (notifications[0][1] as TypeError).message,
+    "Parameter 1 is not of type 'Observable'",
+  );
+});
+
+Deno.test("share should propagate error when connector throws synchronously", () => {
+  // Arrange
+  const connectorError = new Error("connector threw");
+  const source = new Subject<number>();
+  const shared = pipe(
+    source,
+    share((): never => {
+      throw connectorError;
+    }),
+  );
+  const notifications: Array<ObserverNotification<unknown>> = [];
+
+  // Act
+  pipe(shared, materialize()).subscribe(
+    new Observer((notification) => notifications.push(notification)),
+  );
+
+  // Assert
+  assertEquals(notifications, [["throw", connectorError]]);
 });

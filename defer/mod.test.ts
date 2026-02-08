@@ -3,7 +3,7 @@ import { Observer } from "@observable/core";
 import { materialize } from "@observable/materialize";
 import type { ObserverNotification } from "@observable/materialize";
 import { pipe } from "@observable/pipe";
-import { of } from "@observable/of";
+import { ofIterable } from "@observable/of-iterable";
 import { defer } from "./mod.ts";
 
 Deno.test(
@@ -14,7 +14,7 @@ Deno.test(
     const notifications: Array<[1 | 2, ObserverNotification<number>]> = [];
     const source = defer(() => {
       factoryCallCount++;
-      return of([1, 2, 3]);
+      return pipe([1, 2, 3], ofIterable());
     });
 
     // Act
@@ -56,4 +56,50 @@ Deno.test("defer should throw an error if the factory throws an error", () => {
 
   // Assert
   assertEquals(notifications, [["throw", error]]);
+});
+
+Deno.test("defer should propagate asObservable error when getter returns non-observable", () => {
+  // Arrange
+  const notifications: Array<ObserverNotification<unknown>> = [];
+  const source = defer(
+    // deno-lint-ignore no-explicit-any
+    () => "not an observable" as any,
+  );
+  const materialized = pipe(source, materialize());
+
+  // Act
+  materialized.subscribe(
+    new Observer((notification) => notifications.push(notification)),
+  );
+
+  // Assert
+  assertEquals(notifications.length, 1);
+  assertEquals(notifications[0][0], "throw");
+  assertEquals(
+    (notifications[0][1] as TypeError).message,
+    "Parameter 1 is not of type 'Observable'",
+  );
+});
+
+Deno.test("defer should propagate asObservable error when getter returns null", () => {
+  // Arrange
+  const notifications: Array<ObserverNotification<unknown>> = [];
+  const source = defer(
+    // deno-lint-ignore no-explicit-any
+    () => null as any,
+  );
+  const materialized = pipe(source, materialize());
+
+  // Act
+  materialized.subscribe(
+    new Observer((notification) => notifications.push(notification)),
+  );
+
+  // Assert
+  assertEquals(notifications.length, 1);
+  assertEquals(notifications[0][0], "throw");
+  assertEquals(
+    (notifications[0][1] as TypeError).message,
+    "Parameter 1 is not of type 'Observable'",
+  );
 });

@@ -1,6 +1,11 @@
-import { isObservable, Observable, toObservable } from "@observable/core";
+import { isObservable, type Observable } from "@observable/core";
+import { asObservable } from "@observable/as-observable";
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
-import { of } from "@observable/of";
+import { pipe } from "@observable/pipe";
+import { flat } from "@observable/flat";
+import { take } from "@observable/take";
+import { mergeMap } from "@observable/merge-map";
+import { ofIterable } from "@observable/of-iterable";
 
 /**
  * Re-[`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe)s to the
@@ -13,12 +18,12 @@ import { of } from "@observable/of";
  * @example
  * ```ts
  * import { repeat } from "@observable/repeat";
- * import { of } from "@observable/of";
+ * import { ofIterable } from "@observable/of-iterable";
  * import { pipe } from "@observable/pipe";
  * import { empty } from "@observable/empty";
  * import { defer } from "@observable/defer";
  *
- * const source = of([1, 2, 3]);
+ * const source = pipe([1, 2, 3], ofIterable());
  * const controller = new AbortController();
  * const repeated = defer(() => {
  *   let count = 0;
@@ -26,7 +31,7 @@ import { of } from "@observable/of";
  *     source,
  *     repeat(defer(() => {
  *      console.log("notifier subscribed");
- *      return ++count === 2 ? empty : of([undefined]);
+ *      return ++count === 2 ? empty : pipe([undefined], ofIterable());
  *     })),
  *   );
  * });
@@ -51,38 +56,14 @@ import { of } from "@observable/of";
  * ```
  */
 export function repeat<Value>(
-  notifier: Observable = of([undefined]),
+  notifier: Observable = pipe([undefined], ofIterable()),
 ): (source: Observable<Value>) => Observable<Value> {
   if (!isObservable(notifier)) throw new ParameterTypeError(0, "Observable");
-  notifier = toObservable(notifier);
-  return function repeat(source) {
+  notifier = pipe(notifier, asObservable());
+  return function repeatFn(source) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
-    source = toObservable(source);
-    return new Observable((observer) => {
-      subscribeToSource();
-
-      function subscribeToSource(): void {
-        source.subscribe({
-          signal: observer.signal,
-          next: (value) => observer.next(value),
-          return: processReturn,
-          throw: (value) => observer.throw(value),
-        });
-      }
-
-      function processReturn(): void {
-        const activeSubscriptionController = new AbortController();
-        notifier.subscribe({
-          signal: AbortSignal.any([observer.signal, activeSubscriptionController.signal]),
-          next() {
-            activeSubscriptionController.abort();
-            subscribeToSource();
-          },
-          return: () => observer.return(),
-          throw: (value) => observer.throw(value),
-        });
-      }
-    });
+    source = pipe(source, asObservable());
+    return flat([source, pipe(notifier, take(1), mergeMap(() => pipe(source, repeat(notifier))))]);
   };
 }

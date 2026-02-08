@@ -5,23 +5,28 @@ import {
   MinimumArgumentsRequiredError,
   ParameterTypeError,
 } from "@observable/internal";
-import { of } from "@observable/of";
+import { ofIterable } from "@observable/of-iterable";
 import { pipe } from "@observable/pipe";
 import { flatMap } from "@observable/flat-map";
 import { empty } from "@observable/empty";
 
 /**
- * Creates an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) which sequentially emits all values from the first given
- * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) and then moves on to the next.
+ * Sequentially [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s all values from the first given
+ * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) until it
+ * [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s and then moves on to the next and so on.
  * @example
  * ```ts
  * import { flat } from "@observable/flat";
- * import { of } from "@observable/of";
+ * import { ofIterable } from "@observable/of-iterable";
  * import { pipe } from "@observable/pipe";
+ *
+ * const source1 = pipe([1, 2, 3], ofIterable());
+ * const source2 = pipe([4, 5, 6], ofIterable());
+ * const source3 = pipe([7, 8, 9], ofIterable());
  *
  * const controller = new AbortController();
  *
- * flat(of([1, 2, 3]), of([4, 5, 6]), of([7, 8, 9])).subscribe({
+ * flat([source1, source2, source3]).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
  *   return: () => console.log("return"),
@@ -44,6 +49,38 @@ import { empty } from "@observable/empty";
 export function flat<const Values extends ReadonlyArray<unknown>>(
   sources: Readonly<{ [Key in keyof Values]: Observable<Values[Key]> }>,
 ): Observable<Values[number]>;
+/**
+ * Sequentially [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s all values from the first given
+ * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) until it
+ * [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s and then moves on to the next and so on.
+ * @example
+ * ```ts
+ * import { flat } from "@observable/flat";
+ * import { ofIterable } from "@observable/of-iterable";
+ * import { pipe } from "@observable/pipe";
+ *
+ * const controller = new AbortController();
+ * const source1 = pipe([1, 2, 3], ofIterable());
+ * const source2 = source1;
+ * const source3 = pipe([4, 5, 6], ofIterable());
+ *
+ * flat(new Set([source1, source2, source3])).subscribe({
+ *   signal: controller.signal,
+ *   next: (value) => console.log("next", value),
+ *   return: () => console.log("return"),
+ *   throw: (value) => console.log("throw", value),
+ * });
+ *
+ * // Console output:
+ * // "next" 1
+ * // "next" 2
+ * // "next" 3
+ * // "next" 4
+ * // "next" 5
+ * // "next" 6
+ * // "return"
+ * ```
+ */
 export function flat<Value>(
   sources: Iterable<Observable<Value>>,
 ): Observable<Value>;
@@ -55,5 +92,5 @@ export function flat<Value>(
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
   if (!isIterable(sources)) throw new ParameterTypeError(0, "Iterable");
   if (Array.isArray(sources) && !sources.length) return empty;
-  return pipe(of(sources), flatMap(identity));
+  return pipe(sources, ofIterable(), flatMap(identity));
 }

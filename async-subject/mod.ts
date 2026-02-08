@@ -5,8 +5,10 @@ import {
   ParameterTypeError,
 } from "@observable/internal";
 import { flat } from "@observable/flat";
+import { ofIterable } from "@observable/of-iterable";
 import { pipe } from "@observable/pipe";
-import { ignoreElements } from "@observable/ignore-elements";
+import { switchMap } from "@observable/switch-map";
+import { drop } from "@observable/drop";
 import { ReplaySubject } from "@observable/replay-subject";
 
 /**
@@ -20,9 +22,8 @@ export type AsyncSubject<Value = unknown> = Subject<Value>;
 export interface AsyncSubjectConstructor {
   /**
    * Creates and returns an object that acts as a [`Subject`](https://jsr.io/@observable/core/doc/~/Subject) that buffers the most recent
-   * [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed value until [`return`](https://jsr.io/@observable/core/doc/~/Observer.return) is called.
-   * Once [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)ed, [`next`](https://jsr.io/@observable/core/doc/~/Observer.next) will be replayed
-   * to late [`consumers`](https://jsr.io/@observable/core#consumer) upon [`subscription`](https://jsr.io/@observable/core/doc/~/Observable.subscribe).
+   * [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed value until immediately before [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)
+   * is called.
    * @example
    * ```ts
    * import { AsyncSubject } from "@observable/async-subject";
@@ -56,7 +57,6 @@ export interface AsyncSubjectConstructor {
    * });
    *
    * // Console output:
-   * // "next" 3
    * // "return"
    * ```
    */
@@ -65,14 +65,22 @@ export interface AsyncSubjectConstructor {
   readonly prototype: AsyncSubject;
 }
 
+/**
+ * A fixed string that is used to identify the {@linkcode AsyncSubject} class.
+ * @internal Do NOT export.
+ */
+const stringTag = "AsyncSubject";
+
 export const AsyncSubject: AsyncSubjectConstructor = class {
-  readonly [Symbol.toStringTag] = "AsyncSubject";
+  readonly [Symbol.toStringTag] = stringTag;
   readonly #subject = new ReplaySubject(1);
   readonly signal = this.#subject.signal;
-  readonly #observable = flat<unknown>([
-    pipe(this.#subject, ignoreElements()),
+  readonly #observable = pipe(
     this.#subject,
-  ]);
+    switchMap((value) =>
+      flat([pipe(this.#subject, drop<never>(Infinity)), pipe([value], ofIterable())])
+    ),
+  );
 
   constructor() {
     Object.freeze(this);
@@ -80,25 +88,21 @@ export const AsyncSubject: AsyncSubjectConstructor = class {
 
   next(value: unknown): void {
     if (this instanceof AsyncSubject) this.#subject.next(value);
-    else throw new InstanceofError("this", "AsyncSubject");
+    else throw new InstanceofError("this", stringTag);
   }
 
   return(): void {
     if (this instanceof AsyncSubject) this.#subject.return();
-    else throw new InstanceofError("this", "AsyncSubject");
+    else throw new InstanceofError("this", stringTag);
   }
 
   throw(value: unknown): void {
-    if (this instanceof AsyncSubject) {
-      this.#subject.next(undefined);
-      this.#subject.throw(value);
-    } else throw new InstanceofError("this", "AsyncSubject");
+    if (this instanceof AsyncSubject) this.#subject.throw(value);
+    else throw new InstanceofError("this", stringTag);
   }
 
   subscribe(observer: Observer): void {
-    if (!(this instanceof AsyncSubject)) {
-      throw new InstanceofError("this", "AsyncSubject");
-    }
+    if (!(this instanceof AsyncSubject)) throw new InstanceofError("this", stringTag);
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObserver(observer)) throw new ParameterTypeError(0, "Observer");
     this.#observable.subscribe(observer);

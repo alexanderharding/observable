@@ -19,11 +19,11 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 
 ```ts
 import { keepAlive } from "@observable/keep-alive";
-import { of } from "@observable/of";
+import { ofIterable } from "@observable/of-iterable";
 import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
-pipe(of([1, 2, 3]), keepAlive()).subscribe({
+pipe([1, 2, 3], ofIterable(), keepAlive()).subscribe({
   signal: controller.signal,
   next: (value) => {
     console.log("next", value);
@@ -39,6 +39,61 @@ pipe(of([1, 2, 3]), keepAlive()).subscribe({
 // "next" 3
 // "return"
 ```
+
+# AI Prompt
+
+Use the following prompt with AI assistants to help them understand this library:
+
+````
+You are helping me with code that uses @observable/keep-alive from the @observable library ecosystem.
+
+WHAT IT DOES:
+`keepAlive()` ignores unsubscription signals (`abort()`), keeping the source subscription alive until the source naturally returns or throws.
+
+CRITICAL: This library is NOT RxJS. Key differences:
+- Observer uses `return`/`throw` — NOT `complete`/`error`
+- Unsubscription via `AbortController.abort()` — NOT `subscription.unsubscribe()`
+- `keepAlive` is a standalone function used with `pipe()` — NOT a method on Observable
+
+USAGE PATTERN:
+```ts
+import { keepAlive } from "@observable/keep-alive";
+import { ofIterable } from "@observable/of-iterable";
+import { pipe } from "@observable/pipe";
+
+const controller = new AbortController();
+
+pipe(
+  [1, 2, 3],
+  ofIterable(),
+  keepAlive()
+).subscribe({
+  signal: controller.signal,
+  next: (value) => {
+    console.log(value);
+    if (value === 2) controller.abort();  // Ignored!
+  },
+  return: () => console.log("done"),
+  throw: (error) => console.error(error),
+});
+// Output: 1, 2, 3, "done"
+// Note: abort() at value 2 was ignored
+```
+
+WARNING:
+Use with caution! This prevents normal cleanup:
+- `controller.abort()` has no effect
+- Subscription continues until source returns
+- Could cause memory leaks if source never returns
+
+COMMON USE — Critical operations:
+```ts
+pipe(
+  criticalSaveOperation,
+  keepAlive()  // Don't interrupt mid-save
+).subscribe({ ... });
+```
+````
 
 # Glossary And Semantics
 

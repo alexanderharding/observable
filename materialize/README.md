@@ -1,8 +1,8 @@
 # [@observable/materialize](https://jsr.io/@observable/materialize)
 
-Represents all of the notifications from the [source](https://jsr.io/@observable/core#source) as
-[`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values marked with their original
-types within notification entries. This is especially useful for testing, debugging, and logging.
+Projects all of the [`Observer`](https://jsr.io/@observable/core/doc/~/Observer)
+[notification](https://jsr.io/@observable/core#notification) as
+[`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values.
 
 ## Build
 
@@ -21,11 +21,11 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 
 ```ts
 import { materialize } from "@observable/materialize";
-import { of } from "@observable/of";
+import { ofIterable } from "@observable/of-iterable";
 import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
-pipe(of([1, 2, 3]), materialize()).subscribe({
+pipe([1, 2, 3], ofIterable(), materialize()).subscribe({
   signal: controller.signal,
   next: (value) => console.log(value),
   return: () => console.log("return"),
@@ -45,10 +45,10 @@ pipe(of([1, 2, 3]), materialize()).subscribe({
 ```ts
 import { materialize, ObserverNotification } from "@observable/materialize";
 import { pipe } from "@observable/pipe";
-import { of } from "@observable/of";
+import { ofIterable } from "@observable/of-iterable";
 import { Observer } from "@observable/core";
 
-const observable = of([1, 2, 3]);
+const observable = pipe([1, 2, 3], ofIterable());
 
 describe("observable", () => {
   let activeSubscriptionController: AbortController;
@@ -79,6 +79,75 @@ describe("observable", () => {
   });
 });
 ```
+
+# AI Prompt
+
+Use the following prompt with AI assistants to help them understand this library:
+
+````
+You are helping me with code that uses @observable/materialize from the @observable library ecosystem.
+
+WHAT IT DOES:
+`materialize()` converts all notifications (next, return, throw) into `next` emissions as tagged tuples. Useful for testing, debugging, and logging.
+
+CRITICAL: This library is NOT RxJS. Key differences:
+- Observer uses `return`/`throw` — NOT `complete`/`error`
+- Unsubscription via `AbortController.abort()` — NOT `subscription.unsubscribe()`
+- `materialize` is a standalone function used with `pipe()` — NOT a method on Observable
+
+NOTIFICATION FORMAT:
+- `["next", value]` — for emitted values
+- `["return"]` — for return (successful finish)
+- `["throw", error]` — for errors
+
+USAGE PATTERN:
+```ts
+import { materialize } from "@observable/materialize";
+import { ofIterable } from "@observable/of-iterable";
+import { pipe } from "@observable/pipe";
+
+const controller = new AbortController();
+
+pipe(
+  [1, 2, 3],
+  ofIterable(),
+  materialize()
+).subscribe({
+  signal: controller.signal,
+  next: (notification) => console.log(notification),
+  return: () => console.log("done"),
+  throw: (error) => console.error(error),
+});
+// Output:
+// ["next", 1]
+// ["next", 2]
+// ["next", 3]
+// ["return"]
+// "done"
+```
+
+TESTING EXAMPLE:
+```ts
+import { materialize, ObserverNotification } from "@observable/materialize";
+import { Observer } from "@observable/core";
+
+const notifications: Array<ObserverNotification<number>> = [];
+
+pipe(observable, materialize()).subscribe(
+  new Observer({
+    signal: controller.signal,
+    next: (notification) => notifications.push(notification),
+  })
+);
+
+expect(notifications).toEqual([
+  ["next", 1],
+  ["next", 2],
+  ["next", 3],
+  ["return"],
+]);
+```
+````
 
 # Glossary And Semantics
 

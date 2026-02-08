@@ -1,23 +1,22 @@
-import { type Observable, Observer } from "@observable/core";
+import { type Observable, Subject } from "@observable/core";
 import {
   isIterable,
   MinimumArgumentsRequiredError,
-  noop,
   ParameterTypeError,
 } from "@observable/internal";
 import { defer } from "@observable/defer";
-import { of } from "@observable/of";
+import { ofIterable } from "@observable/of-iterable";
 import { pipe } from "@observable/pipe";
-import { tap } from "@observable/tap";
+import { forEach } from "@observable/for-each";
 import { mergeMap } from "@observable/merge-map";
 import { takeUntil } from "@observable/take-until";
 import { filter } from "@observable/filter";
-import { AsyncSubject } from "@observable/async-subject";
 import { empty } from "@observable/empty";
 
 /**
- * Creates and returns an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) that mirrors the first
- * [source](https://jsr.io/@observable/core#source) to [`next`](https://jsr.io/@observable/core/doc/~/Observer.next) or
+ * Mirrors the first [source](https://jsr.io/@observable/core#source)
+ * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) to
+ * [`next`](https://jsr.io/@observable/core/doc/~/Observer.next) or
  * [`throw`](https://jsr.io/@observable/core/doc/~/Observer.throw) a value.
  * @example
  * ```ts
@@ -41,7 +40,6 @@ import { empty } from "@observable/empty";
  * source3.next(3);
  * source1.return();
  * source2.next(4); // "next" 4
- * source2.return();
  * source3.next(5);
  * source2.return(); // "return"
  * ```
@@ -49,6 +47,36 @@ import { empty } from "@observable/empty";
 export function race<const Values extends ReadonlyArray<unknown>>(
   sources: Readonly<{ [Key in keyof Values]: Observable<Values[Key]> }>,
 ): Observable<Values[number]>;
+/**
+ * Creates and returns an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) that mirrors the first
+ * [source](https://jsr.io/@observable/core#source) to [`next`](https://jsr.io/@observable/core/doc/~/Observer.next) or
+ * [`throw`](https://jsr.io/@observable/core/doc/~/Observer.throw) a value.
+ * @example
+ * ```ts
+ * import { race } from "@observable/race";
+ * import { Subject } from "@observable/core";
+ *
+ * const controller = new AbortController();
+ * const source1 = new Subject<number>();
+ * const source2 = source1;
+ * const source3 = new Subject<number>();
+ *
+ * race(new Set([source1, source2, source3])).subscribe({
+ *   signal: controller.signal,
+ *   next: (value) => console.log("next", value),
+ *   return: () => console.log("return"),
+ *   throw: (value) => console.log("throw", value),
+ * });
+ *
+ * source2.next(1); // "next" 1
+ * source1.next(2);
+ * source3.next(3);
+ * source1.return();
+ * source2.next(4); // "next" 4
+ * source3.next(5);
+ * source2.return(); // "return"
+ * ```
+ */
 export function race<Value>(
   sources: Iterable<Observable<Value>>,
 ): Observable<Value>;
@@ -61,27 +89,21 @@ export function race<Value>(
   if (!isIterable(sources)) throw new ParameterTypeError(0, "Iterable");
   if (Array.isArray(sources) && !sources.length) return empty;
   return defer(() => {
-    const finished = new AsyncSubject<number>();
+    const finished = new Subject<number>();
     return pipe(
-      of(sources),
+      sources,
+      ofIterable(),
       takeUntil(finished),
-      mergeMap((source, index) => {
-        const controller = new AbortController();
-        const { signal } = controller;
-        const observer = new Observer<Value>({ signal, next: finish, throw: noop });
-        const lost = pipe(finished, filter(isLoser));
-        return pipe(source, tap(observer), takeUntil(lost));
-
-        function finish(): void {
-          controller.abort();
-          finished.next(index);
-          finished.return();
-        }
-
-        function isLoser(winnerIndex: number): boolean {
-          return winnerIndex !== index;
-        }
-      }),
+      mergeMap((source, index) =>
+        pipe(
+          source,
+          forEach(() => {
+            finished.next(index);
+            finished.return();
+          }),
+          takeUntil(pipe(finished, filter((winnerIndex) => winnerIndex !== index))),
+        )
+      ),
     );
   });
 }

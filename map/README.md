@@ -1,6 +1,8 @@
 # [@observable/map](https://jsr.io/@observable/map)
 
-Projects each value from the [source](https://jsr.io/@observable/core#source) to a new value.
+Projects each [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed value from the
+[source](https://jsr.io/@observable/core#source)
+[`Observable`](https://jsr.io/@observable/core/doc/~/Observable) to a new value.
 
 ## Build
 
@@ -19,12 +21,12 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 
 ```ts
 import { map } from "@observable/map";
-import { of } from "@observable/of";
+import { ofIterable } from "@observable/of-iterable";
 import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
 
-pipe(of([1, 2, 3]), map((value) => value * 2)).subscribe({
+pipe([1, 2, 3], ofIterable(), map((value) => value * 2)).subscribe({
   signal: controller.signal,
   next: (value) => console.log("next", value),
   return: () => console.log("return"),
@@ -37,6 +39,58 @@ pipe(of([1, 2, 3]), map((value) => value * 2)).subscribe({
 // "next" 6
 // "return"
 ```
+
+# AI Prompt
+
+Use the following prompt with AI assistants to help them understand this library:
+
+````
+You are helping me with code that uses @observable/map from the @observable library ecosystem.
+
+WHAT IT DOES:
+`map()` projects each value from the source Observable to a new value using a projection function.
+
+CRITICAL: This library is NOT RxJS. Key differences:
+- `map` is a standalone function used with `pipe()` — NOT a method on Observable
+- Observer uses `return`/`throw` — NOT `complete`/`error`
+- Unsubscription via `AbortController.abort()` — NOT `subscription.unsubscribe()`
+
+USAGE PATTERN:
+```ts
+import { map } from "@observable/map";
+import { ofIterable } from "@observable/of-iterable";
+import { pipe } from "@observable/pipe";
+
+const controller = new AbortController();
+
+pipe(
+  [1, 2, 3],
+  ofIterable(),
+  map((value) => value * 2)
+).subscribe({
+  signal: controller.signal,
+  next: (value) => console.log(value),  // 2, 4, 6
+  return: () => console.log("done"),
+  throw: (error) => console.error(error),
+});
+```
+
+WRONG USAGE:
+```ts
+// ✗ WRONG: map is NOT a method on Observable
+pipe([1, 2, 3], ofIterable()).map(x => x * 2)  // This does NOT work!
+```
+
+CHAINING WITH OTHER OPERATORS:
+```ts
+pipe(
+  [1, 2, 3, 4, 5],
+  ofIterable(),
+  filter((x) => x % 2 === 0),
+  map((x) => x * 10),
+).subscribe({ ... });  // 20, 40
+```
+````
 
 # Glossary And Semantics
 

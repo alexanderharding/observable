@@ -1,6 +1,6 @@
 import { assertEquals } from "@std/assert";
 import { Observable, Observer } from "@observable/core";
-import { of } from "@observable/of";
+import { ofIterable } from "@observable/of-iterable";
 import { pipe } from "@observable/pipe";
 import { filter } from "./mod.ts";
 import { materialize, type ObserverNotification } from "@observable/materialize";
@@ -10,7 +10,7 @@ Deno.test(
   () => {
     // Arrange
     const notifications: Array<ObserverNotification<number>> = [];
-    const source = of([1, 2, 3, 4, 5]);
+    const source = pipe([1, 2, 3, 4, 5], ofIterable());
     const materialized = pipe(
       source,
       filter((value) => value % 2 === 0),

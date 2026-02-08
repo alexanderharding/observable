@@ -2,13 +2,13 @@ import { assertEquals, assertStrictEquals, assertThrows } from "@std/assert";
 import { Observable, Observer, Subject } from "@observable/core";
 import { empty } from "@observable/empty";
 import { pipe } from "@observable/pipe";
-import { of } from "@observable/of";
+import { ofIterable } from "@observable/of-iterable";
 import { materialize, type ObserverNotification } from "@observable/materialize";
 import { throttle } from "./mod.ts";
 
 Deno.test("throttle should return empty if milliseconds is negative", () => {
   // Arrange
-  const source = of([1, 2, 3]);
+  const source = pipe([1, 2, 3], ofIterable());
 
   // Act
   const result = pipe(source, throttle(-1));
@@ -19,7 +19,7 @@ Deno.test("throttle should return empty if milliseconds is negative", () => {
 
 Deno.test("throttle should return empty if milliseconds is NaN", () => {
   // Arrange
-  const source = of([1, 2, 3]);
+  const source = pipe([1, 2, 3], ofIterable());
 
   // Act
   const result = pipe(source, throttle(NaN));
@@ -211,7 +211,7 @@ Deno.test("throttle should throw when source is not an Observable", () => {
 Deno.test("throttle should emit all values immediately when milliseconds is 0", () => {
   // Arrange
   const notifications: Array<ObserverNotification<number>> = [];
-  const source = of([1, 2, 3]);
+  const source = pipe([1, 2, 3], ofIterable());
   const materialized = pipe(source, throttle(0), materialize());
 
   // Act
@@ -228,17 +228,42 @@ Deno.test("throttle should emit all values immediately when milliseconds is 0", 
   ]);
 });
 
-Deno.test("throttle should work with Infinity milliseconds", () => {
+Deno.test("throttle should emit only first value and wait for source to return when milliseconds is Infinity", () => {
   // Arrange
   const notifications: Array<ObserverNotification<number>> = [];
-  const source = of([1, 2, 3]);
+  const source = new Subject<number>();
   const materialized = pipe(source, throttle(Infinity), materialize());
 
   // Act
   materialized.subscribe(
     new Observer((notification) => notifications.push(notification)),
   );
+  source.next(1);
+  source.next(2);
+  source.next(3);
 
   // Assert
   assertEquals(notifications, [["next", 1]]);
+  source.return();
+  assertEquals(notifications, [["next", 1], ["return"]]);
+});
+
+Deno.test("throttle should emit only first value and wait for source to throw when milliseconds is Infinity", () => {
+  // Arrange
+  const error = new Error("test error");
+  const notifications: Array<ObserverNotification<number>> = [];
+  const source = new Subject<number>();
+  const materialized = pipe(source, throttle(Infinity), materialize());
+
+  // Act
+  materialized.subscribe(
+    new Observer((notification) => notifications.push(notification)),
+  );
+  source.next(1);
+  source.next(2);
+
+  // Assert
+  assertEquals(notifications, [["next", 1]]);
+  source.throw(error);
+  assertEquals(notifications, [["next", 1], ["throw", error]]);
 });

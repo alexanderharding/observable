@@ -267,8 +267,21 @@ type Customer = Readonly<Record<"email" | "name", string>>;
 // No errors! It's that easy
 class CustomerService implements Observable<Customer> {
   readonly #customer = new Observable<Customer>(async (observer) => {
-    const response = await fetch("https://www.example.com/api/customer");
-    return await response.json();
+    try {
+      const response = await fetch("https://www.example.com/api/customer", {
+        signal: observer.signal,
+      });
+      observer.next(await response.json());
+      observer.return();
+    } catch (error) {
+      if (error instanceof DOMException && error.name === "AbortError") {
+        // The consumer has likely unsubscribed which should not be treated
+        // as an error in Observables. Though we probably don't need to,
+        // we'll return the observer just in-case the AbortError was not a
+        // result of unsubscription.
+        observer.return();
+      } else observer.throw(error);
+    }
   });
 
   subscribe(observer: Observer<Customer>): void {
@@ -293,3 +306,67 @@ there's no longer the need for a custom `Subscription` implementation. This make
 integrate with other APIs that support abort signals (like
 [`fetch`](https://developer.mozilla.org/en-US/docs/Web/API/fetch)) while also solving the
 ["synchronous firehose" problem](https://github.com/ReactiveX/rxjs/discussions/6345).
+
+# AI Prompt
+
+Use the following prompt with AI assistants to help them understand this library:
+
+````
+You are helping me with code that uses @observable/core, a lightweight RxJS-inspired Observable library that is FUNDAMENTALLY DIFFERENT from RxJS.
+
+CRITICAL DIFFERENCES FROM RxJS:
+1. Observer methods: `next`, `return`, `throw` — NOT `next`, `complete`, `error`
+2. Unsubscription: Use `AbortController`/`AbortSignal` — NOT `Subscription.unsubscribe()`
+3. `subscribe()` returns `void` — NOT a Subscription object
+4. Teardown: Use `observer.signal.addEventListener("abort", cleanup)` — NOT return a teardown function
+5. Operators: Standalone curried functions with `pipe()` — NOT methods on Observable
+6. Teardown ordering: Abort happens BEFORE terminal notification handlers run (fixes RxJS bug)
+
+OBSERVER INTERFACE:
+```ts
+interface Observer<Value> {
+  readonly signal: AbortSignal;
+  next(value: Value): void;
+  return(): void;      // Called when producer finishes successfully
+  throw(value: unknown): void;  // Called when producer errors
+}
+```
+
+SUBSCRIPTION PATTERN:
+```ts
+const controller = new AbortController();
+observable.subscribe({
+  signal: controller.signal,
+  next: (value) => console.log(value),
+  return: () => console.log("done"),
+  throw: (error) => console.error(error),
+});
+// To unsubscribe:
+controller.abort();
+```
+
+CREATING OBSERVABLES:
+```ts
+new Observable<T>((observer) => {
+  // Setup producer
+  const cleanup = () => { /* cleanup logic */ };
+  
+  observer.signal.addEventListener("abort", cleanup, { once: true });
+  
+  // Emit values
+  observer.next(value);
+  
+  // Finish successfully
+  observer.return();
+  // OR throw error
+  observer.throw(error);
+});
+```
+
+COMMON MISTAKES TO AVOID:
+- Using `complete()` instead of `return()`
+- Using `error()` instead of `throw()`
+- Returning a teardown function from Observable constructor
+- Expecting `subscribe()` to return a Subscription
+- Using `subscription.unsubscribe()` instead of `controller.abort()`
+````

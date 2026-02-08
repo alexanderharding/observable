@@ -62,9 +62,15 @@ export interface BroadcastSubjectConstructor {
  */
 const namespace = "394068c9-9d2c-45cb-81d2-a09197594a9d";
 
-export const BroadcastSubject: BroadcastSubjectConstructor = class {
-  readonly [Symbol.toStringTag] = "BroadcastSubject";
-  readonly #subject = new Subject();
+/**
+ * A fixed string that is used to identify the {@linkcode BroadcastSubject} class.
+ * @internal Do NOT export.
+ */
+const stringTag = "BroadcastSubject";
+
+export const BroadcastSubject: BroadcastSubjectConstructor = class<Value> {
+  readonly [Symbol.toStringTag] = stringTag;
+  readonly #subject = new Subject<Value>();
   readonly signal = this.#subject.signal;
   readonly #channel: BroadcastChannel;
 
@@ -72,7 +78,7 @@ export const BroadcastSubject: BroadcastSubjectConstructor = class {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (typeof name !== "string") throw new ParameterTypeError(0, "String");
     Object.freeze(this);
-    this.#channel = new BroadcastChannel(`${namespace}:${name}`);
+    this.#channel = new BroadcastChannel(`${name}:${namespace}`);
     this.signal.addEventListener("abort", () => this.#channel.close(), {
       once: true,
     });
@@ -80,10 +86,8 @@ export const BroadcastSubject: BroadcastSubjectConstructor = class {
     this.#channel.onmessageerror = (event) => this.#subject.throw(event);
   }
 
-  next(value: unknown): void {
-    if (!(this instanceof BroadcastSubject)) {
-      throw new InstanceofError("this", "BroadcastSubject");
-    }
+  next(value: Value): void {
+    if (!(this instanceof BroadcastSubject)) throw new InstanceofError("this", stringTag);
     try {
       this.#channel.postMessage(value);
     } catch (error) {
@@ -93,18 +97,16 @@ export const BroadcastSubject: BroadcastSubjectConstructor = class {
 
   return(): void {
     if (this instanceof BroadcastSubject) this.#subject.return();
-    else throw new InstanceofError("this", "BroadcastSubject");
+    else throw new InstanceofError("this", stringTag);
   }
 
   throw(value: unknown): void {
     if (this instanceof BroadcastSubject) this.#subject.throw(value);
-    else throw new InstanceofError("this", "BroadcastSubject");
+    else throw new InstanceofError("this", stringTag);
   }
 
-  subscribe(observer: Observer): void {
-    if (!(this instanceof BroadcastSubject)) {
-      throw new InstanceofError("this", "BroadcastSubject");
-    }
+  subscribe(observer: Observer<Value>): void {
+    if (!(this instanceof BroadcastSubject)) throw new InstanceofError("this", stringTag);
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObserver(observer)) throw new ParameterTypeError(0, "Observer");
     this.#subject.subscribe(observer);

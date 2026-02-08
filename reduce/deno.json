@@ -1,0 +1,7 @@
+{
+  "name": "@observable/reduce",
+  "version": "0.3.0",
+  "license": "MIT",
+  "exports": "./mod.ts",
+  "publish": { "exclude": ["*.test.ts"] }
+}

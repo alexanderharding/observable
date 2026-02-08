@@ -1,8 +1,12 @@
-import { isObservable, Observable, toObservable } from "@observable/core";
+import { isObservable, Observable } from "@observable/core";
+import { asObservable } from "@observable/as-observable";
+import { pipe } from "@observable/pipe";
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 
 /**
- * {@linkcode project|Projects} each [source](https://jsr.io/@observable/core#source) value to an
+ * {@linkcode project|Projects} each [source](https://jsr.io/@observable/core#source)
+ * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)'s
+ * [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed value to an
  * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) which is merged in the output
  * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable), in a serialized fashion
  * waiting for each one to [`return`](https://jsr.io/@observable/core/doc/~/Observer.return) before
@@ -10,15 +14,15 @@ import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/i
  * @example
  * ```ts
  * import { flatMap } from "@observable/flat-map";
- * import { of } from "@observable/of";
+ * import { ofIterable } from "@observable/of-iterable";
  * import { pipe } from "@observable/pipe";
  *
- * const source = of(["a", "b", "c"]);
+ * const source = pipe(["a", "b", "c"], ofIterable());
  * const controller = new AbortController();
  * const observableLookup = {
- *   a: of([1, 2, 3]),
- *   b: of([4, 5, 6]),
- *   c: of([7, 8, 9]),
+ *   a: pipe([1, 2, 3], ofIterable()),
+ *   b: pipe([4, 5, 6], ofIterable()),
+ *   c: pipe([7, 8, 9], ofIterable()),
  * } as const;
  *
  * pipe(source, flatMap((value) => observableLookup[value])).subscribe({
@@ -51,7 +55,7 @@ export function flatMap<In, Out>(
   return function flatMapFn(source) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
-    source = toObservable(source);
+    source = pipe(source, asObservable());
     return new Observable((observer) => {
       let index = 0;
       let activeInnerSubscription = false;
@@ -81,14 +85,16 @@ export function flatMap<In, Out>(
       });
 
       function processNextValue(value: In): void {
-        project(value, index++).subscribe({
+        pipe(project(value, index++), asObservable()).subscribe({
           signal: observer.signal,
           next: (value) => observer.next(value),
           return() {
-            if (queue.length) processNextValue(queue.shift()!);
-            else {
+            try {
+              if (queue.length) return processNextValue(queue.shift()!);
               activeInnerSubscription = false;
               if (outerSubscriptionHasReturned) observer.return();
+            } catch (value) {
+              observer.throw(value);
             }
           },
           throw: (value) => observer.throw(value),

@@ -1,20 +1,13 @@
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 import { Observable } from "@observable/core";
 import { empty } from "@observable/empty";
-import { of } from "@observable/of";
+import { ofIterable } from "@observable/of-iterable";
 import { never } from "@observable/never";
-import { flat } from "@observable/flat";
+import { pipe } from "@observable/pipe";
 
 /**
- * @internal Do NOT export.
- */
-const success = of([0]);
-
-/**
- * Creates an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) that
- * [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s a successful execution
- * code (`0`) after a specified number of {@linkcode milliseconds} and then
- * [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s.
+ * [`Next`](https://jsr.io/@observable/core/doc/~/Observer.next)s a `void` value after a specified number of
+ * {@linkcode milliseconds} and then [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s.
  * @example
  * ```ts
  * import { timeout } from "@observable/timeout";
@@ -28,7 +21,7 @@ const success = of([0]);
  * });
  *
  * // Console output (after 1 second):
- * // "next" 0
+ * // "next" undefined
  * // "return"
  * ```
  * @example
@@ -44,7 +37,7 @@ const success = of([0]);
  * });
  *
  * // Console output (synchronously):
- * // "next" 0
+ * // "next" undefined
  * // "return"
  * ```
  * @example
@@ -78,26 +71,26 @@ const success = of([0]);
  * // "return"
  * ```
  */
-export function timeout(milliseconds: number): Observable<0> {
+export function timeout(milliseconds: number): Observable<void> {
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
   if (typeof milliseconds !== "number") {
     throw new ParameterTypeError(0, "Number");
   }
   if (milliseconds < 0 || Number.isNaN(milliseconds)) return empty;
-  if (milliseconds === 0) return success;
+  if (milliseconds === 0) return pipe([undefined], ofIterable());
   if (milliseconds === Infinity) return never;
-  return flat([
-    new Observable<never>((observer) => {
-      const timeout = globalThis.setTimeout(
-        () => observer.return(),
-        milliseconds,
-      );
-      observer.signal.addEventListener(
-        "abort",
-        () => globalThis.clearTimeout(timeout),
-        { once: true },
-      );
-    }),
-    success,
-  ]);
+  return new Observable((observer) => {
+    const timeout = globalThis.setTimeout(
+      () => {
+        observer.next();
+        observer.return();
+      },
+      milliseconds,
+    );
+    observer.signal.addEventListener(
+      "abort",
+      () => globalThis.clearTimeout(timeout),
+      { once: true },
+    );
+  });
 }
