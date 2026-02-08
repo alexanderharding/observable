@@ -4,7 +4,9 @@ import { pipe } from "@observable/pipe";
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 
 /**
- * {@linkcode project|Projects} each [source](https://jsr.io/@observable/core#source) value to an
+ * {@linkcode project|Projects} each [source](https://jsr.io/@observable/core#source)
+ * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)'s
+ * [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed value to an
  * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) which is merged in the output
  * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable), in a serialized fashion
  * waiting for each one to [`return`](https://jsr.io/@observable/core/doc/~/Observer.return) before

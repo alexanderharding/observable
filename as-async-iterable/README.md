@@ -1,7 +1,9 @@
 # [@observable/as-async-iterable](https://jsr.io/@observable/as-async-iterable)
 
-Projects an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) through a
-[`AsyncIterable`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#the_async_iterator_and_async_iterable_protocols).
+Projects the [source](https://jsr.io/@observable/core#source)
+[`Observable`](https://jsr.io/@observable/core/doc/~/Observable) to an
+[`AsyncIterable`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#the_async_iterator_and_async_iterable_protocols)
+that yields each [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed value.
 
 ## Build
 
@@ -16,7 +18,7 @@ Automated by `.github\workflows\publish.yml`.
 Run `deno task test` or `deno task test:ci` to execute the unit tests via
 [Deno](https://deno.land/).
 
-## Example
+## Examples
 
 ```ts
 import { asAsyncIterable } from "@observable/as-async-iterable";
@@ -33,6 +35,55 @@ for await (const value of pipe([1, 2, 3], ofIterable(), asAsyncIterable())) {
 // 3
 ```
 
+```ts
+import { asAsyncIterable } from "@observable/as-async-iterable";
+import { throwError } from "@observable/throw-error";
+import { pipe } from "@observable/pipe";
+
+try {
+  for await (const value of pipe(throwError(new Error("test")), asAsyncIterable())) {
+    console.log(value);
+  }
+} catch (error) {
+  console.log(error);
+  // Console output:
+  // Error: test
+}
+```
+
+```ts
+import { asAsyncIterable } from "@observable/as-async-iterable";
+import { interval } from "@observable/interval";
+import { pipe } from "@observable/pipe";
+
+for await (const value of pipe(interval(100), asAsyncIterable())) {
+  console.log(value);
+  if (value === 5) break; // Unsubscribes from the source Observable
+}
+
+// Console output:
+// 0
+// 1
+// 2
+// 3
+// 4
+// 5
+```
+
+```ts
+import { asAsyncIterable } from "@observable/as-async-iterable";
+import { empty } from "@observable/empty";
+import { pipe } from "@observable/pipe";
+
+for await (const value of pipe(empty, asAsyncIterable())) {
+  console.log(value);
+}
+console.log("Done!");
+
+// Console output:
+// Done!
+```
+
 # AI Prompt
 
 Use the following prompt with AI assistants to help them understand this library:
@@ -41,7 +92,7 @@ Use the following prompt with AI assistants to help them understand this library
 You are helping me with code that uses @observable/as-async-iterable from the @observable library ecosystem.
 
 WHAT IT DOES:
-`asAsyncIterable()` converts an Observable to an AsyncIterable, allowing you to use `for await...of` loops.
+`asAsyncIterable()` converts an Observable to an AsyncIterable, allowing you to use `for await...of` loops. The subscription starts lazily when iteration begins.
 
 CRITICAL: This library is NOT RxJS. Key differences:
 - Observer uses `return`/`throw` — NOT `complete`/`error`
@@ -65,23 +116,33 @@ for await (const value of pipe([1, 2, 3], ofIterable(), asAsyncIterable())) {
 
 ERROR HANDLING:
 ```ts
+import { throwError } from "@observable/throw-error";
+
 try {
-  for await (const value of pipe(someObservable, asAsyncIterable())) {
+  for await (const value of pipe(throwError(new Error("test")), asAsyncIterable())) {
     console.log(value);
   }
 } catch (error) {
-  console.error("Observable threw:", error);
+  console.error(error);  // Error: test
 }
 ```
 
 BREAKING OUT OF LOOP:
 Breaking out of the loop will unsubscribe from the Observable:
 ```ts
+import { interval } from "@observable/interval";
+
 for await (const value of pipe(interval(100), asAsyncIterable())) {
   console.log(value);
   if (value === 5) break;  // Unsubscribes from interval
 }
 ```
+
+IMPORTANT:
+- Subscription starts LAZILY when iteration begins
+- Yields ALL values, not just the last one (unlike asPromise)
+- Breaking out of the loop unsubscribes from the source
+- Thrown errors from the Observable are rethrown in the loop
 ````
 
 # Glossary And Semantics

@@ -12,7 +12,7 @@ import { never } from "@observable/never";
 const infiniteVoid = defer(() => pipe(generateInfiniteVoid(), ofIterable()));
 
 /**
- * Repeatedly [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ing a `void` value with a
+ * Repeatedly [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s a `void` value with a
  * fixed {@linkcode milliseconds|time delay} between each call.
  * @example
  * ```ts

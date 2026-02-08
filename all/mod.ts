@@ -16,7 +16,8 @@ import { finalize } from "@observable/finalize";
  * [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed value of each [source](https://jsr.io/@observable/core#source)
  * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable). If any of the [sources](https://jsr.io/@observable/core#source)
  * [`return`](https://jsr.io/@observable/core/doc/~/Observer.return) without [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ing a value,
- * the returned [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) will also [`return`](https://jsr.io/@observable/core/doc/~/Observer.return).
+ * the returned [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) will also [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)
+ * without [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ing a value.
  * @example
  * ```ts
  * import { all } from "@observable/all";
