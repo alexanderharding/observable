@@ -5,7 +5,7 @@ import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/i
 
 /**
  * {@linkcode factory|Creates} a new [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)
- * for each [`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe).
+ * for each [consumer](https://jsr.io/@observable/core#consumer).
  * @example
  * ```ts
  * import { defer } from "@observable/defer";

@@ -86,7 +86,7 @@ Use the following prompt with AI assistants to help them understand this library
 You are helping me with code that uses @observable/replay-subject from the @observable library ecosystem.
 
 WHAT IT DOES:
-`ReplaySubject` is a Subject that buffers the last N emitted values and replays them to new consumers upon observation.
+`ReplaySubject` is a Subject that buffers the last N emitted values and replays them to new consumers upon subscribe.
 
 CRITICAL: This library is NOT RxJS. Key differences:
 - Observer uses `return`/`throw` — NOT `complete`/`error`

@@ -234,7 +234,7 @@ Deno.test("distinct should use reference equality for objects", () => {
   ]);
 });
 
-Deno.test("distinct should reset state for each observation", () => {
+Deno.test("distinct should reset state for each consumer", () => {
   // Arrange
   const notifications1: Array<ObserverNotification<number>> = [];
   const notifications2: Array<ObserverNotification<number>> = [];

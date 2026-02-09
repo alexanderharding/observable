@@ -7,7 +7,7 @@ import { ofIterable } from "@observable/of-iterable";
 import { defer } from "./mod.ts";
 
 Deno.test(
-  "defer should create an Observable that calls a factory to make an Observable for each new Observer",
+  "defer should create an Observable that calls a factory to make an Observable for each new consumer",
   () => {
     // Arrange
     let factoryCallCount = 0;

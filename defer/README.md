@@ -1,7 +1,7 @@
 # [@observable/defer](https://jsr.io/@observable/defer)
 
-Creates a new [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) for each
-[`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe).
+Creates a new [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)
+for each [consumer](https://jsr.io/@observable/core#consumer).
 
 ## Build
 
@@ -63,7 +63,7 @@ Use the following prompt with AI assistants to help them understand this library
 You are helping me with code that uses @observable/defer from the @observable library ecosystem.
 
 WHAT IT DOES:
-`defer(factory)` creates an Observable that calls a factory function on each observation to create a new Observable. Useful for lazy evaluation and per-observation state.
+`defer(factory)` creates an Observable that calls a factory function on each subscribe to create a new Observable. Useful for lazy evaluation and per-subscribe state.
 
 CRITICAL: This library is NOT RxJS. Key differences:
 - Observer uses `return`/`throw` — NOT `complete`/`error`
@@ -98,7 +98,7 @@ deferred.subscribe({
 ```
 
 LAZY EVALUATION:
-The factory is called at observation time, not creation time:
+The factory is called on subscribe, not creation time:
 ```ts
 const deferred = defer(() => {
   console.log("Factory called!");  // Only when subscribed
@@ -109,8 +109,8 @@ deferred.subscribe({ ... });  // "Factory called!"
 ```
 
 USE CASES:
-- Fresh timestamp/random values per observation
-- Per-observation state initialization
+- Fresh timestamp/random values per subscribe
+- Per-subscribe state initialization
 - Lazy resource allocation
 - Conditional Observable creation
 ````

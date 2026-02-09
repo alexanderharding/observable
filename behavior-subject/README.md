@@ -64,7 +64,7 @@ Use the following prompt with AI assistants to help them understand this library
 You are helping me with code that uses @observable/behavior-subject from the @observable library ecosystem.
 
 WHAT IT DOES:
-`BehaviorSubject` is a Subject that requires an initial value and replays the current (most recent) value to new consumers immediately upon observation.
+`BehaviorSubject` is a Subject that requires an initial value and replays the current (most recent) value to new consumers immediately upon subscribe.
 
 CRITICAL: This library is NOT RxJS. Key differences:
 - Observer uses `return`/`throw` — NOT `complete`/`error`

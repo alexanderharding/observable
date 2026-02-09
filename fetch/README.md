@@ -126,7 +126,7 @@ BEHAVIOR:
 
 SEE ALSO:
 - `timeout` — emits after a delay
-- `defer` — creates Observable lazily on each observation
+- `defer` — creates Observable lazily on each subscribe
 ````
 
 # Glossary And Semantics
