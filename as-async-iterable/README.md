@@ -92,7 +92,7 @@ Use the following prompt with AI assistants to help them understand this library
 You are helping me with code that uses @observable/as-async-iterable from the @observable library ecosystem.
 
 WHAT IT DOES:
-`asAsyncIterable()` converts an Observable to an AsyncIterable, allowing you to use `for await...of` loops. The observation starts lazily when iteration begins.
+`asAsyncIterable()` converts an Observable to an AsyncIterable, allowing you to use `for await...of` loops. `subscribe` is called when iteration begins.
 
 CRITICAL: This library is NOT RxJS. Key differences:
 - Observer uses `return`/`throw` — NOT `complete`/`error`
@@ -139,7 +139,7 @@ for await (const value of pipe(interval(100), asAsyncIterable())) {
 ```
 
 IMPORTANT:
-- Observation starts LAZILY when iteration begins
+- `subscribe` is called when iteration begins
 - Yields ALL values, not just the last one (unlike asPromise)
 - Breaking out of the loop aborts the source
 - Thrown errors from the Observable are rethrown in the loop

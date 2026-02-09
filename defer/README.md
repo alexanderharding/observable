@@ -1,7 +1,7 @@
 # [@observable/defer](https://jsr.io/@observable/defer)
 
-Creates a new [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)
-for each [consumer](https://jsr.io/@observable/core#consumer).
+Creates a new [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) for each
+[consumer](https://jsr.io/@observable/core#consumer).
 
 ## Build
 

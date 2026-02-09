@@ -260,7 +260,7 @@ Deno.test("repeat should only use first emission from notifier per repeat cycle"
 Deno.test("repeat should work with defer notifier for controlled repetition", () => {
   // Arrange
   const notifications: Array<ObserverNotification<number>> = [];
-  const notifierObservations: number[] = [];
+  const notifierSubscribes: number[] = [];
   const source = pipe([1, 2, 3], ofIterable());
   const repeated = defer(() => {
     let count = 0;
@@ -268,7 +268,7 @@ Deno.test("repeat should work with defer notifier for controlled repetition", ()
       source,
       repeat(
         defer(() => {
-          notifierObservations.push(++count);
+          notifierSubscribes.push(++count);
           return count === 2 ? empty : pipe([undefined], ofIterable());
         }),
       ),
@@ -291,7 +291,7 @@ Deno.test("repeat should work with defer notifier for controlled repetition", ()
     ["next", 3],
     ["return"],
   ]);
-  assertEquals(notifierObservations, [1, 2]);
+  assertEquals(notifierSubscribes, [1, 2]);
 });
 
 Deno.test("repeat should pass through return for empty source", () => {
