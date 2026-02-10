@@ -8,14 +8,15 @@ import { defer } from "@observable/defer";
 /**
  * Shares a single [subscription](https://jsr.io/@observable/core#subscription) to the
  * [source](https://jsr.io/@observable/core#source)
- * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) and projects
- * it to all [consumers](https://jsr.io/@observable/core#consumer) through a
- * [`Subject`](https://jsr.io/@observable/core/doc/~/Subject). Resets when all
- * [unsubscribe](https://jsr.io/@observable/core@0.3.0/doc/~/Observer.signal) or when the
- * [source](https://jsr.io/@observable/core#source)
- * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)
- * [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s or
- * [`throw`](https://jsr.io/@observable/core/doc/~/Observer.throw)s.
+ * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable), forwarding
+ * [`notifications`](https://jsr.io/@observable/core#notification) to all
+ * [consumers](https://jsr.io/@observable/core#consumer) of the output
+ * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) through a
+ * [`Subject`](https://jsr.io/@observable/core/doc/~/Subject) created by a
+ * {@linkcode factory} function. Resets on [`return`](https://jsr.io/@observable/core/doc/~/Observer.return),
+ * [`throw`](https://jsr.io/@observable/core/doc/~/Observer.throw), or when on all
+ * [consumers](https://jsr.io/@observable/core#consumer)
+ * [unsubscribe](https://jsr.io/@observable/core/doc/~/Observer.signal).
  * @example
  * ```ts
  * import { share } from "@observable/share";
