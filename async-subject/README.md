@@ -92,7 +92,7 @@ subject.next(3);  // Replaces buffer, not emitted yet
 subject.return();  // NOW emits: 3, then "done"
 ```
 
-NEW SUBSCRIBER AFTER RETURN:
+NEW CONSUMER AFTER RETURN:
 Subscribing to an AsyncSubject that has already returned immediately receives `return()` only (no value):
 ```ts
 subject.subscribe({
@@ -109,7 +109,7 @@ Like a Promise — only the final result matters:
 const result = new AsyncSubject<Response>();
 // ... long running operation ...
 result.next(finalResponse);
-result.return();  // Now all subscribers receive the response
+result.return();  // Now all consumers receive the response
 ```
 
 SEE ALSO:
