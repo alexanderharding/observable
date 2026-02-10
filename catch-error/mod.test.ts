@@ -7,7 +7,7 @@ import { catchError } from "./mod.ts";
 import { throwError } from "@observable/throw-error";
 import { flat } from "@observable/flat";
 
-Deno.test("catchError should catch errors and emit values from resolver", () => {
+Deno.test("catchError should catch errors and emit values from project", () => {
   // Arrange
   const error = new Error("test error");
   const notifications: Array<ObserverNotification<number | string>> = [];
@@ -32,7 +32,7 @@ Deno.test("catchError should catch errors and emit values from resolver", () => 
   ]);
 });
 
-Deno.test("catchError should pass error value to resolver", () => {
+Deno.test("catchError should pass error value to project", () => {
   // Arrange
   const error = new Error("specific error");
   let receivedError: unknown;
@@ -154,17 +154,8 @@ Deno.test("catchError should honor unsubscribe during error handling", () => {
   const controller = new AbortController();
   const error = new Error("test");
   const notifications: Array<ObserverNotification<number>> = [];
-  const source = new Observable<number>((observer) => {
-    observer.next(1);
-    observer.throw(error);
-  });
-  const recoverySource = new Observable<number>((observer) => {
-    for (const value of [10, 20, 30]) {
-      observer.next(value);
-      if (observer.signal.aborted) return;
-    }
-    observer.return();
-  });
+  const source = flat([pipe([1], ofIterable()), throwError(error)]);
+  const recoverySource = pipe([10, 20, 30], ofIterable());
   const materialized = pipe(
     source,
     catchError(() => recoverySource),
@@ -188,7 +179,7 @@ Deno.test("catchError should honor unsubscribe during error handling", () => {
   assertEquals(notifications, [["next", 1], ["next", 10]]);
 });
 
-Deno.test("catchError should throw when called with no arguments", () => {
+Deno.test("catchError should throw when called without arguments", () => {
   // Arrange / Act / Assert
   assertThrows(
     () => catchError(...([] as unknown as Parameters<typeof catchError>)),
@@ -197,7 +188,7 @@ Deno.test("catchError should throw when called with no arguments", () => {
   );
 });
 
-Deno.test("catchError should throw when resolver is not a function", () => {
+Deno.test("catchError should throw when project is not a function", () => {
   // Arrange / Act / Assert
   assertThrows(
     // deno-lint-ignore no-explicit-any
@@ -207,7 +198,7 @@ Deno.test("catchError should throw when resolver is not a function", () => {
   );
 });
 
-Deno.test("catchError should throw when called with no source", () => {
+Deno.test("catchError should throw when called without source", () => {
   // Arrange
   const operator = catchError(() => pipe([1], ofIterable()));
 
