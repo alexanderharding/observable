@@ -47,7 +47,7 @@ Use the following prompt with AI assistants to help them understand this library
 You are helping me with code that uses @observable/finalize from the @observable library ecosystem.
 
 WHAT IT DOES:
-`finalize(teardown)` calls the teardown function when the `Observer` aborts for ANY reason — `return()`, `throw()`, or `abort()`. Teardown runs BEFORE the terminal notification is delivered.
+`finalize(teardown)` calls the teardown function when observation ends for ANY reason — `return()`, `throw()`, or unsubscription via `abort()`. Teardown runs BEFORE the terminal notification is delivered.
 
 CRITICAL: This library is NOT RxJS. Key differences:
 - `Observer` uses `return`/`throw` — NOT `complete`/`error`

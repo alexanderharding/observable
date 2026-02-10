@@ -85,8 +85,8 @@ A [consumer](#consumer) reacting to [producer](#producer) [notifications](#notif
 When an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) uses another
 [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) as a [producer](#producer), an
 "observation chain" is set up. That is a chain of [observation](#observation) such that multiple
-[`Observer`](https://jsr.io/@observable/core/doc/~/Observer)s are notifying each other in a
-unidirectional way toward the final [consumer](#consumer).
+[consumers](#consumer) are notifying each other in a unidirectional way toward the final
+[consumer](#consumer).
 
 ### Notification
 
