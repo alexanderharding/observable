@@ -63,7 +63,7 @@ Deno.test("asObservable should handle completion", () => {
   assertEquals(notifications, [["return"]]);
 });
 
-Deno.test("asObservable should handle unsubscription via abort signal", () => {
+Deno.test("asObservable should handle abort via abort signal", () => {
   // Arrange
   let rxjsUnsubscribed = false;
   const controller = new AbortController();
@@ -201,7 +201,7 @@ Deno.test("asRxJsObservable should handle completion", () => {
   assertEquals(completed, true);
 });
 
-Deno.test("asRxJsObservable should handle unsubscription", () => {
+Deno.test("asRxJsObservable should handle abort", () => {
   // Arrange
   let sourceAborted = false;
   const source = new Observable<number>((observer) => {
@@ -217,7 +217,7 @@ Deno.test("asRxJsObservable should handle unsubscription", () => {
   assertEquals(sourceAborted, true);
 });
 
-Deno.test("asRxJsObservable should emit values before unsubscription", () => {
+Deno.test("asRxJsObservable should emit values before abort", () => {
   // Arrange
   const values: Array<number> = [];
   const subject = new Subject<number>();
@@ -238,7 +238,7 @@ Deno.test("asRxJsObservable should emit values before unsubscription", () => {
 });
 
 Deno.test(
-  "asRxJsObservable should throw MinimumArgumentsRequiredError when called with no arguments",
+  "asRxJsObservable should throw MinimumArgumentsRequiredError when called without arguments",
   () => {
     // Arrange
     const operator = asRxJsObservable();
@@ -281,7 +281,7 @@ Deno.test(
 );
 
 Deno.test(
-  "asRxJsObservable should handle late subscriber unsubscription cleanup",
+  "asRxJsObservable should handle late observer abort cleanup",
   () => {
     // Arrange
     let sourceAborted = false;

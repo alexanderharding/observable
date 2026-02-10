@@ -81,14 +81,14 @@ export function asRxJsObservable<Value>(): (source: Observable<Value>) => RxJsOb
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
     return new RxJsObservable((subscriber) => {
       if (subscriber.closed) return;
-      const activeSubscriptionController = new AbortController();
+      const activeObserverController = new AbortController();
       source.subscribe({
-        signal: activeSubscriptionController.signal,
+        signal: activeObserverController.signal,
         next: (value) => subscriber.next(value),
         return: () => subscriber.complete(),
         throw: (value) => subscriber.error(value),
       });
-      return () => activeSubscriptionController.abort();
+      return () => activeObserverController.abort();
     });
   };
 }

@@ -185,7 +185,7 @@ Deno.test("debounce should pump throws right through itself", () => {
   overrideGlobals = false;
 });
 
-Deno.test("debounce should honor unsubscribe", () => {
+Deno.test("debounce should honor abort", () => {
   // Arrange
   let overrideGlobals = true;
   const controller = new AbortController();

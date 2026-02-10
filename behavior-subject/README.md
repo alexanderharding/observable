@@ -2,7 +2,7 @@
 
 A variant of [`Subject`](https://jsr.io/@observable/core/doc/~/Subject) that keeps track of its
 current value and replays it to [`consumers`](https://jsr.io/@observable/core#consumer) upon
-[`subscription`](https://jsr.io/@observable/core/doc/~/Observable.subscribe).
+[`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe).
 
 ## Build
 
@@ -64,7 +64,7 @@ Use the following prompt with AI assistants to help them understand this library
 You are helping me with code that uses @observable/behavior-subject from the @observable library ecosystem.
 
 WHAT IT DOES:
-`BehaviorSubject` is a Subject that requires an initial value and replays the current (most recent) value to new subscribers immediately upon subscription.
+`BehaviorSubject` is a Subject that requires an initial value and replays the current (most recent) value to new consumers immediately upon subscribe.
 
 CRITICAL: This library is NOT RxJS. Key differences:
 - Observer uses `return`/`throw` — NOT `complete`/`error`
@@ -88,18 +88,18 @@ subject.subscribe({
 subject.next(1);  // logs: 1
 subject.next(2);  // logs: 2
 
-// New subscriber gets current value immediately
+// New consumer gets current value immediately
 subject.subscribe({
   signal: controller.signal,
   next: (value) => console.log("New:", value),  // Immediately: "New:" 2
   ...
 });
 
-subject.return();  // Both subscribers: "done"
+subject.return();  // Both consumers: "done"
 ```
 
 AFTER RETURN:
-New subscribers to a BehaviorSubject that has already returned receive only `return()`:
+New consumers of a BehaviorSubject that has already returned receive only `return()`:
 ```ts
 subject.return();
 subject.subscribe({

@@ -137,7 +137,7 @@ Deno.test("forEach should pump returns through itself", () => {
   assertEquals(notifications, [["return"]]);
 });
 
-Deno.test("forEach should handle unsubscribe", () => {
+Deno.test("forEach should handle abort", () => {
   // Arrange
   let sourceAborted = false;
   const controller = new AbortController();

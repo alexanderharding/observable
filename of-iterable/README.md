@@ -19,7 +19,7 @@ Automated by `.github\workflows\publish.yml`.
 Run `deno task test` or `deno task test:ci` to execute the unit tests via
 [Deno](https://deno.land/).
 
-## Example
+## Examples
 
 ```ts
 import { ofIterable } from "@observable/of-iterable";
@@ -38,8 +38,6 @@ pipe([1, 2, 3], ofIterable()).subscribe({
 // "next" 3
 // "return"
 ```
-
-## Example with early unsubscription
 
 ```ts
 import { ofIterable } from "@observable/of-iterable";
@@ -61,8 +59,6 @@ pipe([1, 2, 3], ofIterable()).subscribe({
 // "next" 1
 // "next" 2
 ```
-
-## Example with Set
 
 ```ts
 import { ofIterable } from "@observable/of-iterable";

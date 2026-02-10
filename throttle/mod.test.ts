@@ -122,7 +122,7 @@ Deno.test("throttle should pump throws right through itself", () => {
   overrideGlobals = false;
 });
 
-Deno.test("throttle should honor unsubscribe", () => {
+Deno.test("throttle should honor abort", () => {
   // Arrange
   let overrideGlobals = true;
   const controller = new AbortController();

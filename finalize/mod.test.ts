@@ -62,7 +62,7 @@ Deno.test(
 );
 
 Deno.test(
-  "finalize should call the finalizer function after the source is unsubscribed",
+  "finalize should call the finalizer function after the source is aborted",
   () => {
     // Arrange
     const notifications: Array<ObserverNotification<number> | [type: "finalize"]> = [];

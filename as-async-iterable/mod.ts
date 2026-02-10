@@ -86,7 +86,7 @@ export function asAsyncIterable<Value>(): (
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
     return {
       [Symbol.asyncIterator]() {
-        let activeSubscriptionController: AbortController | undefined;
+        let activeObserverController: AbortController | undefined;
         let thrownValue: unknown = notThrown;
         let returned = false;
         const values: Array<Value> = [];
@@ -96,11 +96,11 @@ export function asAsyncIterable<Value>(): (
 
         return {
           next() {
-            if (!activeSubscriptionController) {
-              // We only want to start the subscription when the user starts iterating.
-              activeSubscriptionController = new AbortController();
+            if (!activeObserverController) {
+              // We only want to start observing when the user starts iterating.
+              activeObserverController = new AbortController();
               source.subscribe({
-                signal: activeSubscriptionController.signal,
+                signal: activeObserverController.signal,
                 next(value) {
                   if (deferredResolvers.length) {
                     const { resolve } = deferredResolvers.shift()!;
@@ -143,11 +143,11 @@ export function asAsyncIterable<Value>(): (
             return promise;
           },
           return() {
-            activeSubscriptionController?.abort();
+            activeObserverController?.abort();
             return Promise.resolve({ value: undefined, done: true });
           },
           throw(value) {
-            activeSubscriptionController?.abort();
+            activeObserverController?.abort();
             return Promise.reject(value);
           },
         };

@@ -1,12 +1,12 @@
 # [@observable/switch-map](https://jsr.io/@observable/switch-map)
 
-Projects each [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed value from the
-[source](https://jsr.io/@observable/core#source)
-[`Observable`](https://jsr.io/@observable/core/doc/~/Observable) to an inner
-[`Observable`](https://jsr.io/@observable/core/doc/~/Observable),
-[subscribing](https://jsr.io/@observable/core/doc/~/Observable.subscribe) only to the most recently
-projected inner [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) and canceling any
-previous inner [subscription](https://jsr.io/@observable/core#subscription).
+Projects each [source](https://jsr.io/@observable/core#source)
+[`Observable`](https://jsr.io/@observable/core/doc/~/Observable)'s
+[`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed value to an
+[`Observable`](https://jsr.io/@observable/core/doc/~/Observable) which is merged in the output
+[`Observable`](https://jsr.io/@observable/core/doc/~/Observable), switching to latest projected
+[`Observable`](https://jsr.io/@observable/core/doc/~/Observable) and
+[`abort`](https://jsr.io/@observable/core/doc/~/Observer.signal)ing the previous one.
 
 ## Build
 
@@ -85,7 +85,7 @@ pipe(
 ```
 
 CANCELLATION BEHAVIOR:
-When a new source value arrives, the previous inner Observable is automatically unsubscribed:
+When a new source value arrives, the previous inner Observable is automatically aborted:
 ```ts
 pipe(
   searchInput,

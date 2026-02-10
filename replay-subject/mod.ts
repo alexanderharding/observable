@@ -22,7 +22,7 @@ export interface ReplaySubjectConstructor {
   /**
    * Creates and returns an object that acts as a [`Subject`](https://jsr.io/@observable/core/doc/~/Subject) that replays
    * {@linkcode count} buffered [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values upon
-   * [`subscription`](https://jsr.io/@observable/core/doc/~/Observable.subscribe).
+   * [`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe).
    * @example
    * ```ts
    * import { ReplaySubject } from "@observable/replay-subject";

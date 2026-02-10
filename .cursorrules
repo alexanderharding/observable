@@ -116,7 +116,7 @@ of(1, 2, 3)  // <-- This does NOT work
 
 ### 7. Correct Teardown Ordering (Fixed RxJS Bug)
 
-This library fixes a [known RxJS issue](https://github.com/ReactiveX/rxjs/issues/7443) that has persisted for nearly a decade. **Teardown (unsubscription) occurs BEFORE terminal notifications (`throw`/`return`) are delivered to the consumer.**
+This library fixes a [known RxJS issue](https://github.com/ReactiveX/rxjs/issues/7443) that has persisted for nearly a decade. **Teardown (abort) occurs BEFORE terminal notifications (`throw`/`return`) are delivered to the consumer.**
 
 ```ts
 // In this library, the ordering is:

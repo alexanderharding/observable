@@ -51,11 +51,11 @@ import { Observer } from "@observable/core";
 const observable = pipe([1, 2, 3], ofIterable());
 
 describe("observable", () => {
-  let activeSubscriptionController: AbortController;
+  let activeObserverController: AbortController;
 
-  beforeEach(() => (activeSubscriptionController = new AbortController()));
+  beforeEach(() => (activeObserverController = new AbortController()));
 
-  afterEach(() => activeSubscriptionController?.abort());
+  afterEach(() => activeObserverController?.abort());
 
   it("should emit the notifications", () => {
     // Arrange
@@ -64,7 +64,7 @@ describe("observable", () => {
     // Act
     pipe(observable, materialize()).subscribe(
       new Observer({
-        signal: activeSubscriptionController.signal,
+        signal: activeObserverController.signal,
         next: (notification) => notifications.push(notification),
       }),
     );

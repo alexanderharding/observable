@@ -73,7 +73,7 @@ Deno.test("map should pump returns through itself", () => {
   assertEquals(notifications, [["return"]]);
 });
 
-Deno.test("map should handle unsubscribe", () => {
+Deno.test("map should handle abort", () => {
   // Arrange
   let sourceAborted = false;
   const controller = new AbortController();
