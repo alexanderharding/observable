@@ -95,7 +95,7 @@ KEY POINTS:
 - The callback receives the value AND the index (0-based)
 - Values pass through unchanged to downstream observers
 - If the callback throws, the Observable throws
-- Side-effect executes BEFORE the value reaches downstream subscribers
+- Side-effect executes BEFORE the value reaches downstream consumers
 ````
 
 # Glossary And Semantics

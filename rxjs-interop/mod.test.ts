@@ -409,7 +409,7 @@ Deno.test(
     let subscriberClosedDuringComplete = false;
     let capturedSubscriber: Subscriber<number> | null = null;
     const rxjsObservable = new RxJsObservable<number>((subscriber) => {
-      capturedSubscriber = subscriber as Subscriber<number>;
+      capturedSubscriber = subscriber;
       subscriber.next(1);
       subscriber.complete();
     });
@@ -437,7 +437,7 @@ Deno.test(
     let capturedSubscriber: Subscriber<number> | null = null;
     const error = new Error("test");
     const rxjsObservable = new RxJsObservable<number>((subscriber) => {
-      capturedSubscriber = subscriber as Subscriber<number>;
+      capturedSubscriber = subscriber;
       subscriber.next(1);
       subscriber.error(error);
     });

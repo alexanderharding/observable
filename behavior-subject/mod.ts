@@ -18,7 +18,7 @@ export interface BehaviorSubjectConstructor {
   /**
    * Creates and returns an object that acts as a [`Subject`](https://jsr.io/@observable/core/doc/~/Subject) that keeps track of it's current
    * value and replays it to [`consumers`](https://jsr.io/@observable/core#consumer) upon
-   * [`subscription`](https://jsr.io/@observable/core/doc/~/Observable.subscribe).
+   * [`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe).
    * @example
    * ```ts
    * import { BehaviorSubject } from "@observable/behavior-subject";

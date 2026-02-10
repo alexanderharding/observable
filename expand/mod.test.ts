@@ -482,7 +482,7 @@ Deno.test("expand should handle branching expansion (multiple values from inner)
   ]);
 });
 
-Deno.test("expand should have unique index counter per subscriber", () => {
+Deno.test("expand should have unique index counter per subscription", () => {
   // Arrange
   const indices1: number[] = [];
   const indices2: number[] = [];
@@ -508,7 +508,7 @@ Deno.test("expand should have unique index counter per subscriber", () => {
   assertEquals(indices2, [0, 1, 2, 3]);
 });
 
-Deno.test("expand should reset index for each new subscriber", () => {
+Deno.test("expand should reset index for each new subscription", () => {
   // Arrange
   const allIndices1: number[] = [];
   const allIndices2: number[] = [];
