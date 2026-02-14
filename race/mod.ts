@@ -48,8 +48,9 @@ export function race<const Values extends ReadonlyArray<unknown>>(
   sources: Readonly<{ [Key in keyof Values]: Observable<Values[Key]> }>,
 ): Observable<Values[number]>;
 /**
- * Creates and returns an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) that mirrors the first
- * [source](https://jsr.io/@observable/core#source) to [`next`](https://jsr.io/@observable/core/doc/~/Observer.next) or
+ * Mirrors the first [source](https://jsr.io/@observable/core#source)
+ * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) to
+ * [`next`](https://jsr.io/@observable/core/doc/~/Observer.next) or
  * [`throw`](https://jsr.io/@observable/core/doc/~/Observer.throw) a value.
  * @example
  * ```ts
