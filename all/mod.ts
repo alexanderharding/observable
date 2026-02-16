@@ -1,5 +1,9 @@
 import { type Observable, Subject } from "@observable/core";
-import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
+import {
+  isIterable,
+  MinimumArgumentsRequiredError,
+  ParameterTypeError,
+} from "@observable/internal";
 import { defer } from "@observable/defer";
 import { empty } from "@observable/empty";
 import { ofIterable } from "@observable/of-iterable";
@@ -12,12 +16,9 @@ import { takeUntil } from "@observable/take-until";
 import { finalize } from "@observable/finalize";
 
 /**
- * Calculates [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values from the latest
- * [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed value of each [source](https://jsr.io/@observable/core#source)
- * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable). If any of the [sources](https://jsr.io/@observable/core#source)
- * [`return`](https://jsr.io/@observable/core/doc/~/Observer.return) without [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ing a value,
- * the returned [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) will also [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)
- * without [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ing a value.
+ * [`Next`](https://jsr.io/@observable/core/doc/~/Observer.next)s an [`Array`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)
+ * of the latest {@linkcode Values|values} from _all_ of {@linkcode input}'s [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)s, in
+ * [index](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array#array_indices) order.
  * @example
  * ```ts
  * import { all } from "@observable/all";
@@ -65,48 +66,137 @@ import { finalize } from "@observable/finalize";
  * ```
  */
 export function all<const Values extends ReadonlyArray<unknown>>(
-  sources: Readonly<{ [Key in keyof Values]: Observable<Values[Key]> }>,
+  input: Readonly<{ [Key in keyof Values]: Observable<Values[Key]> }>,
 ): Observable<Values>;
-export function all(
-  // Long term, it would be nice to be able to accept an Iterable for performance and flexibility.
-  // This new signature would have to work in conjunction with the mapped array signature above as this
-  // encourages more explicit types for sources as a tuple.
-  sources: ReadonlyArray<Observable>,
-): Observable<ReadonlyArray<unknown>> {
+/**
+ * [`Next`](https://jsr.io/@observable/core/doc/~/Observer.next)s an [`Array`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)
+ * of the latest {@linkcode Value|values} from _all_ of {@linkcode input}'s [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)s, in
+ * [iteration](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#the_iterable_protocol) order.
+ * @example
+ * ```ts
+ * import { all } from "@observable/all";
+ * import { Subject } from "@observable/core";
+ *
+ * const source1 = new Subject<number>();
+ * const source2 = source1;
+ * const source3 = new Subject<number>();
+ *
+ * const controller = new AbortController();
+ * all(new Set([source1, source2, source3])).subscribe({
+ *   signal: controller.signal,
+ *   next: (value) => console.log("next", value),
+ *   return: () => console.log("return"),
+ *   throw: (value) => console.log("throw", value),
+ * });
+ * source2.next(1);
+ * source1.next(2);
+ * source3.next(3); // "next" [2, 3]
+ * source1.next(4); // "next" [4, 3]
+ * source2.next(5); // "next" [4, 5]
+ * source1.return();
+ * source3.return(); // "return"
+ * source2.return();
+ * ```
+ * @example
+ * ```ts
+ * import { all } from "@observable/all";
+ * import { ofIterable } from "@observable/of-iterable";
+ * import { pipe } from "@observable/pipe";
+ * import { empty } from "@observable/empty";
+ *
+ * const source1 = pipe([1, 2, 3], ofIterable());
+ * const source2 = pipe([7, 8, 9], ofIterable());
+ *
+ * const controller = new AbortController();
+ * all([source1, empty, source2]).subscribe({
+ *   signal: controller.signal,
+ *   next: (value) => console.log("next", value),
+ *   return: () => console.log("return"),
+ *   throw: (value) => console.log("throw", value),
+ * });
+ *
+ * // Console output:
+ * // "return"
+ * ```
+ */
+export function all<Value>(
+  input: Iterable<Observable<Value>>,
+): Observable<ReadonlyArray<Value>>;
+export function all<Value>(
+  input: Iterable<Observable<Value>>,
+): Observable<ReadonlyArray<Value>> {
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-  if (!isArray(sources)) throw new ParameterTypeError(0, "Array");
-  if (sources.length === 0) return empty;
+  if (!isIterable(input)) throw new ParameterTypeError(0, "Iterable");
+
+  // Early return if the iterable is an empty array.
+  if (Array.isArray(input) && !input.length) return empty;
+
+  // Use defer so we do not start iterating until subscription, we get a fresh iteration for each subscription,
+  // and we get a fresh variable scope for each subscription.
   return defer(() => {
+    /**
+     * Tracking the number of first values that have been received.
+     */
     let receivedFirstValueCount = 0;
-    const { length: expectedFirstValueCount } = sources;
-    const values: Array<unknown> = [];
-    const emptySourceNotifier = new Subject<void>();
+    /**
+     * The normalized {@linkcode input} which has a known length for subsequent logic.
+     */
+    const inputArray: ReadonlyArray<Observable<Value>> = Array.isArray(input)
+      ? input
+      : Array.from(input);
+    /**
+     * Tracking the expected number of first values that need to be received before the first snapshot is emitted.
+     */
+    const expectedFirstValueCount = inputArray.length;
+
+    /**
+     * Tracking a known list of buffered values, so we don't have to clone them while nexting to prevent reentrant behaviors.
+     */
+    let bufferSnapshot: ReadonlyArray<Value> | undefined;
+    /**
+     * Tracking the buffered values.
+     */
+    const buffer: Array<Value> = [];
+
+    /**
+     * The [notifier](https://jsr.io/@observable/core#notifier) that will tell the output
+     * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) to stop taking values.
+     */
+    const stop = new Subject<void>();
+
     return pipe(
-      sources,
-      ofIterable<Observable>(),
-      mergeMap((source, index) => {
+      inputArray,
+      ofIterable(),
+      mergeMap((observable, index) => {
+        /**
+         * Tracking if the observable is empty to be evaluated by subsequent logic.
+         */
         let isEmpty = true;
         return pipe(
-          source,
+          observable,
           forEach((value) => {
             if (isEmpty) receivedFirstValueCount++;
             isEmpty = false;
-            values[index] = value;
+
+            // Check for value equality and update the buffer only if it's different.
+            // Though this doesn't stop the snapshot from being emitted, it prevents the buffer from
+            // being cloned unnecessarily.
+            if (!Object.is(buffer[index], value)) {
+              // Update the buffer.
+              buffer[index] = value;
+              // Reset the buffer snapshot since it's now stale.
+              bufferSnapshot = undefined;
+            }
           }),
-          finalize(() => isEmpty && emptySourceNotifier.next()),
+          // If this `observable` is empty, tell the output Observable to stop taking values.
+          finalize(() => isEmpty && stop.next()),
         );
       }),
       filter(() => receivedFirstValueCount === expectedFirstValueCount),
-      map(() => values.slice()),
-      takeUntil(emptySourceNotifier),
+      // All first values have been received, we can cleanup the notifier.
+      forEach(() => stop.return()),
+      map(() => bufferSnapshot ??= Object.freeze(buffer.slice())),
+      takeUntil(stop),
     );
   });
-}
-
-/**
- * Like `Array.isArray`, but with better type inference.
- * @internal Do NOT export.
- */
-function isArray(value: unknown): value is Array<unknown> {
-  return Array.isArray(value);
 }
