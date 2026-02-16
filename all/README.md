@@ -1,15 +1,11 @@
 # [@observable/all](https://jsr.io/@observable/all)
 
-Calculates [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values from the latest
-[`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed value of each
-[source](https://jsr.io/@observable/core#source)
-[`Observable`](https://jsr.io/@observable/core/doc/~/Observable). If any of the
-[sources](https://jsr.io/@observable/core#source)
-[`return`](https://jsr.io/@observable/core/doc/~/Observer.return) without
-[`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ing a value, the returned
-[`Observable`](https://jsr.io/@observable/core/doc/~/Observable) will also
-[`return`](https://jsr.io/@observable/core/doc/~/Observer.return) without
-[`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ing a value.
+[`Next`](https://jsr.io/@observable/core/doc/~/Observer.next)s an
+[`Array`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) of
+the latest values from _all_ of input's
+[`Observable`](https://jsr.io/@observable/core/doc/~/Observable)s, in
+[iteration](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#the_iterable_protocol)
+order. Each emitted array is a frozen snapshot.
 
 ## Build
 
@@ -24,7 +20,7 @@ Automated by `.github\workflows\publish.yml`.
 Run `deno task test` or `deno task test:ci` to execute the unit tests via
 [Deno](https://deno.land/).
 
-## Example
+## Examples
 
 ```ts
 import { all } from "@observable/all";
@@ -49,8 +45,6 @@ all([source1, source2, source3]).subscribe({
 // "next" [3, 6, 9]
 // "return"
 ```
-
-## Example with empty source
 
 ```ts
 import { all } from "@observable/all";
@@ -81,7 +75,7 @@ Use the following prompt with AI assistants to help them understand this library
 You are helping me with code that uses @observable/all from the @observable library ecosystem.
 
 WHAT IT DOES:
-`all(sources)` creates an Observable that emits arrays containing the latest value from each source. Only starts emitting once ALL sources have emitted at least once. If any source is empty, the result is empty.
+`all(input)` nexts an Array of the latest values from _all_ of `input`'s Observables — in index order when `input` is an array, or in iteration order for other iterables. Emitting starts when each of `input`'s Observables has nexted its first value. If any of them is empty, the returned Observable returns without nexting. Each emitted array is a frozen snapshot.
 
 CRITICAL: This library is NOT RxJS. Key differences:
 - Observer uses `return`/`throw` — NOT `complete`/`error`
@@ -108,13 +102,13 @@ all([source1, source2, source3]).subscribe({
 });
 
 // Output:
-// [3, 6, 7]  — all sources have emitted, combining latest
+// [3, 6, 7]  — each of input's Observables has nexted its first value
 // [3, 6, 8]
 // [3, 6, 9]
 // "done"
 ```
 
-EMPTY SOURCE BEHAVIOR:
+WHEN ONE OF INPUT'S OBSERVABLES IS EMPTY:
 ```ts
 import { empty } from "@observable/empty";
 
@@ -122,16 +116,16 @@ const source1 = pipe([1, 2, 3], ofIterable());
 const source2 = pipe([7, 8, 9], ofIterable());
 
 all([source1, empty, source2]).subscribe({
-  next: (value) => console.log(value),  // Never called!
-  return: () => console.log("done"),    // Called immediately
+  next: (value) => console.log(value),  // Never called
+  return: () => console.log("done"),    // Called immediately — returns without nexting
   ...
 });
-// Output: "done" (because one source is empty)
+// Output: "done"
 ```
 
 SEE ALSO:
-- `merge` — emits individual values from all sources
-- `race` — mirrors only the first source to emit
+- `merge` — nexts every value from every Observable in the input
+- `race` — mirrors the first of input's Observables to next
 ````
 
 # Glossary And Semantics

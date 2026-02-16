@@ -1,4 +1,4 @@
-import { assertEquals, assertStrictEquals } from "@std/assert";
+import { assertEquals, assertStrictEquals, assertThrows } from "@std/assert";
 import { Observer } from "@observable/core";
 import { materialize, type ObserverNotification } from "@observable/materialize";
 import { flat } from "@observable/flat";
@@ -9,12 +9,13 @@ import { ofIterable } from "@observable/of-iterable";
 import { pipe } from "@observable/pipe";
 import { all } from "./mod.ts";
 import { ReplaySubject } from "@observable/replay-subject";
+import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 
 Deno.test(
-  "all should multiple sources that next and return synchronously",
+  "all should combine multiple input's Observables that next and return synchronously",
   () => {
     // Arrange
-    const notifications: Array<ObserverNotification<ReadonlyArray<unknown>>> = [];
+    const notifications: Array<ObserverNotification<ReadonlyArray<number>>> = [];
     const source1 = pipe([1, 2, 3], ofIterable());
     const source2 = pipe([4, 5, 6], ofIterable());
     const source3 = pipe([7, 8, 9], ofIterable());
@@ -22,7 +23,11 @@ Deno.test(
 
     // Act
     pipe(observable, materialize()).subscribe(
-      new Observer((notification) => notifications.push(notification)),
+      new Observer((notification) => {
+        notifications.push(notification);
+        const [type, value] = notification;
+        if (type === "next") assertStrictEquals(Object.isFrozen(value), true);
+      }),
     );
 
     // Assert
@@ -36,7 +41,7 @@ Deno.test(
 );
 
 Deno.test(
-  "all should handle multiple sources that next and return synchronously except one that is empty",
+  "all should handle multiple input's Observables that next and return synchronously except one that is empty",
   () => {
     // Arrange
     const deferCalls: Array<number> = [];
@@ -68,8 +73,8 @@ Deno.test(
 
 Deno.test("all should handle reentrancy", () => {
   // Arrange
-  const notifications: Array<ObserverNotification<ReadonlyArray<unknown>>> = [];
-  const source1 = new ReplaySubject<number>(3);
+  const notifications: Array<ObserverNotification<ReadonlyArray<number>>> = [];
+  const source1 = new ReplaySubject<1 | 2 | 3 | 10>(3);
   const source2 = pipe([4, 5, 6], ofIterable());
   const source3 = pipe([7, 8, 9], ofIterable());
   const observable = all([source1, source2, source3]);
@@ -79,11 +84,8 @@ Deno.test("all should handle reentrancy", () => {
   pipe(observable, materialize()).subscribe(
     new Observer((notification) => {
       notifications.push(notification);
-      if (
-        notification[0] === "next" &&
-        notification[1][2] === 7 &&
-        notification[1][0] !== 10
-      ) {
+      const [type, values] = notification;
+      if (type === "next" && values[2] === 7 && values[0] !== 10) {
         source1.next(10);
       }
     }),
@@ -104,4 +106,68 @@ Deno.test("all should return empty when given an empty array", () => {
 
   // Assert
   assertStrictEquals(observable, empty);
+});
+
+Deno.test("all should accept Set of observables", () => {
+  // Arrange
+  const notifications: Array<ObserverNotification<ReadonlyArray<number>>> = [];
+  const source1 = pipe([1, 2, 3, 4, 5, 6], ofIterable());
+  const source2 = source1;
+  const source3 = pipe([7, 8, 9], ofIterable());
+  const observable = all(new Set([source1, source2, source3]));
+
+  // Act
+  pipe(observable, materialize()).subscribe(
+    new Observer((notification) => notifications.push(notification)),
+  );
+
+  // Assert
+  assertEquals(notifications, [
+    ["next", [6, 7]],
+    ["next", [6, 8]],
+    ["next", [6, 9]],
+    ["return"],
+  ]);
+});
+
+Deno.test("all should accept iterable (generator) of observables", () => {
+  // Arrange
+  const notifications: Array<ObserverNotification<ReadonlyArray<number>>> = [];
+  function* observables() {
+    yield pipe([1, 2], ofIterable());
+    yield pipe([3, 4], ofIterable());
+  }
+  const observable = all(observables());
+
+  // Act
+  pipe(observable, materialize()).subscribe(
+    new Observer((notification) => notifications.push(notification)),
+  );
+
+  // Assert
+  assertEquals(notifications, [
+    ["next", [2, 3]],
+    ["next", [2, 4]],
+    ["return"],
+  ]);
+});
+
+Deno.test("all should throw MinimumArgumentsRequiredError when called with no arguments", () => {
+  // Act / Arrange / Assert
+  assertThrows(
+    () => (all as (iterable?: Iterable<unknown>) => unknown)(),
+    MinimumArgumentsRequiredError,
+  );
+});
+
+Deno.test("all should throw ParameterTypeError when argument is not iterable", () => {
+  // Act / Arrange / Assert
+  assertThrows(
+    () => (all as (iterable: unknown) => unknown)(null),
+    ParameterTypeError,
+  );
+  assertThrows(
+    () => (all as (iterable: unknown) => unknown)(42),
+    ParameterTypeError,
+  );
 });
