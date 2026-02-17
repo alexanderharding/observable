@@ -25,6 +25,17 @@ Deno.test("AsyncSubject.prototype should be frozen", () => {
 });
 
 Deno.test(
+  "AsyncSubject should not freeze Object.prototype",
+  () => {
+    // Arrange / Act
+    new AsyncSubject();
+
+    // Assert
+    assertStrictEquals(Object.isFrozen(Object.prototype), false);
+  },
+);
+
+Deno.test(
   "AsyncSubject.constructor should not throw when creating with arguments",
   () => {
     // Arrange / Act / Assert

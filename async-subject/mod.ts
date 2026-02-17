@@ -71,9 +71,9 @@ export interface AsyncSubjectConstructor {
  */
 const stringTag = "AsyncSubject";
 
-export const AsyncSubject: AsyncSubjectConstructor = class {
+export const AsyncSubject: AsyncSubjectConstructor = class<Value> {
   readonly [Symbol.toStringTag] = stringTag;
-  readonly #subject = new ReplaySubject(1);
+  readonly #subject = new ReplaySubject<Value>(1);
   readonly signal = this.#subject.signal;
   readonly #observable = pipe(
     this.#subject,
@@ -86,7 +86,7 @@ export const AsyncSubject: AsyncSubjectConstructor = class {
     Object.freeze(this);
   }
 
-  next(value: unknown): void {
+  next(value: Value): void {
     if (this instanceof AsyncSubject) this.#subject.next(value);
     else throw new InstanceofError("this", stringTag);
   }
@@ -101,7 +101,7 @@ export const AsyncSubject: AsyncSubjectConstructor = class {
     else throw new InstanceofError("this", stringTag);
   }
 
-  subscribe(observer: Observer): void {
+  subscribe(observer: Observer<Value>): void {
     if (!(this instanceof AsyncSubject)) throw new InstanceofError("this", stringTag);
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObserver(observer)) throw new ParameterTypeError(0, "Observer");
