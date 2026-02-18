@@ -8,7 +8,7 @@ import { defer } from "@observable/defer";
 import { empty } from "@observable/empty";
 import { ofIterable } from "@observable/of-iterable";
 import { pipe } from "@observable/pipe";
-import { forEach } from "@observable/for-each";
+import { tap } from "@observable/tap";
 import { map } from "@observable/map";
 import { mergeMap } from "@observable/merge-map";
 import { filter } from "@observable/filter";
@@ -174,7 +174,7 @@ export function all<Value>(
         let isEmpty = true;
         return pipe(
           observable,
-          forEach((value) => {
+          tap((value) => {
             if (isEmpty) receivedFirstValueCount++;
             isEmpty = false;
 
@@ -194,7 +194,7 @@ export function all<Value>(
       }),
       filter(() => receivedFirstValueCount === expectedFirstValueCount),
       // All first values have been received, we can cleanup the notifier.
-      forEach(() => stop.return()),
+      tap(() => stop.return()),
       map(() => bufferSnapshot ??= Object.freeze(buffer.slice())),
       takeUntil(stop),
     );

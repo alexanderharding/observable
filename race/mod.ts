@@ -7,7 +7,7 @@ import {
 import { defer } from "@observable/defer";
 import { ofIterable } from "@observable/of-iterable";
 import { pipe } from "@observable/pipe";
-import { forEach } from "@observable/for-each";
+import { tap } from "@observable/tap";
 import { mergeMap } from "@observable/merge-map";
 import { takeUntil } from "@observable/take-until";
 import { filter } from "@observable/filter";
@@ -98,7 +98,7 @@ export function race<Value>(
       mergeMap((source, index) =>
         pipe(
           source,
-          forEach(() => {
+          tap(() => {
             finished.next(index);
             finished.return();
           }),

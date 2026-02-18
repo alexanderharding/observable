@@ -1,6 +1,6 @@
 {
-  "name": "@observable/for-each",
-  "version": "0.3.0",
+  "name": "@observable/tap",
+  "version": "0.7.0",
   "license": "MIT",
   "exports": "./mod.ts",
   "publish": { "exclude": ["*.test.ts"] }
