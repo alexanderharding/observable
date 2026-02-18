@@ -8,7 +8,7 @@ import { map } from "@observable/map";
  * from the [source](https://jsr.io/@observable/core#source) [`Observable`](https://jsr.io/@observable/core/doc/~/Observable).
  * @example
  * ```ts
- * import { forEach } from "@observable/for-each";
+ * import { tap } from "@observable/tap";
  * import { ofIterable } from "@observable/of-iterable";
  * import { pipe } from "@observable/pipe";
  *
@@ -17,7 +17,7 @@ import { map } from "@observable/map";
  * pipe(
  *   [1, 2, 3],
  *   ofIterable(),
- *   forEach((value) => console.log("forEach next", value)),
+ *   tap((value) => console.log("tap callback", value)),
  * ).subscribe({
  *   signal: activeSubscriptionController.signal,
  *   next: (value) => console.log("next", value),
@@ -26,21 +26,21 @@ import { map } from "@observable/map";
  * });
  *
  * // Console output:
- * // "forEach next" 1
+ * // "tap callback" 1
  * // "next" 1
- * // "forEach next" 2
+ * // "tap callback" 2
  * // "next" 2
- * // "forEach next" 3
+ * // "tap callback" 3
  * // "next" 3
  * // "return"
  * ```
  */
-export function forEach<Value>(
+export function tap<Value>(
   callback: (value: Value, index: number) => void,
 ): (source: Observable<Value>) => Observable<Value> {
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
   if (typeof callback !== "function") throw new ParameterTypeError(0, "Function");
-  return function forEachFn(source) {
+  return function tapFn(source) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
     return pipe(

@@ -3,7 +3,7 @@ import { asObservable } from "@observable/as-observable";
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 import { defer } from "@observable/defer";
 import { pipe } from "@observable/pipe";
-import { forEach } from "@observable/for-each";
+import { tap } from "@observable/tap";
 import { filter } from "@observable/filter";
 
 /**
@@ -44,7 +44,7 @@ export function distinct<Value>(): (
       return pipe(
         source,
         filter((value) => !values.has(value)),
-        forEach((value) => values.add(value)),
+        tap((value) => values.add(value)),
       );
     });
   };

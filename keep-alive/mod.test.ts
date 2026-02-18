@@ -4,7 +4,7 @@ import { materialize, type ObserverNotification } from "@observable/materialize"
 import { pipe } from "@observable/pipe";
 import { keepAlive } from "./mod.ts";
 import { ofIterable } from "@observable/of-iterable";
-import { forEach } from "@observable/for-each";
+import { tap } from "@observable/tap";
 
 Deno.test("keepAlive should ignore unsubscribe indefinitely", () => {
   // Arrange
@@ -17,7 +17,7 @@ Deno.test("keepAlive should ignore unsubscribe indefinitely", () => {
   pipe(
     source,
     materialize(),
-    forEach((notification) => tapNotifications.push(notification)),
+    tap((notification) => tapNotifications.push(notification)),
     keepAlive(),
   ).subscribe(
     new Observer({

@@ -1,4 +1,4 @@
-# [@observable/for-each](https://jsr.io/@observable/for-each)
+# [@observable/tap](https://jsr.io/@observable/tap)
 
 Performs a side-effect for each [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed
 value from the [source](https://jsr.io/@observable/core#source)
@@ -20,7 +20,7 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 ## Example
 
 ```ts
-import { forEach } from "@observable/for-each";
+import { tap } from "@observable/tap";
 import { ofIterable } from "@observable/of-iterable";
 import { pipe } from "@observable/pipe";
 
@@ -29,7 +29,7 @@ const activeSubscriptionController = new AbortController();
 pipe(
   [1, 2, 3],
   ofIterable(),
-  forEach((value) => console.log("forEach next", value)),
+  tap((value) => console.log("tap", value)),
 ).subscribe({
   signal: activeSubscriptionController.signal,
   next: (value) => console.log("next", value),
@@ -38,11 +38,11 @@ pipe(
 });
 
 // Console output:
-// "forEach next" 1
+// "tap" 1
 // "next" 1
-// "forEach next" 2
+// "tap" 2
 // "next" 2
-// "forEach next" 3
+// "tap" 3
 // "next" 3
 // "return"
 ```
@@ -52,19 +52,19 @@ pipe(
 Use the following prompt with AI assistants to help them understand this library:
 
 ````
-You are helping me with code that uses @observable/for-each from the @observable library ecosystem.
+You are helping me with code that uses @observable/tap from the @observable library ecosystem.
 
 WHAT IT DOES:
-`forEach()` performs side-effects on each value emitted by the source Observable without modifying the values. Useful for debugging, logging, or triggering external actions. It takes a callback function `(value, index) => void` that is called for each value.
+`tap()` performs side-effects on each value emitted by the source Observable without modifying the values. Useful for debugging, logging, or triggering external actions. It takes a callback function `(value, index) => void` that is called for each value.
 
 CRITICAL: This library is NOT RxJS. Key differences:
 - Observer uses `return`/`throw` — NOT `complete`/`error`
 - Unsubscription via `AbortController.abort()` — NOT `subscription.unsubscribe()`
-- `forEach` is a standalone function used with `pipe()` — NOT a method on Observable
+- `tap` is a standalone function used with `pipe()` — NOT a method on Observable
 
 USAGE PATTERN:
 ```ts
-import { forEach } from "@observable/for-each";
+import { tap } from "@observable/tap";
 import { ofIterable } from "@observable/of-iterable";
 import { pipe } from "@observable/pipe";
 
@@ -73,7 +73,7 @@ const controller = new AbortController();
 pipe(
   [1, 2, 3],
   ofIterable(),
-  forEach((value, index) => console.log(`Value ${value} at index ${index}`)),
+  tap((value, index) => console.log(`Value ${value} at index ${index}`)),
 ).subscribe({
   signal: controller.signal,
   next: (value) => console.log("received:", value),
