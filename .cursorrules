@@ -176,7 +176,6 @@ All operators follow this exact pattern:
 ```ts
 import { isObservable, Observable } from "@observable/core";
 import { from } from "@observable/from";
-import { pipe } from "@observable/pipe;
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 
 export function operatorName<Value>(
@@ -185,7 +184,7 @@ export function operatorName<Value>(
   // Validate arguments
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
   // More validation as needed...
-  
+
   return function operatorNameFn(source) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
