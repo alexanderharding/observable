@@ -39,9 +39,7 @@ const infiniteVoid = defer(() => pipe(generateInfiniteVoid(), ofIterable()));
  */
 export function interval(milliseconds: number): Observable<void> {
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-  if (typeof milliseconds !== "number") {
-    throw new ParameterTypeError(0, "Number");
-  }
+  if (typeof milliseconds !== "number") throw new ParameterTypeError(0, "Number");
   if (milliseconds < 0 || Number.isNaN(milliseconds)) return empty;
   if (milliseconds === 0) return infiniteVoid;
   if (milliseconds === Infinity) return never;
