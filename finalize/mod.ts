@@ -1,7 +1,6 @@
 import { isObservable, Observable } from "@observable/core";
 import { from } from "@observable/from";
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
-import { pipe } from "@observable/pipe";
 
 /**
  * The [consumer](https://jsr.io/@observable/core#consumer) is telling the [producer](https://jsr.io/@observable/core#producer)

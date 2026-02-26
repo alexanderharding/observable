@@ -2,7 +2,6 @@ import { isObservable, Observable } from "@observable/core";
 import { from } from "@observable/from";
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 import { empty } from "@observable/empty";
-import { pipe } from "@observable/pipe";
 
 /**
  * Takes the first {@linkcode count} of [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed

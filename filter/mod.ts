@@ -1,7 +1,6 @@
 import { isObservable, Observable } from "@observable/core";
 import { from } from "@observable/from";
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
-import { pipe } from "@observable/pipe";
 
 /**
  * Filters [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values from the

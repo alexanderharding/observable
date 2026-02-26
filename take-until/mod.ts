@@ -1,6 +1,5 @@
 import { isObservable, Observable } from "@observable/core";
 import { from } from "@observable/from";
-import { pipe } from "@observable/pipe";
 import { MinimumArgumentsRequiredError, noop, ParameterTypeError } from "@observable/internal";
 
 /**

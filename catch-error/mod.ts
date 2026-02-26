@@ -1,7 +1,6 @@
 import { isObservable, Observable } from "@observable/core";
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 import { from } from "@observable/from";
-import { pipe } from "@observable/pipe";
 
 /**
  * {@linkcode project|Projects} each [`throw`](https://jsr.io/@observable/core/doc/~/Observer.throw)n
