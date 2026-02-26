@@ -64,7 +64,7 @@ WHAT IT DOES:
 CRITICAL: This library is NOT RxJS. Key differences:
 - Observer uses `return`/`throw` — NOT `complete`/`error`
 - Unsubscription via `AbortController.abort()` — NOT `subscription.unsubscribe()`
-- `from` is a standalone function used with `pipe()` — NOT a method on Observable
+- `from` is a standalone function
 
 USAGE PATTERN (source is already an Observable instance):
 ```ts
