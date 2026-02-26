@@ -5,7 +5,7 @@ import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/i
 import { mergeMap } from "@observable/merge-map";
 import { merge } from "@observable/merge";
 import { defer } from "@observable/defer";
-import { ofIterable } from "@observable/of-iterable";
+import { sequence } from "@observable/sequence";
 
 /**
  * Recursively {@linkcode project|projects} each [source](https://jsr.io/@observable/core#source) value
@@ -14,7 +14,7 @@ import { ofIterable } from "@observable/of-iterable";
  * @example
  * ```ts
  * import { expand } from "@observable/expand";
- * import { ofIterable } from "@observable/of-iterable";
+ * import { sequence } from "@observable/sequence";
  * import { pipe } from "@observable/pipe";
  * import { empty } from "@observable/empty";
  *
@@ -22,9 +22,8 @@ import { ofIterable } from "@observable/of-iterable";
  *
  * // Recursively double values until >= 16
  * pipe(
- *   [2],
- *   ofIterable(),
- *   expand((value) => value < 16 ? pipe([value * 2], ofIterable()) : empty),
+ *   sequence([2]),
+ *   expand((value) => value < 16 ? sequence([value * 2]) : empty),
  * ).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
@@ -42,7 +41,7 @@ import { ofIterable } from "@observable/of-iterable";
  * @example
  * ```ts
  * import { expand } from "@observable/expand";
- * import { ofIterable } from "@observable/of-iterable";
+ * import { sequence } from "@observable/sequence";
  * import { pipe } from "@observable/pipe";
  * import { empty } from "@observable/empty";
  *
@@ -63,10 +62,9 @@ import { ofIterable } from "@observable/of-iterable";
  * const controller = new AbortController();
  *
  * pipe(
- *   [tree],
- *   ofIterable(),
+ *   sequence([tree]),
  *   expand((node) =>
- *     node.children.length ? pipe(node.children, ofIterable()) : empty
+ *     node.children.length ? sequence(node.children) : empty
  *   ),
  * ).subscribe({
  *   signal: controller.signal,
@@ -100,7 +98,7 @@ export function expand<Value>(
         source,
         mergeMap((value) =>
           merge([
-            pipe([value], ofIterable()),
+            sequence([value]),
             pipe(defer(() => project(value, index++)), expand((value) => project(value, index++))),
           ])
         ),

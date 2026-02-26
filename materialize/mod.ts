@@ -19,11 +19,11 @@ export type ObserverNotification<Value = unknown> = Readonly<
  * @example
  * ```ts
  * import { materialize } from "@observable/materialize";
- * import { ofIterable } from "@observable/of-iterable";
+ * import { sequence } from "@observable/sequence";
  * import { pipe } from "@observable/pipe";
  *
  * const controller = new AbortController();
- * pipe([1, 2, 3], ofIterable(), materialize()).subscribe({
+ * pipe(sequence([1, 2, 3]), materialize()).subscribe({
  *  signal: controller.signal,
  *  next: (value) => console.log(value),
  *  return: () => console.log("return"),
@@ -60,10 +60,10 @@ export type ObserverNotification<Value = unknown> = Readonly<
  * ```ts
  * import { materialize, ObserverNotification } from "@observable/materialize";
  * import { pipe } from "@observable/pipe";
- * import { ofIterable } from "@observable/of-iterable";
+ * import { sequence } from "@observable/sequence";
  * import { Observer } from "@observable/core";
  *
- * const observable = pipe([1, 2, 3], ofIterable());
+ * const observable = sequence([1, 2, 3]);
  *
  * describe("observable", () => {
  *  let activeSubscriptionController: AbortController;

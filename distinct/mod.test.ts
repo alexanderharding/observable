@@ -1,18 +1,19 @@
 import { assertEquals, assertThrows } from "@std/assert";
 import { Observable, Observer, Subject } from "@observable/core";
 import { pipe } from "@observable/pipe";
-import { ofIterable } from "@observable/of-iterable";
+import { sequence } from "@observable/sequence";
 import { materialize, type ObserverNotification } from "@observable/materialize";
 import { distinct } from "./mod.ts";
 import { flat } from "@observable/flat";
 import { throwError } from "@observable/throw-error";
+import { empty } from "@observable/empty";
 
 Deno.test(
   "distinct should filter out all duplicate values across the stream",
   () => {
     // Arrange
     const notifications: Array<ObserverNotification<number>> = [];
-    const source = pipe([1, 2, 2, 3, 1, 3, 4, 2], ofIterable());
+    const source = sequence([1, 2, 2, 3, 1, 3, 4, 2]);
     const materialized = pipe(source, distinct(), materialize());
 
     // Act
@@ -34,7 +35,7 @@ Deno.test(
 Deno.test("distinct should emit all values when none are duplicates", () => {
   // Arrange
   const notifications: Array<ObserverNotification<number>> = [];
-  const source = pipe([1, 2, 3, 4, 5], ofIterable());
+  const source = sequence([1, 2, 3, 4, 5]);
   const materialized = pipe(source, distinct(), materialize());
 
   // Act
@@ -58,7 +59,7 @@ Deno.test(
   () => {
     // Arrange
     const notifications: Array<ObserverNotification<number>> = [];
-    const source = pipe([5, 5, 5, 5, 5], ofIterable());
+    const source = sequence([5, 5, 5, 5, 5]);
     const materialized = pipe(source, distinct(), materialize());
 
     // Act
@@ -74,7 +75,7 @@ Deno.test(
 Deno.test("distinct should handle empty source", () => {
   // Arrange
   const notifications: Array<ObserverNotification<number>> = [];
-  const source = pipe([], ofIterable<number>());
+  const source = empty;
   const materialized = pipe(source, distinct(), materialize());
 
   // Act
@@ -116,7 +117,7 @@ Deno.test("distinct should honor unsubscribe", () => {
   const controller = new AbortController();
   const notifications: Array<ObserverNotification<number>> = [];
   const source = flat([
-    pipe([1, 2, 3, 1, 2, 3], ofIterable()),
+    sequence([1, 2, 3, 1, 2, 3]),
     throwError(new Error("Should not make it here")),
   ]);
   const materialized = pipe(source, distinct(), materialize());
@@ -193,7 +194,7 @@ Deno.test("distinct should work with Subject", () => {
 Deno.test("distinct should work with string values", () => {
   // Arrange
   const notifications: Array<ObserverNotification<string>> = [];
-  const source = pipe(["a", "b", "a", "c", "b", "d"], ofIterable());
+  const source = sequence(["a", "b", "a", "c", "b", "d"]);
   const materialized = pipe(source, distinct(), materialize());
 
   // Act
@@ -217,7 +218,7 @@ Deno.test("distinct should use reference equality for objects", () => {
   const obj2 = { id: 2 };
   const obj3 = { id: 1 };
   const notifications: Array<ObserverNotification<{ id: number }>> = [];
-  const source = pipe([obj1, obj2, obj1, obj3, obj2], ofIterable());
+  const source = sequence([obj1, obj2, obj1, obj3, obj2]);
   const materialized = pipe(source, distinct(), materialize());
 
   // Act
@@ -238,7 +239,7 @@ Deno.test("distinct should reset state for each subscription", () => {
   // Arrange
   const notifications1: Array<ObserverNotification<number>> = [];
   const notifications2: Array<ObserverNotification<number>> = [];
-  const source = pipe([1, 2, 1, 2, 3], ofIterable());
+  const source = sequence([1, 2, 1, 2, 3]);
   const distinctSource = pipe(source, distinct());
 
   // Act

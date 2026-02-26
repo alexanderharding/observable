@@ -1,5 +1,5 @@
 import { Observer } from "@observable/core";
-import { ofIterable } from "@observable/of-iterable";
+import { sequence } from "@observable/sequence";
 import { BroadcastSubject } from "./mod.ts";
 import { assertEquals, assertInstanceOf, assertStrictEquals, assertThrows } from "@std/assert";
 import { noop } from "@observable/internal";
@@ -108,7 +108,7 @@ Deno.test(
   "BroadcastSubject should be an Observer which can be given to Observable.subscribe",
   () => {
     // Arrange
-    const source = pipe([1, 2, 3, 4, 5], ofIterable());
+    const source = sequence([1, 2, 3, 4, 5]);
     const subject = new BroadcastSubject<number>("test");
     const notifications: Array<ObserverNotification<number>> = [];
     const postMessageCalls: Array<Parameters<BroadcastChannel["postMessage"]>> = [];

@@ -1,6 +1,6 @@
 import { merge } from "./mod.ts";
-import { ofIterable } from "@observable/of-iterable";
-import { Observer } from "@observable/core";
+import { sequence } from "@observable/sequence";
+import { type Observable, Observer } from "@observable/core";
 import { pipe } from "@observable/pipe";
 import { materialize, type ObserverNotification } from "@observable/materialize";
 import { assertEquals, assertStrictEquals } from "@std/assert";
@@ -8,12 +8,14 @@ import { empty } from "@observable/empty";
 
 Deno.test("merge should merge the values", () => {
   // Arrange
-  const notifications: Array<ObserverNotification> = [];
   const observable = merge([
-    pipe([1, 2, 3], ofIterable()),
-    pipe([4, 5, 6], ofIterable()),
-    pipe([7, 8, 9], ofIterable()),
+    sequence([1, 2, 3]),
+    sequence([4, 5, 6]),
+    sequence([7, 8, 9]),
   ]);
+  const notifications: Array<
+    ObserverNotification<typeof observable extends Observable<infer Value> ? Value : never>
+  > = [];
 
   // Act
   pipe(observable, materialize()).subscribe(

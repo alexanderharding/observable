@@ -21,11 +21,11 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 
 ```ts
 import { pairwise } from "@observable/pairwise";
-import { ofIterable } from "@observable/of-iterable";
+import { sequence } from "@observable/sequence";
 import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
-pipe([1, 2, 3, 4], ofIterable(), pairwise()).subscribe({
+pipe(sequence([1, 2, 3, 4]), pairwise()).subscribe({
   signal: controller.signal,
   next: (value) => console.log("next", value),
   return: () => console.log("return"),
@@ -57,14 +57,13 @@ CRITICAL: This library is NOT RxJS. Key differences:
 USAGE PATTERN:
 ```ts
 import { pairwise } from "@observable/pairwise";
-import { ofIterable } from "@observable/of-iterable";
+import { sequence } from "@observable/sequence";
 import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
 
 pipe(
-  [1, 2, 3, 4],
-  ofIterable(),
+  sequence([1, 2, 3, 4]),
   pairwise()
 ).subscribe({
   signal: controller.signal,

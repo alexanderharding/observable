@@ -24,6 +24,17 @@ Deno.test("Observable.prototype should be frozen", () => {
 });
 
 Deno.test(
+  "Observable should not freeze Object.prototype",
+  () => {
+    // Arrange / Act
+    new Observable(noop);
+
+    // Assert
+    assertStrictEquals(Object.isFrozen(Object.prototype), false);
+  },
+);
+
+Deno.test(
   "Observable.constructor should throw when creating with no arguments",
   () => {
     // Arrange / Act / Assert

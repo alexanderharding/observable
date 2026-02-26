@@ -1,7 +1,7 @@
 import { assertEquals, assertThrows } from "@std/assert";
 import { Observer, Subject } from "@observable/core";
 import { pipe } from "@observable/pipe";
-import { ofIterable } from "@observable/of-iterable";
+import { sequence } from "@observable/sequence";
 import { materialize, type ObserverNotification } from "@observable/materialize";
 import { repeat } from "./mod.ts";
 import { take } from "@observable/take";
@@ -13,9 +13,9 @@ import { flat } from "@observable/flat";
 Deno.test("repeat should repeat source when notifier emits", () => {
   // Arrange
   const notifications: Array<ObserverNotification<number>> = [];
-  const source = pipe([1, 2, 3], ofIterable());
+  const source = sequence([1, 2, 3]);
   let repeatCount = 0;
-  const notifier = defer(() => ++repeatCount >= 3 ? empty : pipe([undefined], ofIterable()));
+  const notifier = defer(() => ++repeatCount >= 3 ? empty : sequence([void 0]));
   const materialized = pipe(source, repeat(notifier), materialize());
 
   // Act
@@ -41,7 +41,7 @@ Deno.test("repeat should repeat source when notifier emits", () => {
 Deno.test("repeat should return when notifier returns before emitting", () => {
   // Arrange
   const notifications: Array<ObserverNotification<number>> = [];
-  const source = pipe([1, 2, 3], ofIterable());
+  const source = sequence([1, 2, 3]);
   const notifier = empty;
   const materialized = pipe(source, repeat(notifier), materialize());
 
@@ -63,8 +63,8 @@ Deno.test("repeat should propagate throws from source", () => {
   // Arrange
   const error = new Error("source error");
   const notifications: Array<ObserverNotification<number>> = [];
-  const source = flat([pipe([1], ofIterable()), throwError(error)]);
-  const notifier = pipe([undefined], ofIterable());
+  const source = flat([sequence([1]), throwError(error)]);
+  const notifier = sequence([void 0]);
   const materialized = pipe(source, repeat(notifier), materialize());
 
   // Act
@@ -80,7 +80,7 @@ Deno.test("repeat should propagate throws from notifier", () => {
   // Arrange
   const error = new Error("notifier error");
   const notifications: Array<ObserverNotification<number>> = [];
-  const source = pipe([1, 2, 3], ofIterable());
+  const source = sequence([1, 2, 3]);
   const notifier = throwError(error);
   const materialized = pipe(source, repeat(notifier), materialize());
 
@@ -101,7 +101,7 @@ Deno.test("repeat should propagate throws from notifier", () => {
 Deno.test("repeat should work with Subject as notifier", () => {
   // Arrange
   const notifications: Array<ObserverNotification<number>> = [];
-  const source = pipe([1, 2], ofIterable());
+  const source = sequence([1, 2]);
   const notifier = new Subject<void>();
   const materialized = pipe(source, repeat(notifier), materialize());
 
@@ -125,7 +125,7 @@ Deno.test("repeat should work with Subject as notifier", () => {
 Deno.test("repeat should repeat indefinitely with default notifier", () => {
   // Arrange
   const notifications: Array<ObserverNotification<number>> = [];
-  const source = pipe([1], ofIterable());
+  const source = sequence([1]);
   const materialized = pipe(source, repeat(), take(5), materialize());
 
   // Act
@@ -148,8 +148,8 @@ Deno.test("repeat should honor unsubscribe during source", () => {
   // Arrange
   const controller = new AbortController();
   const notifications: Array<ObserverNotification<number>> = [];
-  const source = pipe([1, 2, 3, 4, 5], ofIterable());
-  const notifier = pipe([undefined], ofIterable());
+  const source = sequence([1, 2, 3, 4, 5]);
+  const notifier = sequence([void 0]);
   const materialized = pipe(source, repeat(notifier), materialize());
 
   // Act
@@ -173,7 +173,7 @@ Deno.test("repeat should honor unsubscribe during notifier", () => {
   // Arrange
   const controller = new AbortController();
   const notifications: Array<ObserverNotification<number>> = [];
-  const source = pipe([1], ofIterable());
+  const source = sequence([1]);
   const notifier = new Subject<void>();
   const materialized = pipe(source, repeat(notifier), materialize());
 
@@ -206,7 +206,7 @@ Deno.test("repeat should throw when notifier is not an Observable", () => {
 
 Deno.test("repeat should throw when called with no source", () => {
   // Arrange
-  const operator = repeat(pipe([undefined], ofIterable()));
+  const operator = repeat(sequence([void 0]));
 
   // Act / Assert
   assertThrows(
@@ -218,7 +218,7 @@ Deno.test("repeat should throw when called with no source", () => {
 
 Deno.test("repeat should throw when source is not an Observable", () => {
   // Arrange
-  const operator = repeat(pipe([undefined], ofIterable()));
+  const operator = repeat(sequence([void 0]));
 
   // Act / Assert
   assertThrows(
@@ -233,10 +233,10 @@ Deno.test("repeat should only use first emission from notifier per repeat cycle"
   // Arrange
   let notifierEmissions = 0;
   const notifications: Array<ObserverNotification<number>> = [];
-  const source = pipe([1], ofIterable());
+  const source = sequence([1]);
   const notifier = defer(() => {
     notifierEmissions++;
-    return pipe([undefined, undefined, undefined], ofIterable());
+    return sequence([void 0, void 0, void 0]);
   });
   let repeatCount = 0;
   const limitedNotifier = defer(() => ++repeatCount >= 3 ? empty : notifier);
@@ -261,7 +261,7 @@ Deno.test("repeat should work with defer notifier for controlled repetition", ()
   // Arrange
   const notifications: Array<ObserverNotification<number>> = [];
   const notifierSubscriptions: number[] = [];
-  const source = pipe([1, 2, 3], ofIterable());
+  const source = sequence([1, 2, 3]);
   const repeated = defer(() => {
     let count = 0;
     return pipe(
@@ -269,7 +269,7 @@ Deno.test("repeat should work with defer notifier for controlled repetition", ()
       repeat(
         defer(() => {
           notifierSubscriptions.push(++count);
-          return count === 2 ? empty : pipe([undefined], ofIterable());
+          return count === 2 ? empty : sequence([void 0]);
         }),
       ),
     );
@@ -297,7 +297,7 @@ Deno.test("repeat should work with defer notifier for controlled repetition", ()
 Deno.test("repeat should pass through return for empty source", () => {
   // Arrange
   const notifications: Array<ObserverNotification<number>> = [];
-  const source = pipe([], ofIterable<number>());
+  const source = empty;
   const notifier = empty;
   const materialized = pipe(source, repeat(notifier), materialize());
 
@@ -316,10 +316,10 @@ Deno.test("repeat should resubscribe to source on each repeat", () => {
   let subscriptionCount = 0;
   const source = defer(() => {
     subscriptionCount++;
-    return pipe([subscriptionCount * 10 + 1, subscriptionCount * 10 + 2], ofIterable());
+    return sequence([subscriptionCount * 10 + 1, subscriptionCount * 10 + 2]);
   });
   let repeatCount = 0;
-  const notifier = defer(() => ++repeatCount >= 2 ? empty : pipe([undefined], ofIterable()));
+  const notifier = defer(() => ++repeatCount >= 2 ? empty : sequence([void 0]));
   const materialized = pipe(source, repeat(notifier), materialize());
 
   // Act

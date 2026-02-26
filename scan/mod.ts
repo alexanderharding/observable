@@ -14,11 +14,11 @@ import { map } from "@observable/map";
  * @example
  * ```ts
  * import { scan } from "@observable/scan";
- * import { ofIterable } from "@observable/of-iterable";
+ * import { sequence } from "@observable/sequence";
  * import { pipe } from "@observable/pipe";
  *
  * const controller = new AbortController();
- * const source = pipe([1, 2, 3], ofIterable());
+ * const source = sequence([1, 2, 3]);
  * pipe(source, scan((previous, current) => previous + current, 0)).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),

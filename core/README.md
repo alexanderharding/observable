@@ -87,10 +87,25 @@ This can be a wide variety of things, from a
 to a simple iteration over an
 [`Array`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array).
 
+### Observer
+
+The manifestation of a [consumer](#consumer). Though it can be any object that matches the
+[`interface`](https://jsr.io/@observable/core/doc/~/Observer), ultimately it will be converted to an
+[`Observer`](https://jsr.io/@observable/core/doc/~/Observer) instance before it can be referenced by
+the [producer](#producer) for the purpose of predictable behavior.
+
+### Subscriber
+
+The [consumer](#consumer) that initiated the [subscription](#subscription).
+
 ### Subscription
 
 A contract where a [consumer](#consumer) is [observing](#observation) values pushed by a
-[producer](#producer).
+[producer](#producer). The subscription, is an ongoing process that amounts to the function of the
+[`Observable`](https://jsr.io/@observable/core/doc/~/Observable) from the [consumer](#consumer)'s
+perspective starting the moment of
+[`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe) and ending the moment of
+[unsubscribe](https://jsr.io/@observable/core/doc/~/Observer.signal).
 
 ## Major Actions
 

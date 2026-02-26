@@ -17,10 +17,10 @@ import { share } from "@observable/share";
  * @example
  * ```ts
  * import { asPromise } from "@observable/as-promise";
- * import { ofIterable } from "@observable/of-iterable";
+ * import { sequence } from "@observable/sequence";
  * import { pipe } from "@observable/pipe";
  *
- * console.log(await pipe([1, 2, 3], ofIterable(), asPromise()));
+ * console.log(await pipe(sequence([1, 2, 3]), asPromise()));
  *
  * // Console output:
  * // 3
@@ -56,11 +56,11 @@ import { share } from "@observable/share";
  * @example
  * ```ts
  * import { asPromise } from "@observable/as-promise";
- * import { ofIterable } from "@observable/of-iterable";
+ * import { sequence } from "@observable/sequence";
  * import { pipe } from "@observable/pipe";
  *
  * try {
- *   console.log(await pipe([], ofIterable(), asPromise()));
+ *   console.log(await pipe(sequence([]), asPromise()));
  * } catch (error) {
  *   console.log(error);
  *   // Console output:

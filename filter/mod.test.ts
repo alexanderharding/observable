@@ -1,21 +1,27 @@
 import { assertEquals } from "@std/assert";
-import { Observable, Observer } from "@observable/core";
-import { ofIterable } from "@observable/of-iterable";
+import { type Observable, Observer } from "@observable/core";
+import { sequence } from "@observable/sequence";
 import { pipe } from "@observable/pipe";
 import { filter } from "./mod.ts";
 import { materialize, type ObserverNotification } from "@observable/materialize";
+import { throwError } from "@observable/throw-error";
+import { flat } from "@observable/flat";
 
 Deno.test(
   "filter should filter the items emitted by the source observable",
   () => {
     // Arrange
-    const notifications: Array<ObserverNotification<number>> = [];
-    const source = pipe([1, 2, 3, 4, 5], ofIterable());
     const materialized = pipe(
-      source,
+      sequence([1, 2, 3, 4, 5]),
       filter((value) => value % 2 === 0),
       materialize(),
     );
+    const notifications: Array<
+      ObserverNotification<
+        typeof materialized extends Observable<ObserverNotification<infer Value>> ? Value
+          : never
+      >
+    > = [];
 
     // Act
     materialized.subscribe(
@@ -29,18 +35,18 @@ Deno.test(
 
 Deno.test("filter should pump throws right through itself", () => {
   // Arrange
-  const notifications: Array<ObserverNotification<number>> = [];
   const error = new Error("test");
   const materialized = pipe(
-    new Observable<number>((observer) => {
-      observer.next(1);
-      observer.next(2);
-      observer.next(3);
-      observer.throw(error);
-    }),
+    flat([sequence([1, 2, 3]), throwError(error)]),
     filter((value) => value % 2 === 0),
     materialize(),
   );
+  const notifications: Array<
+    ObserverNotification<
+      typeof materialized extends Observable<ObserverNotification<infer Value>> ? Value
+        : never
+    >
+  > = [];
 
   // Act
   materialized.subscribe(
@@ -57,22 +63,20 @@ Deno.test("filter should pump throws right through itself", () => {
 Deno.test("filter should honor unsubscribe", () => {
   // Arrange
   const controller = new AbortController();
-  const notifications: Array<ObserverNotification<number>> = [];
-  const source = new Observable<number>((observer) => {
-    for (const value of [1, 2, 3, 4]) {
-      observer.next(value);
-      if (observer.signal.aborted) return;
-    }
-    observer.throw(new Error("Should not make it here"));
-  });
-  const materialized = pipe(
-    source,
+  const observable = pipe(
+    flat([sequence([1, 2, 3]), throwError(new Error("Should not make it here"))]),
     filter((value) => value % 2 === 0),
     materialize(),
   );
+  const notifications: Array<
+    ObserverNotification<
+      typeof observable extends Observable<ObserverNotification<infer Value>> ? Value
+        : never
+    >
+  > = [];
 
   // Act
-  materialized.subscribe(
+  observable.subscribe(
     new Observer({
       signal: controller.signal,
       next: (notification) => {

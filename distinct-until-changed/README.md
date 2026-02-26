@@ -25,11 +25,11 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 
 ```ts
 import { distinctUntilChanged } from "@observable/distinct-until-changed";
-import { ofIterable } from "@observable/of-iterable";
+import { sequence } from "@observable/sequence";
 import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
-pipe([1, 1, 1, 2, 2, 3], ofIterable(), distinctUntilChanged()).subscribe({
+pipe(sequence([1, 1, 1, 2, 2, 3]), distinctUntilChanged()).subscribe({
   signal: controller.signal,
   next: (value) => console.log(value),
   return: () => console.log("return"),
@@ -61,14 +61,13 @@ CRITICAL: This library is NOT RxJS. Key differences:
 USAGE PATTERN:
 ```ts
 import { distinctUntilChanged } from "@observable/distinct-until-changed";
-import { ofIterable } from "@observable/of-iterable";
+import { sequence } from "@observable/sequence";
 import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
 
 pipe(
-  [1, 1, 1, 2, 2, 3, 1],  // Note: 1 repeats at end
-  ofIterable(),
+  sequence([1, 1, 1, 2, 2, 3, 1]),  // Note: 1 repeats at end
   distinctUntilChanged()
 ).subscribe({
   signal: controller.signal,
@@ -81,8 +80,7 @@ pipe(
 WITH CUSTOM COMPARATOR:
 ```ts
 pipe(
-  [{ id: 1 }, { id: 1 }, { id: 2 }],
-  ofIterable(),
+  sequence([{ id: 1 }, { id: 1 }, { id: 2 }]),
   distinctUntilChanged((a, b) => a.id === b.id)
 ).subscribe({ ... });  // { id: 1 }, { id: 2 }
 ```

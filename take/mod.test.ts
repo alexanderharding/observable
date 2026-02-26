@@ -3,7 +3,7 @@ import { Observable, Observer, Subject } from "@observable/core";
 import { MinimumArgumentsRequiredError, noop, ParameterTypeError } from "@observable/internal";
 import { empty } from "@observable/empty";
 import { never } from "@observable/never";
-import { ofIterable } from "@observable/of-iterable";
+import { sequence } from "@observable/sequence";
 import { pipe } from "@observable/pipe";
 import { materialize, type ObserverNotification } from "@observable/materialize";
 import { take } from "./mod.ts";
@@ -85,7 +85,7 @@ Deno.test(
   () => {
     // Arrange
     const notifications: Array<ObserverNotification<number>> = [];
-    const source = pipe([1, 2, 3], ofIterable());
+    const source = sequence([1, 2, 3]);
     const materialized = pipe(source, take(2), materialize());
 
     // Act

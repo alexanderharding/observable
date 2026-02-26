@@ -24,6 +24,17 @@ Deno.test("Subject.prototype should be frozen", () => {
 });
 
 Deno.test(
+  "Subject should not freeze Object.prototype",
+  () => {
+    // Arrange / Act
+    new Subject();
+
+    // Assert
+    assertStrictEquals(Object.isFrozen(Object.prototype), false);
+  },
+);
+
+Deno.test(
   "Subject.constructor should throw when creating with arguments",
   () => {
     // Arrange / Act / Assert

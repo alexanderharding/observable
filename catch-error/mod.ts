@@ -12,13 +12,13 @@ import { pipe } from "@observable/pipe";
  * ```ts
  * import { catchError } from "@observable/catch-error";
  * import { throwError } from "@observable/throw-error";
- * import { ofIterable } from "@observable/of-iterable";
+ * import { sequence } from "@observable/sequence";
  * import { pipe } from "@observable/pipe";
  *
  * const controller = new AbortController();
  * pipe(
  *   throwError(new Error("error")),
- *   catchError(() => pipe(["fallback"], ofIterable())),
+ *   catchError(() => sequence(["fallback"])),
  * ).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),

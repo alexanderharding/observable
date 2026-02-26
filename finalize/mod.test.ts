@@ -4,7 +4,7 @@ import { materialize, type ObserverNotification } from "@observable/materialize"
 import { pipe } from "@observable/pipe";
 import { finalize } from "./mod.ts";
 import { flat } from "@observable/flat";
-import { ofIterable } from "@observable/of-iterable";
+import { sequence } from "@observable/sequence";
 import { throwError } from "@observable/throw-error";
 
 Deno.test(
@@ -14,8 +14,7 @@ Deno.test(
     const notifications: Array<ObserverNotification<number> | [type: "finalize"]> = [];
     const values = [1, 2, 3] as const;
     const observable = pipe(
-      values,
-      ofIterable(),
+      sequence(values),
       finalize(() => notifications.push(["finalize"])),
       materialize(),
     );
@@ -42,7 +41,7 @@ Deno.test(
     const notifications: Array<ObserverNotification<number> | [type: "finalize"]> = [];
     const values = [1, 2, 3] as const;
     const observable = pipe(
-      flat([pipe(values, ofIterable()), throwError(error)]),
+      flat([sequence(values), throwError(error)]),
       finalize(() => notifications.push(["finalize"])),
       materialize(),
     );
@@ -68,8 +67,7 @@ Deno.test(
     const notifications: Array<ObserverNotification<number> | [type: "finalize"]> = [];
     const controller = new AbortController();
     const observable = pipe(
-      [1, 2, 3],
-      ofIterable(),
+      sequence([1, 2, 3]),
       finalize(() => notifications.push(["finalize"])),
       materialize(),
     );

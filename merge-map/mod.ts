@@ -10,16 +10,16 @@ import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/i
  * @example
  * ```ts
  * import { mergeMap } from "@observable/merge-map";
- * import { ofIterable } from "@observable/of-iterable";
+ * import { sequence } from "@observable/sequence";
  * import { pipe } from "@observable/pipe";
  *
  * const controller = new AbortController();
  * const observableLookup = {
- *   1: pipe([1, 2, 3], ofIterable()),
- *   2: pipe([4, 5, 6], ofIterable()),
- *   3: pipe([7, 8, 9], ofIterable()),
+ *   1: sequence([1, 2, 3]),
+ *   2: sequence([4, 5, 6]),
+ *   3: sequence([7, 8, 9]),
  * } as const;
- * pipe([1, 2, 3], ofIterable(), mergeMap((value) => observableLookup[value])).subscribe({
+ * pipe(sequence([1, 2, 3]), mergeMap((value) => observableLookup[value])).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
  *   return: () => console.log("return"),

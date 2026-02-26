@@ -15,13 +15,13 @@ import { finalize } from "@observable/finalize";
  * @example
  * ```ts
  * import { exhaustMap } from "@observable/exhaust-map";
- * import { ofIterable } from "@observable/of-iterable";
+ * import { sequence } from "@observable/sequence";
  * import { pipe } from "@observable/pipe";
  * import { timeout } from "@observable/timeout";
  * import { map } from "@observable/map";
  *
  * const controller = new AbortController();
- * const source = pipe([1, 2, 3], ofIterable());
+ * const source = sequence([1, 2, 3]);
  *
  * pipe(
  *   source,

@@ -1,7 +1,7 @@
 import { assertEquals, assertStrictEquals, assertThrows } from "@std/assert";
 import { Observer } from "@observable/core";
 import { noop } from "@observable/internal";
-import { ofIterable } from "@observable/of-iterable";
+import { sequence } from "@observable/sequence";
 import { pipe } from "@observable/pipe";
 import { materialize, type ObserverNotification } from "@observable/materialize";
 import { ReplaySubject } from "./mod.ts";
@@ -46,7 +46,7 @@ Deno.test(
   () => {
     // Arrange
     const notifications: Array<ObserverNotification<number>> = [];
-    const source = pipe([1, 2, 3, 4, 5], ofIterable());
+    const source = sequence([1, 2, 3, 4, 5]);
     const subject = new ReplaySubject<number>(Infinity);
 
     // Act
