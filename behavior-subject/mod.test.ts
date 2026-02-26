@@ -1,8 +1,39 @@
-import { assertEquals, assertThrows } from "@std/assert";
+import { assertEquals, assertStrictEquals, assertThrows } from "@std/assert";
 import { Observable, Observer } from "@observable/core";
 import { materialize, type ObserverNotification } from "@observable/materialize";
 import { pipe } from "@observable/pipe";
 import { BehaviorSubject } from "./mod.ts";
+
+Deno.test("BehaviorSubject.toString should be '[object BehaviorSubject]'", () => {
+  // Arrange / Act / Assert
+  assertStrictEquals(`${new BehaviorSubject(2)}`, "[object BehaviorSubject]");
+});
+
+Deno.test("AsyncSubject.constructor should be frozen", () => {
+  // Arrange / Act / Assert
+  assertStrictEquals(Object.isFrozen(BehaviorSubject), true);
+});
+
+Deno.test("AsyncSubject should be frozen", () => {
+  // Arrange / Act / Assert
+  assertStrictEquals(Object.isFrozen(new BehaviorSubject(2)), true);
+});
+
+Deno.test("AsyncSubject.prototype should be frozen", () => {
+  // Arrange / Act / Assert
+  assertStrictEquals(Object.isFrozen(BehaviorSubject.prototype), true);
+});
+
+Deno.test(
+  "BehaviorSubject should not freeze Object.prototype",
+  () => {
+    // Arrange / Act
+    new BehaviorSubject(2);
+
+    // Assert
+    assertStrictEquals(Object.isFrozen(Object.prototype), false);
+  },
+);
 
 Deno.test(
   "BehaviorSubject.constructor should not throw when creating with more than one argument",

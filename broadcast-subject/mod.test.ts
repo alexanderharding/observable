@@ -38,6 +38,18 @@ Deno.test("BroadcastSubject.prototype should be frozen", () => {
 });
 
 Deno.test(
+  "BroadcastSubject should not freeze Object.prototype",
+  () => {
+    // Arrange / Act
+    const subject = new BroadcastSubject("test");
+
+    // Assert
+    assertStrictEquals(Object.isFrozen(Object.prototype), false);
+    subject.return(); // Clean up
+  },
+);
+
+Deno.test(
   "BroadcastSubject.constructor should throw when creating with 0 arguments",
   () => {
     // Arrange / Act / Assert
