@@ -1,6 +1,5 @@
 import { isObservable, Observable } from "@observable/core";
-import { asObservable } from "@observable/as-observable";
-import { pipe } from "@observable/pipe";
+import { from } from "@observable/from";
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 
 /**
@@ -43,13 +42,11 @@ export function mergeMap<In, Out>(
   project: (value: In, index: number) => Observable<Out>,
 ): (source: Observable<In>) => Observable<Out> {
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-  if (typeof project !== "function") {
-    throw new ParameterTypeError(0, "Function");
-  }
+  if (typeof project !== "function") throw new ParameterTypeError(0, "Function");
   return function mergeMapFn(source) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
-    source = pipe(source, asObservable());
+    source = from(source);
     return new Observable((observer) => {
       let index = 0;
       let outerSubscriptionHasReturned = false;
@@ -59,7 +56,7 @@ export function mergeMap<In, Out>(
         signal: observer.signal,
         next(value) {
           activeInnerSubscriptions++;
-          pipe(project(value, index++), asObservable()).subscribe({
+          from(project(value, index++)).subscribe({
             signal: observer.signal,
             next: (value) => observer.next(value),
             return() {

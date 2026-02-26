@@ -1,5 +1,5 @@
 import { isObservable, type Observable } from "@observable/core";
-import { asObservable } from "@observable/as-observable";
+import { from } from "@observable/from";
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 import { pipe } from "@observable/pipe";
 import { flat } from "@observable/flat";
@@ -59,11 +59,14 @@ export function repeat<Value>(
   notifier: Observable = pipe([undefined], ofIterable()),
 ): (source: Observable<Value>) => Observable<Value> {
   if (!isObservable(notifier)) throw new ParameterTypeError(0, "Observable");
-  notifier = pipe(notifier, asObservable());
+  notifier = from(notifier);
   return function repeatFn(source) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
-    source = pipe(source, asObservable());
-    return flat([source, pipe(notifier, take(1), mergeMap(() => pipe(source, repeat(notifier))))]);
+    source = from(source);
+    return flat([
+      source,
+      pipe(notifier, take(1), mergeMap(() => pipe(source, repeat(notifier)))),
+    ]);
   };
 }

@@ -443,7 +443,7 @@ Deno.test("share should work with observable-like sources", () => {
   ]);
 });
 
-Deno.test("share should propagate asObservable error when connector returns non-observable", () => {
+Deno.test("share should propagate from error when connector returns non-observable", () => {
   // Arrange
   const source = new Subject<number>();
   const shared = pipe(

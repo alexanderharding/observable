@@ -2,7 +2,6 @@
   "workspace": [
     "all",
     "as-async-iterable",
-    "as-observable",
     "as-promise",
     "async-subject",
     "behavior-subject",
@@ -22,6 +21,7 @@
     "finalize",
     "flat",
     "flat-map",
+    "from",
     "internal",
     "interval",
     "keep-alive",

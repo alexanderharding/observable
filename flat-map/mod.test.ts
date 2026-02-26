@@ -218,7 +218,7 @@ Deno.test("flatMap should flatten many inner, and outer throws", () => {
 });
 
 Deno.test(
-  "flatMap should propagate asObservable error when project returns non-observable",
+  "flatMap should propagate from error when project returns non-observable",
   () => {
     // Arrange
     const source = new Subject<number>();
@@ -246,7 +246,7 @@ Deno.test(
 );
 
 Deno.test(
-  "flatMap should propagate asObservable error when project returns non-observable after first value",
+  "flatMap should propagate from error when project returns non-observable after first value",
   () => {
     // Arrange
     const source = pipe(["a", "b"], ofIterable());

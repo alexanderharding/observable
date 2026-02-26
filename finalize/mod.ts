@@ -1,5 +1,5 @@
 import { isObservable, Observable } from "@observable/core";
-import { asObservable } from "@observable/as-observable";
+import { from } from "@observable/from";
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 import { pipe } from "@observable/pipe";
 
@@ -56,13 +56,11 @@ export function finalize<Value>(
   teardown: () => void,
 ): (source: Observable<Value>) => Observable<Value> {
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-  if (typeof teardown !== "function") {
-    throw new ParameterTypeError(0, "Function");
-  }
+  if (typeof teardown !== "function") throw new ParameterTypeError(0, "Function");
   return function finalizeFn(source) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
-    source = pipe(source, asObservable());
+    source = from(source);
     return new Observable((observer) => {
       observer.signal.addEventListener("abort", () => teardown(), {
         once: true,

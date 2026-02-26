@@ -1,5 +1,5 @@
 import { isObservable, Observable } from "@observable/core";
-import { asObservable } from "@observable/as-observable";
+import { from } from "@observable/from";
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 import { empty } from "@observable/empty";
 import { pipe } from "@observable/pipe";
@@ -37,7 +37,7 @@ export function take<Value>(
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
     if (count <= 0 || Number.isNaN(count)) return empty;
-    source = pipe(source, asObservable());
+    source = from(source);
     if (count === Infinity) return source;
     return new Observable((observer) => {
       let seen = 0;

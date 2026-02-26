@@ -1,5 +1,5 @@
 import { isObservable, type Observable } from "@observable/core";
-import { asObservable } from "@observable/as-observable";
+import { from } from "@observable/from";
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 import { pipe } from "@observable/pipe";
 import { filter } from "@observable/filter";
@@ -47,7 +47,7 @@ export function pairwise<Value>(): (
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
     const seed: Pair<Value | typeof noValue> = [noValue, noValue];
-    source = pipe(source, asObservable());
+    source = from(source);
     return pipe(
       source,
       scan(([, previous], current) => [previous, current] as const, seed),

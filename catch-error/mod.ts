@@ -1,6 +1,6 @@
 import { isObservable, Observable } from "@observable/core";
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
-import { asObservable } from "@observable/as-observable";
+import { from } from "@observable/from";
 import { pipe } from "@observable/pipe";
 
 /**
@@ -39,7 +39,7 @@ export function catchError<Value, ProjectedValue>(
   return function catchErrorFn(source) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
-    source = pipe(source, asObservable());
+    source = from(source);
     return new Observable((observer) =>
       source.subscribe({
         signal: observer.signal,
@@ -47,7 +47,7 @@ export function catchError<Value, ProjectedValue>(
         return: () => observer.return(),
         throw(value) {
           try {
-            pipe(project(value), asObservable()).subscribe(observer);
+            from(project(value)).subscribe(observer);
           } catch (error) {
             observer.throw(error);
           }
