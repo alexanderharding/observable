@@ -64,9 +64,6 @@ export function repeat<Value>(
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
     source = from(source);
-    return flat([
-      source,
-      pipe(notifier, take(1), mergeMap(() => pipe(source, repeat(notifier)))),
-    ]);
+    return flat([source, pipe(notifier, take(1), mergeMap(() => pipe(source, repeat(notifier))))]);
   };
 }
