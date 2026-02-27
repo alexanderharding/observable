@@ -1,5 +1,5 @@
 import { isObservable, type Observable } from "@observable/core";
-import { asObservable } from "@observable/as-observable";
+import { from } from "@observable/from";
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 import { defer } from "@observable/defer";
 import { pipe } from "@observable/pipe";
@@ -42,12 +42,12 @@ export function scan<In, Out>(
   return function scanFn(source) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
-    source = pipe(source, asObservable());
+    source = from(source);
     return defer(() => {
       let previous = seed;
       return pipe(
         source,
-        map((current, index) => previous = reducer(previous, current, index)),
+        map((current, index) => (previous = reducer(previous, current, index))),
       );
     });
   };

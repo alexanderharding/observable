@@ -1,5 +1,5 @@
 import { isObservable, type Observable } from "@observable/core";
-import { asObservable } from "@observable/as-observable";
+import { from } from "@observable/from";
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 import { pipe } from "@observable/pipe";
 import { map } from "@observable/map";
@@ -46,13 +46,11 @@ export function distinctUntilChanged<Value>(
   // strict equality checks.
   comparator: (previous: Value, current: Value) => boolean = Object.is,
 ): (source: Observable<Value>) => Observable<Value> {
-  if (typeof comparator !== "function") {
-    throw new ParameterTypeError(0, "Function");
-  }
+  if (typeof comparator !== "function") throw new ParameterTypeError(0, "Function");
   return function distinctUntilChangedFn(source) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
-    source = pipe(source, asObservable());
+    source = from(source);
     return pipe(
       flat([pipe([noValue], ofIterable()), source]),
       pairwise(),
@@ -61,9 +59,9 @@ export function distinctUntilChanged<Value>(
     );
   };
 
-  function isDistinct(
-    [previous, current]: Readonly<[previous: Value | typeof noValue, current: Value]>,
-  ): boolean {
+  function isDistinct([previous, current]: Readonly<
+    [previous: Value | typeof noValue, current: Value]
+  >): boolean {
     return previous === noValue || !comparator(previous, current);
   }
 }

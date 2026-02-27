@@ -1,5 +1,5 @@
 import { isObservable, Observable, Subject } from "@observable/core";
-import { asObservable } from "@observable/as-observable";
+import { from } from "@observable/from";
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 import { pipe } from "@observable/pipe";
 import { finalize } from "@observable/finalize";
@@ -93,22 +93,20 @@ import { defer } from "@observable/defer";
 export function share<Value>(
   factory: () => Subject<NoInfer<Value>> = () => new Subject(),
 ): (source: Observable<Value>) => Observable<Value> {
-  if (typeof factory !== "function") {
-    throw new ParameterTypeError(0, "Function");
-  }
+  if (typeof factory !== "function") throw new ParameterTypeError(0, "Function");
   return function shareFn(source) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
     let activeSubscriptions = 0;
     let shared: Observable<Value> | undefined;
-    source = pipe(source, asObservable());
+    source = from(source);
     return pipe(
       defer(() => {
         ++activeSubscriptions;
         if (isObservable(shared)) return shared;
         return new Observable((observer) => {
           const subject = factory();
-          (shared = pipe(subject, asObservable())).subscribe(observer);
+          (shared = from(subject)).subscribe(observer);
           source.subscribe(subject);
         });
       }),

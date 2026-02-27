@@ -317,7 +317,7 @@ Deno.test("expand should propagate error when project throws synchronously", () 
   assertEquals(notifications, [["next", 1], ["throw", projectError]]);
 });
 
-Deno.test("expand should propagate asObservable error when project returns non-observable", () => {
+Deno.test("expand should propagate from error when project returns non-observable", () => {
   // Arrange
   const notifications: Array<ObserverNotification<unknown>> = [];
   const source = new Subject<number>();

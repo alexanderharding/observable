@@ -364,7 +364,7 @@ Deno.test(
 );
 
 Deno.test(
-  "mergeMap should propagate asObservable error when project returns non-observable",
+  "mergeMap should propagate from error when project returns non-observable",
   () => {
     // Arrange
     const source = new Subject<number>();

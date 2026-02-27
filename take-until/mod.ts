@@ -1,6 +1,5 @@
 import { isObservable, Observable } from "@observable/core";
-import { asObservable } from "@observable/as-observable";
-import { pipe } from "@observable/pipe";
+import { from } from "@observable/from";
 import { MinimumArgumentsRequiredError, noop, ParameterTypeError } from "@observable/internal";
 
 /**
@@ -37,11 +36,11 @@ export function takeUntil<Value>(
 ): (source: Observable<Value>) => Observable<Value> {
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
   if (!isObservable(notifier)) throw new ParameterTypeError(0, "Observable");
-  notifier = pipe(notifier, asObservable());
+  notifier = from(notifier);
   return function takeUntilFn(source) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
-    source = pipe(source, asObservable());
+    source = from(source);
     return new Observable((observer) => {
       notifier.subscribe({
         signal: observer.signal,
