@@ -299,7 +299,7 @@ Deno.test("catchError should emit multiple values from recovery observable", () 
   ]);
 });
 
-Deno.test("catchError should propagate asObservable error when handleError returns non-observable", () => {
+Deno.test("catchError should propagate from error when handleError returns non-observable", () => {
   // Arrange
   const originalError = new Error("original");
   const notifications: Array<ObserverNotification<unknown>> = [];
@@ -348,7 +348,7 @@ Deno.test("catchError should propagate error when handleError throws synchronous
   assertEquals(notifications, [["throw", handlerError]]);
 });
 
-Deno.test("catchError should propagate asObservable error when handleError returns null", () => {
+Deno.test("catchError should propagate from error when handleError returns null", () => {
   // Arrange
   const originalError = new Error("original");
   const notifications: Array<ObserverNotification<unknown>> = [];
@@ -374,7 +374,7 @@ Deno.test("catchError should propagate asObservable error when handleError retur
   );
 });
 
-Deno.test("catchError should propagate asObservable error when handleError returns undefined", () => {
+Deno.test("catchError should propagate from error when handleError returns undefined", () => {
   // Arrange
   const originalError = new Error("original");
   const notifications: Array<ObserverNotification<unknown>> = [];
@@ -400,7 +400,7 @@ Deno.test("catchError should propagate asObservable error when handleError retur
   );
 });
 
-Deno.test("catchError should propagate asObservable error when handleError returns plain object", () => {
+Deno.test("catchError should propagate from error when handleError returns plain object", () => {
   // Arrange
   const originalError = new Error("original");
   const notifications: Array<ObserverNotification<unknown>> = [];

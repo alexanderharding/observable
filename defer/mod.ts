@@ -1,6 +1,5 @@
 import { Observable } from "@observable/core";
-import { asObservable } from "@observable/as-observable";
-import { pipe } from "@observable/pipe";
+import { from } from "@observable/from";
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 
 /**
@@ -48,5 +47,5 @@ export function defer<Value>(
 ): Observable<Value> {
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
   if (typeof factory !== "function") throw new ParameterTypeError(0, "Function");
-  return new Observable((observer) => pipe(factory(), asObservable()).subscribe(observer));
+  return new Observable((observer) => from(factory()).subscribe(observer));
 }

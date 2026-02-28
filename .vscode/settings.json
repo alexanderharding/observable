@@ -1,5 +1,1 @@
-{
-  "editor.defaultFormatter": "denoland.vscode-deno",
-  "editor.formatOnPaste": true,
-  "editor.formatOnSave": true
-}
+{ "editor.defaultFormatter": "denoland.vscode-deno" }

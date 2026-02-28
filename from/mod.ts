@@ -3,21 +3,20 @@ import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/i
 
 /**
  * Converts a custom [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) to a proper
- * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable). If the [source](https://jsr.io/@observable/core#source) is
+ * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable). If the provided {@linkcode value} is
  * already an instanceof [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)
  * (which means it has [`Observable.prototype`](https://jsr.io/@observable/core/doc/~/ObservableConstructor.prototype)
  * in its prototype chain), it's returned directly. Otherwise, a new [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)
- * object is created that wraps the original [source](https://jsr.io/@observable/core#source).
+ * object is created that wraps the original provided {@linkcode value}.
  * @example
  * ```ts
  * import { Observable } from "@observable/core";
- * import { asObservable } from "@observable/as-observable";
- * import { pipe } from "@observable/pipe";
+ * import { from } from "@observable/from";
  *
  * const observableInstance = new Observable((observer) => {
  *   // Implementation omitted for brevity.
  * });
- * const result = pipe(observableInstance, asObservable());
+ * const result = from(observableInstance);
  *
  * result === observableInstance; // true
  * result instanceof Observable; // true
@@ -25,30 +24,25 @@ import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/i
  * @example
  * ```ts
  * import { Observable } from "@observable/core";
- * import { asObservable } from "@observable/as-observable";
- * import { pipe } from "@observable/pipe";
+ * import { from } from "@observable/from";
  *
  * const customObservable: Observable = {
  *   subscribe(observer) {
  *     // Implementation omitted for brevity.
  *   },
  * };
- * const result = pipe(customObservable, asObservable());
+ * const result = from(customObservable);
  *
  * result === customObservable; // false
  * result instanceof Observable; // true
  * ```
  */
-export function asObservable<Value>(): (
-  source: Observable<Value>,
-) => Observable<Value>;
-export function asObservable<Value>(): (
-  source: Pick<Observable<Value>, keyof Observable<Value>>,
-) => Observable<Value> {
-  return function asObservableFn(source) {
-    if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-    if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
-    if (source instanceof Observable) return source;
-    return new Observable((observer) => source.subscribe(observer));
-  };
+export function from<Value>(value: Observable<Value>): Observable<Value>;
+export function from<Value>(
+  value: Pick<Observable<Value>, keyof Observable<Value>>,
+): Observable<Value> {
+  if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
+  if (!isObservable(value)) throw new ParameterTypeError(0, "Observable");
+  if (value instanceof Observable) return value;
+  return new Observable((observer) => value.subscribe(observer));
 }

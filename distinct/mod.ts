@@ -1,5 +1,5 @@
 import { isObservable, type Observable } from "@observable/core";
-import { asObservable } from "@observable/as-observable";
+import { from } from "@observable/from";
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 import { defer } from "@observable/defer";
 import { pipe } from "@observable/pipe";
@@ -38,14 +38,10 @@ export function distinct<Value>(): (
   return function distinctFn(source) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
-    source = pipe(source, asObservable());
+    source = from(source);
     return defer(() => {
       const values = new Set<Value>();
-      return pipe(
-        source,
-        filter((value) => !values.has(value)),
-        tap((value) => values.add(value)),
-      );
+      return pipe(source, filter((value) => !values.has(value)), tap((value) => values.add(value)));
     });
   };
 }

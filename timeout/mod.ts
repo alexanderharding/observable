@@ -72,9 +72,7 @@ import { never } from "@observable/never";
  */
 export function timeout(milliseconds: number): Observable<void> {
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-  if (typeof milliseconds !== "number") {
-    throw new ParameterTypeError(0, "Number");
-  }
+  if (typeof milliseconds !== "number") throw new ParameterTypeError(0, "Number");
   if (milliseconds < 0 || Number.isNaN(milliseconds)) return empty;
   if (milliseconds === 0) return sequence([void 0]);
   if (milliseconds === Infinity) return never;

@@ -58,7 +58,7 @@ Deno.test("defer should throw an error if the factory throws an error", () => {
   assertEquals(notifications, [["throw", error]]);
 });
 
-Deno.test("defer should propagate asObservable error when getter returns non-observable", () => {
+Deno.test("defer should propagate from error when getter returns non-observable", () => {
   // Arrange
   const notifications: Array<ObserverNotification<unknown>> = [];
   const source = defer(
@@ -81,7 +81,7 @@ Deno.test("defer should propagate asObservable error when getter returns non-obs
   );
 });
 
-Deno.test("defer should propagate asObservable error when getter returns null", () => {
+Deno.test("defer should propagate from error when getter returns null", () => {
   // Arrange
   const notifications: Array<ObserverNotification<unknown>> = [];
   const source = defer(

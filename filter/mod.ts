@@ -1,7 +1,6 @@
 import { isObservable, Observable } from "@observable/core";
-import { asObservable } from "@observable/as-observable";
+import { from } from "@observable/from";
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
-import { pipe } from "@observable/pipe";
 
 /**
  * Filters [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values from the
@@ -36,7 +35,7 @@ export function filter<Value>(
   return function filterFn(source) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
-    source = pipe(source, asObservable());
+    source = from(source);
     return new Observable((observer) => {
       let index = 0;
       source.subscribe({
