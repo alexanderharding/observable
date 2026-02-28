@@ -1,7 +1,6 @@
 {
   "workspace": [
     "all",
-    "as-promise",
     "async-subject",
     "behavior-subject",
     "broadcast-subject",
@@ -25,6 +24,7 @@
     "internal",
     "interval",
     "keep-alive",
+    "last-value-from",
     "map",
     "materialize",
     "merge",
