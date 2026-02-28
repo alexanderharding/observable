@@ -1,7 +1,6 @@
 {
   "workspace": [
     "all",
-    "as-async-iterable",
     "as-promise",
     "async-subject",
     "behavior-subject",
@@ -13,6 +12,7 @@
     "distinct",
     "distinct-until-changed",
     "drop",
+    "each-value-from",
     "empty",
     "exhaust-map",
     "expand",
