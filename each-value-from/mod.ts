@@ -9,13 +9,25 @@ import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/i
 const notThrown = Symbol("Flag indicating that a value is not thrown.");
 
 /**
+ * Flag indicating that we are done yielding values.
+ * @internal Do NOT export.
+ */
+const doneValue = Symbol("Flag indicating that we are done yielding values.");
+
+/**
+ * Object type representing a deferred resolver.
+ * @internal Do NOT export.
+ */
+type Deferred<Value> = Omit<PromiseWithResolvers<Value>, "promise">;
+
+/**
  * Projects the provided {@linkcode observable|Observable} to an
  * [`AsyncGenerator`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/AsyncGenerator)
  * that [`yield`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/yield)s each
  * [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed {@linkcode Value|value} in order.
  * @example
  * ```ts
- * import { nextV * import { eachValueFrom } from "@obserable/each-value-from";
+ * import { eachValueFrom } from "@observable/each-value-from";
  * import { ofIterable } from "@observable/of-iterable";
  * import { pipe } from "@observable/pipe";
  *
@@ -87,25 +99,24 @@ export async function* eachValueFrom<Value>(
   let thrownValue: unknown = notThrown;
   let returned = false;
   const buffer: Array<Value> = [];
-  const deferredResolvers: Array<
-    Omit<PromiseWithResolvers<IteratorResult<Value, void>>, "promise">
-  > = [];
+  const deferreds: Array<Deferred<Value | typeof doneValue>> = [];
 
   from(observable).subscribe({
     signal: activeSubscriptionController.signal,
     next(value) {
-      if (deferredResolvers.length) deferredResolvers.shift()!.resolve({ value, done: false });
+      const deferred = deferreds.shift();
+      if (deferred) deferred.resolve(value);
       else buffer.push(value);
     },
     return() {
       returned = true;
-      while (deferredResolvers.length) {
-        deferredResolvers.shift()!.resolve({ value: undefined, done: true });
-      }
+      let deferred: Deferred<Value | typeof doneValue> | undefined;
+      while ((deferred = deferreds.shift())) deferred.resolve(doneValue);
     },
     throw(value) {
       thrownValue = value;
-      while (deferredResolvers.length) deferredResolvers.shift()!.reject(value);
+      let deferred: Deferred<Value | typeof doneValue> | undefined;
+      while ((deferred = deferreds.shift())) deferred.reject(value);
     },
   });
 
@@ -117,20 +128,17 @@ export async function* eachValueFrom<Value>(
       else if (returned) return;
       // If the source has thrown an error, we'll rethrow it.
       else if (thrownValue !== notThrown) throw thrownValue;
+      // Otherwise, we'll wait for the next value.
       else {
-        // Otherwise, we'll wait for the next value.
-        const { promise, ...resolvers } = Promise.withResolvers<IteratorResult<Value, void>>();
-        deferredResolvers.push(resolvers);
-        const result = await promise;
-        if (result.done) return;
-        else yield result.value;
+        const value = await new Promise<Value | typeof doneValue>((resolve, reject) => {
+          deferreds.push({ resolve, reject });
+        });
+        if (value !== doneValue && !returned) yield value;
       }
     }
-  } catch (value) {
-    throw value;
   } finally {
     activeSubscriptionController.abort();
-    deferredResolvers.length = 0;
+    deferreds.length = 0;
     buffer.length = 0;
   }
 }

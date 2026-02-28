@@ -1,13 +1,11 @@
 # [@observable/each-value-from](https://jsr.io/@observable/each-value-from)
 
-A library for making [@observable](https://jsr.io/@observable) support
-[each-value-from...of](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/each-value-from...of)
-via
-[`AsyncGenerator`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/AsyncGenerator)s.
+Projects the provided [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) to an
+[`AsyncGenerator`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/AsyncGenerator)
+that [`yield`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/yield)s
+each [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed value in order.
 
 ## Examples
-
-**Sync sequence:**
 
 ```ts
 import { eachValueFrom } from "@observable/each-value-from";
@@ -17,38 +15,40 @@ import { pipe } from "@observable/pipe";
 for await (const value of eachValueFrom(pipe([1, 2, 3], ofIterable()))) {
   console.log(value);
 }
+console.log("Done!");
+
+// Console output:
 // 1
 // 2
 // 3
+// "Done!"
 ```
-
-**Errors:**
 
 ```ts
 import { eachValueFrom } from "@observable/each-value-from";
 import { throwError } from "@observable/throw-error";
-import { pipe } from "@observable/pipe";
 
 try {
-  for await (const value of eachValueFrom(pipe(throwError(new Error("test"))))) {
+  for await (const value of eachValueFrom(throwError(new Error("test")))) {
     console.log(value);
   }
 } catch (error) {
-  console.log(error); // Error: test
+  console.log(error);
+  // Console output:
+  // Error: test
 }
 ```
-
-**Breaking out unsubscribes:**
 
 ```ts
 import { eachValueFrom } from "@observable/each-value-from";
 import { interval } from "@observable/interval";
-import { pipe } from "@observable/pipe";
 
-for await (const value of eachValueFrom(pipe(interval(100)))) {
+for await (const value of eachValueFrom(interval(100))) {
   console.log(value);
-  if (value === 5) break; // Stops the interval subscription
+  if (value === 5) break;
 }
+
+// Console output:
 // 0
 // 1
 // 2
@@ -57,17 +57,17 @@ for await (const value of eachValueFrom(pipe(interval(100)))) {
 // 5
 ```
 
-**Empty observable:**
-
 ```ts
 import { eachValueFrom } from "@observable/each-value-from";
 import { empty } from "@observable/empty";
 import { pipe } from "@observable/pipe";
 
-for await (const value of eachValueFrom(pipe(empty))) {
+for await (const value of eachValueFrom(empty)) {
   console.log(value);
 }
 console.log("Done!");
+
+// Console output:
 // Done!
 ```
 
@@ -116,7 +116,7 @@ BREAKING OUT: Breaking out of the loop or calling iterator.return() aborts the s
 
 IMPORTANT:
 - Subscription starts when iteration begins
-- Yields every value in order (unlike asPromise which only gives the last)
+- Yields every value in order (unlike lastValueFrom which only gives the last)
 - Breaking or closing the loop unsubscribes from the source
 ````
 
