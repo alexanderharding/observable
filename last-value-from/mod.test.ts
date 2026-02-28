@@ -1,44 +1,38 @@
 import { assertEquals, assertRejects, assertStrictEquals } from "@std/assert";
 import { pipe } from "@observable/pipe";
-import { asPromise } from "./mod.ts";
+import { lastValueFrom } from "./mod.ts";
 import { ofIterable } from "@observable/of-iterable";
 import { throwError } from "@observable/throw-error";
 import { empty } from "@observable/empty";
 
-Deno.test("asPromise should pump throw values right through the Promise", async () => {
+Deno.test("lastValueFrom should pump throw values right through the Promise", async () => {
   // Arrange
   const error = new Error("test");
 
   // Act
   try {
-    await pipe(
-      throwError(error),
-      asPromise(),
-    );
+    await lastValueFrom(throwError(error));
   } catch (error) {
     // Assert
     assertStrictEquals(error, error);
   }
 });
 
-Deno.test("asPromise should pump last next value through the Promise", async () => {
+Deno.test("lastValueFrom should pump last next value through the Promise", async () => {
   // Arrange
-  const source = pipe([1, 2, 3], ofIterable());
+  const observable = pipe([1, 2, 3], ofIterable());
 
   // Act
-  const value = await pipe(
-    source,
-    asPromise(),
-  );
+  const value = await lastValueFrom(observable);
 
   // Assert
   assertEquals(value, 3);
 });
 
-Deno.test("asPromise should reject with TypeError when source is empty", async () => {
+Deno.test("lastValueFrom should reject with TypeError when source is empty", async () => {
   // Arrange / Act / Assert
   await assertRejects(
-    () => pipe(empty, asPromise()),
+    () => lastValueFrom(empty),
     TypeError,
     "Cannot convert empty Observable to Promise",
   );
