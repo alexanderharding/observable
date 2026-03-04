@@ -6,6 +6,7 @@ import { throwError } from "@observable/throw-error";
 import { map } from "./mod.ts";
 import { materialize, type ObserverNotification } from "@observable/materialize";
 import { empty } from "@observable/empty";
+import { of } from "@observable/of";
 
 Deno.test("map should project the values", () => {
   // Arrange
@@ -99,7 +100,7 @@ Deno.test("map should throw if the project function throws", () => {
   const error = new Error("test");
   const notifications: Array<ObserverNotification<number>> = [];
   const observable = pipe(
-    forOf([1]),
+    of(1),
     map(() => {
       throw error;
     }),

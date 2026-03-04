@@ -81,9 +81,7 @@ export function flat<const Values extends ReadonlyArray<unknown>>(
  * // "return"
  * ```
  */
-export function flat<Value>(
-  sources: Iterable<Observable<Value>>,
-): Observable<Value>;
+export function flat<Value>(sources: Iterable<Observable<Value>>): Observable<Value>;
 export function flat<Value>(
   // Accepting any iterable is a design choice for performance (iterables are
   // lazily evaluated) and flexibility.

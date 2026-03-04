@@ -5,7 +5,7 @@ import {
   ParameterTypeError,
 } from "@observable/internal";
 import { flat } from "@observable/flat";
-import { forOf } from "@observable/for-of";
+import { of } from "@observable/of";
 import { pipe } from "@observable/pipe";
 import { switchMap } from "@observable/switch-map";
 import { drop } from "@observable/drop";
@@ -71,20 +71,20 @@ export interface AsyncSubjectConstructor {
  */
 const stringTag = "AsyncSubject";
 
-export const AsyncSubject: AsyncSubjectConstructor = class {
+export const AsyncSubject: AsyncSubjectConstructor = class<Value> {
   readonly [Symbol.toStringTag] = stringTag;
-  readonly #subject = new ReplaySubject(1);
+  readonly #subject = new ReplaySubject<Value>(1);
   readonly signal = this.#subject.signal;
   readonly #observable = pipe(
     this.#subject,
-    switchMap((value) => flat([pipe(this.#subject, drop<never>(Infinity)), forOf([value])])),
+    switchMap((value) => flat([pipe(this.#subject, drop<never>(Infinity)), of(value)])),
   );
 
   constructor() {
     Object.freeze(this);
   }
 
-  next(value: unknown): void {
+  next(value: Value): void {
     if (this instanceof AsyncSubject) this.#subject.next(value);
     else throw new InstanceofError("this", stringTag);
   }
@@ -99,10 +99,8 @@ export const AsyncSubject: AsyncSubjectConstructor = class {
     else throw new InstanceofError("this", stringTag);
   }
 
-  subscribe(observer: Observer): void {
-    if (!(this instanceof AsyncSubject)) {
-      throw new InstanceofError("this", stringTag);
-    }
+  subscribe(observer: Observer<Value>): void {
+    if (!(this instanceof AsyncSubject)) throw new InstanceofError("this", stringTag);
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObserver(observer)) throw new ParameterTypeError(0, "Observer");
     this.#observable.subscribe(observer);

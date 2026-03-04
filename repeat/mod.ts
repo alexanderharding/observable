@@ -5,7 +5,7 @@ import { pipe } from "@observable/pipe";
 import { flat } from "@observable/flat";
 import { take } from "@observable/take";
 import { mergeMap } from "@observable/merge-map";
-import { forOf } from "@observable/for-of";
+import { of } from "@observable/of";
 
 /**
  * Re-[`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe)s to the
@@ -56,7 +56,7 @@ import { forOf } from "@observable/for-of";
  * ```
  */
 export function repeat<Value>(
-  notifier: Observable = forOf([void 0]),
+  notifier: Observable = of(void 0),
 ): (source: Observable<Value>) => Observable<Value> {
   if (!isObservable(notifier)) throw new ParameterTypeError(0, "Observable");
   notifier = from(notifier);

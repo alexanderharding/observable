@@ -6,6 +6,7 @@ import { throwError } from "@observable/throw-error";
 import { scan } from "./mod.ts";
 import { materialize, type ObserverNotification } from "@observable/materialize";
 import { empty } from "@observable/empty";
+import { of } from "@observable/of";
 
 Deno.test("scan should accumulate values with a seed", () => {
   // Arrange
@@ -122,7 +123,7 @@ Deno.test("scan should throw if the accumulator function throws", () => {
   const error = new Error("test");
   const notifications: Array<ObserverNotification<number>> = [];
   const observable = pipe(
-    forOf([1]),
+    of(1),
     scan(() => {
       throw error;
     }, 0),

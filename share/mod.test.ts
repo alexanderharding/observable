@@ -8,6 +8,7 @@ import { materialize, type ObserverNotification } from "@observable/materialize"
 import { ReplaySubject } from "@observable/replay-subject";
 import { defer } from "@observable/defer";
 import { never } from "@observable/never";
+import { of } from "@observable/of";
 
 Deno.test("share should not throw when called with no connector argument", () => {
   // Arrange / Act / Assert
@@ -119,7 +120,7 @@ Deno.test("share should not subscribe to source until first observer", () => {
   let subscribed = false;
   const source = defer(() => {
     subscribed = true;
-    return forOf([1]);
+    return of(1);
   });
   const shared = pipe(source, share());
   assertStrictEquals(subscribed, false);
@@ -328,7 +329,7 @@ Deno.test("share should create new source subscription after source returns", ()
   let sourceSubscribeCount = 0;
   const source = defer(() => {
     sourceSubscribeCount++;
-    return forOf([sourceSubscribeCount]);
+    return of(sourceSubscribeCount);
   });
   const shared = pipe(source, share());
   const notifications1: Array<ObserverNotification<number>> = [];

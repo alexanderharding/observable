@@ -1,7 +1,7 @@
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 import { Observable } from "@observable/core";
 import { empty } from "@observable/empty";
-import { forOf } from "@observable/for-of";
+import { of } from "@observable/of";
 import { never } from "@observable/never";
 import { pipe } from "@observable/pipe";
 import { take } from "@observable/take";
@@ -74,11 +74,9 @@ import { take } from "@observable/take";
  */
 export function timeout(milliseconds: number): Observable<void> {
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-  if (typeof milliseconds !== "number") {
-    throw new ParameterTypeError(0, "Number");
-  }
+  if (typeof milliseconds !== "number") throw new ParameterTypeError(0, "Number");
   if (milliseconds < 0 || Number.isNaN(milliseconds)) return empty;
-  if (milliseconds === 0) return forOf([void 0]);
+  if (milliseconds === 0) return of(void 0);
   if (milliseconds === Infinity) return never;
   return pipe(
     new Observable<void>((observer) => {
