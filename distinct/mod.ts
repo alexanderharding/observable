@@ -41,11 +41,7 @@ export function distinct<Value>(): (
     source = from(source);
     return defer(() => {
       const values = new Set<Value>();
-      return pipe(
-        source,
-        filter((value) => !values.has(value)),
-        tap((value) => values.add(value)),
-      );
+      return pipe(source, filter((value) => !values.has(value)), tap((value) => values.add(value)));
     });
   };
 }
