@@ -46,9 +46,7 @@ export function interval(milliseconds: number): Observable<void> {
   if (milliseconds === Infinity) return never;
   return new Observable<void>((observer) => {
     const interval = setInterval(() => observer.next(), milliseconds);
-    observer.signal.addEventListener("abort", () => clearInterval(interval), {
-      once: true,
-    });
+    observer.signal.addEventListener("abort", () => clearInterval(interval), { once: true });
   });
 }
 
