@@ -44,9 +44,7 @@ const noValue = Symbol("Flag indicating that no value has been emitted yet");
 export function distinctUntilChanged<Value>(
   comparator: (previous: Value, current: Value) => boolean = Object.is,
 ): (source: Observable<Value>) => Observable<Value> {
-  if (typeof comparator !== "function") {
-    throw new ParameterTypeError(0, "Function");
-  }
+  if (typeof comparator !== "function") throw new ParameterTypeError(0, "Function");
   return function distinctUntilChangedFn(source) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
