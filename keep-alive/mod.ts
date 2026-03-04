@@ -9,11 +9,11 @@ const { signal: noopSignal } = new AbortController();
  * @example
  * ```ts
  * import { keepAlive } from "@observable/keep-alive";
- * import { iterate } from "@observable/iterate";
+ * import { forOf } from "@observable/for-of";
  * import { pipe } from "@observable/pipe";
  *
  * const controller = new AbortController();
- * pipe(iterate([1, 2, 3]), keepAlive()).subscribe({
+ * pipe(forOf([1, 2, 3]), keepAlive()).subscribe({
  *   signal: controller.signal,
  *   next: (value) => {
  *     console.log("next", value);
