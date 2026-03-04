@@ -24,13 +24,12 @@ import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
-pipe(forOf([1, 2, 3, 4, 5]), filter((value) => value % 2 === 0))
-  .subscribe({
-    signal: controller.signal,
-    next: (value) => console.log("next", value),
-    return: () => console.log("return"),
-    throw: (value) => console.log("throw", value),
-  });
+pipe(forOf([1, 2, 3, 4, 5]), filter((value) => value % 2 === 0)).subscribe({
+  signal: controller.signal,
+  next: (value) => console.log("next", value),
+  return: () => console.log("return"),
+  throw: (value) => console.log("throw", value),
+});
 
 // Console output:
 // "next" 2

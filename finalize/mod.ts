@@ -55,17 +55,13 @@ export function finalize<Value>(
   teardown: () => void,
 ): (source: Observable<Value>) => Observable<Value> {
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-  if (typeof teardown !== "function") {
-    throw new ParameterTypeError(0, "Function");
-  }
+  if (typeof teardown !== "function") throw new ParameterTypeError(0, "Function");
   return function finalizeFn(source) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
     source = from(source);
     return new Observable((observer) => {
-      observer.signal.addEventListener("abort", () => teardown(), {
-        once: true,
-      });
+      observer.signal.addEventListener("abort", () => teardown(), { once: true });
       source.subscribe(observer);
     });
   };
