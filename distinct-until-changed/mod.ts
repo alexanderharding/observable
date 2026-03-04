@@ -6,7 +6,7 @@ import { map } from "@observable/map";
 import { filter } from "@observable/filter";
 import { pairwise } from "@observable/pairwise";
 import { flat } from "@observable/flat";
-import { fromIterable } from "@observable/from-iterable";
+import { forOf } from "@observable/for-of";
 
 /**
  * Flag indicating that no value has been emitted yet.
@@ -23,11 +23,11 @@ const noValue = Symbol("Flag indicating that no value has been emitted yet");
  * @example
  * ```ts
  * import { distinctUntilChanged } from "@observable/distinct-until-changed";
- * import { fromIterable } from "@observable/from-iterable";
+ * import { forOf } from "@observable/for-of";
  * import { pipe } from "@observable/pipe";
  *
  * const controller = new AbortController();
- * pipe(fromIterable([1, 1, 1, 2, 2, 3]), distinctUntilChanged()).subscribe({
+ * pipe(forOf([1, 1, 1, 2, 2, 3]), distinctUntilChanged()).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log(value),
  *   return: () => console.log("return"),
@@ -44,13 +44,15 @@ const noValue = Symbol("Flag indicating that no value has been emitted yet");
 export function distinctUntilChanged<Value>(
   comparator: (previous: Value, current: Value) => boolean = Object.is,
 ): (source: Observable<Value>) => Observable<Value> {
-  if (typeof comparator !== "function") throw new ParameterTypeError(0, "Function");
+  if (typeof comparator !== "function") {
+    throw new ParameterTypeError(0, "Function");
+  }
   return function distinctUntilChangedFn(source) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
     source = from(source);
     return pipe(
-      flat([fromIterable([noValue]), source]),
+      flat([forOf([noValue]), source]),
       pairwise(),
       filter(isDistinct),
       map(([_, current]) => current),

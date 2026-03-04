@@ -14,11 +14,11 @@ import { map } from "@observable/map";
  * @example
  * ```ts
  * import { scan } from "@observable/scan";
- * import { fromIterable } from "@observable/from-iterable";
+ * import { forOf } from "@observable/for-of";
  * import { pipe } from "@observable/pipe";
  *
  * const controller = new AbortController();
- * const source = fromIterable([1, 2, 3]);
+ * const source = forOf([1, 2, 3]);
  * pipe(source, scan((previous, current) => previous + current, 0)).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
@@ -38,7 +38,9 @@ export function scan<In, Out>(
   seed: Out,
 ): (source: Observable<In>) => Observable<Out> {
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-  if (typeof reducer !== "function") throw new ParameterTypeError(0, "Function");
+  if (typeof reducer !== "function") {
+    throw new ParameterTypeError(0, "Function");
+  }
   return function scanFn(source) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");

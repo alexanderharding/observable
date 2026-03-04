@@ -5,7 +5,7 @@ import { pipe } from "@observable/pipe";
 import { flat } from "@observable/flat";
 import { take } from "@observable/take";
 import { mergeMap } from "@observable/merge-map";
-import { fromIterable } from "@observable/from-iterable";
+import { forOf } from "@observable/for-of";
 
 /**
  * Re-[`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe)s to the
@@ -18,12 +18,12 @@ import { fromIterable } from "@observable/from-iterable";
  * @example
  * ```ts
  * import { repeat } from "@observable/repeat";
- * import { fromIterable } from "@observable/from-iterable";
+ * import { forOf } from "@observable/for-of";
  * import { pipe } from "@observable/pipe";
  * import { empty } from "@observable/empty";
  * import { defer } from "@observable/defer";
  *
- * const source = fromIterable([1, 2, 3]);
+ * const source = forOf([1, 2, 3]);
  * const controller = new AbortController();
  * const repeated = defer(() => {
  *   let count = 0;
@@ -31,7 +31,7 @@ import { fromIterable } from "@observable/from-iterable";
  *     source,
  *     repeat(defer(() => {
  *      console.log("notifier subscribed");
- *      return ++count === 2 ? empty : fromIterable([undefined]);
+ *      return ++count === 2 ? empty : forOf([undefined]);
  *     })),
  *   );
  * });
@@ -56,7 +56,7 @@ import { fromIterable } from "@observable/from-iterable";
  * ```
  */
 export function repeat<Value>(
-  notifier: Observable = fromIterable([void 0]),
+  notifier: Observable = forOf([void 0]),
 ): (source: Observable<Value>) => Observable<Value> {
   if (!isObservable(notifier)) throw new ParameterTypeError(0, "Observable");
   notifier = from(notifier);

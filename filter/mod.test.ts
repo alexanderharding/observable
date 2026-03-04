@@ -1,6 +1,6 @@
 import { assertEquals } from "@std/assert";
 import { type Observable, Observer } from "@observable/core";
-import { fromIterable } from "@observable/from-iterable";
+import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 import { filter } from "./mod.ts";
 import { materialize, type ObserverNotification } from "@observable/materialize";
@@ -12,7 +12,7 @@ Deno.test(
   () => {
     // Arrange
     const materialized = pipe(
-      fromIterable([1, 2, 3, 4, 5]),
+      forOf([1, 2, 3, 4, 5]),
       filter((value) => value % 2 === 0),
       materialize(),
     );
@@ -37,7 +37,7 @@ Deno.test("filter should pump throws right through itself", () => {
   // Arrange
   const error = new Error("test");
   const materialized = pipe(
-    flat([fromIterable([1, 2, 3]), throwError(error)]),
+    flat([forOf([1, 2, 3]), throwError(error)]),
     filter((value) => value % 2 === 0),
     materialize(),
   );
@@ -65,7 +65,7 @@ Deno.test("filter should honor unsubscribe", () => {
   const controller = new AbortController();
   const observable = pipe(
     flat([
-      fromIterable([1, 2, 3]),
+      forOf([1, 2, 3]),
       throwError(new Error("Should not make it here")),
     ]),
     filter((value) => value % 2 === 0),

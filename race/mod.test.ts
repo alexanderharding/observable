@@ -7,7 +7,7 @@ import { throwError } from "@observable/throw-error";
 import { materialize, type ObserverNotification } from "@observable/materialize";
 import { race } from "./mod.ts";
 import { defer } from "@observable/defer";
-import { fromIterable } from "@observable/from-iterable";
+import { forOf } from "@observable/for-of";
 import { flat } from "@observable/flat";
 
 Deno.test(
@@ -64,11 +64,11 @@ Deno.test(
     });
     const source2 = defer(() => {
       deferredCalls.push(2);
-      return flat([fromIterable([1, 2, 3]), never]);
+      return flat([forOf([1, 2, 3]), never]);
     });
     const source3 = defer(() => {
       deferredCalls.push(3);
-      return fromIterable([4, 5, 6]);
+      return forOf([4, 5, 6]);
     });
     const observable = race([source1, source2, source3]);
 
@@ -100,11 +100,11 @@ Deno.test(
     });
     const source2 = defer(() => {
       deferredCalls.push(2);
-      return flat([fromIterable([1, 2, 3]), throwError(error)]);
+      return flat([forOf([1, 2, 3]), throwError(error)]);
     });
     const source3 = defer(() => {
       deferredCalls.push(3);
-      return fromIterable([4, 5, 6]);
+      return forOf([4, 5, 6]);
     });
     const observable = race([source1, source2, source3]);
 

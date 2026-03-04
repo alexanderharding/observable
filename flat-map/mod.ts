@@ -13,15 +13,15 @@ import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/i
  * @example
  * ```ts
  * import { flatMap } from "@observable/flat-map";
- * import { fromIterable } from "@observable/from-iterable";
+ * import { forOf } from "@observable/for-of";
  * import { pipe } from "@observable/pipe";
  *
- * const source = fromIterable(["a", "b", "c"]);
+ * const source = forOf(["a", "b", "c"]);
  * const controller = new AbortController();
  * const observableLookup = {
- *   a: fromIterable([1, 2, 3]),
- *   b: fromIterable([4, 5, 6]),
- *   c: fromIterable([7, 8, 9]),
+ *   a: forOf([1, 2, 3]),
+ *   b: forOf([4, 5, 6]),
+ *   c: forOf([7, 8, 9]),
  * } as const;
  *
  * pipe(source, flatMap((value) => observableLookup[value])).subscribe({
@@ -48,7 +48,9 @@ export function flatMap<In, Out>(
   project: (value: In, index: number) => Observable<Out>,
 ): (source: Observable<In>) => Observable<Out> {
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-  if (typeof project !== "function") throw new ParameterTypeError(0, "Function");
+  if (typeof project !== "function") {
+    throw new ParameterTypeError(0, "Function");
+  }
   return function flatMapFn(source) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");

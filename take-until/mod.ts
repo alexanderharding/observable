@@ -10,7 +10,7 @@ import { MinimumArgumentsRequiredError, noop, ParameterTypeError } from "@observ
  * ```ts
  * import { Subject } from "@observable/core";
  * import { takeUntil } from "@observable/take-until";
- * import { fromIterable } from "@observable/from-iterable";
+ * import { forOf } from "@observable/for-of";
  * import { pipe } from "@observable/pipe";
  *
  * const controller = new AbortController();

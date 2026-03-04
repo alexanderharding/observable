@@ -1,4 +1,4 @@
-# [@observable/from-iterable](https://jsr.io/@observable/from-iterable)
+# [@observable/for-of](https://jsr.io/@observable/for-of)
 
 Projects an
 [`Iterable`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols)
@@ -22,11 +22,11 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 ## Example
 
 ```ts
-import { fromIterable } from "@observable/from-iterable";
+import { forOf } from "@observable/for-of";
 
 const controller = new AbortController();
 
-fromIterable([1, 2, 3]).subscribe({
+forOf([1, 2, 3]).subscribe({
   signal: controller.signal,
   next: (value) => console.log("next", value),
   return: () => console.log("return"),

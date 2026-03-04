@@ -23,13 +23,13 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 
 ```ts
 import { exhaustMap } from "@observable/exhaust-map";
-import { fromIterable } from "@observable/from-iterable";
+import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 import { timeout } from "@observable/timeout";
 import { map } from "@observable/map";
 
 const controller = new AbortController();
-const source = fromIterable([1, 2, 3]);
+const source = forOf([1, 2, 3]);
 
 pipe(
   source,
@@ -64,7 +64,7 @@ CRITICAL: This library is NOT RxJS. Key differences:
 USAGE PATTERN:
 ```ts
 import { exhaustMap } from "@observable/exhaust-map";
-import { fromIterable } from "@observable/from-iterable";
+import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 import { timeout } from "@observable/timeout";
 import { map } from "@observable/map";
@@ -72,7 +72,7 @@ import { map } from "@observable/map";
 const controller = new AbortController();
 
 pipe(
-  fromIterable([1, 2, 3]),  // Rapid clicks
+  forOf([1, 2, 3]),  // Rapid clicks
   exhaustMap((value) => pipe(
     timeout(100),
     map(() => value)

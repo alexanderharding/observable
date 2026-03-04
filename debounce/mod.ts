@@ -7,7 +7,7 @@ import { timeout } from "@observable/timeout";
 import { drop } from "@observable/drop";
 import { from } from "@observable/from";
 import { flat } from "@observable/flat";
-import { fromIterable } from "@observable/from-iterable";
+import { forOf } from "@observable/for-of";
 
 /**
  * Debounces the [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values from the
@@ -41,7 +41,9 @@ export function debounce<Value>(
   milliseconds: number,
 ): (source: Observable<Value>) => Observable<Value> {
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-  if (typeof milliseconds !== "number") throw new ParameterTypeError(0, "Number");
+  if (typeof milliseconds !== "number") {
+    throw new ParameterTypeError(0, "Number");
+  }
   return function debounceFn(source) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
@@ -51,7 +53,10 @@ export function debounce<Value>(
     return pipe(
       source,
       switchMap((value) =>
-        flat([pipe(timeout(milliseconds), drop<never>(Infinity)), fromIterable([value])])
+        flat([
+          pipe(timeout(milliseconds), drop<never>(Infinity)),
+          forOf([value]),
+        ])
       ),
     );
   };

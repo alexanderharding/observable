@@ -1,7 +1,7 @@
 import { assertEquals, assertThrows } from "@std/assert";
 import { type Observable, Observer, Subject } from "@observable/core";
 import { pipe } from "@observable/pipe";
-import { fromIterable } from "@observable/from-iterable";
+import { forOf } from "@observable/for-of";
 import { materialize, type ObserverNotification } from "@observable/materialize";
 import { catchError } from "./mod.ts";
 import { throwError } from "@observable/throw-error";
@@ -13,10 +13,10 @@ Deno.test("catchError should catch errors and emit values from project", () => {
   // Arrange
   const error = new Error("test error");
   const notifications: Array<ObserverNotification<number | string>> = [];
-  const source = flat([fromIterable([1, 2]), throwError(error)]);
+  const source = flat([forOf([1, 2]), throwError(error)]);
   const materialized = pipe(
     source,
-    catchError(() => fromIterable(["recovered"])),
+    catchError(() => forOf(["recovered"])),
     materialize(),
   );
 
@@ -44,7 +44,7 @@ Deno.test("catchError should pass error value to project", () => {
     source,
     catchError((err) => {
       receivedError = err;
-      return fromIterable(["handled"]);
+      return forOf(["handled"]);
     }),
     materialize(),
   );
@@ -83,10 +83,10 @@ Deno.test("catchError should propagate error from resolved observable", () => {
 Deno.test("catchError should pass through values if no error occurs", () => {
   // Arrange
   const notifications: Array<ObserverNotification<number>> = [];
-  const source = fromIterable([1, 2, 3]);
+  const source = forOf([1, 2, 3]);
   const materialized = pipe(
     source,
-    catchError(() => fromIterable([999])),
+    catchError(() => forOf([999])),
     materialize(),
   );
 
@@ -110,7 +110,7 @@ Deno.test("catchError should pass through return", () => {
   const source = empty;
   const materialized = pipe(
     source,
-    catchError(() => fromIterable([999])),
+    catchError(() => forOf([999])),
     materialize(),
   );
 
@@ -127,10 +127,10 @@ Deno.test("catchError should honor unsubscribe", () => {
   // Arrange
   const controller = new AbortController();
   const notifications: Array<ObserverNotification<number>> = [];
-  const source = fromIterable([1, 2, 3, 4, 5]);
+  const source = forOf([1, 2, 3, 4, 5]);
   const materialized = pipe(
     source,
-    catchError(() => fromIterable([999])),
+    catchError(() => forOf([999])),
     materialize(),
   );
 
@@ -156,8 +156,8 @@ Deno.test("catchError should honor unsubscribe during error handling", () => {
   const controller = new AbortController();
   const error = new Error("test");
   const notifications: Array<ObserverNotification<number>> = [];
-  const source = flat([fromIterable([1]), throwError(error)]);
-  const recoverySource = fromIterable([10, 20, 30]);
+  const source = flat([forOf([1]), throwError(error)]);
+  const recoverySource = forOf([10, 20, 30]);
   const materialized = pipe(
     source,
     catchError(() => recoverySource),
@@ -202,7 +202,7 @@ Deno.test("catchError should throw when project is not a function", () => {
 
 Deno.test("catchError should throw when called without source", () => {
   // Arrange
-  const operator = catchError(() => fromIterable([1]));
+  const operator = catchError(() => forOf([1]));
 
   // Act / Assert
   assertThrows(
@@ -214,7 +214,7 @@ Deno.test("catchError should throw when called without source", () => {
 
 Deno.test("catchError should throw when source is not an Observable", () => {
   // Arrange
-  const operator = catchError(() => fromIterable([1]));
+  const operator = catchError(() => forOf([1]));
 
   // Act / Assert
   assertThrows(
@@ -232,7 +232,7 @@ Deno.test("catchError should work with Subject", () => {
   const source = new Subject<number>();
   const materialized = pipe(
     source,
-    catchError(() => fromIterable(["caught"])),
+    catchError(() => forOf(["caught"])),
     materialize(),
   );
 
@@ -281,7 +281,7 @@ Deno.test("catchError should emit multiple values from recovery observable", () 
   const source = throwError(error);
   const materialized = pipe(
     source,
-    catchError(() => fromIterable([10, 20, 30])),
+    catchError(() => forOf([10, 20, 30])),
     materialize(),
   );
 

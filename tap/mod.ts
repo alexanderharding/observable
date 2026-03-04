@@ -9,13 +9,13 @@ import { map } from "@observable/map";
  * @example
  * ```ts
  * import { tap } from "@observable/tap";
- * import { fromIterable } from "@observable/from-iterable";
+ * import { forOf } from "@observable/for-of";
  * import { pipe } from "@observable/pipe";
  *
  * const activeSubscriptionController = new AbortController();
  *
  * pipe(
- *   fromIterable([1, 2, 3]),
+ *   forOf([1, 2, 3]),
  *   tap((value) => console.log("tap callback", value)),
  * ).subscribe({
  *   signal: activeSubscriptionController.signal,
@@ -38,7 +38,9 @@ export function tap<Value>(
   callback: (value: Value, index: number) => void,
 ): (source: Observable<Value>) => Observable<Value> {
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-  if (typeof callback !== "function") throw new ParameterTypeError(0, "Function");
+  if (typeof callback !== "function") {
+    throw new ParameterTypeError(0, "Function");
+  }
   return function tapFn(source) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");

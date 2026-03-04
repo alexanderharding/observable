@@ -12,10 +12,10 @@ import { empty } from "@observable/empty";
  * each {@linkcode Values|value} in order upon [`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe).
  * @example
  * ```ts
- * import { fromIterable } from "@observable/from-iterable";
+ * import { forOf } from "@observable/for-of";
  *
  * const controller = new AbortController();
- * fromIterable([1, 2, 3]).subscribe({
+ * forOf([1, 2, 3]).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
  *   return: () => console.log("return"),
@@ -29,7 +29,7 @@ import { empty } from "@observable/empty";
  * // "return"
  * ```
  */
-export function fromIterable<const Values extends ReadonlyArray<unknown>>(
+export function forOf<const Values extends ReadonlyArray<unknown>>(
   values: Values,
 ): Observable<Values[number]>;
 /**
@@ -38,10 +38,10 @@ export function fromIterable<const Values extends ReadonlyArray<unknown>>(
  * each {@linkcode Value|value} in order upon [`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe).
  * @example
  * ```ts
- * import { fromIterable } from "@observable/from-iterable";
+ * import { forOf } from "@observable/for-of";
  *
  * const controller = new AbortController();
- * fromIterable(new Set([1, 2, 1, 2, 3, 3])).subscribe({
+ * forOf(new Set([1, 2, 1, 2, 3, 3])).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
  *   return: () => console.log("return"),
@@ -55,8 +55,8 @@ export function fromIterable<const Values extends ReadonlyArray<unknown>>(
  * // "return"
  * ```
  */
-export function fromIterable<Value>(iterable: Iterable<Value>): Observable<Value>;
-export function fromIterable<Value>(iterable: Iterable<Value>): Observable<Value> {
+export function forOf<Value>(iterable: Iterable<Value>): Observable<Value>;
+export function forOf<Value>(iterable: Iterable<Value>): Observable<Value> {
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
   if (!isIterable(iterable)) throw new ParameterTypeError(0, "Iterable");
   if (Array.isArray(iterable) && !iterable.length) return empty;

@@ -1,6 +1,6 @@
 import { assertEquals, assertThrows } from "@std/assert";
 import { Observable, Observer } from "@observable/core";
-import { fromIterable } from "@observable/from-iterable";
+import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 import { throwError } from "@observable/throw-error";
 import { tap } from "./mod.ts";
@@ -46,7 +46,7 @@ Deno.test("tap should perform side-effects for each value", () => {
   const sideEffects: Array<[number, number]> = [];
   const notifications: Array<ObserverNotification<number>> = [];
   const observable = pipe(
-    fromIterable([1, 2, 3]),
+    forOf([1, 2, 3]),
     tap((value, index) => sideEffects.push([value, index])),
     materialize(),
   );
@@ -74,7 +74,7 @@ Deno.test("tap should pass values through unchanged", () => {
   // Arrange
   const notifications: Array<ObserverNotification<string>> = [];
   const observable = pipe(
-    fromIterable(["a", "b", "c"]),
+    forOf(["a", "b", "c"]),
     tap(noop),
     materialize(),
   );
@@ -119,7 +119,7 @@ Deno.test("tap should pump returns through itself", () => {
   const sideEffects: Array<number> = [];
   const notifications: Array<ObserverNotification<number>> = [];
   const observable = pipe(
-    fromIterable([]),
+    forOf([]),
     tap((value) => sideEffects.push(value)),
     materialize(),
   );
@@ -161,7 +161,7 @@ Deno.test("tap should throw if the callback throws", () => {
   const error = new Error("test");
   const notifications: Array<ObserverNotification<number>> = [];
   const observable = pipe(
-    fromIterable([1, 2, 3]),
+    forOf([1, 2, 3]),
     tap(() => {
       throw error;
     }),
@@ -182,7 +182,7 @@ Deno.test("tap callback error should be delivered as throw notification without 
   const error = new Error("callback error");
   const notifications: Array<ObserverNotification<number>> = [];
   const observable = pipe(
-    fromIterable([1]),
+    forOf([1]),
     tap(() => {
       throw error;
     }),
@@ -204,7 +204,7 @@ Deno.test("tap callback throwing on later value should stop processing", () => {
   const sideEffects: Array<number> = [];
   const notifications: Array<ObserverNotification<number>> = [];
   const observable = pipe(
-    fromIterable([1, 2, 3]),
+    forOf([1, 2, 3]),
     tap((value) => {
       sideEffects.push(value);
       if (value === 2) throw error;
@@ -226,7 +226,7 @@ Deno.test("tap should execute side-effect before downstream receives value", () 
   // Arrange
   const order: Array<string> = [];
   const observable = pipe(
-    fromIterable([1]),
+    forOf([1]),
     tap(() => order.push("tap")),
     materialize(),
   );

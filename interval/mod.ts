@@ -1,14 +1,14 @@
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 import { Observable } from "@observable/core";
 import { defer } from "@observable/defer";
-import { fromIterable } from "@observable/from-iterable";
+import { forOf } from "@observable/for-of";
 import { empty } from "@observable/empty";
 import { never } from "@observable/never";
 
 /**
  * @internal Do NOT export.
  */
-const infiniteVoid = defer(() => fromIterable(generateInfiniteVoid()));
+const infiniteVoid = defer(() => forOf(generateInfiniteVoid()));
 
 /**
  * Repeatedly [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s a `void` value with a
@@ -38,7 +38,9 @@ const infiniteVoid = defer(() => fromIterable(generateInfiniteVoid()));
  */
 export function interval(milliseconds: number): Observable<void> {
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-  if (typeof milliseconds !== "number") throw new ParameterTypeError(0, "Number");
+  if (typeof milliseconds !== "number") {
+    throw new ParameterTypeError(0, "Number");
+  }
   if (milliseconds < 0 || Number.isNaN(milliseconds)) return empty;
   if (milliseconds === 0) return infiniteVoid;
   if (milliseconds === Infinity) return never;

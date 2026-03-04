@@ -6,7 +6,7 @@ import {
 } from "@observable/internal";
 import { flat } from "@observable/flat";
 import { defer } from "@observable/defer";
-import { fromIterable } from "@observable/from-iterable";
+import { forOf } from "@observable/for-of";
 
 /**
  * Object type that acts as a variant of [`Subject`](https://jsr.io/@observable/core/doc/~/Subject).
@@ -103,7 +103,7 @@ export const ReplaySubject: ReplaySubjectConstructor = class {
   readonly #subject = new Subject();
   readonly signal = this.#subject.signal;
   readonly #observable = flat([
-    defer(() => fromIterable(this.#bufferSnapshot ??= this.#buffer.slice())),
+    defer(() => forOf(this.#bufferSnapshot ??= this.#buffer.slice())),
     this.#subject,
   ]);
 
@@ -120,7 +120,9 @@ export const ReplaySubject: ReplaySubjectConstructor = class {
   }
 
   next(value: unknown): void {
-    if (!(this instanceof ReplaySubject)) throw new InstanceofError("this", stringTag);
+    if (!(this instanceof ReplaySubject)) {
+      throw new InstanceofError("this", stringTag);
+    }
     if (!this.signal.aborted && this.#count > 0) {
       // Add the next value to the buffer.
       const length = this.#buffer.push(value);
@@ -143,7 +145,9 @@ export const ReplaySubject: ReplaySubjectConstructor = class {
   }
 
   subscribe(observer: Observer): void {
-    if (!(this instanceof ReplaySubject)) throw new InstanceofError("this", stringTag);
+    if (!(this instanceof ReplaySubject)) {
+      throw new InstanceofError("this", stringTag);
+    }
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObserver(observer)) throw new ParameterTypeError(0, "Observer");
     this.#observable.subscribe(observer);

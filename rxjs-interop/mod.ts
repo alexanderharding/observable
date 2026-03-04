@@ -36,7 +36,9 @@ export function asObservable<Value>(): (
 ) => Observable<Value> {
   return function asObservableFn(source) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-    if (!isRxJsObservable(source)) throw new ParameterTypeError(0, "RxJsObservable");
+    if (!isRxJsObservable(source)) {
+      throw new ParameterTypeError(0, "RxJsObservable");
+    }
     return new Observable((observer) => {
       // Create a new subscriber to manually before subscribing to the source so we have precise
       // control over teardown timing which is crucial to prevent reentrancy issues. We'll swap
@@ -63,11 +65,11 @@ export function asObservable<Value>(): (
  * @example
  * ```ts
  * import { asRxJsObservable } from "@observable/rxjs-interop";
- * import { fromIterable } from "@observable/from-iterable";
+ * import { forOf } from "@observable/for-of";
  * import { pipe } from "@observable/pipe";
  *
  * const controller = new AbortController();
- * const observable = pipe(fromIterable([1, 2, 3]), asRxJsObservable());
+ * const observable = pipe(forOf([1, 2, 3]), asRxJsObservable());
  * const subscription = observable.subscribe({
  *   next: (value) => console.log("next", value),
  *   complete: () => console.log("complete"),

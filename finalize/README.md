@@ -20,11 +20,11 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 
 ```ts
 import { finalize } from "@observable/finalize";
-import { fromIterable } from "@observable/from-iterable";
+import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
-pipe(fromIterable([1, 2, 3]), finalize(() => console.log("finalized")))
+pipe(forOf([1, 2, 3]), finalize(() => console.log("finalized")))
   .subscribe({
     signal: controller.signal,
     next: (value) => console.log("next", value),
@@ -58,13 +58,13 @@ CRITICAL: This library is NOT RxJS. Key differences:
 USAGE PATTERN:
 ```ts
 import { finalize } from "@observable/finalize";
-import { fromIterable } from "@observable/from-iterable";
+import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
 
 pipe(
-  fromIterable([1, 2, 3]),
+  forOf([1, 2, 3]),
   finalize(() => console.log("finalized"))
 ).subscribe({
   signal: controller.signal,

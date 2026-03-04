@@ -25,17 +25,17 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 
 ```ts
 import { switchMap } from "@observable/switch-map";
-import { fromIterable } from "@observable/from-iterable";
+import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
 const observableLookup = {
-  1: fromIterable([1, 2, 3]),
-  2: fromIterable([4, 5, 6]),
-  3: fromIterable([7, 8, 9]),
+  1: forOf([1, 2, 3]),
+  2: forOf([4, 5, 6]),
+  3: forOf([7, 8, 9]),
 } as const;
 
-pipe(fromIterable([1, 2, 3]), switchMap((value) => observableLookup[value]))
+pipe(forOf([1, 2, 3]), switchMap((value) => observableLookup[value]))
   .subscribe({
     signal: controller.signal,
     next: (value) => console.log("next", value),
@@ -68,13 +68,13 @@ CRITICAL: This library is NOT RxJS. Key differences:
 USAGE PATTERN:
 ```ts
 import { switchMap } from "@observable/switch-map";
-import { fromIterable } from "@observable/from-iterable";
+import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
 
 pipe(
-  fromIterable([1, 2, 3]),
+  forOf([1, 2, 3]),
   switchMap((id) => fetchUser(id))  // Only latest request matters
 ).subscribe({
   signal: controller.signal,
@@ -96,9 +96,9 @@ pipe(
 
 SYNCHRONOUS EXAMPLE:
 ```ts
-const lookup = { 1: fromIterable([1, 2, 3]), 2: fromIterable([4, 5, 6]), 3: fromIterable([7, 8, 9]) };
+const lookup = { 1: forOf([1, 2, 3]), 2: forOf([4, 5, 6]), 3: forOf([7, 8, 9]) };
 pipe(
-  fromIterable([1, 2, 3]),
+  forOf([1, 2, 3]),
   switchMap((key) => lookup[key])
 ).subscribe({ ... });
 // Only emits: 7, 8, 9 (from the last Observable)

@@ -8,11 +8,11 @@ import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/i
  * @example
  * ```ts
  * import { filter } from "@observable/filter";
- * import { fromIterable } from "@observable/from-iterable";
+ * import { forOf } from "@observable/for-of";
  * import { pipe } from "@observable/pipe";
  *
  * const controller = new AbortController();
- * pipe(fromIterable([1, 2, 3, 4, 5]), filter((value) => value % 2 === 0)).subscribe({
+ * pipe(forOf([1, 2, 3, 4, 5]), filter((value) => value % 2 === 0)).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
  *   return: () => console.log("return"),
@@ -29,7 +29,9 @@ export function filter<Value>(
   predicate: (value: Value, index: number) => boolean,
 ): (source: Observable<Value>) => Observable<Value> {
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-  if (typeof predicate !== "function") throw new ParameterTypeError(0, "Function");
+  if (typeof predicate !== "function") {
+    throw new ParameterTypeError(0, "Function");
+  }
   return function filterFn(source) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");

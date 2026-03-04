@@ -1,7 +1,7 @@
 import { assertEquals, assertThrows } from "@std/assert";
 import { Observer, Subject } from "@observable/core";
 import { pipe } from "@observable/pipe";
-import { fromIterable } from "@observable/from-iterable";
+import { forOf } from "@observable/for-of";
 import { materialize, type ObserverNotification } from "@observable/materialize";
 import { distinctUntilChanged } from "./mod.ts";
 import { flat } from "@observable/flat";
@@ -13,7 +13,7 @@ Deno.test(
   () => {
     // Arrange
     const notifications: Array<ObserverNotification<number>> = [];
-    const source = fromIterable([1, 1, 1, 2, 2, 3, 3, 3, 1, 1]);
+    const source = forOf([1, 1, 1, 2, 2, 3, 3, 3, 1, 1]);
     const materialized = pipe(source, distinctUntilChanged(), materialize());
 
     // Act
@@ -37,7 +37,7 @@ Deno.test(
   () => {
     // Arrange
     const notifications: Array<ObserverNotification<number>> = [];
-    const source = fromIterable([1, 2, 3, 4, 5]);
+    const source = forOf([1, 2, 3, 4, 5]);
     const materialized = pipe(source, distinctUntilChanged(), materialize());
 
     // Act
@@ -62,7 +62,7 @@ Deno.test(
   () => {
     // Arrange
     const notifications: Array<ObserverNotification<number>> = [];
-    const source = fromIterable([5, 5, 5, 5, 5]);
+    const source = forOf([5, 5, 5, 5, 5]);
     const materialized = pipe(source, distinctUntilChanged(), materialize());
 
     // Act
@@ -94,7 +94,7 @@ Deno.test("distinctUntilChanged should pump throws right through itself", () => 
   // Arrange
   const error = new Error("test error");
   const notifications: Array<ObserverNotification<number>> = [];
-  const source = flat([fromIterable([1, 1, 2]), throwError(error)]);
+  const source = flat([forOf([1, 1, 2]), throwError(error)]);
   const materialized = pipe(source, distinctUntilChanged(), materialize());
 
   // Act
@@ -115,7 +115,7 @@ Deno.test("distinctUntilChanged should honor unsubscribe", () => {
   const controller = new AbortController();
   const notifications: Array<ObserverNotification<number>> = [];
   const source = flat([
-    fromIterable([1, 2, 2, 3, 3, 3]),
+    forOf([1, 2, 2, 3, 3, 3]),
     throwError(new Error("Should not make it here")),
   ]);
   const materialized = pipe(source, distinctUntilChanged(), materialize());
@@ -142,7 +142,7 @@ Deno.test(
   () => {
     // Arrange
     const notifications: Array<ObserverNotification<{ id: number }>> = [];
-    const source = fromIterable([
+    const source = forOf([
       { id: 1 },
       { id: 1 },
       { id: 2 },
@@ -176,7 +176,7 @@ Deno.test(
   () => {
     // Arrange
     const notifications: Array<ObserverNotification<number>> = [];
-    const source = fromIterable([NaN, NaN, 1, 1]);
+    const source = forOf([NaN, NaN, 1, 1]);
     const materialized = pipe(source, distinctUntilChanged(), materialize());
 
     // Act

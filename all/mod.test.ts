@@ -5,7 +5,7 @@ import { flat } from "@observable/flat";
 import { defer } from "@observable/defer";
 import { empty } from "@observable/empty";
 import { never } from "@observable/never";
-import { fromIterable } from "@observable/from-iterable";
+import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 import { all } from "./mod.ts";
 import { ReplaySubject } from "@observable/replay-subject";
@@ -16,9 +16,9 @@ Deno.test(
   () => {
     // Arrange
     const notifications: Array<ObserverNotification<ReadonlyArray<number>>> = [];
-    const source1 = fromIterable([1, 2, 3]);
-    const source2 = fromIterable([4, 5, 6]);
-    const source3 = fromIterable([7, 8, 9]);
+    const source1 = forOf([1, 2, 3]);
+    const source2 = forOf([4, 5, 6]);
+    const source3 = forOf([7, 8, 9]);
     const observable = all([source1, source2, source3]);
 
     // Act
@@ -48,7 +48,7 @@ Deno.test(
     const notifications: Array<ObserverNotification<ReadonlyArray<unknown>>> = [];
     const source1 = defer(() => {
       deferCalls.push(1);
-      return flat([fromIterable([1, 2, 3]), never]);
+      return flat([forOf([1, 2, 3]), never]);
     });
     const source2 = defer(() => {
       deferCalls.push(2);
@@ -56,7 +56,7 @@ Deno.test(
     });
     const source3 = defer(() => {
       deferCalls.push(3);
-      return fromIterable([7, 8, 9]);
+      return forOf([7, 8, 9]);
     });
     const observable = all([source1, source2, source3]);
 
@@ -75,10 +75,10 @@ Deno.test("all should handle reentrancy", () => {
   // Arrange
   const notifications: Array<ObserverNotification<ReadonlyArray<number>>> = [];
   const source1 = new ReplaySubject<1 | 2 | 3 | 10>(3);
-  const source2 = fromIterable([4, 5, 6]);
-  const source3 = fromIterable([7, 8, 9]);
+  const source2 = forOf([4, 5, 6]);
+  const source3 = forOf([7, 8, 9]);
   const observable = all([source1, source2, source3]);
-  flat([fromIterable([1, 2, 3]), never]).subscribe(source1);
+  flat([forOf([1, 2, 3]), never]).subscribe(source1);
 
   // Act
   pipe(observable, materialize()).subscribe(
@@ -111,9 +111,9 @@ Deno.test("all should return empty when given an empty array", () => {
 Deno.test("all should accept Set of observables", () => {
   // Arrange
   const notifications: Array<ObserverNotification<ReadonlyArray<number>>> = [];
-  const source1 = fromIterable([1, 2, 3, 4, 5, 6]);
+  const source1 = forOf([1, 2, 3, 4, 5, 6]);
   const source2 = source1;
-  const source3 = fromIterable([7, 8, 9]);
+  const source3 = forOf([7, 8, 9]);
   const observable = all(new Set([source1, source2, source3]));
 
   // Act
@@ -134,8 +134,8 @@ Deno.test("all should accept iterable (generator) of observables", () => {
   // Arrange
   const notifications: Array<ObserverNotification<ReadonlyArray<number>>> = [];
   function* observables() {
-    yield fromIterable([1, 2]);
-    yield fromIterable([3, 4]);
+    yield forOf([1, 2]);
+    yield forOf([3, 4]);
   }
   const observable = all(observables());
 

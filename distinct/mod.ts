@@ -14,11 +14,11 @@ import { filter } from "@observable/filter";
  * @example
  * ```ts
  * import { distinct } from "@observable/distinct";
- * import { fromIterable } from "@observable/from-iterable";
+ * import { forOf } from "@observable/for-of";
  * import { pipe } from "@observable/pipe";
  *
  * const controller = new AbortController();
- * pipe(fromIterable([1, 2, 2, 3, 1, 3]), distinct()).subscribe({
+ * pipe(forOf([1, 2, 2, 3, 1, 3]), distinct()).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
  *   return: () => console.log("return"),
@@ -41,7 +41,11 @@ export function distinct<Value>(): (
     source = from(source);
     return defer(() => {
       const values = new Set<Value>();
-      return pipe(source, filter((value) => !values.has(value)), tap((value) => values.add(value)));
+      return pipe(
+        source,
+        filter((value) => !values.has(value)),
+        tap((value) => values.add(value)),
+      );
     });
   };
 }

@@ -23,11 +23,11 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 
 ```ts
 import { distinct } from "@observable/distinct";
-import { fromIterable } from "@observable/from-iterable";
+import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
-pipe(fromIterable([1, 2, 2, 3, 1, 3]), distinct()).subscribe({
+pipe(forOf([1, 2, 2, 3, 1, 3]), distinct()).subscribe({
   signal: controller.signal,
   next: (value) => console.log("next", value),
   return: () => console.log("return"),
@@ -59,13 +59,13 @@ CRITICAL: This library is NOT RxJS. Key differences:
 USAGE PATTERN:
 ```ts
 import { distinct } from "@observable/distinct";
-import { fromIterable } from "@observable/from-iterable";
+import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
 
 pipe(
-  fromIterable([1, 2, 2, 3, 1, 3, 4]),
+  forOf([1, 2, 2, 3, 1, 3, 4]),
   distinct()
 ).subscribe({
   signal: controller.signal,
