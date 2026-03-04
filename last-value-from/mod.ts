@@ -63,9 +63,7 @@ import { share } from "@observable/share";
  * // TypeError: Cannot convert empty Observable to Promise
  * ```
  */
-export function lastValueFrom<Value>(
-  observable: Observable<Value>,
-): Promise<Value> {
+export function lastValueFrom<Value>(observable: Observable<Value>): Promise<Value> {
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
   if (!isObservable(observable)) throw new ParameterTypeError(0, "Observable");
   return new Promise((resolve, reject) => {
