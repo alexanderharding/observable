@@ -16,7 +16,7 @@ Deno.test("catchError should catch errors and emit values from project", () => {
   const source = flat([forOf([1, 2]), throwError(error)]);
   const materialized = pipe(
     source,
-    catchError(() => forOf(["recovered"])),
+    catchError(() => of("recovered")),
     materialize(),
   );
 
@@ -44,7 +44,7 @@ Deno.test("catchError should pass error value to project", () => {
     source,
     catchError((err) => {
       receivedError = err;
-      return forOf(["handled"]);
+      return of("handled");
     }),
     materialize(),
   );
