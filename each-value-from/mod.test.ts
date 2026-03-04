@@ -12,6 +12,7 @@ import { timeout } from "@observable/timeout";
 import { drop } from "@observable/drop";
 import { map } from "@observable/map";
 import { defer } from "@observable/defer";
+import { of } from "@observable/of";
 
 Deno.test("eachValueFrom should throw when iterated with no source", () => {
   // Arrange / Act / Assert
@@ -191,7 +192,7 @@ Deno.test("eachValueFrom throw method should abort subscription and reject", asy
   let subscriptionAborted = false;
   const error = new Error("iterator throw");
   const source = pipe(
-    flat([forOf([1]), never]),
+    flat([of(1), never]),
     finalize(() => subscriptionAborted = true),
   );
   const generator = eachValueFrom(source);
@@ -303,7 +304,7 @@ Deno.test("eachValueFrom should only start subscription on first next call", asy
   let subscribed = false;
   const source = defer(() => {
     subscribed = true;
-    return forOf([1]);
+    return of(1);
   });
   const generator = eachValueFrom(source);
 
