@@ -48,9 +48,7 @@ export function flatMap<In, Out>(
   project: (value: In, index: number) => Observable<Out>,
 ): (source: Observable<In>) => Observable<Out> {
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-  if (typeof project !== "function") {
-    throw new ParameterTypeError(0, "Function");
-  }
+  if (typeof project !== "function") throw new ParameterTypeError(0, "Function");
   return function flatMapFn(source) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
@@ -61,9 +59,7 @@ export function flatMap<In, Out>(
       let outerSubscriptionHasReturned = false;
       const queue: Array<In> = [];
 
-      observer.signal.addEventListener("abort", () => (queue.length = 0), {
-        once: true,
-      });
+      observer.signal.addEventListener("abort", () => (queue.length = 0), { once: true });
 
       source.subscribe({
         signal: observer.signal,
