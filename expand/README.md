@@ -109,7 +109,7 @@ CRITICAL: This library is NOT RxJS. Key differences:
 USAGE PATTERN:
 ```ts
 import { expand } from "@observable/expand";
-import { forOf } from "@observable/for-of";
+import { of } from "@observable/of";
 import { pipe } from "@observable/pipe";
 import { empty } from "@observable/empty";
 
