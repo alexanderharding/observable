@@ -55,10 +55,7 @@ export function exhaustMap<In, Out>(
         filter(() => !activeInnerSubscription),
         switchMap((value, index) => {
           activeInnerSubscription = true;
-          return pipe(
-            project(value, index),
-            finalize(() => activeInnerSubscription = false),
-          );
+          return pipe(project(value, index), finalize(() => activeInnerSubscription = false));
         }),
       );
     });
