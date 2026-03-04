@@ -46,8 +46,6 @@ export function defer<Value>(
   factory: () => Observable<Value>,
 ): Observable<Value> {
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-  if (typeof factory !== "function") {
-    throw new ParameterTypeError(0, "Function");
-  }
+  if (typeof factory !== "function") throw new ParameterTypeError(0, "Function");
   return new Observable((observer) => from(factory()).subscribe(observer));
 }

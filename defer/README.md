@@ -102,7 +102,7 @@ The factory is called at subscription time, not creation time:
 ```ts
 const deferred = defer(() => {
   console.log("Factory called!");  // Only when subscribed
-  return forOf([Date.now()]);
+  return of(Date.now());
 });
 // Factory not called yet...
 deferred.subscribe({ ... });  // "Factory called!"
