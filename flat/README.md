@@ -22,12 +22,12 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 
 ```ts
 import { flat } from "@observable/flat";
-import { sequence } from "@observable/sequence";
+import { fromIterable } from "@observable/from-iterable";
 import { pipe } from "@observable/pipe";
 
-const source1 = sequence([1, 2, 3]);
-const source2 = sequence([4, 5, 6]);
-const source3 = sequence([7, 8, 9]);
+const source1 = fromIterable([1, 2, 3]);
+const source2 = fromIterable([4, 5, 6]);
+const source3 = fromIterable([7, 8, 9]);
 
 const controller = new AbortController();
 
@@ -69,12 +69,12 @@ CRITICAL: This library is NOT RxJS. Key differences:
 USAGE PATTERN:
 ```ts
 import { flat } from "@observable/flat";
-import { sequence } from "@observable/sequence";
+import { fromIterable } from "@observable/from-iterable";
 import { pipe } from "@observable/pipe";
 
-const source1 = sequence([1, 2, 3]);
-const source2 = sequence([4, 5, 6]);
-const source3 = sequence([7, 8, 9]);
+const source1 = fromIterable([1, 2, 3]);
+const source2 = fromIterable([4, 5, 6]);
+const source3 = fromIterable([7, 8, 9]);
 
 const controller = new AbortController();
 
@@ -93,8 +93,8 @@ SEQUENTIAL BEHAVIOR:
 - Repeats until all sources return
 
 USE CASES:
-- Ordered sequences that must run in order
-- Startup initialization sequences
+- Ordered ofIterables that must run in order
+- Startup initialization ofIterables
 - Chaining async operations
 
 SEE ALSO:

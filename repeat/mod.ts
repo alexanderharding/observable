@@ -5,7 +5,7 @@ import { pipe } from "@observable/pipe";
 import { flat } from "@observable/flat";
 import { take } from "@observable/take";
 import { mergeMap } from "@observable/merge-map";
-import { sequence } from "@observable/sequence";
+import { fromIterable } from "@observable/from-iterable";
 
 /**
  * Re-[`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe)s to the
@@ -18,12 +18,12 @@ import { sequence } from "@observable/sequence";
  * @example
  * ```ts
  * import { repeat } from "@observable/repeat";
- * import { sequence } from "@observable/sequence";
+ * import { fromIterable } from "@observable/from-iterable";
  * import { pipe } from "@observable/pipe";
  * import { empty } from "@observable/empty";
  * import { defer } from "@observable/defer";
  *
- * const source = sequence([1, 2, 3]);
+ * const source = fromIterable([1, 2, 3]);
  * const controller = new AbortController();
  * const repeated = defer(() => {
  *   let count = 0;
@@ -31,7 +31,7 @@ import { sequence } from "@observable/sequence";
  *     source,
  *     repeat(defer(() => {
  *      console.log("notifier subscribed");
- *      return ++count === 2 ? empty : sequence([undefined]);
+ *      return ++count === 2 ? empty : fromIterable([undefined]);
  *     })),
  *   );
  * });
@@ -56,7 +56,7 @@ import { sequence } from "@observable/sequence";
  * ```
  */
 export function repeat<Value>(
-  notifier: Observable = sequence([void 0]),
+  notifier: Observable = fromIterable([void 0]),
 ): (source: Observable<Value>) => Observable<Value> {
   if (!isObservable(notifier)) throw new ParameterTypeError(0, "Observable");
   notifier = from(notifier);
@@ -64,6 +64,9 @@ export function repeat<Value>(
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
     source = from(source);
-    return flat([source, pipe(notifier, take(1), mergeMap(() => pipe(source, repeat(notifier))))]);
+    return flat([
+      source,
+      pipe(notifier, take(1), mergeMap(() => pipe(source, repeat(notifier)))),
+    ]);
   };
 }

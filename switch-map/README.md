@@ -25,22 +25,23 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 
 ```ts
 import { switchMap } from "@observable/switch-map";
-import { sequence } from "@observable/sequence";
+import { fromIterable } from "@observable/from-iterable";
 import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
 const observableLookup = {
-  1: sequence([1, 2, 3]),
-  2: sequence([4, 5, 6]),
-  3: sequence([7, 8, 9]),
+  1: fromIterable([1, 2, 3]),
+  2: fromIterable([4, 5, 6]),
+  3: fromIterable([7, 8, 9]),
 } as const;
 
-pipe(sequence([1, 2, 3]), switchMap((value) => observableLookup[value])).subscribe({
-  signal: controller.signal,
-  next: (value) => console.log("next", value),
-  return: () => console.log("return"),
-  throw: (value) => console.log("throw", value),
-});
+pipe(fromIterable([1, 2, 3]), switchMap((value) => observableLookup[value]))
+  .subscribe({
+    signal: controller.signal,
+    next: (value) => console.log("next", value),
+    return: () => console.log("return"),
+    throw: (value) => console.log("throw", value),
+  });
 
 // Console output:
 // "next" 7
@@ -67,13 +68,13 @@ CRITICAL: This library is NOT RxJS. Key differences:
 USAGE PATTERN:
 ```ts
 import { switchMap } from "@observable/switch-map";
-import { sequence } from "@observable/sequence";
+import { fromIterable } from "@observable/from-iterable";
 import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
 
 pipe(
-  sequence([1, 2, 3]),
+  fromIterable([1, 2, 3]),
   switchMap((id) => fetchUser(id))  // Only latest request matters
 ).subscribe({
   signal: controller.signal,
@@ -95,9 +96,9 @@ pipe(
 
 SYNCHRONOUS EXAMPLE:
 ```ts
-const lookup = { 1: sequence([1, 2, 3]), 2: sequence([4, 5, 6]), 3: sequence([7, 8, 9]) };
+const lookup = { 1: fromIterable([1, 2, 3]), 2: fromIterable([4, 5, 6]), 3: fromIterable([7, 8, 9]) };
 pipe(
-  sequence([1, 2, 3]),
+  fromIterable([1, 2, 3]),
   switchMap((key) => lookup[key])
 ).subscribe({ ... });
 // Only emits: 7, 8, 9 (from the last Observable)

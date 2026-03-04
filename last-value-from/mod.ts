@@ -15,9 +15,9 @@ import { share } from "@observable/share";
  * @example
  * ```ts
  * import { lastValueFrom } from "@observable/last-value-from";
- * import { sequence } from "@observable/sequence";
+ * import { fromIterable } from "@observable/from-iterable";
  *
- * console.log(await lastValueFrom(sequence([1, 2, 3])));
+ * console.log(await lastValueFrom(fromIterable([1, 2, 3])));
  *
  * // Console output:
  * // 3
@@ -25,11 +25,11 @@ import { share } from "@observable/share";
  * @example
  * ```ts
  * import { lastValueFrom } from "@observable/last-value-from";
- * import { sequence } from "@observable/sequence";
+ * import { fromIterable } from "@observable/from-iterable";
  * import { pipe } from "@observable/pipe";
  * import { take } from "@observable/take";
  *
- * console.log(await lastValueFrom(pipe(sequence([1, 2, 3]), take(1))));
+ * console.log(await lastValueFrom(pipe(fromIterable([1, 2, 3]), take(1))));
  *
  * // Console output:
  * // 1
@@ -63,7 +63,9 @@ import { share } from "@observable/share";
  * // TypeError: Cannot convert empty Observable to Promise
  * ```
  */
-export function lastValueFrom<Value>(observable: Observable<Value>): Promise<Value> {
+export function lastValueFrom<Value>(
+  observable: Observable<Value>,
+): Promise<Value> {
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
   if (!isObservable(observable)) throw new ParameterTypeError(0, "Observable");
   return new Promise((resolve, reject) => {

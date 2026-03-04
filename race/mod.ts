@@ -5,7 +5,7 @@ import {
   ParameterTypeError,
 } from "@observable/internal";
 import { defer } from "@observable/defer";
-import { sequence } from "@observable/sequence";
+import { fromIterable } from "@observable/from-iterable";
 import { pipe } from "@observable/pipe";
 import { tap } from "@observable/tap";
 import { mergeMap } from "@observable/merge-map";
@@ -92,7 +92,7 @@ export function race<Value>(
   return defer(() => {
     const finished = new Subject<number>();
     return pipe(
-      sequence(sources),
+      fromIterable(sources),
       takeUntil(finished),
       mergeMap((source, index) =>
         pipe(
@@ -101,7 +101,9 @@ export function race<Value>(
             finished.next(index);
             finished.return();
           }),
-          takeUntil(pipe(finished, filter((winnerIndex) => winnerIndex !== index))),
+          takeUntil(
+            pipe(finished, filter((winnerIndex) => winnerIndex !== index)),
+          ),
         )
       ),
     );

@@ -1,6 +1,6 @@
 import { assertEquals, assertInstanceOf, assertThrows } from "@std/assert";
 import { Observable, Observer, Subject } from "@observable/core";
-import { sequence } from "@observable/sequence";
+import { fromIterable } from "@observable/from-iterable";
 import { pipe } from "@observable/pipe";
 import { throwError } from "@observable/throw-error";
 import { materialize, type ObserverNotification } from "@observable/materialize";
@@ -157,7 +157,7 @@ Deno.test(
     // Arrange
     const values: Array<number> = [];
     let completed = false;
-    const observable = sequence([1, 2, 3]);
+    const observable = fromIterable([1, 2, 3]);
 
     // Act
     pipe(observable, asRxJsObservable()).subscribe({
@@ -270,7 +270,7 @@ Deno.test(
   "asRxJsObservable should return an RxJS Observable instance",
   () => {
     // Arrange
-    const observable = sequence([1, 2, 3]);
+    const observable = fromIterable([1, 2, 3]);
 
     // Act
     const result = pipe(observable, asRxJsObservable());
@@ -315,7 +315,7 @@ Deno.test(
   () => {
     // Arrange
     const notifications: Array<ObserverNotification<number>> = [];
-    const source = sequence([1, 2, 3]);
+    const source = fromIterable([1, 2, 3]);
 
     // Act
     pipe(
@@ -363,7 +363,9 @@ Deno.test(
     // Arrange
     const events: Array<string> = [];
     const source = new Observable<number>((observer) => {
-      observer.signal.addEventListener("abort", () => events.push("abort"), { once: true });
+      observer.signal.addEventListener("abort", () => events.push("abort"), {
+        once: true,
+      });
       observer.next(1);
       observer.return();
     });
@@ -386,7 +388,9 @@ Deno.test(
     const events: Array<string> = [];
     const error = new Error("test");
     const source = new Observable<number>((observer) => {
-      observer.signal.addEventListener("abort", () => events.push("abort"), { once: true });
+      observer.signal.addEventListener("abort", () => events.push("abort"), {
+        once: true,
+      });
       observer.next(1);
       observer.throw(error);
     });

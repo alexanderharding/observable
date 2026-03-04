@@ -3,7 +3,7 @@ import { Observable, Observer, Subject } from "@observable/core";
 import { MinimumArgumentsRequiredError, noop, ParameterTypeError } from "@observable/internal";
 import { empty } from "@observable/empty";
 import { never } from "@observable/never";
-import { sequence } from "@observable/sequence";
+import { fromIterable } from "@observable/from-iterable";
 import { pipe } from "@observable/pipe";
 import { materialize, type ObserverNotification } from "@observable/materialize";
 import { take } from "./mod.ts";
@@ -85,7 +85,7 @@ Deno.test(
   () => {
     // Arrange
     const notifications: Array<ObserverNotification<number>> = [];
-    const source = sequence([1, 2, 3]);
+    const source = fromIterable([1, 2, 3]);
     const materialized = pipe(source, take(2), materialize());
 
     // Act
@@ -100,7 +100,9 @@ Deno.test(
 
 Deno.test("take should handle reentrant observers", () => {
   // Arrange
-  const notifications: Array<ObserverNotification<number> | [type: "finalize"]> = [];
+  const notifications: Array<
+    ObserverNotification<number> | [type: "finalize"]
+  > = [];
   const source = new Subject<number>();
   const materialized = pipe(
     source,
@@ -121,5 +123,7 @@ Deno.test("take should handle reentrant observers", () => {
   source.return();
 
   // Assert
-  assertEquals(notifications, [["next", 1], ["finalize"], ["next", 2], ["return"]]);
+  assertEquals(notifications, [["next", 1], ["finalize"], ["next", 2], [
+    "return",
+  ]]);
 });

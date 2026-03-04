@@ -8,11 +8,11 @@ import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/i
  * @example
  * ```ts
  * import { finalize } from "@observable/finalize";
- * import { sequence } from "@observable/sequence";
+ * import { fromIterable } from "@observable/from-iterable";
  * import { pipe } from "@observable/pipe";
  *
  * const controller = new AbortController();
- * pipe(sequence([1, 2, 3]), finalize(() => console.log("finalized"))).subscribe({
+ * pipe(fromIterable([1, 2, 3]), finalize(() => console.log("finalized"))).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
  *   return: () => console.log("return"),
@@ -31,11 +31,11 @@ import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/i
  * import { finalize } from "@observable/finalize";
  * import { throwError } from "@observable/throw-error";
  * import { pipe } from "@observable/pipe";
- * import { sequence } from "@observable/sequence";
+ * import { fromIterable } from "@observable/from-iterable";
  * import { flat } from "@observable/flat";
  *
  * const controller = new AbortController();
- * const source = flat([sequence([1, 2, 3]), throwError(new Error("error"))]);
+ * const source = flat([fromIterable([1, 2, 3]), throwError(new Error("error"))]);
  * pipe(source, finalize(() => console.log("finalized"))).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
@@ -55,7 +55,9 @@ export function finalize<Value>(
   teardown: () => void,
 ): (source: Observable<Value>) => Observable<Value> {
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-  if (typeof teardown !== "function") throw new ParameterTypeError(0, "Function");
+  if (typeof teardown !== "function") {
+    throw new ParameterTypeError(0, "Function");
+  }
   return function finalizeFn(source) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");

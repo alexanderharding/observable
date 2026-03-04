@@ -2,7 +2,7 @@ import { assertEquals, assertStrictEquals, assertThrows } from "@std/assert";
 import { Observer, Subject } from "@observable/core";
 import { pipe } from "@observable/pipe";
 import { share } from "./mod.ts";
-import { sequence } from "@observable/sequence";
+import { fromIterable } from "@observable/from-iterable";
 import { throwError } from "@observable/throw-error";
 import { materialize, type ObserverNotification } from "@observable/materialize";
 import { ReplaySubject } from "@observable/replay-subject";
@@ -119,7 +119,7 @@ Deno.test("share should not subscribe to source until first observer", () => {
   let subscribed = false;
   const source = defer(() => {
     subscribed = true;
-    return sequence([1]);
+    return fromIterable([1]);
   });
   const shared = pipe(source, share());
   assertStrictEquals(subscribed, false);
@@ -206,7 +206,7 @@ Deno.test("share should use custom connector", () => {
     connectorCalled = true;
     return customSubject;
   };
-  const source = sequence([1, 2, 3]);
+  const source = fromIterable([1, 2, 3]);
   const shared = pipe(source, share(connector));
 
   // Act
@@ -236,7 +236,10 @@ Deno.test("share with ReplaySubject should replay values to late observers", () 
   source.next(4);
 
   // Assert
-  assertEquals(notifications1, [["next", 1], ["next", 2], ["next", 3], ["next", 4]]);
+  assertEquals(notifications1, [["next", 1], ["next", 2], ["next", 3], [
+    "next",
+    4,
+  ]]);
   assertEquals(notifications2, [["next", 2], ["next", 3], ["next", 4]]);
 });
 
@@ -265,7 +268,7 @@ Deno.test("share should reset connection when all unsubscribe", () => {
 
 Deno.test("share should handle synchronous source return", () => {
   // Arrange
-  const source = sequence([1, 2, 3]);
+  const source = fromIterable([1, 2, 3]);
   const shared = pipe(source, share());
   const notifications: Array<ObserverNotification<number>> = [];
 
@@ -325,7 +328,7 @@ Deno.test("share should create new source subscription after source returns", ()
   let sourceSubscribeCount = 0;
   const source = defer(() => {
     sourceSubscribeCount++;
-    return sequence([sourceSubscribeCount]);
+    return fromIterable([sourceSubscribeCount]);
   });
   const shared = pipe(source, share());
   const notifications1: Array<ObserverNotification<number>> = [];
@@ -402,7 +405,9 @@ Deno.test("share should handle observer unsubscribing during emission", () => {
       signal: controller1.signal,
       next: (notification) => {
         notifications1.push(notification);
-        if (notification[0] === "next" && notification[1] === 2) controller1.abort();
+        if (notification[0] === "next" && notification[1] === 2) {
+          controller1.abort();
+        }
       },
     }),
   );

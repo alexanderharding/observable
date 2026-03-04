@@ -20,12 +20,12 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 
 ```ts
 import { defer } from "@observable/defer";
-import { sequence } from "@observable/sequence";
+import { fromIterable } from "@observable/from-iterable";
 import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
 let values = [1, 2, 3];
-const observable = defer(() => sequence(values));
+const observable = defer(() => fromIterable(values));
 
 observable.subscribe({
   signal: controller.signal,
@@ -72,13 +72,13 @@ CRITICAL: This library is NOT RxJS. Key differences:
 USAGE PATTERN:
 ```ts
 import { defer } from "@observable/defer";
-import { sequence } from "@observable/sequence";
+import { fromIterable } from "@observable/from-iterable";
 import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
 let values = [1, 2, 3];
 
-const deferred = defer(() => sequence(values));
+const deferred = defer(() => fromIterable(values));
 
 deferred.subscribe({
   signal: controller.signal,
@@ -102,7 +102,7 @@ The factory is called at subscription time, not creation time:
 ```ts
 const deferred = defer(() => {
   console.log("Factory called!");  // Only when subscribed
-  return sequence([Date.now()]);
+  return fromIterable([Date.now()]);
 });
 // Factory not called yet...
 deferred.subscribe({ ... });  // "Factory called!"

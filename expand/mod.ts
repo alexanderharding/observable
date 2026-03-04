@@ -5,7 +5,7 @@ import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/i
 import { mergeMap } from "@observable/merge-map";
 import { merge } from "@observable/merge";
 import { defer } from "@observable/defer";
-import { sequence } from "@observable/sequence";
+import { fromIterable } from "@observable/from-iterable";
 
 /**
  * Recursively {@linkcode project|projects} each [source](https://jsr.io/@observable/core#source) value
@@ -14,7 +14,7 @@ import { sequence } from "@observable/sequence";
  * @example
  * ```ts
  * import { expand } from "@observable/expand";
- * import { sequence } from "@observable/sequence";
+ * import { fromIterable } from "@observable/from-iterable";
  * import { pipe } from "@observable/pipe";
  * import { empty } from "@observable/empty";
  *
@@ -22,8 +22,8 @@ import { sequence } from "@observable/sequence";
  *
  * // Recursively double values until >= 16
  * pipe(
- *   sequence([2]),
- *   expand((value) => value < 16 ? sequence([value * 2]) : empty),
+ *   fromIterable([2]),
+ *   expand((value) => value < 16 ? fromIterable([value * 2]) : empty),
  * ).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
@@ -41,7 +41,7 @@ import { sequence } from "@observable/sequence";
  * @example
  * ```ts
  * import { expand } from "@observable/expand";
- * import { sequence } from "@observable/sequence";
+ * import { fromIterable } from "@observable/from-iterable";
  * import { pipe } from "@observable/pipe";
  * import { empty } from "@observable/empty";
  *
@@ -62,9 +62,9 @@ import { sequence } from "@observable/sequence";
  * const controller = new AbortController();
  *
  * pipe(
- *   sequence([tree]),
+ *   fromIterable([tree]),
  *   expand((node) =>
- *     node.children.length ? sequence(node.children) : empty
+ *     node.children.length ? fromIterable(node.children) : empty
  *   ),
  * ).subscribe({
  *   signal: controller.signal,
@@ -85,9 +85,7 @@ export function expand<Value>(
   project: (value: Value, index: number) => Observable<Value>,
 ): (source: Observable<Value>) => Observable<Value> {
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-  if (typeof project !== "function") {
-    throw new ParameterTypeError(0, "Function");
-  }
+  if (typeof project !== "function") throw new ParameterTypeError(0, "Function");
   return function expandFn(source) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
@@ -98,7 +96,7 @@ export function expand<Value>(
         source,
         mergeMap((value) =>
           merge([
-            sequence([value]),
+            fromIterable([value]),
             pipe(defer(() => project(value, index++)), expand((value) => project(value, index++))),
           ])
         ),

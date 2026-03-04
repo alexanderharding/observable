@@ -31,9 +31,7 @@ export const Observable: ObservableConstructor = class<Value> {
 
   constructor(subscribe: (observer: Observer<Value>) => void) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-    if (typeof subscribe !== "function") {
-      throw new ParameterTypeError(0, "Function");
-    }
+    if (typeof subscribe !== "function") throw new ParameterTypeError(0, "Function");
     Object.freeze(this);
     this.#subscribe = subscribe;
   }

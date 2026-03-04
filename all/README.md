@@ -24,12 +24,12 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 
 ```ts
 import { all } from "@observable/all";
-import { sequence } from "@observable/sequence";
+import { fromIterable } from "@observable/from-iterable";
 import { pipe } from "@observable/pipe";
 
-const source1 = sequence([1, 2, 3]);
-const source2 = sequence([4, 5, 6]);
-const source3 = sequence([7, 8, 9]);
+const source1 = fromIterable([1, 2, 3]);
+const source2 = fromIterable([4, 5, 6]);
+const source3 = fromIterable([7, 8, 9]);
 
 const controller = new AbortController();
 all([source1, source2, source3]).subscribe({
@@ -48,12 +48,12 @@ all([source1, source2, source3]).subscribe({
 
 ```ts
 import { all } from "@observable/all";
-import { sequence } from "@observable/sequence";
+import { fromIterable } from "@observable/from-iterable";
 import { pipe } from "@observable/pipe";
 import { empty } from "@observable/empty";
 
-const source1 = sequence([1, 2, 3]);
-const source2 = sequence([7, 8, 9]);
+const source1 = fromIterable([1, 2, 3]);
+const source2 = fromIterable([7, 8, 9]);
 
 const controller = new AbortController();
 all([source1, empty, source2]).subscribe({
@@ -85,12 +85,12 @@ CRITICAL: This library is NOT RxJS. Key differences:
 USAGE PATTERN:
 ```ts
 import { all } from "@observable/all";
-import { sequence } from "@observable/sequence";
+import { fromIterable } from "@observable/from-iterable";
 import { pipe } from "@observable/pipe";
 
-const source1 = sequence([1, 2, 3]);
-const source2 = sequence([4, 5, 6]);
-const source3 = sequence([7, 8, 9]);
+const source1 = fromIterable([1, 2, 3]);
+const source2 = fromIterable([4, 5, 6]);
+const source3 = fromIterable([7, 8, 9]);
 
 const controller = new AbortController();
 
@@ -112,8 +112,8 @@ WHEN ONE OF INPUT'S OBSERVABLES IS EMPTY:
 ```ts
 import { empty } from "@observable/empty";
 
-const source1 = sequence([1, 2, 3]);
-const source2 = sequence([7, 8, 9]);
+const source1 = fromIterable([1, 2, 3]);
+const source2 = fromIterable([7, 8, 9]);
 
 all([source1, empty, source2]).subscribe({
   next: (value) => console.log(value),  // Never called

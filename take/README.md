@@ -22,11 +22,11 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 
 ```ts
 import { take } from "@observable/take";
-import { sequence } from "@observable/sequence";
+import { fromIterable } from "@observable/from-iterable";
 import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
-pipe(sequence([1, 2, 3, 4, 5]), take(2)).subscribe({
+pipe(fromIterable([1, 2, 3, 4, 5]), take(2)).subscribe({
   signal: controller.signal,
   next: (value) => console.log("next", value),
   return: () => console.log("return"),
@@ -57,13 +57,13 @@ CRITICAL: This library is NOT RxJS. Key differences:
 USAGE PATTERN:
 ```ts
 import { take } from "@observable/take";
-import { sequence } from "@observable/sequence";
+import { fromIterable } from "@observable/from-iterable";
 import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
 
 pipe(
-  sequence([1, 2, 3, 4, 5]),
+  fromIterable([1, 2, 3, 4, 5]),
   take(2)
 ).subscribe({
   signal: controller.signal,

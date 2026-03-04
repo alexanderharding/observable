@@ -21,11 +21,11 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 
 ```ts
 import { materialize } from "@observable/materialize";
-import { sequence } from "@observable/sequence";
+import { fromIterable } from "@observable/from-iterable";
 import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
-pipe(sequence([1, 2, 3]), materialize()).subscribe({
+pipe(fromIterable([1, 2, 3]), materialize()).subscribe({
   signal: controller.signal,
   next: (value) => console.log(value),
   return: () => console.log("return"),
@@ -45,10 +45,10 @@ pipe(sequence([1, 2, 3]), materialize()).subscribe({
 ```ts
 import { materialize, ObserverNotification } from "@observable/materialize";
 import { pipe } from "@observable/pipe";
-import { sequence } from "@observable/sequence";
+import { fromIterable } from "@observable/from-iterable";
 import { Observer } from "@observable/core";
 
-const observable = sequence([1, 2, 3]);
+const observable = fromIterable([1, 2, 3]);
 
 describe("observable", () => {
   let activeSubscriptionController: AbortController;
@@ -103,13 +103,13 @@ NOTIFICATION FORMAT:
 USAGE PATTERN:
 ```ts
 import { materialize } from "@observable/materialize";
-import { sequence } from "@observable/sequence";
+import { fromIterable } from "@observable/from-iterable";
 import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
 
 pipe(
-  sequence([1, 2, 3]),
+  fromIterable([1, 2, 3]),
   materialize()
 ).subscribe({
   signal: controller.signal,

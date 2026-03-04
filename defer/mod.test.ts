@@ -3,7 +3,7 @@ import { Observer } from "@observable/core";
 import { materialize } from "@observable/materialize";
 import type { ObserverNotification } from "@observable/materialize";
 import { pipe } from "@observable/pipe";
-import { sequence } from "@observable/sequence";
+import { fromIterable } from "@observable/from-iterable";
 import { defer } from "./mod.ts";
 
 Deno.test(
@@ -14,7 +14,7 @@ Deno.test(
     const notifications: Array<[1 | 2, ObserverNotification<number>]> = [];
     const source = defer(() => {
       factoryCallCount++;
-      return sequence([1, 2, 3]);
+      return fromIterable([1, 2, 3]);
     });
 
     // Act

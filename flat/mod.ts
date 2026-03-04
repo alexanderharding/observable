@@ -5,7 +5,7 @@ import {
   MinimumArgumentsRequiredError,
   ParameterTypeError,
 } from "@observable/internal";
-import { sequence } from "@observable/sequence";
+import { fromIterable } from "@observable/from-iterable";
 import { pipe } from "@observable/pipe";
 import { flatMap } from "@observable/flat-map";
 import { empty } from "@observable/empty";
@@ -17,12 +17,12 @@ import { empty } from "@observable/empty";
  * @example
  * ```ts
  * import { flat } from "@observable/flat";
- * import { sequence } from "@observable/sequence";
+ * import { fromIterable } from "@observable/from-iterable";
  * import { pipe } from "@observable/pipe";
  *
- * const source1 = sequence([1, 2, 3]);
- * const source2 = sequence([4, 5, 6]);
- * const source3 = sequence([7, 8, 9]);
+ * const source1 = fromIterable([1, 2, 3]);
+ * const source2 = fromIterable([4, 5, 6]);
+ * const source3 = fromIterable([7, 8, 9]);
  *
  * const controller = new AbortController();
  *
@@ -56,13 +56,13 @@ export function flat<const Values extends ReadonlyArray<unknown>>(
  * @example
  * ```ts
  * import { flat } from "@observable/flat";
- * import { sequence } from "@observable/sequence";
+ * import { fromIterable } from "@observable/from-iterable";
  * import { pipe } from "@observable/pipe";
  *
  * const controller = new AbortController();
- * const source1 = sequence([1, 2, 3]);
+ * const source1 = fromIterable([1, 2, 3]);
  * const source2 = source1;
- * const source3 = sequence([4, 5, 6]);
+ * const source3 = fromIterable([4, 5, 6]);
  *
  * flat(new Set([source1, source2, source3])).subscribe({
  *   signal: controller.signal,
@@ -92,5 +92,5 @@ export function flat<Value>(
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
   if (!isIterable(sources)) throw new ParameterTypeError(0, "Iterable");
   if (Array.isArray(sources) && !sources.length) return empty;
-  return pipe(sequence(sources), flatMap(identity));
+  return pipe(fromIterable(sources), flatMap(identity));
 }

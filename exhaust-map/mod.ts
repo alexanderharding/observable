@@ -15,13 +15,13 @@ import { finalize } from "@observable/finalize";
  * @example
  * ```ts
  * import { exhaustMap } from "@observable/exhaust-map";
- * import { sequence } from "@observable/sequence";
+ * import { fromIterable } from "@observable/from-iterable";
  * import { pipe } from "@observable/pipe";
  * import { timeout } from "@observable/timeout";
  * import { map } from "@observable/map";
  *
  * const controller = new AbortController();
- * const source = sequence([1, 2, 3]);
+ * const source = fromIterable([1, 2, 3]);
  *
  * pipe(
  *   source,
@@ -42,9 +42,7 @@ export function exhaustMap<In, Out>(
   project: (value: In, index: number) => Observable<Out>,
 ): (source: Observable<In>) => Observable<Out> {
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-  if (typeof project !== "function") {
-    throw new ParameterTypeError(0, "Function");
-  }
+  if (typeof project !== "function") throw new ParameterTypeError(0, "Function");
   return function exhaustMapFn(source) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
@@ -55,7 +53,10 @@ export function exhaustMap<In, Out>(
         filter(() => !activeInnerSubscription),
         switchMap((value, index) => {
           activeInnerSubscription = true;
-          return pipe(project(value, index), finalize(() => activeInnerSubscription = false));
+          return pipe(
+            project(value, index),
+            finalize(() => activeInnerSubscription = false),
+          );
         }),
       );
     });

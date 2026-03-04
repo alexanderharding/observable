@@ -22,11 +22,11 @@ export type Pair<Value = unknown> = Readonly<[previous: Value, current: Value]>;
  * @example
  * ```ts
  * import { pairwise } from "@observable/pairwise";
- * import { sequence } from "@observable/sequence";
+ * import { fromIterable } from "@observable/from-iterable";
  * import { pipe } from "@observable/pipe";
  *
  * const controller = new AbortController();
- * pipe(sequence([1, 2, 3, 4]), pairwise()).subscribe({
+ * pipe(fromIterable([1, 2, 3, 4]), pairwise()).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
  *   return: () => console.log("return"),

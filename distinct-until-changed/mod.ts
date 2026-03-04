@@ -6,7 +6,7 @@ import { map } from "@observable/map";
 import { filter } from "@observable/filter";
 import { pairwise } from "@observable/pairwise";
 import { flat } from "@observable/flat";
-import { sequence } from "@observable/sequence";
+import { fromIterable } from "@observable/from-iterable";
 
 /**
  * Flag indicating that no value has been emitted yet.
@@ -23,11 +23,11 @@ const noValue = Symbol("Flag indicating that no value has been emitted yet");
  * @example
  * ```ts
  * import { distinctUntilChanged } from "@observable/distinct-until-changed";
- * import { sequence } from "@observable/sequence";
+ * import { fromIterable } from "@observable/from-iterable";
  * import { pipe } from "@observable/pipe";
  *
  * const controller = new AbortController();
- * pipe(sequence([1, 1, 1, 2, 2, 3]), distinctUntilChanged()).subscribe({
+ * pipe(fromIterable([1, 1, 1, 2, 2, 3]), distinctUntilChanged()).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log(value),
  *   return: () => console.log("return"),
@@ -50,7 +50,7 @@ export function distinctUntilChanged<Value>(
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
     source = from(source);
     return pipe(
-      flat([sequence([noValue]), source]),
+      flat([fromIterable([noValue]), source]),
       pairwise(),
       filter(isDistinct),
       map(([_, current]) => current),

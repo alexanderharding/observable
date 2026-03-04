@@ -81,11 +81,11 @@ pipe(
 
 COMMON USE — Default case:
 ```ts
-import { sequence } from "@observable/sequence";
+import { fromIterable } from "@observable/from-iterable";
 import { pipe } from "@observable/pipe";
 
 const getObservable = (condition: boolean) =>
-  condition ? sequence([1, 2, 3]) : empty;
+  condition ? fromIterable([1, 2, 3]) : empty;
 ```
 
 SEE ALSO:

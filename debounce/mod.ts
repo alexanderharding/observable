@@ -7,7 +7,7 @@ import { timeout } from "@observable/timeout";
 import { drop } from "@observable/drop";
 import { from } from "@observable/from";
 import { flat } from "@observable/flat";
-import { sequence } from "@observable/sequence";
+import { fromIterable } from "@observable/from-iterable";
 
 /**
  * Debounces the [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values from the
@@ -50,7 +50,9 @@ export function debounce<Value>(
     if (milliseconds === 0) return from(source);
     return pipe(
       source,
-      switchMap((value) => flat([pipe(timeout(milliseconds), drop(Infinity)), sequence([value])])),
+      switchMap((value) =>
+        flat([pipe(timeout(milliseconds), drop<never>(Infinity)), fromIterable([value])])
+      ),
     );
   };
 }

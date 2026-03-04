@@ -4,17 +4,19 @@ import { materialize, type ObserverNotification } from "@observable/materialize"
 import { pipe } from "@observable/pipe";
 import { finalize } from "./mod.ts";
 import { flat } from "@observable/flat";
-import { sequence } from "@observable/sequence";
+import { fromIterable } from "@observable/from-iterable";
 import { throwError } from "@observable/throw-error";
 
 Deno.test(
   "finalize should call the finalizer function after the source is returned",
   () => {
     // Arrange
-    const notifications: Array<ObserverNotification<number> | [type: "finalize"]> = [];
+    const notifications: Array<
+      ObserverNotification<number> | [type: "finalize"]
+    > = [];
     const values = [1, 2, 3] as const;
     const observable = pipe(
-      sequence(values),
+      fromIterable(values),
       finalize(() => notifications.push(["finalize"])),
       materialize(),
     );
@@ -38,10 +40,12 @@ Deno.test(
   () => {
     // Arrange
     const error = new Error("test");
-    const notifications: Array<ObserverNotification<number> | [type: "finalize"]> = [];
+    const notifications: Array<
+      ObserverNotification<number> | [type: "finalize"]
+    > = [];
     const values = [1, 2, 3] as const;
     const observable = pipe(
-      flat([sequence(values), throwError(error)]),
+      flat([fromIterable(values), throwError(error)]),
       finalize(() => notifications.push(["finalize"])),
       materialize(),
     );
@@ -64,10 +68,12 @@ Deno.test(
   "finalize should call the finalizer function after the source is unsubscribed",
   () => {
     // Arrange
-    const notifications: Array<ObserverNotification<number> | [type: "finalize"]> = [];
+    const notifications: Array<
+      ObserverNotification<number> | [type: "finalize"]
+    > = [];
     const controller = new AbortController();
     const observable = pipe(
-      sequence([1, 2, 3]),
+      fromIterable([1, 2, 3]),
       finalize(() => notifications.push(["finalize"])),
       materialize(),
     );

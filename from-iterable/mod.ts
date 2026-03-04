@@ -12,10 +12,10 @@ import { empty } from "@observable/empty";
  * each {@linkcode Values|value} in order upon [`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe).
  * @example
  * ```ts
- * import { sequence } from "@observable/sequence";
+ * import { fromIterable } from "@observable/from-iterable";
  *
  * const controller = new AbortController();
- * sequence([1, 2, 3]).subscribe({
+ * fromIterable([1, 2, 3]).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
  *   return: () => console.log("return"),
@@ -29,7 +29,7 @@ import { empty } from "@observable/empty";
  * // "return"
  * ```
  */
-export function sequence<const Values extends ReadonlyArray<unknown>>(
+export function fromIterable<const Values extends ReadonlyArray<unknown>>(
   values: Values,
 ): Observable<Values[number]>;
 /**
@@ -38,10 +38,10 @@ export function sequence<const Values extends ReadonlyArray<unknown>>(
  * each {@linkcode Value|value} in order upon [`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe).
  * @example
  * ```ts
- * import { sequence } from "@observable/sequence";
+ * import { fromIterable } from "@observable/from-iterable";
  *
  * const controller = new AbortController();
- * sequence(new Set([1, 2, 1, 2, 3, 3])).subscribe({
+ * fromIterable(new Set([1, 2, 1, 2, 3, 3])).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
  *   return: () => console.log("return"),
@@ -55,13 +55,13 @@ export function sequence<const Values extends ReadonlyArray<unknown>>(
  * // "return"
  * ```
  */
-export function sequence<Value>(values: Iterable<Value>): Observable<Value>;
-export function sequence<Value>(values: Iterable<Value>): Observable<Value> {
+export function fromIterable<Value>(iterable: Iterable<Value>): Observable<Value>;
+export function fromIterable<Value>(iterable: Iterable<Value>): Observable<Value> {
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-  if (!isIterable(values)) throw new ParameterTypeError(0, "Iterable");
-  if (Array.isArray(values) && !values.length) return empty;
+  if (!isIterable(iterable)) throw new ParameterTypeError(0, "Iterable");
+  if (Array.isArray(iterable) && !iterable.length) return empty;
   return new Observable((observer) => {
-    for (const value of values) {
+    for (const value of iterable) {
       observer.next(value);
       if (observer.signal.aborted) return;
     }

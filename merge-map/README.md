@@ -21,17 +21,17 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 
 ```ts
 import { mergeMap } from "@observable/merge-map";
-import { sequence } from "@observable/sequence";
+import { fromIterable } from "@observable/from-iterable";
 import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
 const observableLookup = {
-  1: sequence([1, 2, 3]),
-  2: sequence([4, 5, 6]),
-  3: sequence([7, 8, 9]),
+  1: fromIterable([1, 2, 3]),
+  2: fromIterable([4, 5, 6]),
+  3: fromIterable([7, 8, 9]),
 } as const;
 pipe(
-  sequence([1, 2, 3]),
+  fromIterable([1, 2, 3]),
   mergeMap((value) => observableLookup[value]),
 ).subscribe({
   signal: controller.signal,
@@ -71,19 +71,19 @@ CRITICAL: This library is NOT RxJS. Key differences:
 USAGE PATTERN:
 ```ts
 import { mergeMap } from "@observable/merge-map";
-import { sequence } from "@observable/sequence";
+import { fromIterable } from "@observable/from-iterable";
 import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
 
 const lookup = {
-  1: sequence([1, 2, 3]),
-  2: sequence([4, 5, 6]),
-  3: sequence([7, 8, 9]),
+  1: fromIterable([1, 2, 3]),
+  2: fromIterable([4, 5, 6]),
+  3: fromIterable([7, 8, 9]),
 };
 
 pipe(
-  sequence([1, 2, 3]),
+  fromIterable([1, 2, 3]),
   mergeMap((key) => lookup[key])
 ).subscribe({
   signal: controller.signal,
@@ -97,7 +97,7 @@ CONCURRENT EXECUTION:
 All inner Observables run at the same time:
 ```ts
 pipe(
-  sequence(["url1", "url2", "url3"]),
+  fromIterable(["url1", "url2", "url3"]),
   mergeMap((url) => fetchData(url))  // All requests fire immediately
 ).subscribe({ ... });
 ```

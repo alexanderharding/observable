@@ -6,7 +6,7 @@ import {
 } from "@observable/internal";
 import { flat } from "@observable/flat";
 import { defer } from "@observable/defer";
-import { sequence } from "@observable/sequence";
+import { fromIterable } from "@observable/from-iterable";
 
 /**
  * Object type that acts as a variant of [`Subject`](https://jsr.io/@observable/core/doc/~/Subject).
@@ -103,15 +103,13 @@ export const ReplaySubject: ReplaySubjectConstructor = class {
   readonly #subject = new Subject();
   readonly signal = this.#subject.signal;
   readonly #observable = flat([
-    defer(() => sequence(this.#bufferSnapshot ??= this.#buffer.slice())),
+    defer(() => fromIterable(this.#bufferSnapshot ??= this.#buffer.slice())),
     this.#subject,
   ]);
 
   constructor(count: number) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-    if (typeof count !== "number") {
-      throw new ParameterTypeError(0, "Number");
-    }
+    if (typeof count !== "number") throw new ParameterTypeError(0, "Number");
     Object.freeze(this);
     (this.#count = count) >= 0 ? this.#bufferSnapshot = undefined : this.return();
     if (this.signal.aborted || this.#count === 0) return;

@@ -10,11 +10,11 @@ import { empty } from "@observable/empty";
  * @example
  * ```ts
  * import { take } from "@observable/take";
- * import { sequence } from "@observable/sequence";
+ * import { fromIterable } from "@observable/from-iterable";
  * import { pipe } from "@observable/pipe";
  *
  * const controller = new AbortController();
- * pipe(sequence([1, 2, 3, 4, 5]), take(2)).subscribe({
+ * pipe(fromIterable([1, 2, 3, 4, 5]), take(2)).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
  *   return: () => console.log("return"),
@@ -27,9 +27,7 @@ import { empty } from "@observable/empty";
  * // "return"
  * ```
  */
-export function take<Value>(
-  count: number,
-): (source: Observable<Value>) => Observable<Value> {
+export function take<Value>(count: number): (source: Observable<Value>) => Observable<Value> {
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
   if (typeof count !== "number") throw new ParameterTypeError(0, "Number");
   return function takeFn(source) {

@@ -28,9 +28,9 @@ type Deferred<Value> = Omit<PromiseWithResolvers<Value>, "promise">;
  * @example
  * ```ts
  * import { eachValueFrom } from "@observable/each-value-from";
- * import { sequence } from "@observable/sequence";
+ * import { fromIterable } from "@observable/from-iterable";
  *
- * for await (const value of eachValueFrom(sequence([1, 2, 3]))) {
+ * for await (const value of eachValueFrom(fromIterable([1, 2, 3]))) {
  *   console.log(value);
  * }
  * console.log("Done!");
@@ -128,9 +128,11 @@ export async function* eachValueFrom<Value>(
       else if (thrownValue !== notThrown) throw thrownValue;
       // Otherwise, we'll wait for the next value.
       else {
-        const value = await new Promise<Value | typeof doneValue>((resolve, reject) => {
-          deferreds.push({ resolve, reject });
-        });
+        const value = await new Promise<Value | typeof doneValue>(
+          (resolve, reject) => {
+            deferreds.push({ resolve, reject });
+          },
+        );
         if (value !== doneValue && !returned) yield value;
       }
     }

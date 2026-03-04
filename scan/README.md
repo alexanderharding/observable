@@ -22,11 +22,11 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 
 ```ts
 import { scan } from "@observable/scan";
-import { sequence } from "@observable/sequence";
+import { fromIterable } from "@observable/from-iterable";
 import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
-const source = sequence([1, 2, 3]);
+const source = fromIterable([1, 2, 3]);
 pipe(source, scan((previous, current) => previous + current, 0)).subscribe({
   signal: controller.signal,
   next: (value) => console.log("next", value),
@@ -59,11 +59,11 @@ CRITICAL: This library is NOT RxJS. Key differences:
 USAGE PATTERN:
 ```ts
 import { scan } from "@observable/scan";
-import { sequence } from "@observable/sequence";
+import { fromIterable } from "@observable/from-iterable";
 import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
-const source = sequence([1, 2, 3]);
+const source = fromIterable([1, 2, 3]);
 pipe(source, scan((previous, current) => previous + current, 0)).subscribe({
   signal: controller.signal,
   next: (value) => console.log(value),  // 1, 3, 6
@@ -75,7 +75,7 @@ pipe(source, scan((previous, current) => previous + current, 0)).subscribe({
 WRONG USAGE:
 ```ts
 // ✗ WRONG: scan is NOT a method on Observable
-sequence([1, 2, 3]).scan((a, b) => a + b, 0)  // This does NOT work!
+fromIterable([1, 2, 3]).scan((a, b) => a + b, 0)  // This does NOT work!
 ```
 
 ACCUMULATING TO DIFFERENT TYPE:

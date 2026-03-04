@@ -9,9 +9,9 @@ each [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed value in or
 
 ```ts
 import { eachValueFrom } from "@observable/each-value-from";
-import { sequence } from "@observable/sequence";
+import { fromIterable } from "@observable/from-iterable";
 
-for await (const value of eachValueFrom(sequence([1, 2, 3]))) {
+for await (const value of eachValueFrom(fromIterable([1, 2, 3]))) {
   console.log(value);
 }
 console.log("Done!");
@@ -100,10 +100,10 @@ CRITICAL: This library is NOT RxJS. Key differences:
 USAGE:
 ```ts
 import { eachValueFrom } from "@observable/each-value-from";
-import { ofIterable } from "@observable/of-iterable";
+import { fromIterable } from "@observable/from-iterable";
 import { pipe } from "@observable/pipe";
 
-for await (const value of eachValueFrom(pipe([1, 2, 3], ofIterable()))) {
+for await (const value of eachValueFrom(pipe([1, 2, 3], fromIterable()))) {
   console.log(value);
 }
 ```

@@ -25,15 +25,15 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 
 ```ts
 import { flatMap } from "@observable/flat-map";
-import { sequence } from "@observable/sequence";
+import { fromIterable } from "@observable/from-iterable";
 import { pipe } from "@observable/pipe";
 
-const source = sequence(["a", "b", "c"]);
+const source = fromIterable(["a", "b", "c"]);
 const controller = new AbortController();
 const observableLookup = {
-  a: sequence([1, 2, 3]),
-  b: sequence([4, 5, 6]),
-  c: sequence([7, 8, 9]),
+  a: fromIterable([1, 2, 3]),
+  b: fromIterable([4, 5, 6]),
+  c: fromIterable([7, 8, 9]),
 } as const;
 
 pipe(source, flatMap((value) => observableLookup[value])).subscribe({
@@ -75,19 +75,19 @@ CRITICAL: This library is NOT RxJS. Key differences:
 USAGE PATTERN:
 ```ts
 import { flatMap } from "@observable/flat-map";
-import { sequence } from "@observable/sequence";
+import { fromIterable } from "@observable/from-iterable";
 import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
 
 const lookup = {
-  a: sequence([1, 2, 3]),
-  b: sequence([4, 5, 6]),
-  c: sequence([7, 8, 9]),
+  a: fromIterable([1, 2, 3]),
+  b: fromIterable([4, 5, 6]),
+  c: fromIterable([7, 8, 9]),
 };
 
 pipe(
-  sequence(["a", "b", "c"]),
+  fromIterable(["a", "b", "c"]),
   flatMap((key) => lookup[key])
 ).subscribe({
   signal: controller.signal,
@@ -101,7 +101,7 @@ SEQUENTIAL EXECUTION:
 Each inner Observable returns before the next one starts:
 ```ts
 pipe(
-  sequence(["file1", "file2", "file3"]),
+  fromIterable(["file1", "file2", "file3"]),
   flatMap((file) => uploadFile(file))  // Uploads one at a time
 ).subscribe({ ... });
 ```

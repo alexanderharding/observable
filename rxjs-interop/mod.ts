@@ -31,7 +31,9 @@ import {
  * // "return"
  * ```
  */
-export function asObservable<Value>(): (source: RxJsObservable<Value>) => Observable<Value> {
+export function asObservable<Value>(): (
+  source: RxJsObservable<Value>,
+) => Observable<Value> {
   return function asObservableFn(source) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isRxJsObservable(source)) throw new ParameterTypeError(0, "RxJsObservable");
@@ -46,7 +48,11 @@ export function asObservable<Value>(): (source: RxJsObservable<Value>) => Observ
           error: (value: unknown) => observer.throw(value),
         } satisfies RxJsObserver<Value>,
       );
-      observer.signal.addEventListener("abort", () => subscriber.unsubscribe(), { once: true });
+      observer.signal.addEventListener(
+        "abort",
+        () => subscriber.unsubscribe(),
+        { once: true },
+      );
       source.subscribe(subscriber);
     });
   };
@@ -57,11 +63,11 @@ export function asObservable<Value>(): (source: RxJsObservable<Value>) => Observ
  * @example
  * ```ts
  * import { asRxJsObservable } from "@observable/rxjs-interop";
- * import { sequence } from "@observable/sequence";
+ * import { fromIterable } from "@observable/from-iterable";
  * import { pipe } from "@observable/pipe";
  *
  * const controller = new AbortController();
- * const observable = pipe(sequence([1, 2, 3]), asRxJsObservable());
+ * const observable = pipe(fromIterable([1, 2, 3]), asRxJsObservable());
  * const subscription = observable.subscribe({
  *   next: (value) => console.log("next", value),
  *   complete: () => console.log("complete"),
@@ -75,7 +81,9 @@ export function asObservable<Value>(): (source: RxJsObservable<Value>) => Observ
  * // "complete"
  * ```
  */
-export function asRxJsObservable<Value>(): (source: Observable<Value>) => RxJsObservable<Value> {
+export function asRxJsObservable<Value>(): (
+  source: Observable<Value>,
+) => RxJsObservable<Value> {
   return function asRxJsObservableFn(source) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");

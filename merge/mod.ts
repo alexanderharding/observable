@@ -5,7 +5,7 @@ import {
   MinimumArgumentsRequiredError,
   ParameterTypeError,
 } from "@observable/internal";
-import { sequence } from "@observable/sequence";
+import { fromIterable } from "@observable/from-iterable";
 import { pipe } from "@observable/pipe";
 import { mergeMap } from "@observable/merge-map";
 import { empty } from "@observable/empty";
@@ -84,5 +84,5 @@ export function merge<Value>(
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
   if (!isIterable(sources)) throw new ParameterTypeError(0, "Iterable");
   if (Array.isArray(sources) && !sources.length) return empty;
-  return pipe(sequence(sources), mergeMap(identity));
+  return pipe(fromIterable(sources), mergeMap(identity));
 }

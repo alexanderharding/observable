@@ -11,11 +11,11 @@ import { filter } from "@observable/filter";
  * @example
  * ```ts
  * import { drop } from "@observable/drop";
- * import { sequence } from "@observable/sequence";
+ * import { fromIterable } from "@observable/from-iterable";
  * import { pipe } from "@observable/pipe";
  *
  * const controller = new AbortController();
- * pipe(sequence([1, 2, 3, 4, 5]), drop(2)).subscribe({
+ * pipe(fromIterable([1, 2, 3, 4, 5]), drop(2)).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
  *   return: () => console.log("return"),
