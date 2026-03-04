@@ -5,7 +5,7 @@ import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/i
 import { mergeMap } from "@observable/merge-map";
 import { merge } from "@observable/merge";
 import { defer } from "@observable/defer";
-import { forOf } from "@observable/for-of";
+import { of } from "@observable/of";
 
 /**
  * Recursively {@linkcode project|projects} each [source](https://jsr.io/@observable/core#source) value
@@ -86,9 +86,7 @@ export function expand<Value>(
   project: (value: Value, index: number) => Observable<Value>,
 ): (source: Observable<Value>) => Observable<Value> {
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-  if (typeof project !== "function") {
-    throw new ParameterTypeError(0, "Function");
-  }
+  if (typeof project !== "function") throw new ParameterTypeError(0, "Function");
   return function expandFn(source) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
@@ -99,11 +97,8 @@ export function expand<Value>(
         source,
         mergeMap((value) =>
           merge([
-            forOf([value]),
-            pipe(
-              defer(() => project(value, index++)),
-              expand((value) => project(value, index++)),
-            ),
+            of(value),
+            pipe(defer(() => project(value, index++)), expand((value) => project(value, index++))),
           ])
         ),
       );
