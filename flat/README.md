@@ -23,7 +23,6 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 ```ts
 import { flat } from "@observable/flat";
 import { forOf } from "@observable/for-of";
-import { pipe } from "@observable/pipe";
 
 const source1 = forOf([1, 2, 3]);
 const source2 = forOf([4, 5, 6]);
@@ -70,7 +69,6 @@ USAGE PATTERN:
 ```ts
 import { flat } from "@observable/flat";
 import { forOf } from "@observable/for-of";
-import { pipe } from "@observable/pipe";
 
 const source1 = forOf([1, 2, 3]);
 const source2 = forOf([4, 5, 6]);

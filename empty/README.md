@@ -82,7 +82,6 @@ pipe(
 COMMON USE — Default case:
 ```ts
 import { forOf } from "@observable/for-of";
-import { pipe } from "@observable/pipe";
 
 const getObservable = (condition: boolean) =>
   condition ? forOf([1, 2, 3]) : empty;

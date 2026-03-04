@@ -18,7 +18,6 @@ import { empty } from "@observable/empty";
  * ```ts
  * import { flat } from "@observable/flat";
  * import { forOf } from "@observable/for-of";
- * import { pipe } from "@observable/pipe";
  *
  * const source1 = forOf([1, 2, 3]);
  * const source2 = forOf([4, 5, 6]);
@@ -57,7 +56,6 @@ export function flat<const Values extends ReadonlyArray<unknown>>(
  * ```ts
  * import { flat } from "@observable/flat";
  * import { forOf } from "@observable/for-of";
- * import { pipe } from "@observable/pipe";
  *
  * const controller = new AbortController();
  * const source1 = forOf([1, 2, 3]);

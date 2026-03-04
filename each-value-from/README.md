@@ -101,9 +101,8 @@ USAGE:
 ```ts
 import { eachValueFrom } from "@observable/each-value-from";
 import { forOf } from "@observable/for-of";
-import { pipe } from "@observable/pipe";
 
-for await (const value of eachValueFrom(pipe([1, 2, 3], forOf()))) {
+for await (const value of eachValueFrom(forOf([1, 2, 3]))) {
   console.log(value);
 }
 ```
