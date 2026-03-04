@@ -348,7 +348,7 @@ Deno.test("expand should return immediately when source is empty", () => {
   const notifications: Array<ObserverNotification<number>> = [];
   const observable = pipe(
     empty as Observable<number>,
-    expand((value) => forOf([value * 2])),
+    expand((value) => of(value * 2)),
     materialize(),
   );
 
