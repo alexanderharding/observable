@@ -128,11 +128,9 @@ export async function* eachValueFrom<Value>(
       else if (thrownValue !== notThrown) throw thrownValue;
       // Otherwise, we'll wait for the next value.
       else {
-        const value = await new Promise<Value | typeof doneValue>(
-          (resolve, reject) => {
-            deferreds.push({ resolve, reject });
-          },
-        );
+        const value = await new Promise<Value | typeof doneValue>((resolve, reject) => {
+          deferreds.push({ resolve, reject });
+        });
         if (value !== doneValue && !returned) yield value;
       }
     }
