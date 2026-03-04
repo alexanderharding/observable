@@ -11,13 +11,13 @@ import { from } from "@observable/from";
  * ```ts
  * import { catchError } from "@observable/catch-error";
  * import { throwError } from "@observable/throw-error";
- * import { forOf } from "@observable/for-of";
+ * import { of } from "@observable/of";
  * import { pipe } from "@observable/pipe";
  *
  * const controller = new AbortController();
  * pipe(
  *   throwError(new Error("error")),
- *   catchError(() => forOf(["fallback"])),
+ *   catchError(() => of("fallback")),
  * ).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
