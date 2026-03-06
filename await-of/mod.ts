@@ -10,10 +10,9 @@ import {
  * to an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable).
  * @example
  * ```ts
- * import { ofPromise } from "@observable/of-promise";
- * import { pipe } from "@observable/pipe";
+ * import { awaitOf } from "@observable/await-of";
  *
- * pipe(Promise.resolve(42), ofPromise()).subscribe({
+ * awaitOf(Promise.resolve(42)).subscribe({
  *   signal: new AbortController().signal,
  *   next: (value) => console.log("next", value),
  *   return: () => console.log("return"),
@@ -26,10 +25,9 @@ import {
  * ```
  * @example
  * ```ts
- * import { ofPromise } from "@observable/of-promise";
- * import { pipe } from "@observable/pipe";
+ * import { awaitOf } from "@observable/await-of";
  *
- * pipe(Promise.reject(new Error("test")), ofPromise()).subscribe({
+ * awaitOf(Promise.reject(new Error("test"))).subscribe({
  *   signal: new AbortController().signal,
  *   next: (value) => console.log("next", value),
  *   return: () => console.log("return"),
@@ -40,20 +38,15 @@ import {
  * // "throw" Error: test
  * ```
  */
-export function ofPromise<Value>(): (
-  source: PromiseLike<Value>,
-) => Observable<Value> {
-  return function ofPromiseFn(source) {
-    if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-    if (!isPromiseLike(source)) throw new ParameterTypeError(0, "PromiseLike");
-    return new Observable(async (observer) => {
-      try {
-        const value = await source;
-        observer.next(value);
-        observer.return();
-      } catch (value) {
-        observer.throw(value);
-      }
-    });
-  };
+export function awaitOf<Value>(promise: PromiseLike<Value>): Observable<Value> {
+  if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
+  if (!isPromiseLike(promise)) throw new ParameterTypeError(0, "PromiseLike");
+  return new Observable(async (observer) => {
+    try {
+      observer.next(await promise);
+      observer.return();
+    } catch (value) {
+      observer.throw(value);
+    }
+  });
 }

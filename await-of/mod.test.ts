@@ -1,54 +1,35 @@
 import { assertEquals, assertThrows } from "@std/assert";
 import { Observer } from "@observable/core";
 import { pipe } from "@observable/pipe";
-import { ofPromise } from "./mod.ts";
+import { awaitOf } from "./mod.ts";
 import { materialize, type ObserverNotification } from "@observable/materialize";
 
-Deno.test("ofPromise should throw when called with no source", () => {
-  // Arrange
-  const operator = ofPromise();
-
-  // Act / Assert
+Deno.test("awaitOf should throw when called with no promise", () => {
+  // Arrange / Act / Assert
   assertThrows(
-    () => operator(...([] as unknown as Parameters<typeof operator>)),
+    () => awaitOf(...([] as unknown as Parameters<typeof awaitOf>)),
     TypeError,
     "1 argument required but 0 present",
   );
 });
 
-Deno.test("ofPromise should throw when source is not a PromiseLike", () => {
+Deno.test("awaitOf should throw when promise is not a PromiseLike", () => {
   // Arrange
-  const operator = ofPromise();
-
-  // Act / Assert
   assertThrows(
-    // deno-lint-ignore no-explicit-any
-    () => operator(1 as any),
-    TypeError,
-    "Parameter 1 is not of type 'PromiseLike'",
-  );
-  assertThrows(
-    // deno-lint-ignore no-explicit-any
-    () => operator(null as any),
-    TypeError,
-    "Parameter 1 is not of type 'PromiseLike'",
-  );
-  assertThrows(
-    // deno-lint-ignore no-explicit-any
-    () => operator(undefined as any),
+    () => awaitOf(1 as unknown as PromiseLike<unknown>),
     TypeError,
     "Parameter 1 is not of type 'PromiseLike'",
   );
 });
 
-Deno.test("ofPromise should emit resolved value and return", async () => {
+Deno.test("awaitOf should emit resolved value and return", async () => {
   // Arrange
   const promise = Promise.resolve(42);
   const notifications: Array<ObserverNotification> = [];
   const { promise: done, resolve } = Promise.withResolvers<void>();
 
   // Act
-  pipe(promise, ofPromise(), materialize()).subscribe(
+  pipe(awaitOf(promise), materialize()).subscribe(
     new Observer({
       next: (notification) => notifications.push(notification),
       return: resolve,
@@ -58,13 +39,10 @@ Deno.test("ofPromise should emit resolved value and return", async () => {
   await done;
 
   // Assert
-  assertEquals(notifications, [
-    ["next", 42],
-    ["return"],
-  ]);
+  assertEquals(notifications, [["next", 42], ["return"]]);
 });
 
-Deno.test("ofPromise should emit thrown value on rejection without calling return", async () => {
+Deno.test("awaitOf should emit thrown value on rejection without calling return", async () => {
   // Arrange
   const error = new Error("test error");
   const promise = Promise.reject(error);
@@ -72,7 +50,7 @@ Deno.test("ofPromise should emit thrown value on rejection without calling retur
   const { promise: done, resolve } = Promise.withResolvers<void>();
 
   // Act
-  pipe(promise, ofPromise(), materialize()).subscribe(
+  pipe(awaitOf(promise), materialize()).subscribe(
     new Observer({
       next: (notification) => notifications.push(notification),
       return: resolve,
@@ -87,7 +65,7 @@ Deno.test("ofPromise should emit thrown value on rejection without calling retur
   assertEquals((notifications[0]![1] as Error).message, "test error");
 });
 
-Deno.test("ofPromise should work with PromiseLike objects", async () => {
+Deno.test("awaitOf should work with PromiseLike objects", async () => {
   // Arrange
   const promiseLike: PromiseLike<string> = {
     then<TResult1, TResult2>(
@@ -101,7 +79,7 @@ Deno.test("ofPromise should work with PromiseLike objects", async () => {
   const { promise: done, resolve } = Promise.withResolvers<void>();
 
   // Act
-  pipe(promiseLike, ofPromise(), materialize()).subscribe(
+  pipe(awaitOf(promiseLike), materialize()).subscribe(
     new Observer({
       next: (notification) => notifications.push(notification),
       return: resolve,
@@ -111,8 +89,5 @@ Deno.test("ofPromise should work with PromiseLike objects", async () => {
   await done;
 
   // Assert
-  assertEquals(notifications, [
-    ["next", "hello"],
-    ["return"],
-  ]);
+  assertEquals(notifications, [["next", "hello"], ["return"]]);
 });

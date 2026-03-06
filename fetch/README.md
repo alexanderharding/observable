@@ -39,7 +39,7 @@ import { fetch } from "@observable/fetch";
 import { Observable } from "@observable/core";
 import { switchMap } from "@observable/switch-map";
 import { pipe } from "@observable/pipe";
-import { ofPromise } from "@observable/of-promise";
+import { awaitOf } from "@observable/await-of";
 
 const controller = new AbortController();
 const response = fetch("https://www.example.com/api/data", {
@@ -47,7 +47,7 @@ const response = fetch("https://www.example.com/api/data", {
 });
 const data = pipe(
   response,
-  switchMap((response) => pipe(response.json(), ofPromise())),
+  switchMap((response) => awaitOf(response.json())),
 );
 
 data.subscribe({
@@ -100,7 +100,7 @@ import { fetch } from "@observable/fetch";
 import { Observable } from "@observable/core";
 import { switchMap } from "@observable/switch-map";
 import { pipe } from "@observable/pipe";
-import { ofPromise } from "@observable/of-promise";
+import { awaitOf } from "@observable/await-of";
 
 const controller = new AbortController();
 
@@ -108,7 +108,7 @@ pipe(
   fetch("https://api.example.com/data", {
     headers: { "Content-Type": "application/json" }
   }),
-  switchMap((response) => pipe(response.json(), ofPromise())),
+  switchMap((response) => awaitOf(response.json())),
 ).subscribe({
   signal: controller.signal,
   next: (data) => console.log(data),  // Parsed JSON

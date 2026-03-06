@@ -2,6 +2,7 @@
   "workspace": [
     "all",
     "async-subject",
+    "await-of",
     "behavior-subject",
     "broadcast-subject",
     "catch-error",
@@ -33,7 +34,6 @@
     "merge-map",
     "never",
     "of",
-    "of-promise",
     "pairwise",
     "pipe",
     "race",
