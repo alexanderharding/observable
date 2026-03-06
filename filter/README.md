@@ -81,7 +81,6 @@ TYPE NARROWING:
 The predicate can be a type guard for type narrowing:
 ```ts
 pipe(
-  [1, "a", 2, "b"],
   forOf([1, 2, 3, 4, 5]),
   filter((x): x is number => typeof x === "number"),
 ).subscribe({ ... });  // TypeScript knows values are numbers
