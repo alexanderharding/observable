@@ -87,8 +87,7 @@ const lookup = {
 };
 
 pipe(
-  ["a", "b", "c"],
-  forOf([1, 2, 3]),
+  forOf(["a", "b", "c"]),
   flatMap((key) => lookup[key])
 ).subscribe({
   signal: controller.signal,
@@ -102,8 +101,7 @@ SEQUENTIAL EXECUTION:
 Each inner Observable returns before the next one starts:
 ```ts
 pipe(
-  ["file1", "file2", "file3"],
-  forOf([1, 2, 3]),
+  forOf(["file1", "file2", "file3"]),
   flatMap((file) => uploadFile(file))  // Uploads one at a time
 ).subscribe({ ... });
 ```
