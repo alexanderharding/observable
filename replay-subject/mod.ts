@@ -1,4 +1,4 @@
-import { isObserver, type Observable, type Observer, Subject } from "@observable/core";
+import { isObserver, type Observer, Subject } from "@observable/core";
 import {
   InstanceofError,
   MinimumArgumentsRequiredError,
@@ -7,8 +7,6 @@ import {
 import { flat } from "@observable/flat";
 import { defer } from "@observable/defer";
 import { forOf } from "@observable/for-of";
-import { pipe } from "@observable/pipe";
-import { empty } from "@observable/empty";
 
 /**
  * Object type that acts as a variant of [`Subject`](https://jsr.io/@observable/core/doc/~/Subject).
@@ -97,15 +95,15 @@ export const ReplaySubject: ReplaySubjectConstructor = class<Value> {
   readonly [Symbol.toStringTag] = stringTag;
   readonly #count: number;
   /**
-   * Tracking a known list of buffered values as an Observable, so we don't have to clone
+   * Tracking a known list of buffered values, so we don't have to clone
    * them while iterating to prevent reentrant behaviors.
    */
-  #bufferSnapshot?: Observable = empty;
+  #bufferSnapshot?: ReadonlyArray<Value>;
   readonly #buffer: Array<Value> = [];
   readonly #subject = new Subject<Value>();
   readonly signal = this.#subject.signal;
   readonly #observable = flat([
-    defer(() => (this.#bufferSnapshot ??= forOf(this.#buffer.slice()))),
+    defer(() => forOf(this.#bufferSnapshot ??= this.#buffer.slice())),
     this.#subject,
   ]);
 
@@ -119,7 +117,7 @@ export const ReplaySubject: ReplaySubjectConstructor = class<Value> {
     if (this.signal.aborted || this.#count === 0) return;
     this.signal.addEventListener("abort", () => {
       this.#buffer.length = 0;
-      this.#bufferSnapshot = empty;
+      this.#bufferSnapshot = [];
     }, { once: true });
   }
 
