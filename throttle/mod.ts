@@ -6,7 +6,7 @@ import { pipe } from "@observable/pipe";
 import { exhaustMap } from "@observable/exhaust-map";
 import { filter } from "@observable/filter";
 import { flat } from "@observable/flat";
-import { forOf } from "@observable/for-of";
+import { of } from "@observable/of";
 import { timeout } from "@observable/timeout";
 import { drop } from "@observable/drop";
 
@@ -56,9 +56,7 @@ export function throttle<Value>(
     if (milliseconds === 0) return from(source);
     return pipe(
       source,
-      exhaustMap((value) =>
-        flat([forOf([value]), pipe(timeout(milliseconds), drop<never>(Infinity))])
-      ),
+      exhaustMap((value) => flat([of(value), pipe(timeout(milliseconds), drop<never>(Infinity))])),
     );
   };
 }

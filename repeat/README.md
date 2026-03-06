@@ -31,6 +31,7 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 ```ts
 import { repeat } from "@observable/repeat";
 import { forOf } from "@observable/for-of";
+import { of } from "@observable/of";
 import { pipe } from "@observable/pipe";
 import { empty } from "@observable/empty";
 import { defer } from "@observable/defer";
@@ -43,7 +44,7 @@ const repeated = defer(() => {
     source,
     repeat(defer(() => {
       console.log("notifier subscribed");
-      return ++count === 2 ? empty : forOf([undefined]);
+      return ++count === 2 ? empty : of(undefined);
     })),
   );
 });
@@ -87,6 +88,7 @@ USAGE PATTERN:
 ```ts
 import { repeat } from "@observable/repeat";
 import { forOf } from "@observable/for-of";
+import { of } from "@observable/of";
 import { pipe } from "@observable/pipe";
 import { defer } from "@observable/defer";
 import { empty } from "@observable/empty";
@@ -98,7 +100,7 @@ let count = 0;
 pipe(
   source,
   repeat(defer(() => {
-    return ++count < 3 ? forOf([undefined]) : empty;
+    return ++count < 3 ? of(undefined) : empty;
   }))
 ).subscribe({
   signal: controller.signal,

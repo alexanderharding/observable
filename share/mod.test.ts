@@ -3,6 +3,7 @@ import { Observer, Subject } from "@observable/core";
 import { pipe } from "@observable/pipe";
 import { share } from "./mod.ts";
 import { forOf } from "@observable/for-of";
+import { of } from "@observable/of";
 import { throwError } from "@observable/throw-error";
 import { materialize, type ObserverNotification } from "@observable/materialize";
 import { ReplaySubject } from "@observable/replay-subject";
@@ -119,7 +120,7 @@ Deno.test("share should not subscribe to source until first observer", () => {
   let subscribed = false;
   const source = defer(() => {
     subscribed = true;
-    return forOf([1]);
+    return of(1);
   });
   const shared = pipe(source, share());
   assertStrictEquals(subscribed, false);
@@ -325,7 +326,7 @@ Deno.test("share should create new source subscription after source returns", ()
   let sourceSubscribeCount = 0;
   const source = defer(() => {
     sourceSubscribeCount++;
-    return forOf([sourceSubscribeCount]);
+    return of(sourceSubscribeCount);
   });
   const shared = pipe(source, share());
   const notifications1: Array<ObserverNotification<number>> = [];

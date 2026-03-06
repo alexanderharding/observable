@@ -5,7 +5,7 @@ import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/i
 import { mergeMap } from "@observable/merge-map";
 import { merge } from "@observable/merge";
 import { defer } from "@observable/defer";
-import { forOf } from "@observable/for-of";
+import { of } from "@observable/of";
 
 /**
  * Recursively {@linkcode project|projects} each [source](https://jsr.io/@observable/core#source) value
@@ -14,7 +14,7 @@ import { forOf } from "@observable/for-of";
  * @example
  * ```ts
  * import { expand } from "@observable/expand";
- * import { forOf } from "@observable/for-of";
+ * import { of } from "@observable/of";
  * import { pipe } from "@observable/pipe";
  * import { empty } from "@observable/empty";
  *
@@ -22,8 +22,8 @@ import { forOf } from "@observable/for-of";
  *
  * // Recursively double values until >= 16
  * pipe(
- *   forOf([2]),
- *   expand((value) => value < 16 ? forOf([value * 2]) : empty),
+ *   of(2),
+ *   expand((value) => value < 16 ? of(value * 2) : empty),
  * ).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
@@ -41,6 +41,7 @@ import { forOf } from "@observable/for-of";
  * @example
  * ```ts
  * import { expand } from "@observable/expand";
+ * import { of } from "@observable/of";
  * import { forOf } from "@observable/for-of";
  * import { pipe } from "@observable/pipe";
  * import { empty } from "@observable/empty";
@@ -62,8 +63,7 @@ import { forOf } from "@observable/for-of";
  * const controller = new AbortController();
  *
  * pipe(
- *   [tree],
- *   forOf([root]),
+ *   of(tree),
  *   expand((node) =>
  *     node.children.length ? forOf(node.children) : empty
  *   ),
@@ -99,7 +99,7 @@ export function expand<Value>(
         source,
         mergeMap((value) =>
           merge([
-            forOf([value]),
+            of(value),
             pipe(defer(() => project(value, index++)), expand((value) => project(value, index++))),
           ])
         ),

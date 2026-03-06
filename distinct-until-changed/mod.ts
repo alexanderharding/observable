@@ -6,7 +6,7 @@ import { map } from "@observable/map";
 import { filter } from "@observable/filter";
 import { pairwise } from "@observable/pairwise";
 import { flat } from "@observable/flat";
-import { forOf } from "@observable/for-of";
+import { of } from "@observable/of";
 
 /**
  * Flag indicating that no value has been emitted yet.
@@ -52,7 +52,7 @@ export function distinctUntilChanged<Value>(
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
     source = from(source);
     return pipe(
-      flat([forOf([noValue]), source]),
+      flat([of(noValue), source]),
       pairwise(),
       filter(isDistinct),
       map(([_, current]) => current),
