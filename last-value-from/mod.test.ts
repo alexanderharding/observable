@@ -1,5 +1,4 @@
 import { assertEquals, assertRejects, assertStrictEquals } from "@std/assert";
-import { pipe } from "@observable/pipe";
 import { lastValueFrom } from "./mod.ts";
 import { forOf } from "@observable/for-of";
 import { throwError } from "@observable/throw-error";
