@@ -5,6 +5,7 @@ import { pipe } from "@observable/pipe";
 import { throwError } from "@observable/throw-error";
 import { map } from "./mod.ts";
 import { materialize, type ObserverNotification } from "@observable/materialize";
+import { empty } from "@observable/empty";
 
 Deno.test("map should project the values", () => {
   // Arrange
@@ -57,7 +58,7 @@ Deno.test("map should pump returns through itself", () => {
   // Arrange
   const notifications: Array<ObserverNotification<number>> = [];
   const observable = pipe(
-    forOf([]),
+    empty,
     map((value) => value * 2),
     materialize(),
   );

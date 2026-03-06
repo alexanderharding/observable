@@ -5,6 +5,7 @@ import { pipe } from "@observable/pipe";
 import { throwError } from "@observable/throw-error";
 import { scan } from "./mod.ts";
 import { materialize, type ObserverNotification } from "@observable/materialize";
+import { empty } from "@observable/empty";
 
 Deno.test("scan should accumulate values with a seed", () => {
   // Arrange
@@ -80,7 +81,7 @@ Deno.test("scan should pump returns through itself", () => {
   // Arrange
   const notifications: Array<ObserverNotification<number>> = [];
   const observable = pipe(
-    forOf([]),
+    empty,
     scan((previous, current) => previous + current, 0),
     materialize(),
   );

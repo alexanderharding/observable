@@ -6,6 +6,7 @@ import { throwError } from "@observable/throw-error";
 import { tap } from "./mod.ts";
 import { materialize, type ObserverNotification } from "@observable/materialize";
 import { MinimumArgumentsRequiredError, noop, ParameterTypeError } from "@observable/internal";
+import { empty } from "@observable/empty";
 
 Deno.test("tap should throw if no arguments are provided", () => {
   assertThrows(
@@ -119,7 +120,7 @@ Deno.test("tap should pump returns through itself", () => {
   const sideEffects: Array<number> = [];
   const notifications: Array<ObserverNotification<number>> = [];
   const observable = pipe(
-    forOf([]),
+    empty,
     tap((value) => sideEffects.push(value)),
     materialize(),
   );
