@@ -6,7 +6,7 @@ import {
 } from "@observable/internal";
 import { flat } from "@observable/flat";
 import { defer } from "@observable/defer";
-import { ofIterable } from "@observable/of-iterable";
+import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 import { empty } from "@observable/empty";
 
@@ -93,7 +93,7 @@ export interface ReplaySubjectConstructor {
  */
 const stringTag = "ReplaySubject";
 
-export const ReplaySubject: ReplaySubjectConstructor = class {
+export const ReplaySubject: ReplaySubjectConstructor = class<Value> {
   readonly [Symbol.toStringTag] = stringTag;
   readonly #count: number;
   /**
@@ -101,11 +101,11 @@ export const ReplaySubject: ReplaySubjectConstructor = class {
    * them while iterating to prevent reentrant behaviors.
    */
   #bufferSnapshot?: Observable = empty;
-  readonly #buffer: Array<unknown> = [];
-  readonly #subject = new Subject();
+  readonly #buffer: Array<Value> = [];
+  readonly #subject = new Subject<Value>();
   readonly signal = this.#subject.signal;
   readonly #observable = flat([
-    defer(() => (this.#bufferSnapshot ??= pipe(this.#buffer.slice(), ofIterable()))),
+    defer(() => (this.#bufferSnapshot ??= forOf(this.#buffer.slice()))),
     this.#subject,
   ]);
 
@@ -123,8 +123,10 @@ export const ReplaySubject: ReplaySubjectConstructor = class {
     }, { once: true });
   }
 
-  next(value: unknown): void {
-    if (!(this instanceof ReplaySubject)) throw new InstanceofError("this", stringTag);
+  next(value: Value): void {
+    if (!(this instanceof ReplaySubject)) {
+      throw new InstanceofError("this", stringTag);
+    }
     if (!this.signal.aborted && this.#count > 0) {
       // Add the next value to the buffer.
       const length = this.#buffer.push(value);
@@ -146,8 +148,10 @@ export const ReplaySubject: ReplaySubjectConstructor = class {
     else throw new InstanceofError("this", stringTag);
   }
 
-  subscribe(observer: Observer): void {
-    if (!(this instanceof ReplaySubject)) throw new InstanceofError("this", stringTag);
+  subscribe(observer: Observer<Value>): void {
+    if (!(this instanceof ReplaySubject)) {
+      throw new InstanceofError("this", stringTag);
+    }
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObserver(observer)) throw new ParameterTypeError(0, "Observer");
     this.#observable.subscribe(observer);

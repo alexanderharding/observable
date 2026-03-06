@@ -64,11 +64,11 @@ COMMON USE — Conditional errors:
 ```ts
 import { pipe } from "@observable/pipe";
 import { flatMap } from "@observable/flat-map";
-import { ofIterable } from "@observable/of-iterable";
+import { forOf } from "@observable/for-of";
 
 pipe(
   [userId],
-  ofIterable(),
+  forOf([1, 2, 3]),
   flatMap((id) =>
     id ? fetchUser(id) : throwError(new Error("User ID required"))
   )

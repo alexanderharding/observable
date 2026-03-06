@@ -21,7 +21,7 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 
 ```ts
 import { pipe } from "@observable/pipe";
-import { ofIterable } from "@observable/of-iterable";
+import { forOf } from "@observable/for-of";
 import { map } from "@observable/map";
 import { filter } from "@observable/filter";
 
@@ -29,7 +29,7 @@ const controller = new AbortController();
 
 pipe(
   [1, 2, 3, 4, 5],
-  ofIterable(),
+  forOf([1, 2, 3]),
   filter((value) => value % 2 === 0),
   map((value) => value * 2),
 ).subscribe({
@@ -63,7 +63,7 @@ CRITICAL: This library is NOT RxJS. Key differences:
 USAGE PATTERN:
 ```ts
 import { pipe } from "@observable/pipe";
-import { ofIterable } from "@observable/of-iterable";
+import { forOf } from "@observable/for-of";
 import { map } from "@observable/map";
 import { filter } from "@observable/filter";
 
@@ -71,7 +71,7 @@ const controller = new AbortController();
 
 pipe(
   [1, 2, 3, 4, 5],
-  ofIterable(),
+  forOf([1, 2, 3]),
   filter((value) => value % 2 === 0),
   map((value) => value * 2),
 ).subscribe({

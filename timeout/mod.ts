@@ -1,9 +1,8 @@
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 import { Observable } from "@observable/core";
 import { empty } from "@observable/empty";
-import { ofIterable } from "@observable/of-iterable";
+import { forOf } from "@observable/for-of";
 import { never } from "@observable/never";
-import { pipe } from "@observable/pipe";
 
 /**
  * [`Next`](https://jsr.io/@observable/core/doc/~/Observer.next)s a `void` value after a specified number of
@@ -75,9 +74,9 @@ export function timeout(milliseconds: number): Observable<void> {
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
   if (typeof milliseconds !== "number") throw new ParameterTypeError(0, "Number");
   if (milliseconds < 0 || Number.isNaN(milliseconds)) return empty;
-  if (milliseconds === 0) return pipe([undefined], ofIterable());
+  if (milliseconds === 0) return forOf([undefined]);
   if (milliseconds === Infinity) return never;
-  return new Observable((observer) => {
+  return new Observable<void>((observer) => {
     const timeout = globalThis.setTimeout(
       () => {
         observer.next();

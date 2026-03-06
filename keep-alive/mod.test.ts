@@ -3,7 +3,7 @@ import { Observer } from "@observable/core";
 import { materialize, type ObserverNotification } from "@observable/materialize";
 import { pipe } from "@observable/pipe";
 import { keepAlive } from "./mod.ts";
-import { ofIterable } from "@observable/of-iterable";
+import { forOf } from "@observable/for-of";
 import { tap } from "@observable/tap";
 
 Deno.test("keepAlive should ignore unsubscribe indefinitely", () => {
@@ -11,7 +11,7 @@ Deno.test("keepAlive should ignore unsubscribe indefinitely", () => {
   const controller = new AbortController();
   const tapNotifications: Array<ObserverNotification<number>> = [];
   const observerNotifications: Array<ObserverNotification<number>> = [];
-  const source = pipe([1, 2, 3], ofIterable());
+  const source = forOf([1, 2, 3]);
 
   // Act
   pipe(

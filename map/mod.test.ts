@@ -1,6 +1,6 @@
 import { assertEquals } from "@std/assert";
 import { Observable, Observer } from "@observable/core";
-import { ofIterable } from "@observable/of-iterable";
+import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 import { throwError } from "@observable/throw-error";
 import { map } from "./mod.ts";
@@ -11,8 +11,7 @@ Deno.test("map should project the values", () => {
   const notifications: Array<ObserverNotification<number>> = [];
   const indices: Array<number> = [];
   const observable = pipe(
-    [1, 2, 3],
-    ofIterable(),
+    forOf([1, 2, 3]),
     map((value, index) => {
       indices.push(index);
       return value * 2;
@@ -58,8 +57,7 @@ Deno.test("map should pump returns through itself", () => {
   // Arrange
   const notifications: Array<ObserverNotification<number>> = [];
   const observable = pipe(
-    [],
-    ofIterable(),
+    forOf([]),
     map((value) => value * 2),
     materialize(),
   );
@@ -100,8 +98,7 @@ Deno.test("map should throw if the project function throws", () => {
   const error = new Error("test");
   const notifications: Array<ObserverNotification<number>> = [];
   const observable = pipe(
-    [1],
-    ofIterable(),
+    forOf([1]),
     map(() => {
       throw error;
     }),

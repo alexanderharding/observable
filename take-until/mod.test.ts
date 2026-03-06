@@ -1,7 +1,7 @@
 import { assertEquals } from "@std/assert";
 import { Observable, Observer, Subject } from "@observable/core";
 import { noop } from "@observable/internal";
-import { ofIterable } from "@observable/of-iterable";
+import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 import { takeUntil } from "./mod.ts";
 import { materialize, type ObserverNotification } from "@observable/materialize";
@@ -9,7 +9,7 @@ import { materialize, type ObserverNotification } from "@observable/materialize"
 Deno.test("takeUntil should return when notifier nexts", () => {
   // Arrange
   const notifications: Array<ObserverNotification<number>> = [];
-  const source = pipe([1, 2, 3, 4, 5], ofIterable());
+  const source = forOf([1, 2, 3, 4, 5]);
   const notifier = new Subject<void>();
   const materialized = pipe(source, takeUntil(notifier), materialize());
 
@@ -49,7 +49,7 @@ Deno.test("takeUntil should let values through until notifier nexts", () => {
 Deno.test("takeUntil should allow all values if notifier never fires", () => {
   // Arrange
   const notifications: Array<ObserverNotification<number>> = [];
-  const source = pipe([10, 20, 30], ofIterable());
+  const source = forOf([10, 20, 30]);
   const notifier = new Observable<void>(noop);
   const materialized = pipe(source, takeUntil(notifier), materialize());
 

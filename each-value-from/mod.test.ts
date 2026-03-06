@@ -2,7 +2,7 @@ import { assertEquals, assertRejects, assertStrictEquals } from "@std/assert";
 import { Observable, type Observer, Subject } from "@observable/core";
 import { pipe } from "@observable/pipe";
 import { eachValueFrom } from "./mod.ts";
-import { ofIterable } from "@observable/of-iterable";
+import { forOf } from "@observable/for-of";
 import { throwError } from "@observable/throw-error";
 import { empty } from "@observable/empty";
 import { flat } from "@observable/flat";
@@ -46,7 +46,7 @@ Deno.test("eachValueFrom should throw when iterated with a non-Observable source
 
 Deno.test("eachValueFrom should iterate all values from synchronous observable", async () => {
   // Arrange
-  const source = pipe([1, 2, 3], ofIterable());
+  const source = forOf([1, 2, 3]);
   const values: Array<number> = [];
 
   // Act
@@ -90,7 +90,7 @@ Deno.test("eachValueFrom should reject on observable throw", async () => {
 Deno.test("eachValueFrom should handle throw after some values", async () => {
   // Arrange
   const error = new Error("test error");
-  const source = flat([pipe([1, 2], ofIterable()), throwError(error)]);
+  const source = flat([forOf([1, 2]), throwError(error)]);
   const values: Array<number> = [];
 
   // Act / Assert
@@ -110,7 +110,7 @@ Deno.test("eachValueFrom should abort subscription on iterator return", async ()
   // Arrange
   let subscriptionAborted = false;
   const source = pipe(
-    flat([pipe([1, 2, 2], ofIterable()), never]),
+    flat([forOf([1, 2, 2]), never]),
     finalize(() => subscriptionAborted = true),
   );
   const values: Array<number> = [];
@@ -128,7 +128,7 @@ Deno.test("eachValueFrom should abort subscription on iterator return", async ()
 
 Deno.test("eachValueFrom should return done after observable returns", async () => {
   // Arrange
-  const source = pipe([1, 2], ofIterable());
+  const source = forOf([1, 2]);
   const generator = eachValueFrom(source);
 
   // Act
@@ -168,7 +168,7 @@ Deno.test("eachValueFrom return method should abort subscription and return done
   // Arrange
   let subscriptionAborted = false;
   const source = pipe(
-    flat([pipe([1, 2], ofIterable()), never]),
+    flat([forOf([1, 2]), never]),
     finalize(() => subscriptionAborted = true),
   );
   const generator = eachValueFrom(source);
@@ -189,7 +189,7 @@ Deno.test("eachValueFrom throw method should abort subscription and reject", asy
   let subscriptionAborted = false;
   const error = new Error("iterator throw");
   const source = pipe(
-    flat([pipe([1], ofIterable()), never]),
+    flat([forOf([1]), never]),
     finalize(() => subscriptionAborted = true),
   );
   const generator = eachValueFrom(source);
@@ -301,7 +301,7 @@ Deno.test("eachValueFrom should only start subscription on first next call", asy
   let subscribed = false;
   const source = defer(() => {
     subscribed = true;
-    return pipe([1], ofIterable());
+    return forOf([1]);
   });
   const generator = eachValueFrom(source);
 

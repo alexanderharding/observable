@@ -6,7 +6,7 @@ import {
 } from "@observable/internal";
 import { defer } from "@observable/defer";
 import { empty } from "@observable/empty";
-import { ofIterable } from "@observable/of-iterable";
+import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 import { tap } from "@observable/tap";
 import { map } from "@observable/map";
@@ -22,12 +22,12 @@ import { finalize } from "@observable/finalize";
  * @example
  * ```ts
  * import { all } from "@observable/all";
- * import { ofIterable } from "@observable/of-iterable";
+ * import { forOf } from "@observable/for-of";
  * import { pipe } from "@observable/pipe";
  *
- * const source1 = pipe([1, 2, 3], ofIterable());
- * const source2 = pipe([4, 5, 6], ofIterable());
- * const source3 = pipe([7, 8, 9], ofIterable());
+ * const source1 = forOf([1, 2, 3]);
+ * const source2 = forOf([4, 5, 6]);
+ * const source3 = forOf([7, 8, 9]);
  *
  * const controller = new AbortController();
  * all([source1, source2, source3]).subscribe({
@@ -46,12 +46,12 @@ import { finalize } from "@observable/finalize";
  * @example
  * ```ts
  * import { all } from "@observable/all";
- * import { ofIterable } from "@observable/of-iterable";
+ * import { forOf } from "@observable/for-of";
  * import { pipe } from "@observable/pipe";
  * import { empty } from "@observable/empty";
  *
- * const source1 = pipe([1, 2, 3], ofIterable());
- * const source2 = pipe([7, 8, 9], ofIterable());
+ * const source1 = forOf([1, 2, 3]);
+ * const source2 = forOf([7, 8, 9]);
  *
  * const controller = new AbortController();
  * all([source1, empty, source2]).subscribe({
@@ -100,12 +100,12 @@ export function all<const Values extends ReadonlyArray<unknown>>(
  * @example
  * ```ts
  * import { all } from "@observable/all";
- * import { ofIterable } from "@observable/of-iterable";
+ * import { forOf } from "@observable/for-of";
  * import { pipe } from "@observable/pipe";
  * import { empty } from "@observable/empty";
  *
- * const source1 = pipe([1, 2, 3], ofIterable());
- * const source2 = pipe([7, 8, 9], ofIterable());
+ * const source1 = forOf([1, 2, 3]);
+ * const source2 = forOf([7, 8, 9]);
  *
  * const controller = new AbortController();
  * all([source1, empty, source2]).subscribe({
@@ -165,8 +165,7 @@ export function all<Value>(
     const stop = new Subject<void>();
 
     return pipe(
-      inputArray,
-      ofIterable(),
+      forOf(inputArray),
       mergeMap((observable, index) => {
         /**
          * Tracking if the observable is empty to be evaluated by subsequent logic.

@@ -1,6 +1,6 @@
 import { assertEquals } from "@std/assert";
 import { Observable, Observer } from "@observable/core";
-import { ofIterable } from "@observable/of-iterable";
+import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 import { throwError } from "@observable/throw-error";
 import { scan } from "./mod.ts";
@@ -10,8 +10,7 @@ Deno.test("scan should accumulate values with a seed", () => {
   // Arrange
   const notifications: Array<ObserverNotification<number>> = [];
   const observable = pipe(
-    [1, 2, 3],
-    ofIterable(),
+    forOf([1, 2, 3]),
     scan((previous, current) => previous + current, 0),
     materialize(),
   );
@@ -35,8 +34,7 @@ Deno.test("scan should pass the index to the accumulator", () => {
   const notifications: Array<ObserverNotification<string>> = [];
   const indices: Array<number> = [];
   const observable = pipe(
-    ["a", "b", "c"],
-    ofIterable(),
+    forOf(["a", "b", "c"]),
     scan((previous, current, index) => {
       indices.push(index);
       return previous + current;
@@ -82,8 +80,7 @@ Deno.test("scan should pump returns through itself", () => {
   // Arrange
   const notifications: Array<ObserverNotification<number>> = [];
   const observable = pipe(
-    [],
-    ofIterable(),
+    forOf([]),
     scan((previous, current) => previous + current, 0),
     materialize(),
   );
@@ -124,8 +121,7 @@ Deno.test("scan should throw if the accumulator function throws", () => {
   const error = new Error("test");
   const notifications: Array<ObserverNotification<number>> = [];
   const observable = pipe(
-    [1],
-    ofIterable(),
+    forOf([1]),
     scan(() => {
       throw error;
     }, 0),
@@ -145,8 +141,7 @@ Deno.test("scan should work with different input and output types", () => {
   // Arrange
   const notifications: Array<ObserverNotification<Array<number>>> = [];
   const observable = pipe(
-    [1, 2, 3],
-    ofIterable(),
+    forOf([1, 2, 3]),
     scan((previous, current) => [...previous, current], [] as Array<number>),
     materialize(),
   );
@@ -169,7 +164,7 @@ Deno.test("scan should reset state per subscription when using defer", () => {
   // Arrange
   const notifications1: Array<ObserverNotification<number>> = [];
   const notifications2: Array<ObserverNotification<number>> = [];
-  const source = pipe([1, 2, 3], ofIterable());
+  const source = forOf([1, 2, 3]);
   const scanned = pipe(
     source,
     scan((previous, current) => previous + current, 0),
