@@ -22,7 +22,6 @@ import { forOf } from "@observable/for-of";
  *
  * // Recursively double values until >= 16
  * pipe(
- *   [2],
  *   forOf([2]),
  *   expand((value) => value < 16 ? forOf([value * 2]) : empty),
  * ).subscribe({
