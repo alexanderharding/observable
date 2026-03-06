@@ -68,8 +68,7 @@ const tree: Node = {
 const controller = new AbortController();
 
 pipe(
-  [tree],
-  forOf([2]),
+  forOf([tree]),
   expand((node) => node.children.length ? forOf(node.children) : empty),
 ).subscribe({
   signal: controller.signal,
