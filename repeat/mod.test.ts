@@ -2,6 +2,7 @@ import { assertEquals, assertThrows } from "@std/assert";
 import { Observer, Subject } from "@observable/core";
 import { pipe } from "@observable/pipe";
 import { forOf } from "@observable/for-of";
+import { of } from "@observable/of";
 import { materialize, type ObserverNotification } from "@observable/materialize";
 import { repeat } from "./mod.ts";
 import { take } from "@observable/take";
@@ -15,7 +16,7 @@ Deno.test("repeat should repeat source when notifier emits", () => {
   const notifications: Array<ObserverNotification<number>> = [];
   const source = forOf([1, 2, 3]);
   let repeatCount = 0;
-  const notifier = defer(() => ++repeatCount >= 3 ? empty : forOf([undefined]));
+  const notifier = defer(() => ++repeatCount >= 3 ? empty : of(undefined));
   const materialized = pipe(source, repeat(notifier), materialize());
 
   // Act
@@ -63,8 +64,8 @@ Deno.test("repeat should propagate throws from source", () => {
   // Arrange
   const error = new Error("source error");
   const notifications: Array<ObserverNotification<number>> = [];
-  const source = flat([forOf([1]), throwError(error)]);
-  const notifier = forOf([undefined]);
+  const source = flat([of(1), throwError(error)]);
+  const notifier = of(undefined);
   const materialized = pipe(source, repeat(notifier), materialize());
 
   // Act
@@ -125,7 +126,7 @@ Deno.test("repeat should work with Subject as notifier", () => {
 Deno.test("repeat should repeat indefinitely with default notifier", () => {
   // Arrange
   const notifications: Array<ObserverNotification<number>> = [];
-  const source = forOf([1]);
+  const source = of(1);
   const materialized = pipe(source, repeat(), take(5), materialize());
 
   // Act
@@ -149,7 +150,7 @@ Deno.test("repeat should honor unsubscribe during source", () => {
   const controller = new AbortController();
   const notifications: Array<ObserverNotification<number>> = [];
   const source = forOf([1, 2, 3, 4, 5]);
-  const notifier = forOf([undefined]);
+  const notifier = of(undefined);
   const materialized = pipe(source, repeat(notifier), materialize());
 
   // Act
@@ -173,7 +174,7 @@ Deno.test("repeat should honor unsubscribe during notifier", () => {
   // Arrange
   const controller = new AbortController();
   const notifications: Array<ObserverNotification<number>> = [];
-  const source = forOf([1]);
+  const source = of(1);
   const notifier = new Subject<void>();
   const materialized = pipe(source, repeat(notifier), materialize());
 
@@ -206,7 +207,7 @@ Deno.test("repeat should throw when notifier is not an Observable", () => {
 
 Deno.test("repeat should throw when called with no source", () => {
   // Arrange
-  const operator = repeat(forOf([undefined]));
+  const operator = repeat(of(undefined));
 
   // Act / Assert
   assertThrows(
@@ -218,7 +219,7 @@ Deno.test("repeat should throw when called with no source", () => {
 
 Deno.test("repeat should throw when source is not an Observable", () => {
   // Arrange
-  const operator = repeat(forOf([undefined]));
+  const operator = repeat(of(undefined));
 
   // Act / Assert
   assertThrows(
@@ -233,7 +234,7 @@ Deno.test("repeat should only use first emission from notifier per repeat cycle"
   // Arrange
   let notifierEmissions = 0;
   const notifications: Array<ObserverNotification<number>> = [];
-  const source = forOf([1]);
+  const source = of(1);
   const notifier = defer(() => {
     notifierEmissions++;
     return forOf([undefined, undefined, undefined]);
@@ -269,7 +270,7 @@ Deno.test("repeat should work with defer notifier for controlled repetition", ()
       repeat(
         defer(() => {
           notifierSubscriptions.push(++count);
-          return count === 2 ? empty : forOf([undefined]);
+          return count === 2 ? empty : of(undefined);
         }),
       ),
     );
@@ -319,7 +320,7 @@ Deno.test("repeat should resubscribe to source on each repeat", () => {
     return forOf([subscriptionCount * 10 + 1, subscriptionCount * 10 + 2]);
   });
   let repeatCount = 0;
-  const notifier = defer(() => ++repeatCount >= 2 ? empty : forOf([undefined]));
+  const notifier = defer(() => ++repeatCount >= 2 ? empty : of(undefined));
   const materialized = pipe(source, repeat(notifier), materialize());
 
   // Act

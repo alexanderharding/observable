@@ -32,6 +32,7 @@
     "merge",
     "merge-map",
     "never",
+    "of",
     "of-promise",
     "pairwise",
     "pipe",

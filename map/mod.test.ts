@@ -1,6 +1,7 @@
 import { assertEquals } from "@std/assert";
 import { Observable, Observer } from "@observable/core";
 import { forOf } from "@observable/for-of";
+import { of } from "@observable/of";
 import { pipe } from "@observable/pipe";
 import { throwError } from "@observable/throw-error";
 import { map } from "./mod.ts";
@@ -99,7 +100,7 @@ Deno.test("map should throw if the project function throws", () => {
   const error = new Error("test");
   const notifications: Array<ObserverNotification<number>> = [];
   const observable = pipe(
-    forOf([1]),
+    of(1),
     map(() => {
       throw error;
     }),

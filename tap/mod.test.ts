@@ -1,6 +1,7 @@
 import { assertEquals, assertThrows } from "@std/assert";
 import { Observable, Observer } from "@observable/core";
 import { forOf } from "@observable/for-of";
+import { of } from "@observable/of";
 import { pipe } from "@observable/pipe";
 import { throwError } from "@observable/throw-error";
 import { tap } from "./mod.ts";
@@ -183,7 +184,7 @@ Deno.test("tap callback error should be delivered as throw notification without 
   const error = new Error("callback error");
   const notifications: Array<ObserverNotification<number>> = [];
   const observable = pipe(
-    forOf([1]),
+    of(1),
     tap(() => {
       throw error;
     }),
@@ -227,7 +228,7 @@ Deno.test("tap should execute side-effect before downstream receives value", () 
   // Arrange
   const order: Array<string> = [];
   const observable = pipe(
-    forOf([1]),
+    of(1),
     tap(() => order.push("tap")),
     materialize(),
   );

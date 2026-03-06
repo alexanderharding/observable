@@ -2,6 +2,7 @@ import { assertEquals, assertThrows } from "@std/assert";
 import { Observer, Subject } from "@observable/core";
 import { pipe } from "@observable/pipe";
 import { forOf } from "@observable/for-of";
+import { of } from "@observable/of";
 import { materialize, type ObserverNotification } from "@observable/materialize";
 import { catchError } from "./mod.ts";
 import { throwError } from "@observable/throw-error";
@@ -14,7 +15,7 @@ Deno.test("catchError should catch errors and emit values from project", () => {
   const source = flat([forOf([1, 2]), throwError(error)]);
   const materialized = pipe(
     source,
-    catchError(() => forOf(["recovered"])),
+    catchError(() => of("recovered")),
     materialize(),
   );
 
@@ -42,7 +43,7 @@ Deno.test("catchError should pass error value to project", () => {
     source,
     catchError((err) => {
       receivedError = err;
-      return forOf(["handled"]);
+      return of("handled");
     }),
     materialize(),
   );
@@ -84,7 +85,7 @@ Deno.test("catchError should pass through values if no error occurs", () => {
   const source = forOf([1, 2, 3]);
   const materialized = pipe(
     source,
-    catchError(() => forOf([999])),
+    catchError(() => of(999)),
     materialize(),
   );
 
@@ -108,7 +109,7 @@ Deno.test("catchError should pass through return", () => {
   const source = forOf([] as number[]);
   const materialized = pipe(
     source,
-    catchError(() => forOf([999])),
+    catchError(() => of(999)),
     materialize(),
   );
 
@@ -128,7 +129,7 @@ Deno.test("catchError should honor unsubscribe", () => {
   const source = forOf([1, 2, 3, 4, 5]);
   const materialized = pipe(
     source,
-    catchError(() => forOf([999])),
+    catchError(() => of(999)),
     materialize(),
   );
 
@@ -154,7 +155,7 @@ Deno.test("catchError should honor unsubscribe during error handling", () => {
   const controller = new AbortController();
   const error = new Error("test");
   const notifications: Array<ObserverNotification<number>> = [];
-  const source = flat([forOf([1]), throwError(error)]);
+  const source = flat([of(1), throwError(error)]);
   const recoverySource = forOf([10, 20, 30]);
   const materialized = pipe(
     source,
@@ -200,7 +201,7 @@ Deno.test("catchError should throw when project is not a function", () => {
 
 Deno.test("catchError should throw when called without source", () => {
   // Arrange
-  const operator = catchError(() => forOf([1]));
+  const operator = catchError(() => of(1));
 
   // Act / Assert
   assertThrows(
@@ -212,7 +213,7 @@ Deno.test("catchError should throw when called without source", () => {
 
 Deno.test("catchError should throw when source is not an Observable", () => {
   // Arrange
-  const operator = catchError(() => forOf([1]));
+  const operator = catchError(() => of(1));
 
   // Act / Assert
   assertThrows(
@@ -230,7 +231,7 @@ Deno.test("catchError should work with Subject", () => {
   const source = new Subject<number>();
   const materialized = pipe(
     source,
-    catchError(() => forOf(["caught"])),
+    catchError(() => of("caught")),
     materialize(),
   );
 

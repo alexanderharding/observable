@@ -1,6 +1,7 @@
 import { assertEquals } from "@std/assert";
 import { Observable, Observer } from "@observable/core";
 import { forOf } from "@observable/for-of";
+import { of } from "@observable/of";
 import { pipe } from "@observable/pipe";
 import { throwError } from "@observable/throw-error";
 import { reduce } from "./mod.ts";
@@ -128,7 +129,7 @@ Deno.test("reduce should throw if the accumulator function throws", () => {
   const error = new Error("test");
   const notifications: Array<ObserverNotification<number>> = [];
   const observable = pipe(
-    forOf([1]),
+    of(1),
     reduce(() => {
       throw error;
     }, 0),
@@ -169,7 +170,7 @@ Deno.test("reduce should emit single value for source with one item", () => {
   // Arrange
   const notifications: Array<ObserverNotification<number>> = [];
   const observable = pipe(
-    forOf([42]),
+    of(42),
     reduce((previous, current) => previous + current, 0),
     materialize(),
   );

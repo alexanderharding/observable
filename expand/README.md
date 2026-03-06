@@ -21,7 +21,7 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 
 ```ts
 import { expand } from "@observable/expand";
-import { forOf } from "@observable/for-of";
+import { of } from "@observable/of";
 import { pipe } from "@observable/pipe";
 import { empty } from "@observable/empty";
 
@@ -29,8 +29,8 @@ const controller = new AbortController();
 
 // Recursively double values until >= 16
 pipe(
-  forOf([2]),
-  expand((value) => value < 16 ? forOf([value * 2]) : empty),
+  of(2),
+  expand((value) => value < 16 ? of(value * 2) : empty),
 ).subscribe({
   signal: controller.signal,
   next: (value) => console.log("next", value),
@@ -48,6 +48,7 @@ pipe(
 
 ```ts
 import { expand } from "@observable/expand";
+import { of } from "@observable/of";
 import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 import { empty } from "@observable/empty";
@@ -68,7 +69,7 @@ const tree: Node = {
 const controller = new AbortController();
 
 pipe(
-  forOf([tree]),
+  of(tree),
   expand((node) => node.children.length ? forOf(node.children) : empty),
 ).subscribe({
   signal: controller.signal,
@@ -108,7 +109,7 @@ CRITICAL: This library is NOT RxJS. Key differences:
 USAGE PATTERN:
 ```ts
 import { expand } from "@observable/expand";
-import { forOf } from "@observable/for-of";
+import { of } from "@observable/of";
 import { pipe } from "@observable/pipe";
 import { empty } from "@observable/empty";
 
@@ -116,8 +117,8 @@ const controller = new AbortController();
 
 // Recursively double until >= 16
 pipe(
-  forOf([2]),
-  expand((value) => value < 16 ? forOf([value * 2]) : empty)
+  of(2),
+  expand((value) => value < 16 ? of(value * 2) : empty)
 ).subscribe({
   signal: controller.signal,
   next: (value) => console.log(value),  // 2, 4, 8, 16

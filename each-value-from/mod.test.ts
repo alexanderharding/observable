@@ -3,6 +3,7 @@ import { Observable, type Observer, Subject } from "@observable/core";
 import { pipe } from "@observable/pipe";
 import { eachValueFrom } from "./mod.ts";
 import { forOf } from "@observable/for-of";
+import { of } from "@observable/of";
 import { throwError } from "@observable/throw-error";
 import { empty } from "@observable/empty";
 import { flat } from "@observable/flat";
@@ -189,7 +190,7 @@ Deno.test("eachValueFrom throw method should abort subscription and reject", asy
   let subscriptionAborted = false;
   const error = new Error("iterator throw");
   const source = pipe(
-    flat([forOf([1]), never]),
+    flat([of(1), never]),
     finalize(() => subscriptionAborted = true),
   );
   const generator = eachValueFrom(source);
@@ -301,7 +302,7 @@ Deno.test("eachValueFrom should only start subscription on first next call", asy
   let subscribed = false;
   const source = defer(() => {
     subscribed = true;
-    return forOf([1]);
+    return of(1);
   });
   const generator = eachValueFrom(source);
 
