@@ -31,7 +31,7 @@ import {
  * import { Observable } from "@observable/core";
  * import { switchMap } from "@observable/switch-map";
  * import { pipe } from "@observable/pipe";
- * import { ofPromise } from "@observable/of-promise";
+ * import { awaitValue } from "@observable/await-value";
  *
  * const controller = new AbortController();
  * const response = fetch("https://www.example.com/api/data", {
@@ -39,7 +39,7 @@ import {
  * });
  * const data = pipe(
  *   response,
- *   switchMap((response) => pipe(response.json(), ofPromise())),
+ *   switchMap((response) => awaitValue(response.json())),
  * );
  *
  * data.subscribe({

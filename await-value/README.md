@@ -1,4 +1,4 @@
-# [@observable/of-promise](https://jsr.io/@observable/of-promise)
+# [@observable/await-value](https://jsr.io/@observable/await-value)
 
 Projects a
 [`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)
@@ -20,10 +20,10 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 ## Examples
 
 ```ts
-import { ofPromise } from "@observable/of-promise";
+import { awaitValue } from "@observable/await-value";
 import { pipe } from "@observable/pipe";
 
-pipe(Promise.resolve(42), ofPromise()).subscribe({
+awaitValue(Promise.resolve(42)).subscribe({
   signal: new AbortController().signal,
   next: (value) => console.log("next", value),
   return: () => console.log("return"),
@@ -36,10 +36,9 @@ pipe(Promise.resolve(42), ofPromise()).subscribe({
 ```
 
 ```ts
-import { ofPromise } from "@observable/of-promise";
-import { pipe } from "@observable/pipe";
+import { awaitValue } from "@observable/await-value";
 
-pipe(Promise.reject(new Error("test")), ofPromise()).subscribe({
+awaitValue(Promise.reject(new Error("test"))).subscribe({
   signal: new AbortController().signal,
   next: (value) => console.log("next", value),
   return: () => console.log("return"),
@@ -55,22 +54,21 @@ pipe(Promise.reject(new Error("test")), ofPromise()).subscribe({
 Use the following prompt with AI assistants to help them understand this library:
 
 ````
-You are helping me with code that uses @observable/of-promise from the @observable library ecosystem.
+You are helping me with code that uses @observable/await-value from the @observable library ecosystem.
 
 WHAT IT DOES:
-`ofPromise()` converts a Promise/PromiseLike into an Observable that emits the resolved value, then calls `return()`. If the promise rejects, it calls `throw()` with the error.
+`awaitValue(promise)` converts a Promise/PromiseLike into an Observable that emits the resolved value, then calls `return()`. If the promise rejects, it calls `throw()` with the error.
 
 CRITICAL DIFFERENCES FROM RxJS:
 - Observer uses `return`/`throw` — NOT `complete`/`error`
 - Unsubscription via `AbortController.abort()` — NOT `subscription.unsubscribe()`
-- `ofPromise` is an operator function used with `pipe()` — NOT a standalone factory
+- `awaitValue` is a standalone factory — pass it a Promise to get an Observable
 
 USAGE PATTERN:
 ```ts
-import { ofPromise } from "@observable/of-promise";
-import { pipe } from "@observable/pipe";
+import { awaitValue } from "@observable/await-value";
 
-pipe(fetch("/api/data"), ofPromise()).subscribe({
+awaitValue(fetch("/api/data")).subscribe({
   signal: new AbortController().signal,
   next: (response) => console.log(response),
   return: () => console.log("done"),
@@ -80,10 +78,7 @@ pipe(fetch("/api/data"), ofPromise()).subscribe({
 
 ERROR HANDLING:
 ```ts
-pipe(
-  Promise.reject(new Error("failed")),
-  ofPromise(),
-).subscribe({
+awaitValue(Promise.reject(new Error("failed"))).subscribe({
   signal: new AbortController().signal,
   next: (value) => console.log(value),
   return: () => console.log("done"),
