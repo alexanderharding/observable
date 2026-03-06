@@ -1,47 +1,41 @@
 import { assertEquals, assertThrows } from "@std/assert";
 import { Observer } from "@observable/core";
-import { ofAsyncIterable } from "./mod.ts";
+import { forAwaitOf } from "./mod.ts";
 import { pipe } from "@observable/pipe";
 import { materialize, type ObserverNotification } from "@observable/materialize";
 
-Deno.test("ofAsyncIterable should throw when called with no source", () => {
-  // Arrange
-  const operator = ofAsyncIterable();
-
-  // Act / Assert
+Deno.test("forAwaitOf should throw when called with no source", () => {
+  // Arrange / Act / Assert
   assertThrows(
-    () => operator(...([] as unknown as Parameters<typeof operator>)),
+    () => forAwaitOf(...([] as unknown as Parameters<typeof forAwaitOf>)),
     TypeError,
     "1 argument required but 0 present",
   );
 });
 
-Deno.test("ofAsyncIterable should throw when source is not an AsyncIterable", () => {
-  // Arrange
-  const operator = ofAsyncIterable();
-
-  // Act / Assert
+Deno.test("forAwaitOf should throw when source is not an AsyncIterable", () => {
+  // Arrange / Act / Assert
   assertThrows(
     // deno-lint-ignore no-explicit-any
-    () => operator(1 as any),
+    () => forAwaitOf(1 as any),
     TypeError,
     "Parameter 1 is not of type 'AsyncIterable'",
   );
   assertThrows(
     // deno-lint-ignore no-explicit-any
-    () => operator(null as any),
+    () => forAwaitOf(null as any),
     TypeError,
     "Parameter 1 is not of type 'AsyncIterable'",
   );
   assertThrows(
     // deno-lint-ignore no-explicit-any
-    () => operator(undefined as any),
+    () => forAwaitOf(undefined as any),
     TypeError,
     "Parameter 1 is not of type 'AsyncIterable'",
   );
 });
 
-Deno.test("ofAsyncIterable should emit all values in order and then return", async () => {
+Deno.test("forAwaitOf should emit all values in order and then return", async () => {
   // Arrange
   async function* generateValues() {
     yield 1;
@@ -52,7 +46,7 @@ Deno.test("ofAsyncIterable should emit all values in order and then return", asy
   const { promise: done, resolve } = Promise.withResolvers<void>();
 
   // Act
-  pipe(generateValues(), ofAsyncIterable(), materialize()).subscribe(
+  pipe(forAwaitOf(generateValues()), materialize()).subscribe(
     new Observer({
       next: (notification) => notifications.push(notification),
       return: resolve,
@@ -70,7 +64,7 @@ Deno.test("ofAsyncIterable should emit all values in order and then return", asy
   ]);
 });
 
-Deno.test("ofAsyncIterable should handle async generator with delays", async () => {
+Deno.test("forAwaitOf should handle async generator with delays", async () => {
   // Arrange
   async function* generateDelayedValues() {
     yield await Promise.resolve("a");
@@ -80,7 +74,7 @@ Deno.test("ofAsyncIterable should handle async generator with delays", async () 
   const { promise: done, resolve } = Promise.withResolvers<void>();
 
   // Act
-  pipe(generateDelayedValues(), ofAsyncIterable(), materialize()).subscribe(
+  pipe(forAwaitOf(generateDelayedValues()), materialize()).subscribe(
     new Observer({
       next: (notification) => notifications.push(notification),
       return: resolve,
@@ -97,7 +91,7 @@ Deno.test("ofAsyncIterable should handle async generator with delays", async () 
   ]);
 });
 
-Deno.test("ofAsyncIterable should handle empty async iterable", async () => {
+Deno.test("forAwaitOf should handle empty async iterable", async () => {
   // Arrange
   async function* empty() {
     // yields nothing
@@ -106,7 +100,7 @@ Deno.test("ofAsyncIterable should handle empty async iterable", async () => {
   const { promise: done, resolve } = Promise.withResolvers<void>();
 
   // Act
-  pipe(empty(), ofAsyncIterable(), materialize()).subscribe(
+  pipe(forAwaitOf(empty()), materialize()).subscribe(
     new Observer({
       next: (notification) => notifications.push(notification),
       return: resolve,
@@ -121,7 +115,7 @@ Deno.test("ofAsyncIterable should handle empty async iterable", async () => {
   ]);
 });
 
-Deno.test("ofAsyncIterable should emit thrown value on error", async () => {
+Deno.test("forAwaitOf should emit thrown value on error", async () => {
   // Arrange
   const error = new Error("test error");
   async function* throwingGenerator() {
@@ -132,7 +126,7 @@ Deno.test("ofAsyncIterable should emit thrown value on error", async () => {
   const { promise: done, resolve } = Promise.withResolvers<void>();
 
   // Act
-  pipe(throwingGenerator(), ofAsyncIterable(), materialize()).subscribe(
+  pipe(forAwaitOf(throwingGenerator()), materialize()).subscribe(
     new Observer({
       next: (notification) => notifications.push(notification),
       return: resolve,

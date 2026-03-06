@@ -1,4 +1,4 @@
-# [@observable/of-async-iterable](https://jsr.io/@observable/of-async-iterable)
+# [@observable/for-await-of](https://jsr.io/@observable/for-await-of)
 
 Projects an
 [`AsyncIterable`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#the_async_iterator_and_async_iterable_protocols)
@@ -22,8 +22,7 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 ## Example
 
 ```ts
-import { ofAsyncIterable } from "@observable/of-async-iterable";
-import { pipe } from "@observable/pipe";
+import { forAwaitOf } from "@observable/for-await-of";
 
 async function* generateValues(): AsyncGenerator<1 | 2 | 3, void, unknown> {
   yield await Promise.resolve(1 as const);
@@ -31,9 +30,9 @@ async function* generateValues(): AsyncGenerator<1 | 2 | 3, void, unknown> {
   yield await Promise.resolve(3 as const);
 }
 
-const controller = new AbortController();
-pipe(generateValues(), ofAsyncIterable()).subscribe({
-  signal: controller.signal,
+const activeSubscriptionController = new AbortController();
+forAwaitOf(generateValues()).subscribe({
+  signal: activeSubscriptionController.signal,
   next: (value) => console.log("next", value),
   return: () => console.log("return"),
   throw: (value) => console.error("throw", value),
@@ -51,27 +50,30 @@ pipe(generateValues(), ofAsyncIterable()).subscribe({
 Use the following prompt with AI assistants to help them understand this library:
 
 ````
-You are helping me with code that uses @observable/of-async-iterable from the @observable library ecosystem.
+You are helping with code that uses @observable/for-await-of from the Observable library ecosystem (JSR @observable/*).
 
 WHAT IT DOES:
-`ofAsyncIterable()` is an operator that converts an AsyncIterable into an Observable that emits values in order, then calls `return()`. If the async iterable throws, it calls `throw()` with the error.
+- `forAwaitOf(asyncIterable)` converts an AsyncIterable into an Observable.
+- The Observable emits each value in order via `next(value)`, then calls `return()` when the async iteration finishes.
+- If the async iterable throws, the Observable calls `throw(error)` on the observer.
+
+API SHAPE:
+- `forAwaitOf(values: AsyncIterable<Value>): Observable<Value>` — call it with an async iterable; subscribe to the returned Observable. It is a factory, not an operator used with pipe().
 
 CRITICAL DIFFERENCES FROM RxJS:
-- Observer uses `return`/`throw` — NOT `complete`/`error`
-- Unsubscription via `AbortController.abort()` — NOT `subscription.unsubscribe()`
-- `ofAsyncIterable` is an operator function used with `pipe()` — NOT a standalone factory
+- Observer uses `return` and `throw` — NOT `complete` or `error`.
+- Unsubscription is via `AbortController` (pass `signal` in subscribe options) and `controller.abort()` — NOT `subscription.unsubscribe()`.
 
-USAGE PATTERN:
+BASIC USAGE:
 ```ts
-import { ofAsyncIterable } from "@observable/of-async-iterable";
-import { pipe } from "@observable/pipe";
+import { forAwaitOf } from "@observable/for-await-of";
 
 async function* fetchPages() {
   yield await fetch("/api/page/1").then((r) => r.json());
   yield await fetch("/api/page/2").then((r) => r.json());
 }
 
-pipe(fetchPages(), ofAsyncIterable()).subscribe({
+forAwaitOf(fetchPages()).subscribe({
   signal: new AbortController().signal,
   next: (page) => console.log(page),
   return: () => console.log("done"),
@@ -79,7 +81,7 @@ pipe(fetchPages(), ofAsyncIterable()).subscribe({
 });
 ```
 
-EARLY UNSUBSCRIPTION:
+EARLY UNSUBSCRIPTION (e.g. stop after N values):
 ```ts
 const controller = new AbortController();
 
@@ -89,7 +91,7 @@ async function* generateValues() {
   yield 3;
 }
 
-pipe(generateValues(), ofAsyncIterable()).subscribe({
+forAwaitOf(generateValues()).subscribe({
   signal: controller.signal,
   next(value) {
     console.log(value);
