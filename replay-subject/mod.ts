@@ -109,9 +109,7 @@ export const ReplaySubject: ReplaySubjectConstructor = class<Value> {
 
   constructor(count: number) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-    if (typeof count !== "number") {
-      throw new ParameterTypeError(0, "Number");
-    }
+    if (typeof count !== "number") throw new ParameterTypeError(0, "Number");
     Object.freeze(this);
     (this.#count = count) >= 0 ? this.#bufferSnapshot = undefined : this.return();
     if (this.signal.aborted || this.#count === 0) return;
@@ -147,9 +145,7 @@ export const ReplaySubject: ReplaySubjectConstructor = class<Value> {
   }
 
   subscribe(observer: Observer<Value>): void {
-    if (!(this instanceof ReplaySubject)) {
-      throw new InstanceofError("this", stringTag);
-    }
+    if (!(this instanceof ReplaySubject)) throw new InstanceofError("this", stringTag);
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObserver(observer)) throw new ParameterTypeError(0, "Observer");
     this.#observable.subscribe(observer);
