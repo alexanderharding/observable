@@ -83,11 +83,8 @@ export function fetch(
         observer.next(response);
         observer.return();
       } catch (value) {
-        if (value instanceof DOMException && value.name === "AbortError") {
-          // The consumer has unsubscribed which should not be treated
-          // as an error in Observables.
-          return;
-        }
+        // If the consumer has unsubscribed, we should NOT treat it as an error in Observables.
+        if (value instanceof DOMException && value.name === "AbortError") return;
         observer.throw(value);
       }
     },

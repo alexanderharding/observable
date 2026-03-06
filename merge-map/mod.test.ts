@@ -1,30 +1,20 @@
 import { assertEquals } from "@std/assert";
-import { Observable, Observer, Subject } from "@observable/core";
+import { Observer, Subject } from "@observable/core";
 import { noop } from "@observable/internal";
 import { pipe } from "@observable/pipe";
 import { map } from "@observable/map";
 import { materialize, type ObserverNotification } from "@observable/materialize";
 import { mergeMap } from "./mod.ts";
+import { forOf } from "@observable/for-of";
 
 Deno.test("mergeMap should map-and-flatten each item to an Observable", () => {
   // Arrange
   const hot = new Subject<number>();
-  const cold = new Observable<number>((observer) => {
-    for (const value of Array.from({ length: 3 }, () => 10)) {
-      observer.next(value);
-      if (observer.signal.aborted) return;
-    }
-    observer.return();
-  });
+  const cold = forOf(Array.from({ length: 3 }, () => 10));
   const notifications: Array<ObserverNotification<number>> = [];
   const materialized = pipe(
     hot,
-    mergeMap((x) =>
-      pipe(
-        cold,
-        map((i) => i * +x),
-      )
-    ),
+    mergeMap((x) => pipe(cold, map((i) => i * +x))),
     materialize(),
   );
 
@@ -59,22 +49,10 @@ Deno.test("mergeMap should merge many regular interval inners", () => {
   const d = new Subject<void>();
   const notifications: Array<ObserverNotification<string>> = [];
   const observableLookup = {
-    a: pipe(
-      a,
-      map(() => "a"),
-    ),
-    b: pipe(
-      b,
-      map(() => "b"),
-    ),
-    c: pipe(
-      c,
-      map(() => "c"),
-    ),
-    d: pipe(
-      d,
-      map(() => "d"),
-    ),
+    a: pipe(a, map(() => "a")),
+    b: pipe(b, map(() => "b")),
+    c: pipe(c, map(() => "c")),
+    d: pipe(d, map(() => "d")),
   } as const;
   const source = new Subject<keyof typeof observableLookup>();
   const materialized = pipe(
@@ -140,22 +118,10 @@ Deno.test(
     const d = new Subject<void>();
     const notifications: Array<ObserverNotification<string>> = [];
     const observableLookup = {
-      a: pipe(
-        a,
-        map(() => "a"),
-      ),
-      b: pipe(
-        b,
-        map(() => "b"),
-      ),
-      c: pipe(
-        c,
-        map(() => "c"),
-      ),
-      d: pipe(
-        d,
-        map(() => "d"),
-      ),
+      a: pipe(a, map(() => "a")),
+      b: pipe(b, map(() => "b")),
+      c: pipe(c, map(() => "c")),
+      d: pipe(d, map(() => "d")),
     } as const;
     const source = new Subject<keyof typeof observableLookup>();
     const materialized = pipe(
@@ -215,22 +181,10 @@ Deno.test(
     const d = new Subject<void>();
     const notifications: Array<ObserverNotification<string>> = [];
     const observableLookup = {
-      a: pipe(
-        a,
-        map(() => "a"),
-      ),
-      b: pipe(
-        b,
-        map(() => "b"),
-      ),
-      c: pipe(
-        c,
-        map(() => "c"),
-      ),
-      d: pipe(
-        d,
-        map(() => "d"),
-      ),
+      a: pipe(a, map(() => "a")),
+      b: pipe(b, map(() => "b")),
+      c: pipe(c, map(() => "c")),
+      d: pipe(d, map(() => "d")),
     } as const;
     const source = new Subject<keyof typeof observableLookup>();
     const materialized = pipe(
@@ -296,22 +250,10 @@ Deno.test(
     const d = new Subject<void>();
     const notifications: Array<ObserverNotification<string>> = [];
     const observableLookup = {
-      a: pipe(
-        a,
-        map(() => "a"),
-      ),
-      b: pipe(
-        b,
-        map(() => "b"),
-      ),
-      c: pipe(
-        c,
-        map(() => "c"),
-      ),
-      d: pipe(
-        d,
-        map(() => "d"),
-      ),
+      a: pipe(a, map(() => "a")),
+      b: pipe(b, map(() => "b")),
+      c: pipe(c, map(() => "c")),
+      d: pipe(d, map(() => "d")),
     } as const;
     const source = new Subject<keyof typeof observableLookup>();
     const materialized = pipe(

@@ -1,10 +1,13 @@
 import { assertEquals, assertStrictEquals, assertThrows } from "@std/assert";
-import { Observable, Observer, Subject } from "@observable/core";
+import { Observer, Subject } from "@observable/core";
 import { empty } from "@observable/empty";
 import { pipe } from "@observable/pipe";
 import { forOf } from "@observable/for-of";
 import { materialize, type ObserverNotification } from "@observable/materialize";
 import { throttle } from "./mod.ts";
+import { flat } from "@observable/flat";
+import { of } from "@observable/of";
+import { throwError } from "@observable/throw-error";
 
 Deno.test("throttle should return empty if milliseconds is negative", () => {
   // Arrange
@@ -102,10 +105,7 @@ Deno.test("throttle should pump throws right through itself", () => {
     },
   });
 
-  const source = new Observable<number>((observer) => {
-    observer.next(1);
-    observer.throw(error);
-  });
+  const source = flat([of(1), throwError(error)]);
   const materialized = pipe(source, throttle(100), materialize());
 
   // Act

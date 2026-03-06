@@ -96,26 +96,12 @@ Deno.test("reduce should handle unsubscribe", () => {
   // Arrange
   const controller = new AbortController();
   const values: Array<number> = [];
-  const source = new Observable<number>((observer) => {
-    for (const value of [1, 2, 3, 4, 5]) {
-      if (observer.signal.aborted) return;
-      observer.next(value);
-    }
-    observer.return();
-  });
-  const reduced = pipe(
-    source,
-    reduce((previous, current) => previous + current, 0),
-  );
+  const source = forOf([1, 2, 3, 4, 5]);
+  const reduced = pipe(source, reduce((previous, current) => previous + current, 0));
 
   // Act - abort before subscription can complete processing
   reduced.subscribe(
-    new Observer({
-      signal: controller.signal,
-      next: (value) => {
-        values.push(value);
-      },
-    }),
+    new Observer({ signal: controller.signal, next: (value) => values.push(value) }),
   );
   controller.abort();
 

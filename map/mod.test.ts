@@ -1,5 +1,5 @@
 import { assertEquals } from "@std/assert";
-import { Observable, Observer } from "@observable/core";
+import { Observer } from "@observable/core";
 import { forOf } from "@observable/for-of";
 import { of } from "@observable/of";
 import { pipe } from "@observable/pipe";
@@ -7,6 +7,8 @@ import { throwError } from "@observable/throw-error";
 import { map } from "./mod.ts";
 import { materialize, type ObserverNotification } from "@observable/materialize";
 import { empty } from "@observable/empty";
+import { finalize } from "@observable/finalize";
+import { never } from "@observable/never";
 
 Deno.test("map should project the values", () => {
   // Arrange
@@ -77,15 +79,8 @@ Deno.test("map should handle unsubscribe", () => {
   // Arrange
   let sourceAborted = false;
   const controller = new AbortController();
-  const source = new Observable<number>((observer) =>
-    observer.signal.addEventListener("abort", () => (sourceAborted = true), {
-      once: true,
-    })
-  );
-  const doubled = pipe(
-    source,
-    map((value) => value * 2),
-  );
+  const source = pipe(never, finalize(() => (sourceAborted = true)));
+  const doubled = pipe(source, map((value) => value * 2));
 
   // Act
   doubled.subscribe(new Observer({ signal: controller.signal }));

@@ -7,6 +7,7 @@ import { forOf } from "@observable/for-of";
 import { of } from "@observable/of";
 import { materialize, type ObserverNotification } from "@observable/materialize";
 import { pairwise } from "./mod.ts";
+import { empty } from "@observable/empty";
 
 Deno.test("pairwise should emit pairs of consecutive values", () => {
   // Arrange
@@ -47,8 +48,7 @@ Deno.test("pairwise should not emit if source emits only one value", () => {
 Deno.test("pairwise should not emit if source is empty", () => {
   // Arrange
   const notifications: Array<ObserverNotification<readonly [number, number]>> = [];
-  const source = forOf([] as number[]);
-  const materialized = pipe(source, pairwise(), materialize());
+  const materialized = pipe(empty, pairwise(), materialize());
 
   // Act
   materialized.subscribe(
@@ -110,9 +110,7 @@ Deno.test("pairwise should honor unsubscribe", () => {
       signal: controller.signal,
       next: (notification) => {
         notifications.push(notification);
-        if (notification[0] === "next" && notification[1][1] === 3) {
-          controller.abort();
-        }
+        if (notification[0] === "next" && notification[1][1] === 3) controller.abort();
       },
     }),
   );

@@ -97,9 +97,7 @@ Deno.test("fetch should abort the request on unsubscription", async () => {
   const originalFetch = globalThis.fetch;
   Object.defineProperty(globalThis, "fetch", {
     value: (_url: RequestInfo | URL, init?: RequestInit) => {
-      if (init?.signal) {
-        abortSignals.push(init.signal);
-      }
+      if (init?.signal) abortSignals.push(init.signal);
       return new Promise(() => {
         // Never resolves
       });
@@ -165,9 +163,7 @@ Deno.test("fetch should not abort the response after it is received", async () =
   const originalFetch = globalThis.fetch;
   Object.defineProperty(globalThis, "fetch", {
     value: (_url: RequestInfo | URL, init?: RequestInit) => {
-      if (init?.signal) {
-        abortSignals.push(init.signal);
-      }
+      if (init?.signal) abortSignals.push(init.signal);
       return Promise.resolve(mockResponse);
     },
     configurable: true,

@@ -11,28 +11,20 @@ import { flat } from "@observable/flat";
 import { exhaustMap } from "./mod.ts";
 import { materialize, type ObserverNotification } from "@observable/materialize";
 import { map } from "@observable/map";
+import { forOf } from "@observable/for-of";
+import { of } from "@observable/of";
+import { tap } from "@observable/tap";
 
 Deno.test(
   "exhaustMap should map-and-flatten each item to an Observable",
   () => {
     // Arrange
     const hot = new Subject<number>();
-    const cold = new Observable<number>((observer) => {
-      for (const value of Array.from({ length: 3 }, () => 10)) {
-        observer.next(value);
-        if (observer.signal.aborted) return;
-      }
-      observer.return();
-    });
+    const cold = forOf(Array.from({ length: 3 }, () => 10));
     const notifications: Array<ObserverNotification<number>> = [];
     const materialized = pipe(
       hot,
-      exhaustMap((x) =>
-        pipe(
-          cold,
-          map((i) => i * +x),
-        )
-      ),
+      exhaustMap((x) => pipe(cold, map((i) => i * +x))),
       materialize(),
     );
 
@@ -68,14 +60,8 @@ Deno.test("exhaustMap should ignore values while inner is active", () => {
   const innerB = new Subject<void>();
   const notifications: Array<ObserverNotification<string>> = [];
   const observableLookup: Record<string, Observable<string>> = {
-    a: pipe(
-      innerA,
-      map(() => "a"),
-    ),
-    b: pipe(
-      innerB,
-      map(() => "b"),
-    ),
+    a: pipe(innerA, map(() => "a")),
+    b: pipe(innerB, map(() => "b")),
   };
   const materialized = pipe(
     source,
@@ -118,18 +104,9 @@ Deno.test("exhaustMap should exhaust many hot inners", () => {
   const c = new Subject<void>();
   const notifications: Array<ObserverNotification<string>> = [];
   const observableLookup = {
-    a: pipe(
-      a,
-      map(() => "a"),
-    ),
-    b: pipe(
-      b,
-      map(() => "b"),
-    ),
-    c: pipe(
-      c,
-      map(() => "c"),
-    ),
+    a: pipe(a, map(() => "a")),
+    b: pipe(b, map(() => "b")),
+    c: pipe(c, map(() => "c")),
   } as const;
   const source = new Subject<keyof typeof observableLookup>();
   const materialized = pipe(
@@ -172,13 +149,7 @@ Deno.test("exhaustMap should raise error when projection throws", () => {
   const error = new Error("error");
   const notifications: Array<ObserverNotification<never>> = [];
   const materialized = pipe(
-    new Observable<string>((observer) => {
-      for (const value of ["x", "y"]) {
-        observer.next(value);
-        if (observer.signal.aborted) return;
-      }
-      observer.return();
-    }),
+    forOf(["x", "y"]),
     exhaustMap<string, never>(() => {
       throw error;
     }),
@@ -201,13 +172,7 @@ Deno.test(
     const error = new Error("error");
     const source = new BehaviorSubject<"x" | "y">("x");
     const x = new Subject<string>();
-    const y = new Observable<string>((observer) => {
-      for (const value of ["f", "g", "h", "i"]) {
-        observer.next(value);
-        if (observer.signal.aborted) return;
-      }
-      observer.return();
-    });
+    const y = forOf(["f", "g", "h", "i"]);
     const notifications: Array<ObserverNotification<string>> = [];
     const materialized = pipe(
       source,
@@ -273,13 +238,7 @@ Deno.test("exhaustMap should exhaust inner empty and empty", () => {
   const observableLookup: Record<string, Observable<string>> = { x: x, y: y };
   const notifications: Array<ObserverNotification<string>> = [];
   const materialized = pipe(
-    new Observable<string>((observer) => {
-      for (const value of ["x", "y"]) {
-        observer.next(value);
-        if (observer.signal.aborted) return;
-      }
-      observer.return();
-    }),
+    forOf(["x", "y"]),
     exhaustMap((x) => observableLookup[x]),
     materialize(),
   );
@@ -300,13 +259,7 @@ Deno.test("exhaustMap should exhaust inner empty and never", () => {
   const observableLookup: Record<string, Observable<string>> = { x: x, y: y };
   const notifications: Array<ObserverNotification<string>> = [];
   const materialized = pipe(
-    new Observable<string>((observer) => {
-      for (const value of ["x", "y"]) {
-        observer.next(value);
-        if (observer.signal.aborted) return;
-      }
-      observer.return();
-    }),
+    forOf(["x", "y"]),
     exhaustMap((x) => observableLookup[x]),
     materialize(),
   );
@@ -328,13 +281,7 @@ Deno.test("exhaustMap should exhaust inner never and empty", () => {
   const observableLookup: Record<string, Observable<string>> = { x: x, y: y };
   const notifications: Array<ObserverNotification<string>> = [];
   const materialized = pipe(
-    new Observable<string>((observer) => {
-      for (const value of ["x", "y"]) {
-        observer.next(value);
-        if (observer.signal.aborted) return;
-      }
-      observer.return();
-    }),
+    forOf(["x", "y"]),
     exhaustMap((x) => observableLookup[x]),
     materialize(),
   );
@@ -357,13 +304,7 @@ Deno.test("exhaustMap should exhaust inner never and throw", () => {
   const observableLookup: Record<string, Observable<string>> = { x: x, y: y };
   const notifications: Array<ObserverNotification<string>> = [];
   const materialized = pipe(
-    new Observable<string>((observer) => {
-      for (const value of ["x", "y"]) {
-        observer.next(value);
-        if (observer.signal.aborted) return;
-      }
-      observer.return();
-    }),
+    forOf(["x", "y"]),
     exhaustMap((x) => observableLookup[x]),
     materialize(),
   );
@@ -386,13 +327,7 @@ Deno.test("exhaustMap should exhaust inner empty and throw", () => {
   const observableLookup: Record<string, Observable<string>> = { x: x, y: y };
   const notifications: Array<ObserverNotification<string>> = [];
   const materialized = pipe(
-    new Observable<string>((observer) => {
-      for (const value of ["x", "y"]) {
-        observer.next(value);
-        if (observer.signal.aborted) return;
-      }
-      observer.return();
-    }),
+    forOf(["x", "y"]),
     exhaustMap((x) => observableLookup[x]),
     materialize(),
   );
@@ -412,13 +347,7 @@ Deno.test("exhaustMap should handle outer empty", () => {
   const notifications: Array<ObserverNotification<never>> = [];
   const materialized = pipe(
     empty,
-    exhaustMap(
-      (x) =>
-        new Observable<never>((observer) => {
-          observer.next(x);
-          observer.return();
-        }),
-    ),
+    exhaustMap((x) => of(x)),
     materialize(),
   );
 
@@ -436,13 +365,7 @@ Deno.test("exhaustMap should handle outer never", () => {
   const notifications: Array<ObserverNotification<never>> = [];
   const materialized = pipe(
     never,
-    exhaustMap(
-      (x) =>
-        new Observable<never>((observer) => {
-          observer.next(x);
-          observer.return();
-        }),
-    ),
+    exhaustMap((x) => of(x)),
     materialize(),
   );
 
@@ -461,13 +384,7 @@ Deno.test("exhaustMap should handle outer throwError", () => {
   const notifications: Array<ObserverNotification<never>> = [];
   const materialized = pipe(
     throwError(error),
-    exhaustMap(
-      (x) =>
-        new Observable<never>((observer) => {
-          observer.next(x);
-          observer.return();
-        }),
-    ),
+    exhaustMap((x) => of(x)),
     materialize(),
   );
 
@@ -485,25 +402,15 @@ Deno.test(
   () => {
     // Arrange
     const sideEffects: Array<number> = [];
-    const synchronousObservable = new Observable<number>((observer) => {
-      for (let i = 0; !observer.signal.aborted && i < 10; i++) {
-        sideEffects.push(i);
-        observer.next(i);
-      }
-    });
+    const synchronousObservable = pipe(
+      forOf(Array.from({ length: 10 }, (_, i) => i)),
+      tap((value) => sideEffects.push(value)),
+    );
 
     // Act
-    pipe(
-      synchronousObservable,
-      exhaustMap(
-        (value) =>
-          new Observable<number>((observer) => {
-            observer.next(value);
-            observer.return();
-          }),
-      ),
-      take(3),
-    ).subscribe(new Observer());
+    pipe(synchronousObservable, exhaustMap((value) => of(value)), take(3)).subscribe(
+      new Observer(),
+    );
 
     // Assert
     assertEquals(sideEffects, [0, 1, 2]);
@@ -516,38 +423,10 @@ Deno.test(
     // Arrange
     const controller = new AbortController();
     const sideEffects: number[] = [];
-    const synchronousObservable = flat([
-      defer(() => {
-        sideEffects.push(1);
-        return new Observable<number>((observer) => {
-          observer.next(1);
-          observer.return();
-        });
-      }),
-      defer(() => {
-        sideEffects.push(2);
-        return new Observable<number>((observer) => {
-          observer.next(2);
-          observer.return();
-        });
-      }),
-      defer(() => {
-        sideEffects.push(3);
-        return new Observable<number>((observer) => {
-          observer.next(3);
-          observer.return();
-        });
-      }),
-    ]);
+    const synchronousObservable = pipe(forOf([1, 2, 3]), tap((value) => sideEffects.push(value)));
 
     // Act
-    pipe(
-      new Observable<null>((observer) => {
-        observer.next(null);
-        observer.return();
-      }),
-      exhaustMap(() => synchronousObservable),
-    ).subscribe(
+    pipe(of(null), exhaustMap(() => synchronousObservable)).subscribe(
       new Observer({
         signal: controller.signal,
         next: (value) => value === 2 && controller.abort(),
@@ -563,10 +442,7 @@ Deno.test("exhaustMap should pass index to projection function", () => {
   // Arrange
   const indices: Array<number> = [];
   const source = new Subject<string>();
-  const inner = new Observable<string>((observer) => {
-    observer.next("x");
-    observer.return();
-  });
+  const inner = of("x");
   const notifications: Array<ObserverNotification<string>> = [];
   const materialized = pipe(
     source,
@@ -642,30 +518,12 @@ Deno.test(
   () => {
     // Arrange
     const controller = new AbortController();
-    const x = new Observable<string>((observer) => {
-      for (const value of ["a", "b", "c", "d", "e"]) {
-        observer.next(value);
-        if (observer.signal.aborted) return;
-      }
-      observer.return();
-    });
-    const y = new Observable<string>((observer) => {
-      for (const value of ["f", "g", "h", "i"]) {
-        observer.next(value);
-        if (observer.signal.aborted) return;
-      }
-      observer.return();
-    });
+    const x = forOf(["a", "b", "c", "d", "e"]);
+    const y = forOf(["f", "g", "h", "i"]);
     const notifications: Array<ObserverNotification<string>> = [];
     const observableLookup: Record<string, Observable<string>> = { x: x, y: y };
     const materialized = pipe(
-      new Observable<string>((observer) => {
-        for (const value of ["x", "y"]) {
-          observer.next(value);
-          if (observer.signal.aborted) return;
-        }
-        observer.return();
-      }),
+      forOf(["x", "y"]),
       exhaustMap((x) => observableLookup[x]),
       materialize(),
     );

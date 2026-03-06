@@ -13,6 +13,9 @@ import {
   throwError as rxJsThrowError,
 } from "rxjs";
 import { asObservable, asRxJsObservable } from "./mod.ts";
+import { finalize } from "@observable/finalize";
+import { never } from "@observable/never";
+import { empty } from "@observable/empty";
 
 Deno.test("asObservable should convert RxJS Observable and emit values", () => {
   // Arrange
@@ -91,9 +94,7 @@ Deno.test("asObservable should emit values before abort signal", () => {
       signal: controller.signal,
       next: (notification) => {
         notifications.push(notification);
-        if (notification[0] === "next" && notification[1] === 2) {
-          controller.abort();
-        }
+        if (notification[0] === "next" && notification[1] === 2) controller.abort();
       },
     }),
   );
@@ -204,11 +205,7 @@ Deno.test("asRxJsObservable should handle completion", () => {
 Deno.test("asRxJsObservable should handle unsubscription", () => {
   // Arrange
   let sourceAborted = false;
-  const source = new Observable<number>((observer) => {
-    observer.signal.addEventListener("abort", () => (sourceAborted = true), {
-      once: true,
-    });
-  });
+  const source = pipe(never, finalize(() => (sourceAborted = true)));
 
   // Act
   pipe(source, asRxJsObservable()).subscribe().unsubscribe();
@@ -285,14 +282,7 @@ Deno.test(
   () => {
     // Arrange
     let sourceAborted = false;
-    const source = new Observable<number>((observer) => {
-      observer.signal.addEventListener("abort", () => (sourceAborted = true), {
-        once: true,
-      });
-      observer.next(1);
-      observer.next(2);
-      observer.return();
-    });
+    const source = pipe(forOf([1, 2]), finalize(() => (sourceAborted = true)));
     const rxjsObservable = pipe(source, asRxJsObservable());
     const values: Array<number> = [];
     let completed = false;
@@ -318,12 +308,7 @@ Deno.test(
     const source = forOf([1, 2, 3]);
 
     // Act
-    pipe(
-      source,
-      asRxJsObservable(),
-      asObservable(),
-      materialize(),
-    ).subscribe(
+    pipe(source, asRxJsObservable(), asObservable(), materialize()).subscribe(
       new Observer((notification) => notifications.push(notification)),
     );
 
@@ -362,17 +347,11 @@ Deno.test(
   () => {
     // Arrange
     const events: Array<string> = [];
-    const source = new Observable<number>((observer) => {
-      observer.signal.addEventListener("abort", () => events.push("abort"), { once: true });
-      observer.next(1);
-      observer.return();
-    });
+    const source = pipe(empty, finalize(() => events.push("abort")));
     const rxjsObservable = pipe(source, asRxJsObservable());
 
     // Act
-    rxjsObservable.subscribe({
-      complete: () => events.push("complete"),
-    });
+    rxjsObservable.subscribe({ complete: () => events.push("complete") });
 
     // Assert
     assertEquals(events, ["abort", "complete"]);
@@ -385,17 +364,11 @@ Deno.test(
     // Arrange
     const events: Array<string> = [];
     const error = new Error("test");
-    const source = new Observable<number>((observer) => {
-      observer.signal.addEventListener("abort", () => events.push("abort"), { once: true });
-      observer.next(1);
-      observer.throw(error);
-    });
+    const source = pipe(throwError(error), finalize(() => events.push("abort")));
     const rxjsObservable = pipe(source, asRxJsObservable());
 
     // Act
-    rxjsObservable.subscribe({
-      error: () => events.push("error"),
-    });
+    rxjsObservable.subscribe({ error: () => events.push("error") });
 
     // Assert
     assertEquals(events, ["abort", "error"]);

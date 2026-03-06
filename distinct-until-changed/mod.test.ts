@@ -6,6 +6,7 @@ import { materialize, type ObserverNotification } from "@observable/materialize"
 import { distinctUntilChanged } from "./mod.ts";
 import { flat } from "@observable/flat";
 import { throwError } from "@observable/throw-error";
+import { empty } from "@observable/empty";
 
 Deno.test(
   "distinctUntilChanged should filter out consecutive duplicate values",
@@ -77,8 +78,7 @@ Deno.test(
 Deno.test("distinctUntilChanged should handle empty source", () => {
   // Arrange
   const notifications: Array<ObserverNotification<number>> = [];
-  const source = forOf([] as number[]);
-  const materialized = pipe(source, distinctUntilChanged(), materialize());
+  const materialized = pipe(empty, distinctUntilChanged(), materialize());
 
   // Act
   materialized.subscribe(
@@ -125,9 +125,7 @@ Deno.test("distinctUntilChanged should honor unsubscribe", () => {
       signal: controller.signal,
       next: (notification) => {
         notifications.push(notification);
-        if (notification[0] === "next" && notification[1] === 2) {
-          controller.abort();
-        }
+        if (notification[0] === "next" && notification[1] === 2) controller.abort();
       },
     }),
   );

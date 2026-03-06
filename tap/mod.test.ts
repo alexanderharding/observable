@@ -1,5 +1,5 @@
 import { assertEquals, assertThrows } from "@std/assert";
-import { Observable, Observer } from "@observable/core";
+import { Observer } from "@observable/core";
 import { forOf } from "@observable/for-of";
 import { of } from "@observable/of";
 import { pipe } from "@observable/pipe";
@@ -8,6 +8,8 @@ import { tap } from "./mod.ts";
 import { materialize, type ObserverNotification } from "@observable/materialize";
 import { MinimumArgumentsRequiredError, noop, ParameterTypeError } from "@observable/internal";
 import { empty } from "@observable/empty";
+import { never } from "@observable/never";
+import { finalize } from "@observable/finalize";
 
 Deno.test("tap should throw if no arguments are provided", () => {
   assertThrows(
@@ -140,15 +142,8 @@ Deno.test("tap should handle unsubscribe", () => {
   // Arrange
   let sourceAborted = false;
   const controller = new AbortController();
-  const source = new Observable<number>((observer) =>
-    observer.signal.addEventListener("abort", () => (sourceAborted = true), {
-      once: true,
-    })
-  );
-  const observable = pipe(
-    source,
-    tap(noop),
-  );
+  const source = pipe(never, finalize(() => (sourceAborted = true)));
+  const observable = pipe(source, tap(noop));
 
   // Act
   observable.subscribe(new Observer({ signal: controller.signal }));

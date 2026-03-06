@@ -29,9 +29,7 @@ export function filter<Value>(
   predicate: (value: Value, index: number) => boolean,
 ): (source: Observable<Value>) => Observable<Value> {
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-  if (typeof predicate !== "function") {
-    throw new ParameterTypeError(0, "Function");
-  }
+  if (typeof predicate !== "function") throw new ParameterTypeError(0, "Function");
   return function filterFn(source) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");

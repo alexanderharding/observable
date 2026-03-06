@@ -1,8 +1,9 @@
 import { assertEquals, assertStrictEquals, assertThrows } from "@std/assert";
-import { Observable, Observer } from "@observable/core";
+import { Observer } from "@observable/core";
 import { materialize, type ObserverNotification } from "@observable/materialize";
 import { pipe } from "@observable/pipe";
 import { BehaviorSubject } from "./mod.ts";
+import { forOf } from "@observable/for-of";
 
 Deno.test("BehaviorSubject.toString should be '[object BehaviorSubject]'", () => {
   // Arrange / Act / Assert
@@ -201,10 +202,7 @@ Deno.test(
   "BehaviorSubject should be an Observer which can be given to Observable.subscribe",
   () => {
     // Arrange
-    const source = new Observable<number>((observer) => {
-      [1, 2, 3, 4, 5].forEach((value) => observer.next(value));
-      observer.return();
-    });
+    const source = forOf([1, 2, 3, 4, 5]);
     const subject = new BehaviorSubject(0);
     const notifications: Array<ObserverNotification<number>> = [];
 

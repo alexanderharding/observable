@@ -60,9 +60,7 @@ export function mergeMap<In, Out>(
             signal: observer.signal,
             next: (value) => observer.next(value),
             return() {
-              if (!--activeInnerSubscriptions && outerSubscriptionHasReturned) {
-                observer.return();
-              }
+              if (!--activeInnerSubscriptions && outerSubscriptionHasReturned) observer.return();
             },
             throw: (value) => observer.throw(value),
           });

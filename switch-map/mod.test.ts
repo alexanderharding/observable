@@ -2,7 +2,6 @@ import { assertEquals } from "@std/assert";
 import { Observable, Observer, Subject } from "@observable/core";
 import { empty } from "@observable/empty";
 import { never } from "@observable/never";
-import { defer } from "@observable/defer";
 import { pipe } from "@observable/pipe";
 import { take } from "@observable/take";
 import { throwError } from "@observable/throw-error";
@@ -11,26 +10,20 @@ import { flat } from "@observable/flat";
 import { switchMap } from "./mod.ts";
 import { map } from "@observable/map";
 import { materialize, type ObserverNotification } from "@observable/materialize";
+import { forOf } from "@observable/for-of";
+import { finalize } from "@observable/finalize";
+import { of } from "@observable/of";
+import { tap } from "@observable/tap";
+import { defer } from "@observable/defer";
 
 Deno.test("switchMap should map-and-flatten each item to an Observable", () => {
   // Arrange
   const hot = new Subject<number>();
-  const cold = new Observable<number>((observer) => {
-    for (const value of Array.from({ length: 3 }, () => 10)) {
-      observer.next(value);
-      if (observer.signal.aborted) return;
-    }
-    observer.return();
-  });
+  const cold = forOf(Array.from({ length: 3 }, () => 10));
   const notifications: Array<ObserverNotification<number>> = [];
   const materialized = pipe(
     hot,
-    switchMap((x) =>
-      pipe(
-        cold,
-        map((i) => i * +x),
-      )
-    ),
+    switchMap((x) => pipe(cold, map((i) => i * +x))),
     materialize(),
   );
 
@@ -64,20 +57,9 @@ Deno.test("switchMap should unsub inner observables", () => {
 
   // Act
   pipe(
-    new Observable<string>((observer) => {
-      for (const value of ["a", "b"]) {
-        observer.next(value);
-        if (observer.signal.aborted) return;
-      }
-      observer.return();
-    }),
+    forOf(["a", "b"]),
     switchMap(
-      (x) =>
-        new Observable<string>((observer) => {
-          observer.signal.addEventListener("abort", () => {
-            unsubbed.push(x);
-          });
-        }),
+      (x) => pipe(never, finalize(() => unsubbed.push(x))),
     ),
   ).subscribe(new Observer());
 
@@ -90,13 +72,7 @@ Deno.test("switchMap should raise error when projection throws", () => {
   const error = new Error("error");
   const notifications: Array<ObserverNotification<never>> = [];
   const materialized = pipe(
-    new Observable<string>((observer) => {
-      for (const value of ["x", "y"]) {
-        observer.next(value);
-        if (observer.signal.aborted) return;
-      }
-      observer.return();
-    }),
+    forOf(["x", "y"]),
     switchMap<string, never>(() => {
       throw error;
     }),
@@ -117,29 +93,11 @@ Deno.test(
   () => {
     // Arrange
     const controller = new AbortController();
-    const x = new Observable<string>((observer) => {
-      for (const value of ["a", "b", "c", "d", "e"]) {
-        observer.next(value);
-        if (observer.signal.aborted) return;
-      }
-      observer.return();
-    });
-    const y = new Observable<string>((observer) => {
-      for (const value of ["f", "g", "h", "i"]) {
-        observer.next(value);
-        if (observer.signal.aborted) return;
-      }
-      observer.return();
-    });
+    const x = forOf(["a", "b", "c", "d", "e"]);
+    const y = forOf(["f", "g", "h", "i"]);
     const notifications: Array<ObserverNotification<string>> = [];
     const materialized = pipe(
-      new Observable<string>((observer) => {
-        for (const value of ["x", "y"]) {
-          observer.next(value);
-          if (observer.signal.aborted) return;
-        }
-        observer.return();
-      }),
+      forOf(["x", "y"]),
       switchMap((x) => observableLookup[x]),
       materialize(),
     );
@@ -170,28 +128,11 @@ Deno.test(
   "switchMap should switch inner cold observables, inner never returns",
   () => {
     // Arrange
-    const x = new Observable<string>((observer) => {
-      for (const value of ["a", "b", "c", "d", "e"]) {
-        observer.next(value);
-        if (observer.signal.aborted) return;
-      }
-      observer.return();
-    });
-    const y = new Observable<string>((observer) => {
-      observer.next("f");
-      observer.next("g");
-      observer.next("h");
-      observer.next("i");
-    });
+    const x = forOf(["a", "b", "c", "d", "e"]);
+    const y = flat([forOf(["f", "g", "h", "i"]), never]);
     const notifications: Array<ObserverNotification<string>> = [];
     const materialized = pipe(
-      new Observable<string>((observer) => {
-        for (const value of ["x", "y"]) {
-          observer.next(value);
-          if (observer.signal.aborted) return;
-        }
-        observer.return();
-      }),
+      forOf(["x", "y"]),
       switchMap((x) => observableLookup[x]),
       materialize(),
     );
@@ -222,22 +163,10 @@ Deno.test(
   () => {
     // Arrange
     const x = never;
-    const y = new Observable<string>((observer) => {
-      for (const value of ["f", "g", "h", "i"]) {
-        observer.next(value);
-        if (observer.signal.aborted) return;
-      }
-      observer.return();
-    });
+    const y = forOf(["f", "g", "h", "i"]);
     const notifications: Array<ObserverNotification<string>> = [];
     const materialized = pipe(
-      new Observable<string>((observer) => {
-        for (const value of ["x", "y"]) {
-          observer.next(value);
-          if (observer.signal.aborted) return;
-        }
-        observer.return();
-      }),
+      forOf(["x", "y"]),
       switchMap((x) => observableLookup[x]),
       materialize(),
     );
@@ -267,13 +196,7 @@ Deno.test(
     const error = new Error("error");
     const source = new BehaviorSubject<"x" | "y">("x");
     const x = new Subject<string>();
-    const y = new Observable<string>((observer) => {
-      for (const value of ["f", "g", "h", "i"]) {
-        observer.next(value);
-        if (observer.signal.aborted) return;
-      }
-      observer.return();
-    });
+    const y = forOf(["f", "g", "h", "i"]);
     const notifications: Array<ObserverNotification<string>> = [];
     const materialized = pipe(
       source,
@@ -309,13 +232,7 @@ Deno.test("switchMap should switch inner empty and empty", () => {
   const observableLookup: Record<string, Observable<string>> = { x: x, y: y };
   const notifications: Array<ObserverNotification<string>> = [];
   const materialized = pipe(
-    new Observable<string>((observer) => {
-      for (const value of ["x", "y"]) {
-        observer.next(value);
-        if (observer.signal.aborted) return;
-      }
-      observer.return();
-    }),
+    forOf(["x", "y"]),
     switchMap((x) => observableLookup[x]),
     materialize(),
   );
@@ -336,13 +253,7 @@ Deno.test("switchMap should switch inner empty and never", () => {
   const observableLookup: Record<string, Observable<string>> = { x: x, y: y };
   const notifications: Array<ObserverNotification<string>> = [];
   const materialized = pipe(
-    new Observable<string>((observer) => {
-      for (const value of ["x", "y"]) {
-        observer.next(value);
-        if (observer.signal.aborted) return;
-      }
-      observer.return();
-    }),
+    forOf(["x", "y"]),
     switchMap((x) => observableLookup[x]),
     materialize(),
   );
@@ -363,13 +274,7 @@ Deno.test("switchMap should switch inner never and empty", () => {
   const observableLookup: Record<string, Observable<string>> = { x: x, y: y };
   const notifications: Array<ObserverNotification<string>> = [];
   const materialized = pipe(
-    new Observable<string>((observer) => {
-      for (const value of ["x", "y"]) {
-        observer.next(value);
-        if (observer.signal.aborted) return;
-      }
-      observer.return();
-    }),
+    forOf(["x", "y"]),
     switchMap((x) => observableLookup[x]),
     materialize(),
   );
@@ -391,13 +296,7 @@ Deno.test("switchMap should switch inner never and throw", () => {
   const observableLookup: Record<string, Observable<string>> = { x: x, y: y };
   const notifications: Array<ObserverNotification<string>> = [];
   const materialized = pipe(
-    new Observable<string>((observer) => {
-      for (const value of ["x", "y"]) {
-        observer.next(value);
-        if (observer.signal.aborted) return;
-      }
-      observer.return();
-    }),
+    forOf(["x", "y"]),
     switchMap((x) => observableLookup[x]),
     materialize(),
   );
@@ -419,21 +318,13 @@ Deno.test("switchMap should switch inner empty and throw", () => {
   const observableLookup: Record<string, Observable<string>> = { x: x, y: y };
   const notifications: Array<ObserverNotification<string>> = [];
   const materialized = pipe(
-    new Observable<string>((observer) => {
-      for (const value of ["x", "y"]) {
-        observer.next(value);
-        if (observer.signal.aborted) return;
-      }
-      observer.return();
-    }),
+    forOf(["x", "y"]),
     switchMap((x) => observableLookup[x]),
     materialize(),
   );
 
   // Act
-  materialized.subscribe(
-    new Observer((notification) => notifications.push(notification)),
-  );
+  materialized.subscribe(new Observer((notification) => notifications.push(notification)));
 
   // Assert
   assertEquals(notifications, [["throw", error]]);
@@ -442,22 +333,10 @@ Deno.test("switchMap should switch inner empty and throw", () => {
 Deno.test("switchMap should handle outer empty", () => {
   // Arrange
   const notifications: Array<ObserverNotification<never>> = [];
-  const materialized = pipe(
-    empty,
-    switchMap(
-      (x) =>
-        new Observable<never>((observer) => {
-          observer.next(x);
-          observer.return();
-        }),
-    ),
-    materialize(),
-  );
+  const materialized = pipe(empty, switchMap((x) => of(x)), materialize());
 
   // Act
-  materialized.subscribe(
-    new Observer((notification) => notifications.push(notification)),
-  );
+  materialized.subscribe(new Observer((notification) => notifications.push(notification)));
 
   // Assert
   assertEquals(notifications, [["return"]]);
@@ -468,13 +347,7 @@ Deno.test("switchMap should handle outer never", () => {
   const notifications: Array<ObserverNotification<never>> = [];
   const materialized = pipe(
     never,
-    switchMap(
-      (x) =>
-        new Observable<never>((observer) => {
-          observer.next(x);
-          observer.return();
-        }),
-    ),
+    switchMap((x) => of(x)),
     materialize(),
   );
 
@@ -493,13 +366,7 @@ Deno.test("switchMap should handle outer throw", () => {
   const notifications: Array<ObserverNotification<never>> = [];
   const materialized = pipe(
     throwError(error),
-    switchMap(
-      (x) =>
-        new Observable<never>((observer) => {
-          observer.next(x);
-          observer.return();
-        }),
-    ),
+    switchMap((x) => of(x)),
     materialize(),
   );
 
@@ -517,27 +384,13 @@ Deno.test(
   () => {
     // Arrange
     const sideEffects: Array<number> = [];
-    const synchronousObservable = new Observable<number>((observer) => {
-      // This will check to see if the observer was closed on each loop
-      // when the unsubscribe hits (from the `take`), it should be closed
-      for (let i = 0; !observer.signal.aborted && i < 10; i++) {
-        sideEffects.push(i);
-        observer.next(i);
-      }
-    });
+    const synchronousObservable = pipe(
+      forOf(Array.from({ length: 10 }, (_, i) => i)),
+      tap((value) => sideEffects.push(value)),
+    );
 
     // Act
-    pipe(
-      synchronousObservable,
-      switchMap(
-        (value) =>
-          new Observable<number>((observer) => {
-            observer.next(value);
-            observer.return();
-          }),
-      ),
-      take(3),
-    ).subscribe(new Observer());
+    pipe(synchronousObservable, switchMap((value) => of(value)), take(3)).subscribe(new Observer());
 
     // Assert
     assertEquals(sideEffects, [0, 1, 2]);
@@ -548,7 +401,7 @@ Deno.test(
   "switchMap should unsubscribe previous inner sub when getting synchronously reentrance during subscribing the inner sub",
   () => {
     // Arrange
-    const e = new Subject<number>();
+    const source = new Subject<number>();
     const notifications: Array<ObserverNotification<number>> = [];
     const observer = new Observer<ObserverNotification<number>>((value) =>
       notifications.push(value)
@@ -556,18 +409,17 @@ Deno.test(
 
     // Act
     pipe(
-      e,
+      source,
       take(3),
-      switchMap(
-        (value) =>
-          new Observable<number>((observer) => {
-            e.next(value + 1);
-            observer.next(value);
-          }),
+      switchMap((value) =>
+        defer(() => {
+          source.next(value + 1);
+          return flat([of(value), never]);
+        })
       ),
       materialize(),
     ).subscribe(observer);
-    e.next(1);
+    source.next(1);
 
     // Assert
     assertEquals(notifications, [["next", 3]]);
@@ -580,38 +432,10 @@ Deno.test(
     // Arrange
     const controller = new AbortController();
     const sideEffects: number[] = [];
-    const synchronousObservable = flat([
-      defer(() => {
-        sideEffects.push(1);
-        return new Observable<number>((observer) => {
-          observer.next(1);
-          observer.return();
-        });
-      }),
-      defer(() => {
-        sideEffects.push(2);
-        return new Observable<number>((observer) => {
-          observer.next(2);
-          observer.return();
-        });
-      }),
-      defer(() => {
-        sideEffects.push(3);
-        return new Observable<number>((observer) => {
-          observer.next(3);
-          observer.return();
-        });
-      }),
-    ]);
+    const synchronousObservable = pipe(forOf([1, 2, 3]), tap((value) => sideEffects.push(value)));
 
     // Act
-    pipe(
-      new Observable<null>((observer) => {
-        observer.next(null);
-        observer.return();
-      }),
-      switchMap(() => synchronousObservable),
-    ).subscribe(
+    pipe(of(null), switchMap(() => synchronousObservable)).subscribe(
       new Observer({
         signal: controller.signal,
         next: (value) => value === 2 && controller.abort(),

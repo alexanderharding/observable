@@ -74,9 +74,7 @@ export function flatMap<In, Out>(
         },
         return() {
           outerSubscriptionHasReturned = true;
-          if (!activeInnerSubscription && !queue.length) {
-            observer.return();
-          }
+          if (!activeInnerSubscription && !queue.length) observer.return();
         },
         throw: (value) => observer.throw(value),
       });
