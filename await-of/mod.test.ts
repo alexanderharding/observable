@@ -1,35 +1,35 @@
 import { assertEquals, assertThrows } from "@std/assert";
 import { Observer } from "@observable/core";
 import { pipe } from "@observable/pipe";
-import { awaitValue } from "./mod.ts";
+import { awaitOf } from "./mod.ts";
 import { materialize, type ObserverNotification } from "@observable/materialize";
 
-Deno.test("awaitValue should throw when called with no promise", () => {
+Deno.test("awaitOf should throw when called with no promise", () => {
   // Arrange / Act / Assert
   assertThrows(
-    () => awaitValue(...([] as unknown as Parameters<typeof awaitValue>)),
+    () => awaitOf(...([] as unknown as Parameters<typeof awaitOf>)),
     TypeError,
     "1 argument required but 0 present",
   );
 });
 
-Deno.test("awaitValue should throw when promise is not a PromiseLike", () => {
+Deno.test("awaitOf should throw when promise is not a PromiseLike", () => {
   // Arrange
   assertThrows(
-    () => awaitValue(1 as unknown as PromiseLike<unknown>),
+    () => awaitOf(1 as unknown as PromiseLike<unknown>),
     TypeError,
     "Parameter 1 is not of type 'PromiseLike'",
   );
 });
 
-Deno.test("awaitValue should emit resolved value and return", async () => {
+Deno.test("awaitOf should emit resolved value and return", async () => {
   // Arrange
   const promise = Promise.resolve(42);
   const notifications: Array<ObserverNotification> = [];
   const { promise: done, resolve } = Promise.withResolvers<void>();
 
   // Act
-  pipe(awaitValue(promise), materialize()).subscribe(
+  pipe(awaitOf(promise), materialize()).subscribe(
     new Observer({
       next: (notification) => notifications.push(notification),
       return: resolve,
@@ -42,7 +42,7 @@ Deno.test("awaitValue should emit resolved value and return", async () => {
   assertEquals(notifications, [["next", 42], ["return"]]);
 });
 
-Deno.test("awaitValue should emit thrown value on rejection without calling return", async () => {
+Deno.test("awaitOf should emit thrown value on rejection without calling return", async () => {
   // Arrange
   const error = new Error("test error");
   const promise = Promise.reject(error);
@@ -50,7 +50,7 @@ Deno.test("awaitValue should emit thrown value on rejection without calling retu
   const { promise: done, resolve } = Promise.withResolvers<void>();
 
   // Act
-  pipe(awaitValue(promise), materialize()).subscribe(
+  pipe(awaitOf(promise), materialize()).subscribe(
     new Observer({
       next: (notification) => notifications.push(notification),
       return: resolve,
@@ -65,7 +65,7 @@ Deno.test("awaitValue should emit thrown value on rejection without calling retu
   assertEquals((notifications[0]![1] as Error).message, "test error");
 });
 
-Deno.test("awaitValue should work with PromiseLike objects", async () => {
+Deno.test("awaitOf should work with PromiseLike objects", async () => {
   // Arrange
   const promiseLike: PromiseLike<string> = {
     then<TResult1, TResult2>(
@@ -79,7 +79,7 @@ Deno.test("awaitValue should work with PromiseLike objects", async () => {
   const { promise: done, resolve } = Promise.withResolvers<void>();
 
   // Act
-  pipe(awaitValue(promiseLike), materialize()).subscribe(
+  pipe(awaitOf(promiseLike), materialize()).subscribe(
     new Observer({
       next: (notification) => notifications.push(notification),
       return: resolve,

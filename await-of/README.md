@@ -1,4 +1,4 @@
-# [@observable/await-value](https://jsr.io/@observable/await-value)
+# [@observable/await-of](https://jsr.io/@observable/await-of)
 
 Projects a
 [`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)
@@ -20,10 +20,10 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 ## Examples
 
 ```ts
-import { awaitValue } from "@observable/await-value";
+import { awaitOf } from "@observable/await-of";
 import { pipe } from "@observable/pipe";
 
-awaitValue(Promise.resolve(42)).subscribe({
+awaitOf(Promise.resolve(42)).subscribe({
   signal: new AbortController().signal,
   next: (value) => console.log("next", value),
   return: () => console.log("return"),
@@ -36,9 +36,9 @@ awaitValue(Promise.resolve(42)).subscribe({
 ```
 
 ```ts
-import { awaitValue } from "@observable/await-value";
+import { awaitOf } from "@observable/await-of";
 
-awaitValue(Promise.reject(new Error("test"))).subscribe({
+awaitOf(Promise.reject(new Error("test"))).subscribe({
   signal: new AbortController().signal,
   next: (value) => console.log("next", value),
   return: () => console.log("return"),
@@ -54,21 +54,21 @@ awaitValue(Promise.reject(new Error("test"))).subscribe({
 Use the following prompt with AI assistants to help them understand this library:
 
 ````
-You are helping me with code that uses @observable/await-value from the @observable library ecosystem.
+You are helping me with code that uses @observable/await-of from the @observable library ecosystem.
 
 WHAT IT DOES:
-`awaitValue(promise)` converts a Promise/PromiseLike into an Observable that emits the resolved value, then calls `return()`. If the promise rejects, it calls `throw()` with the error.
+`awaitOf(promise)` converts a Promise/PromiseLike into an Observable that emits the resolved value, then calls `return()`. If the promise rejects, it calls `throw()` with the error.
 
 CRITICAL DIFFERENCES FROM RxJS:
 - Observer uses `return`/`throw` — NOT `complete`/`error`
 - Unsubscription via `AbortController.abort()` — NOT `subscription.unsubscribe()`
-- `awaitValue` is a standalone factory — pass it a Promise to get an Observable
+- `awaitOf` is a standalone factory — pass it a Promise to get an Observable
 
 USAGE PATTERN:
 ```ts
-import { awaitValue } from "@observable/await-value";
+import { awaitOf } from "@observable/await-of";
 
-awaitValue(fetch("/api/data")).subscribe({
+awaitOf(fetch("/api/data")).subscribe({
   signal: new AbortController().signal,
   next: (response) => console.log(response),
   return: () => console.log("done"),
@@ -78,7 +78,7 @@ awaitValue(fetch("/api/data")).subscribe({
 
 ERROR HANDLING:
 ```ts
-awaitValue(Promise.reject(new Error("failed"))).subscribe({
+awaitOf(Promise.reject(new Error("failed"))).subscribe({
   signal: new AbortController().signal,
   next: (value) => console.log(value),
   return: () => console.log("done"),

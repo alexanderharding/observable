@@ -31,7 +31,7 @@ import {
  * import { Observable } from "@observable/core";
  * import { switchMap } from "@observable/switch-map";
  * import { pipe } from "@observable/pipe";
- * import { awaitValue } from "@observable/await-value";
+ * import { awaitOf } from "@observable/await-of";
  *
  * const controller = new AbortController();
  * const response = fetch("https://www.example.com/api/data", {
@@ -39,7 +39,7 @@ import {
  * });
  * const data = pipe(
  *   response,
- *   switchMap((response) => awaitValue(response.json())),
+ *   switchMap((response) => awaitOf(response.json())),
  * );
  *
  * data.subscribe({
@@ -59,10 +59,14 @@ export function fetch(
   init?: Omit<RequestInit, "signal">,
 ): Observable<Response> {
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-  if (typeof input !== "string" && !isURL(input)) throw new ParameterTypeError(0, "(String | URL)");
+  if (typeof input !== "string" && !isURL(input)) {
+    throw new ParameterTypeError(0, "(String | URL)");
+  }
   // Normally we'd check the entire RequestInit interface, but it's complex and we don't need to be
   // that strict here. We'll still do minor type checking though.
-  if (typeof init !== "undefined" && !isObject(init)) throw new ParameterTypeError(1, "Object");
+  if (typeof init !== "undefined" && !isObject(init)) {
+    throw new ParameterTypeError(1, "Object");
+  }
   return new Observable(
     async (observer) => {
       const unsubscribeListenerController = new AbortController();

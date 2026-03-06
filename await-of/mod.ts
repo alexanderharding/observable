@@ -10,9 +10,9 @@ import {
  * to an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable).
  * @example
  * ```ts
- * import { awaitValue } from "@observable/await-value";
+ * import { awaitOf } from "@observable/await-of";
  *
- * awaitValue(Promise.resolve(42)).subscribe({
+ * awaitOf(Promise.resolve(42)).subscribe({
  *   signal: new AbortController().signal,
  *   next: (value) => console.log("next", value),
  *   return: () => console.log("return"),
@@ -25,9 +25,9 @@ import {
  * ```
  * @example
  * ```ts
- * import { awaitValue } from "@observable/await-value";
+ * import { awaitOf } from "@observable/await-of";
  *
- * awaitValue(Promise.reject(new Error("test"))).subscribe({
+ * awaitOf(Promise.reject(new Error("test"))).subscribe({
  *   signal: new AbortController().signal,
  *   next: (value) => console.log("next", value),
  *   return: () => console.log("return"),
@@ -38,7 +38,7 @@ import {
  * // "throw" Error: test
  * ```
  */
-export function awaitValue<Value>(promise: PromiseLike<Value>): Observable<Value> {
+export function awaitOf<Value>(promise: PromiseLike<Value>): Observable<Value> {
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
   if (!isPromiseLike(promise)) throw new ParameterTypeError(0, "PromiseLike");
   return new Observable(async (observer) => {
