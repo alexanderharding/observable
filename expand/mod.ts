@@ -6,7 +6,6 @@ import { mergeMap } from "@observable/merge-map";
 import { merge } from "@observable/merge";
 import { defer } from "@observable/defer";
 import { of } from "@observable/of";
-import { forOf } from "@observable/for-of";
 
 /**
  * Recursively {@linkcode project|projects} each [source](https://jsr.io/@observable/core#source) value
