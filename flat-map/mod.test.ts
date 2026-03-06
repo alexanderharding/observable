@@ -4,7 +4,7 @@ import { pipe } from "@observable/pipe";
 import { flatMap } from "./mod.ts";
 import { map } from "@observable/map";
 import { materialize, type ObserverNotification } from "@observable/materialize";
-import { ofIterable } from "@observable/of-iterable";
+import { forOf } from "@observable/for-of";
 
 Deno.test("flatMap should flatten many inners", () => {
   // Arrange
@@ -249,7 +249,7 @@ Deno.test(
   "flatMap should propagate from error when project returns non-observable after first value",
   () => {
     // Arrange
-    const source = pipe(["a", "b"], ofIterable());
+    const source = forOf(["a", "b"]);
     const notifications: Array<ObserverNotification<number>> = [];
     const observableLookup = {
       a: new Subject<number>(),

@@ -18,7 +18,7 @@ import { mergeMap } from "@observable/merge-map";
  * ```ts
  * import { BehaviorSubject } from "@observable/behavior-subject";
  * import { switchMap } from "@observable/switch-map";
- * import { ofIterable } from "@observable/of-iterable";
+ * import { forOf } from "@observable/for-of";
  * import { pipe } from "@observable/pipe";
  *
  * const page = new BehaviorSubject(1);
@@ -31,7 +31,7 @@ import { mergeMap } from "@observable/merge-map";
  * });
  *
  * function fetchPage(page: number): Observable<string> {
- *   return pipe([`Page ${page}`], ofIterable());
+ *   return forOf([`Page ${page}`]);
  * }
  */
 export function switchMap<In, Out>(

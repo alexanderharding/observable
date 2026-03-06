@@ -13,15 +13,15 @@ import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/i
  * @example
  * ```ts
  * import { flatMap } from "@observable/flat-map";
- * import { ofIterable } from "@observable/of-iterable";
+ * import { forOf } from "@observable/for-of";
  * import { pipe } from "@observable/pipe";
  *
- * const source = pipe(["a", "b", "c"], ofIterable());
+ * const source = forOf(["a", "b", "c"]);
  * const controller = new AbortController();
  * const observableLookup = {
- *   a: pipe([1, 2, 3], ofIterable()),
- *   b: pipe([4, 5, 6], ofIterable()),
- *   c: pipe([7, 8, 9], ofIterable()),
+ *   a: forOf([1, 2, 3]),
+ *   b: forOf([4, 5, 6]),
+ *   c: forOf([7, 8, 9]),
  * } as const;
  *
  * pipe(source, flatMap((value) => observableLookup[value])).subscribe({

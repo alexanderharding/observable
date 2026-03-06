@@ -24,11 +24,11 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 
 ```ts
 import { reduce } from "@observable/reduce";
-import { ofIterable } from "@observable/of-iterable";
+import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
-const source = pipe([1, 2, 3], ofIterable());
+const source = forOf([1, 2, 3]);
 pipe(source, reduce((previous, current) => previous + current, 0)).subscribe({
   signal: controller.signal,
   next: (value) => console.log("next", value),
@@ -59,11 +59,11 @@ CRITICAL: This library is NOT RxJS. Key differences:
 USAGE PATTERN:
 ```ts
 import { reduce } from "@observable/reduce";
-import { ofIterable } from "@observable/of-iterable";
+import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
-const source = pipe([1, 2, 3], ofIterable());
+const source = forOf([1, 2, 3]);
 pipe(source, reduce((previous, current) => previous + current, 0)).subscribe({
   signal: controller.signal,
   next: (value) => console.log(value),  // 6 (only the final sum)
@@ -75,7 +75,7 @@ pipe(source, reduce((previous, current) => previous + current, 0)).subscribe({
 WRONG USAGE:
 ```ts
 // ✗ WRONG: reduce is NOT a method on Observable
-pipe([1, 2, 3], ofIterable()).reduce((a, b) => a + b, 0)  // This does NOT work!
+forOf([1, 2, 3]).reduce((a, b) => a + b, 0)  // This does NOT work!
 ```
 
 ACCUMULATING TO DIFFERENT TYPE:

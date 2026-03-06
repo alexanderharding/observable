@@ -9,14 +9,13 @@ import { map } from "@observable/map";
  * @example
  * ```ts
  * import { tap } from "@observable/tap";
- * import { ofIterable } from "@observable/of-iterable";
+ * import { forOf } from "@observable/for-of";
  * import { pipe } from "@observable/pipe";
  *
  * const activeSubscriptionController = new AbortController();
  *
  * pipe(
- *   [1, 2, 3],
- *   ofIterable(),
+ *   forOf([1, 2, 3]),
  *   tap((value) => console.log("tap callback", value)),
  * ).subscribe({
  *   signal: activeSubscriptionController.signal,

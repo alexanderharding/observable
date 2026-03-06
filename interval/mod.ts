@@ -1,15 +1,14 @@
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 import { Observable } from "@observable/core";
 import { defer } from "@observable/defer";
-import { ofIterable } from "@observable/of-iterable";
-import { pipe } from "@observable/pipe";
+import { forOf } from "@observable/for-of";
 import { empty } from "@observable/empty";
 import { never } from "@observable/never";
 
 /**
  * @internal Do NOT export.
  */
-const infiniteVoid = defer(() => pipe(generateInfiniteVoid(), ofIterable()));
+const infiniteVoid = defer(() => forOf(generateInfiniteVoid()));
 
 /**
  * Repeatedly [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s a `void` value with a
@@ -39,17 +38,15 @@ const infiniteVoid = defer(() => pipe(generateInfiniteVoid(), ofIterable()));
  */
 export function interval(milliseconds: number): Observable<void> {
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-  if (typeof milliseconds !== "number") throw new ParameterTypeError(0, "Number");
+  if (typeof milliseconds !== "number") {
+    throw new ParameterTypeError(0, "Number");
+  }
   if (milliseconds < 0 || Number.isNaN(milliseconds)) return empty;
   if (milliseconds === 0) return infiniteVoid;
   if (milliseconds === Infinity) return never;
   return new Observable<void>((observer) => {
-    const interval = globalThis.setInterval(() => observer.next(), milliseconds);
-    observer.signal.addEventListener(
-      "abort",
-      () => globalThis.clearInterval(interval),
-      { once: true },
-    );
+    const interval = setInterval(() => observer.next(), milliseconds);
+    observer.signal.addEventListener("abort", () => clearInterval(interval), { once: true });
   });
 }
 

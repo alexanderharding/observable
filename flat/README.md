@@ -22,12 +22,12 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 
 ```ts
 import { flat } from "@observable/flat";
-import { ofIterable } from "@observable/of-iterable";
+import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 
-const source1 = pipe([1, 2, 3], ofIterable());
-const source2 = pipe([4, 5, 6], ofIterable());
-const source3 = pipe([7, 8, 9], ofIterable());
+const source1 = forOf([1, 2, 3]);
+const source2 = forOf([4, 5, 6]);
+const source3 = forOf([7, 8, 9]);
 
 const controller = new AbortController();
 
@@ -69,12 +69,12 @@ CRITICAL: This library is NOT RxJS. Key differences:
 USAGE PATTERN:
 ```ts
 import { flat } from "@observable/flat";
-import { ofIterable } from "@observable/of-iterable";
+import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 
-const source1 = pipe([1, 2, 3], ofIterable());
-const source2 = pipe([4, 5, 6], ofIterable());
-const source3 = pipe([7, 8, 9], ofIterable());
+const source1 = forOf([1, 2, 3]);
+const source2 = forOf([4, 5, 6]);
+const source3 = forOf([7, 8, 9]);
 
 const controller = new AbortController();
 

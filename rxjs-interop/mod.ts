@@ -57,11 +57,11 @@ export function asObservable<Value>(): (source: RxJsObservable<Value>) => Observ
  * @example
  * ```ts
  * import { asRxJsObservable } from "@observable/rxjs-interop";
- * import { ofIterable } from "@observable/of-iterable";
+ * import { forOf } from "@observable/for-of";
  * import { pipe } from "@observable/pipe";
  *
  * const controller = new AbortController();
- * const observable = pipe([1, 2, 3], ofIterable(), asRxJsObservable());
+ * const observable = pipe(forOf([1, 2, 3]), asRxJsObservable());
  * const subscription = observable.subscribe({
  *   next: (value) => console.log("next", value),
  *   complete: () => console.log("complete"),

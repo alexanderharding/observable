@@ -27,10 +27,10 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 
 ```ts
 import { lastValueFrom } from "@observable/last-value-from";
-import { ofIterable } from "@observable/of-iterable";
+import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 
-console.log(await lastValueFrom(pipe([1, 2, 3], ofIterable())));
+console.log(await lastValueFrom(forOf([1, 2, 3])));
 
 // Console output:
 // 3
@@ -82,10 +82,10 @@ CRITICAL: This library is NOT RxJS. Key differences:
 USAGE PATTERN:
 ```ts
 import { lastValueFrom } from "@observable/last-value-from";
-import { ofIterable } from "@observable/of-iterable";
+import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 
-const result = await lastValueFrom(pipe([1, 2, 3], ofIterable()));
+const result = await lastValueFrom(forOf([1, 2, 3]));
 console.log(result);  // 3 (last value)
 ```
 

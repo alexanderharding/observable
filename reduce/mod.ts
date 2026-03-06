@@ -17,11 +17,11 @@ import { defer } from "@observable/defer";
  * @example
  * ```ts
  * import { reduce } from "@observable/reduce";
- * import { ofIterable } from "@observable/of-iterable";
+ * import { forOf } from "@observable/for-of";
  * import { pipe } from "@observable/pipe";
  *
  * const controller = new AbortController();
- * const source = pipe([1, 2, 3], ofIterable());
+ * const source = forOf([1, 2, 3]);
  * pipe(source, reduce((previous, current) => previous + current, 0)).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),

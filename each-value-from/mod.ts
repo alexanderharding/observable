@@ -28,10 +28,10 @@ type Deferred<Value> = Omit<PromiseWithResolvers<Value>, "promise">;
  * @example
  * ```ts
  * import { eachValueFrom } from "@observable/each-value-from";
- * import { ofIterable } from "@observable/of-iterable";
+ * import { forOf } from "@observable/for-of";
  * import { pipe } from "@observable/pipe";
  *
- * for await (const value of eachValueFrom(pipe([1, 2, 3], ofIterable()))) {
+ * for await (const value of eachValueFrom(forOf([1, 2, 3]))) {
  *   console.log(value);
  * }
  * console.log("Done!");

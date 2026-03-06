@@ -15,10 +15,10 @@ import { share } from "@observable/share";
  * @example
  * ```ts
  * import { lastValueFrom } from "@observable/last-value-from";
- * import { ofIterable } from "@observable/of-iterable";
+ * import { forOf } from "@observable/for-of";
  * import { pipe } from "@observable/pipe";
  *
- * console.log(await lastValueFrom(pipe([1, 2, 3], ofIterable())));
+ * console.log(await lastValueFrom(forOf([1, 2, 3])));
  *
  * // Console output:
  * // 3
@@ -26,11 +26,11 @@ import { share } from "@observable/share";
  * @example
  * ```ts
  * import { lastValueFrom } from "@observable/last-value-from";
- * import { ofIterable } from "@observable/of-iterable";
+ * import { forOf } from "@observable/for-of";
  * import { pipe } from "@observable/pipe";
  * import { take } from "@observable/take";
  *
- * console.log(await lastValueFrom(pipe([1, 2, 3], ofIterable(), take(1))));
+ * console.log(await lastValueFrom(pipe(forOf([1, 2, 3]), take(1))));
  *
  * // Console output:
  * // 1
