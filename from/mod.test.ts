@@ -1,6 +1,7 @@
 import { Observable, Observer } from "@observable/core";
 import { assertEquals, assertInstanceOf, assertStrictEquals } from "@std/assert";
 import { from } from "./mod.ts";
+import { noop } from "@observable/internal";
 
 Deno.test(
   "from should convert a custom observable to a proper observable",
@@ -32,11 +33,7 @@ Deno.test(
   "from should return the same observer if it is already a proper observer",
   () => {
     // Arrange
-    const expected = new Observable<number>((observer) => {
-      observer.next(1);
-      observer.next(2);
-      observer.return();
-    });
+    const expected = new Observable<number>(noop);
 
     // Act
     const actual = from(expected);

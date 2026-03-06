@@ -59,7 +59,7 @@ Deno.test("awaitOf should emit thrown value on rejection without calling return"
 
   await done;
 
-  // Assert - only throw notification (no next values, no return from source)
+  // Assert
   assertEquals(notifications.length, 1);
   assertEquals(notifications[0]![0], "throw");
   assertEquals((notifications[0]![1] as Error).message, "test error");

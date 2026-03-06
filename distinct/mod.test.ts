@@ -1,11 +1,12 @@
 import { assertEquals, assertThrows } from "@std/assert";
-import { Observable, Observer, Subject } from "@observable/core";
+import { Observer, Subject } from "@observable/core";
 import { pipe } from "@observable/pipe";
 import { forOf } from "@observable/for-of";
 import { materialize, type ObserverNotification } from "@observable/materialize";
 import { distinct } from "./mod.ts";
 import { flat } from "@observable/flat";
 import { throwError } from "@observable/throw-error";
+import { empty } from "@observable/empty";
 
 Deno.test(
   "distinct should filter out all duplicate values across the stream",
@@ -74,8 +75,7 @@ Deno.test(
 Deno.test("distinct should handle empty source", () => {
   // Arrange
   const notifications: Array<ObserverNotification<number>> = [];
-  const source = forOf([] as number[]);
-  const materialized = pipe(source, distinct(), materialize());
+  const materialized = pipe(empty, distinct(), materialize());
 
   // Act
   materialized.subscribe(
@@ -90,12 +90,7 @@ Deno.test("distinct should pump throws right through itself", () => {
   // Arrange
   const error = new Error("test error");
   const notifications: Array<ObserverNotification<number>> = [];
-  const source = new Observable<number>((observer) => {
-    observer.next(1);
-    observer.next(2);
-    observer.next(1);
-    observer.throw(error);
-  });
+  const source = flat([forOf([1, 2, 1]), throwError(error)]);
   const materialized = pipe(source, distinct(), materialize());
 
   // Act
@@ -127,9 +122,7 @@ Deno.test("distinct should honor unsubscribe", () => {
       signal: controller.signal,
       next: (notification) => {
         notifications.push(notification);
-        if (notification[0] === "next" && notification[1] === 2) {
-          controller.abort();
-        }
+        if (notification[0] === "next" && notification[1] === 2) controller.abort();
       },
     }),
   );

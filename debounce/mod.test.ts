@@ -1,10 +1,13 @@
 import { assertEquals, assertStrictEquals, assertThrows } from "@std/assert";
-import { Observable, Observer, Subject } from "@observable/core";
+import { Observer, Subject } from "@observable/core";
 import { empty } from "@observable/empty";
 import { pipe } from "@observable/pipe";
 import { forOf } from "@observable/for-of";
 import { materialize, type ObserverNotification } from "@observable/materialize";
 import { debounce } from "./mod.ts";
+import { flat } from "@observable/flat";
+import { throwError } from "@observable/throw-error";
+import { of } from "@observable/of";
 
 Deno.test("debounce should return empty if milliseconds is negative", () => {
   // Arrange
@@ -47,11 +50,7 @@ Deno.test("debounce should ignore values but propagate throw when milliseconds i
   // Arrange
   const error = new Error("test error");
   const notifications: Array<ObserverNotification<number>> = [];
-  const source = new Observable<number>((observer) => {
-    observer.next(1);
-    observer.next(2);
-    observer.throw(error);
-  });
+  const source = flat([forOf([1, 2]), throwError(error)]);
   const materialized = pipe(source, debounce(Infinity), materialize());
 
   // Act
@@ -168,10 +167,7 @@ Deno.test("debounce should pump throws right through itself", () => {
     },
   });
 
-  const source = new Observable<number>((observer) => {
-    observer.next(1);
-    observer.throw(error);
-  });
+  const source = flat([of(1), throwError(error)]);
   const materialized = pipe(source, debounce(100), materialize());
 
   // Act

@@ -85,9 +85,7 @@ Deno.test("all should handle reentrancy", () => {
     new Observer((notification) => {
       notifications.push(notification);
       const [type, values] = notification;
-      if (type === "next" && values[2] === 7 && values[0] !== 10) {
-        source1.next(10);
-      }
+      if (type === "next" && values[2] === 7 && values[0] !== 10) source1.next(10);
     }),
   );
 

@@ -39,9 +39,7 @@ export function reduce<In, Out>(
   seed: Out,
 ): (source: Observable<In>) => Observable<Out> {
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-  if (typeof reducer !== "function") {
-    throw new ParameterTypeError(0, "Function");
-  }
+  if (typeof reducer !== "function") throw new ParameterTypeError(0, "Function");
   return function reduceFn(source) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");

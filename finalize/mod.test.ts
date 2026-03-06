@@ -78,9 +78,7 @@ Deno.test(
         signal: controller.signal,
         next: (notification) => {
           notifications.push(notification);
-          if (notification[0] === "next" && notification[1] === 2) {
-            controller.abort();
-          }
+          if (notification[0] === "next" && notification[1] === 2) controller.abort();
         },
       }),
     );

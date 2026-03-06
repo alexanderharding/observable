@@ -1,11 +1,13 @@
 import { isObservable, Observable } from "@observable/core";
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 import {
+  from as rxJsFrom,
   isObservable as isRxJsObservable,
   Observable as RxJsObservable,
   type Observer as RxJsObserver,
   Subscriber,
 } from "rxjs";
+import { from } from "@observable/from";
 
 /**
  * Converts an [RxJS Observable](https://rxjs.dev/api/index/class/Observable) to an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable).
@@ -47,7 +49,7 @@ export function asObservable<Value>(): (source: RxJsObservable<Value>) => Observ
         } satisfies RxJsObserver<Value>,
       );
       observer.signal.addEventListener("abort", () => subscriber.unsubscribe(), { once: true });
-      source.subscribe(subscriber);
+      rxJsFrom(source).subscribe(subscriber);
     });
   };
 }
@@ -82,7 +84,7 @@ export function asRxJsObservable<Value>(): (source: Observable<Value>) => RxJsOb
     return new RxJsObservable((subscriber) => {
       if (subscriber.closed) return;
       const activeSubscriptionController = new AbortController();
-      source.subscribe({
+      from(source).subscribe({
         signal: activeSubscriptionController.signal,
         next: (value) => subscriber.next(value),
         return: () => subscriber.complete(),

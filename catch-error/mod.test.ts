@@ -139,9 +139,7 @@ Deno.test("catchError should honor unsubscribe", () => {
       signal: controller.signal,
       next: (notification) => {
         notifications.push(notification);
-        if (notification[0] === "next" && notification[1] === 2) {
-          controller.abort();
-        }
+        if (notification[0] === "next" && notification[1] === 2) controller.abort();
       },
     }),
   );
@@ -169,9 +167,7 @@ Deno.test("catchError should honor unsubscribe during error handling", () => {
       signal: controller.signal,
       next: (notification) => {
         notifications.push(notification);
-        if (notification[0] === "next" && notification[1] === 10) {
-          controller.abort();
-        }
+        if (notification[0] === "next" && notification[1] === 10) controller.abort();
       },
     }),
   );

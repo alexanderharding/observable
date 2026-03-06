@@ -1,5 +1,5 @@
 import { assertEquals, assertRejects, assertStrictEquals } from "@std/assert";
-import { Observable, type Observer, Subject } from "@observable/core";
+import { Subject } from "@observable/core";
 import { pipe } from "@observable/pipe";
 import { eachValueFrom } from "./mod.ts";
 import { forOf } from "@observable/for-of";
@@ -209,19 +209,16 @@ Deno.test("eachValueFrom throw method should abort subscription and reject", asy
 
 Deno.test("eachValueFrom should buffer values when emitted faster than consumed", async () => {
   // Arrange
-  let capturedObserver: Observer<number> | undefined;
-  const source = new Observable<number>((observer) => {
-    capturedObserver = observer;
-  });
+  const source = new Subject<number>();
   const generator = eachValueFrom(source);
 
   // Start iteration to activate subscription
   const nextPromise = generator.next();
 
   // Emit multiple values before consuming
-  capturedObserver!.next(1);
-  capturedObserver!.next(2);
-  capturedObserver!.next(3);
+  source.next(1);
+  source.next(2);
+  source.next(3);
 
   // Act - consume all values
   const result1 = await nextPromise;
@@ -236,10 +233,7 @@ Deno.test("eachValueFrom should buffer values when emitted faster than consumed"
 
 Deno.test("eachValueFrom should resolve waiting promises when values arrive", async () => {
   // Arrange
-  let capturedObserver: Observer<number> | undefined;
-  const source = new Observable<number>((observer) => {
-    capturedObserver = observer;
-  });
+  const source = new Subject<number>();
   const generator = eachValueFrom(source);
 
   // Request values before they're emitted
@@ -247,8 +241,8 @@ Deno.test("eachValueFrom should resolve waiting promises when values arrive", as
   const promise2 = generator.next();
 
   // Act - emit values after requesting
-  capturedObserver!.next(10);
-  capturedObserver!.next(20);
+  source.next(10);
+  source.next(20);
 
   // Assert
   const result1 = await promise1;
@@ -259,10 +253,7 @@ Deno.test("eachValueFrom should resolve waiting promises when values arrive", as
 
 Deno.test("eachValueFrom should resolve all pending promises on return", async () => {
   // Arrange
-  let capturedObserver: Observer<number> | undefined;
-  const source = new Observable<number>((observer) => {
-    capturedObserver = observer;
-  });
+  const source = new Subject<number>();
   const generator = eachValueFrom(source);
 
   // Request values before return
@@ -270,7 +261,7 @@ Deno.test("eachValueFrom should resolve all pending promises on return", async (
   const promise2 = generator.next();
 
   // Act - observable returns
-  capturedObserver!.return();
+  source.return();
 
   // Assert
   const result1 = await promise1;

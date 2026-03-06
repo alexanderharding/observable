@@ -1,5 +1,5 @@
 import { assertEquals, assertThrows } from "@std/assert";
-import { Observable, Observer, Subject } from "@observable/core";
+import { type Observable, Observer, Subject } from "@observable/core";
 import { MinimumArgumentsRequiredError, noop, ParameterTypeError } from "@observable/internal";
 import { pipe } from "@observable/pipe";
 import { materialize, type ObserverNotification } from "@observable/materialize";
@@ -7,6 +7,9 @@ import { forOf } from "@observable/for-of";
 import { of } from "@observable/of";
 import { empty } from "@observable/empty";
 import { expand } from "./mod.ts";
+import { finalize } from "@observable/finalize";
+import { never } from "@observable/never";
+import { flat } from "@observable/flat";
 
 Deno.test("expand should throw if no arguments are provided", () => {
   assertThrows(
@@ -353,9 +356,7 @@ Deno.test("expand should return immediately when source is empty", () => {
   );
 
   // Act
-  observable.subscribe(
-    new Observer((notification) => notifications.push(notification)),
-  );
+  observable.subscribe(new Observer((notification) => notifications.push(notification)));
 
   // Assert
   assertEquals(notifications, [["return"]]);
@@ -366,25 +367,8 @@ Deno.test("expand should handle unsubscription", () => {
   let sourceAborted = false;
   let innerAborted = false;
   const controller = new AbortController();
-  const source = new Observable<number>((observer) => {
-    observer.signal.addEventListener("abort", () => (sourceAborted = true), {
-      once: true,
-    });
-    observer.next(1);
-  });
-  const observable = pipe(
-    source,
-    expand(
-      () =>
-        new Observable<number>((observer) => {
-          observer.signal.addEventListener(
-            "abort",
-            () => (innerAborted = true),
-            { once: true },
-          );
-        }),
-    ),
-  );
+  const source = pipe(flat([of(1), never]), finalize(() => (sourceAborted = true)));
+  const observable = pipe(source, expand(() => pipe(never, finalize(() => (innerAborted = true)))));
 
   // Act
   observable.subscribe(new Observer({ signal: controller.signal }));
@@ -412,9 +396,7 @@ Deno.test("expand should not return until all inner subscriptions return", () =>
   );
 
   // Act
-  observable.subscribe(
-    new Observer((notification) => notifications.push(notification)),
-  );
+  observable.subscribe(new Observer((notification) => notifications.push(notification)));
   source.next(1);
   inner1.next(2);
   source.return();
@@ -422,11 +404,7 @@ Deno.test("expand should not return until all inner subscriptions return", () =>
   inner2.return();
 
   // Assert
-  assertEquals(notifications, [
-    ["next", 1],
-    ["next", 2],
-    ["return"],
-  ]);
+  assertEquals(notifications, [["next", 1], ["next", 2], ["return"]]);
 });
 
 Deno.test("expand should handle deeply nested expansion", () => {
@@ -440,19 +418,12 @@ Deno.test("expand should handle deeply nested expansion", () => {
   );
 
   // Act
-  observable.subscribe(
-    new Observer((notification) => notifications.push(notification)),
-  );
+  observable.subscribe(new Observer((notification) => notifications.push(notification)));
 
   // Assert
-  assertEquals(notifications, [
-    ["next", 1],
-    ["next", 2],
-    ["next", 3],
-    ["next", 4],
-    ["next", 5],
-    ["return"],
-  ]);
+  assertEquals(notifications, [["next", 1], ["next", 2], ["next", 3], ["next", 4], ["next", 5], [
+    "return",
+  ]]);
 });
 
 Deno.test("expand should handle branching expansion (multiple values from inner)", () => {
@@ -466,9 +437,7 @@ Deno.test("expand should handle branching expansion (multiple values from inner)
   );
 
   // Act
-  observable.subscribe(
-    new Observer((notification) => notifications.push(notification)),
-  );
+  observable.subscribe(new Observer((notification) => notifications.push(notification)));
 
   // Assert
   assertEquals(notifications, [
@@ -489,11 +458,8 @@ Deno.test("expand should have unique index counter per subscription", () => {
   const observable = pipe(
     source,
     expand((value, index) => {
-      if (indices1.length < 4 && indices2.length === 0) {
-        indices1.push(index);
-      } else {
-        indices2.push(index);
-      }
+      if (indices1.length < 4 && indices2.length === 0) indices1.push(index);
+      else indices2.push(index);
       return value < 4 ? of(value + 1) : empty;
     }),
   );

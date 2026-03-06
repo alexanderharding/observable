@@ -159,9 +159,7 @@ Deno.test("repeat should honor unsubscribe during source", () => {
       signal: controller.signal,
       next: (notification) => {
         notifications.push(notification);
-        if (notification[0] === "next" && notification[1] === 2) {
-          controller.abort();
-        }
+        if (notification[0] === "next" && notification[1] === 2) controller.abort();
       },
     }),
   );
@@ -298,9 +296,7 @@ Deno.test("repeat should work with defer notifier for controlled repetition", ()
 Deno.test("repeat should pass through return for empty source", () => {
   // Arrange
   const notifications: Array<ObserverNotification<number>> = [];
-  const source = forOf([] as number[]);
-  const notifier = empty;
-  const materialized = pipe(source, repeat(notifier), materialize());
+  const materialized = pipe(empty, repeat(empty), materialize());
 
   // Act
   materialized.subscribe(

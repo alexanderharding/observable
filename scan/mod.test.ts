@@ -1,5 +1,5 @@
 import { assertEquals } from "@std/assert";
-import { Observable, Observer } from "@observable/core";
+import { Observer } from "@observable/core";
 import { forOf } from "@observable/for-of";
 import { of } from "@observable/of";
 import { pipe } from "@observable/pipe";
@@ -7,6 +7,8 @@ import { throwError } from "@observable/throw-error";
 import { scan } from "./mod.ts";
 import { materialize, type ObserverNotification } from "@observable/materialize";
 import { empty } from "@observable/empty";
+import { finalize } from "@observable/finalize";
+import { never } from "@observable/never";
 
 Deno.test("scan should accumulate values with a seed", () => {
   // Arrange
@@ -100,15 +102,8 @@ Deno.test("scan should handle unsubscribe", () => {
   // Arrange
   let sourceAborted = false;
   const controller = new AbortController();
-  const source = new Observable<number>((observer) =>
-    observer.signal.addEventListener("abort", () => (sourceAborted = true), {
-      once: true,
-    })
-  );
-  const scanned = pipe(
-    source,
-    scan((previous, current) => previous + current, 0),
-  );
+  const source = pipe(never, finalize(() => (sourceAborted = true)));
+  const scanned = pipe(source, scan((previous, current) => previous + current, 0));
 
   // Act
   scanned.subscribe(new Observer({ signal: controller.signal }));
@@ -131,9 +126,7 @@ Deno.test("scan should throw if the accumulator function throws", () => {
   );
 
   // Act
-  observable.subscribe(
-    new Observer((notification) => notifications.push(notification)),
-  );
+  observable.subscribe(new Observer((notification) => notifications.push(notification)));
 
   // Assert
   assertEquals(notifications, [["throw", error]]);
@@ -149,9 +142,7 @@ Deno.test("scan should work with different input and output types", () => {
   );
 
   // Act
-  observable.subscribe(
-    new Observer((notification) => notifications.push(notification)),
-  );
+  observable.subscribe(new Observer((notification) => notifications.push(notification)));
 
   // Assert
   assertEquals(notifications, [

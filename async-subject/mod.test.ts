@@ -1,8 +1,9 @@
 import { assertEquals, assertStrictEquals, assertThrows } from "@std/assert";
-import { Observable, Observer } from "@observable/core";
+import { Observer } from "@observable/core";
 import { AsyncSubject } from "./mod.ts";
 import { materialize, type ObserverNotification } from "@observable/materialize";
 import { pipe } from "@observable/pipe";
+import { forOf } from "@observable/for-of";
 
 Deno.test("AsyncSubject.toString should be '[object AsyncSubject]'", () => {
   // Arrange / Act / Assert
@@ -60,13 +61,7 @@ Deno.test(
   () => {
     // Arrange
     const notifications: Array<ObserverNotification<number>> = [];
-    const source = new Observable<number>((observer) => {
-      for (const value of [1, 2, 3, 4, 5]) {
-        observer.next(value);
-        if (observer.signal.aborted) return;
-      }
-      observer.return();
-    });
+    const source = forOf([1, 2, 3, 4, 5]);
     const subject = new AsyncSubject<number>();
 
     // Act
