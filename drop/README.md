@@ -75,7 +75,6 @@ COMBINING WITH TAKE:
 ```ts
 // Get items 3-5 from a sequence
 pipe(
-  [1, 2, 3, 4, 5, 6, 7],
   forOf([1, 2, 3, 4, 5]),
   drop(2),   // Skip first 2
   take(3),   // Take next 3
