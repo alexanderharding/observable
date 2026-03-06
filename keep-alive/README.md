@@ -64,7 +64,6 @@ import { pipe } from "@observable/pipe";
 const controller = new AbortController();
 
 pipe(
-  [1, 2, 3],
   forOf([1, 2, 3]),
   keepAlive()
 ).subscribe({

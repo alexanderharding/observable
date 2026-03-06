@@ -72,7 +72,6 @@ import { map } from "@observable/map";
 const controller = new AbortController();
 
 pipe(
-  [1, 2, 3],  // Rapid clicks
   forOf([1, 2, 3]),
   exhaustMap((value) => pipe(
     timeout(100),

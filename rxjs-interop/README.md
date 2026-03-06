@@ -100,7 +100,6 @@ import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 
 const rxjsObservable = pipe(
-  [1, 2, 3],
   forOf([1, 2, 3]),
   asRxJsObservable()  // Convert to RxJS
 );

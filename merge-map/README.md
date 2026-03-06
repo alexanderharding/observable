@@ -31,7 +31,6 @@ const observableLookup = {
   3: forOf([7, 8, 9]),
 } as const;
 pipe(
-  [1, 2, 3],
   forOf([1, 2, 3]),
   mergeMap((value) => observableLookup[value]),
 ).subscribe({
