@@ -1,5 +1,5 @@
 import { assertEquals, assertStrictEquals, assertThrows } from "@std/assert";
-import { Observable, Observer, Subject } from "@observable/core";
+import { Observer, Subject } from "@observable/core";
 import { empty } from "@observable/empty";
 import { pipe } from "@observable/pipe";
 import { forOf } from "@observable/for-of";

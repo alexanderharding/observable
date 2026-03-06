@@ -1,13 +1,11 @@
 import { assertEquals } from "@std/assert";
-import { Observable, Observer, Subject } from "@observable/core";
+import { type Observable, Observer, Subject } from "@observable/core";
 import { empty } from "@observable/empty";
 import { never } from "@observable/never";
-import { defer } from "@observable/defer";
 import { pipe } from "@observable/pipe";
 import { take } from "@observable/take";
 import { throwError } from "@observable/throw-error";
 import { BehaviorSubject } from "@observable/behavior-subject";
-import { flat } from "@observable/flat";
 import { exhaustMap } from "./mod.ts";
 import { materialize, type ObserverNotification } from "@observable/materialize";
 import { map } from "@observable/map";
