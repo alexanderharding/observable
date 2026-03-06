@@ -50,6 +50,17 @@ Deno.test("Observer.prototype should be frozen", () => {
   assertStrictEquals(Object.isFrozen(Observer.prototype), true);
 });
 
+Deno.test(
+  "Observer should not freeze Object.prototype",
+  () => {
+    // Arrange / Act
+    new Observer();
+
+    // Assert
+    assertStrictEquals(Object.isFrozen(Object.prototype), false);
+  },
+);
+
 Deno.test("Observer.constructor should create with no arguments", () => {
   // Arrange / Act / Assert
   new Observer();
