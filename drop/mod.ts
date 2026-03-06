@@ -1,5 +1,5 @@
 import { isObservable, type Observable } from "@observable/core";
-import { asObservable } from "@observable/as-observable";
+import { from } from "@observable/from";
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 import { empty } from "@observable/empty";
 import { pipe } from "@observable/pipe";
@@ -11,11 +11,11 @@ import { filter } from "@observable/filter";
  * @example
  * ```ts
  * import { drop } from "@observable/drop";
- * import { ofIterable } from "@observable/of-iterable";
+ * import { forOf } from "@observable/for-of";
  * import { pipe } from "@observable/pipe";
  *
  * const controller = new AbortController();
- * pipe([1, 2, 3, 4, 5], ofIterable(), drop(2)).subscribe({
+ * pipe(forOf([1, 2, 3, 4, 5]), drop(2)).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
  *   return: () => console.log("return"),
@@ -38,7 +38,7 @@ export function drop<Value>(
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
     if (count < 0 || Number.isNaN(count)) return empty;
-    if (count === 0) return pipe(source, asObservable());
+    if (count === 0) return from(source);
     return pipe(source, filter((_, index) => index >= count));
   };
 }

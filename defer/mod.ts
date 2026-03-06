@@ -1,6 +1,5 @@
 import { Observable } from "@observable/core";
-import { asObservable } from "@observable/as-observable";
-import { pipe } from "@observable/pipe";
+import { from } from "@observable/from";
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 
 /**
@@ -9,12 +8,12 @@ import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/i
  * @example
  * ```ts
  * import { defer } from "@observable/defer";
- * import { ofIterable } from "@observable/of-iterable";
+ * import { forOf } from "@observable/for-of";
  * import { pipe } from "@observable/pipe";
  *
  * const controller = new AbortController();
  * let values = [1, 2, 3];
- * const observable = defer(() => pipe(values, ofIterable()));
+ * const observable = defer(() => forOf(values));
  *
  * observable.subscribe({
  *   signal: controller.signal,
@@ -48,5 +47,5 @@ export function defer<Value>(
 ): Observable<Value> {
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
   if (typeof factory !== "function") throw new ParameterTypeError(0, "Function");
-  return new Observable((observer) => pipe(factory(), asObservable()).subscribe(observer));
+  return new Observable((observer) => from(factory()).subscribe(observer));
 }

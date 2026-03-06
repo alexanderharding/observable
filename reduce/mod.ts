@@ -1,5 +1,5 @@
 import { isObservable, type Observable } from "@observable/core";
-import { asObservable } from "@observable/as-observable";
+import { from } from "@observable/from";
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 import { scan } from "@observable/scan";
 import { pipe } from "@observable/pipe";
@@ -17,11 +17,11 @@ import { defer } from "@observable/defer";
  * @example
  * ```ts
  * import { reduce } from "@observable/reduce";
- * import { ofIterable } from "@observable/of-iterable";
+ * import { forOf } from "@observable/for-of";
  * import { pipe } from "@observable/pipe";
  *
  * const controller = new AbortController();
- * const source = pipe([1, 2, 3], ofIterable());
+ * const source = forOf([1, 2, 3]);
  * pipe(source, reduce((previous, current) => previous + current, 0)).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
@@ -39,11 +39,13 @@ export function reduce<In, Out>(
   seed: Out,
 ): (source: Observable<In>) => Observable<Out> {
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-  if (typeof reducer !== "function") throw new ParameterTypeError(0, "Function");
+  if (typeof reducer !== "function") {
+    throw new ParameterTypeError(0, "Function");
+  }
   return function reduceFn(source) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
-    source = pipe(source, asObservable());
+    source = from(source);
     return defer(() => pipe(source, scan(reducer, seed), share(() => new AsyncSubject())));
   };
 }

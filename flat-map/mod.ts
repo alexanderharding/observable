@@ -1,6 +1,5 @@
 import { isObservable, Observable } from "@observable/core";
-import { asObservable } from "@observable/as-observable";
-import { pipe } from "@observable/pipe";
+import { from } from "@observable/from";
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 
 /**
@@ -14,15 +13,15 @@ import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/i
  * @example
  * ```ts
  * import { flatMap } from "@observable/flat-map";
- * import { ofIterable } from "@observable/of-iterable";
+ * import { forOf } from "@observable/for-of";
  * import { pipe } from "@observable/pipe";
  *
- * const source = pipe(["a", "b", "c"], ofIterable());
+ * const source = forOf(["a", "b", "c"]);
  * const controller = new AbortController();
  * const observableLookup = {
- *   a: pipe([1, 2, 3], ofIterable()),
- *   b: pipe([4, 5, 6], ofIterable()),
- *   c: pipe([7, 8, 9], ofIterable()),
+ *   a: forOf([1, 2, 3]),
+ *   b: forOf([4, 5, 6]),
+ *   c: forOf([7, 8, 9]),
  * } as const;
  *
  * pipe(source, flatMap((value) => observableLookup[value])).subscribe({
@@ -49,13 +48,11 @@ export function flatMap<In, Out>(
   project: (value: In, index: number) => Observable<Out>,
 ): (source: Observable<In>) => Observable<Out> {
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-  if (typeof project !== "function") {
-    throw new ParameterTypeError(0, "Function");
-  }
+  if (typeof project !== "function") throw new ParameterTypeError(0, "Function");
   return function flatMapFn(source) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
-    source = pipe(source, asObservable());
+    source = from(source);
     return new Observable((observer) => {
       let index = 0;
       let activeInnerSubscription = false;
@@ -85,7 +82,7 @@ export function flatMap<In, Out>(
       });
 
       function processNextValue(value: In): void {
-        pipe(project(value, index++), asObservable()).subscribe({
+        from(project(value, index++)).subscribe({
           signal: observer.signal,
           next: (value) => observer.next(value),
           return() {

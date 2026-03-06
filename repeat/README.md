@@ -30,12 +30,13 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 
 ```ts
 import { repeat } from "@observable/repeat";
-import { ofIterable } from "@observable/of-iterable";
+import { forOf } from "@observable/for-of";
+import { of } from "@observable/of";
 import { pipe } from "@observable/pipe";
 import { empty } from "@observable/empty";
 import { defer } from "@observable/defer";
 
-const source = pipe([1, 2, 3], ofIterable());
+const source = forOf([1, 2, 3]);
 const controller = new AbortController();
 const repeated = defer(() => {
   let count = 0;
@@ -43,7 +44,7 @@ const repeated = defer(() => {
     source,
     repeat(defer(() => {
       console.log("notifier subscribed");
-      return ++count === 2 ? empty : pipe([undefined], ofIterable());
+      return ++count === 2 ? empty : of(undefined);
     })),
   );
 });
@@ -86,19 +87,20 @@ CRITICAL: This library is NOT RxJS. Key differences:
 USAGE PATTERN:
 ```ts
 import { repeat } from "@observable/repeat";
-import { ofIterable } from "@observable/of-iterable";
+import { forOf } from "@observable/for-of";
+import { of } from "@observable/of";
 import { pipe } from "@observable/pipe";
 import { defer } from "@observable/defer";
 import { empty } from "@observable/empty";
 
-const source = pipe([1, 2, 3], ofIterable());
+const source = forOf([1, 2, 3]);
 const controller = new AbortController();
 
 let count = 0;
 pipe(
   source,
   repeat(defer(() => {
-    return ++count < 3 ? pipe([undefined], ofIterable()) : empty;
+    return ++count < 3 ? of(undefined) : empty;
   }))
 ).subscribe({
   signal: controller.signal,

@@ -79,9 +79,7 @@ export const BroadcastSubject: BroadcastSubjectConstructor = class<Value> {
     if (typeof name !== "string") throw new ParameterTypeError(0, "String");
     Object.freeze(this);
     this.#channel = new BroadcastChannel(`${name}:${namespace}`);
-    this.signal.addEventListener("abort", () => this.#channel.close(), {
-      once: true,
-    });
+    this.signal.addEventListener("abort", () => this.#channel.close(), { once: true });
     this.#channel.onmessage = (event) => this.#subject.next(event.data);
     this.#channel.onmessageerror = (event) => this.#subject.throw(event);
   }

@@ -1,6 +1,7 @@
 import { assertEquals } from "@std/assert";
 import { Observable, Observer } from "@observable/core";
-import { ofIterable } from "@observable/of-iterable";
+import { forOf } from "@observable/for-of";
+import { of } from "@observable/of";
 import { pipe } from "@observable/pipe";
 import { throwError } from "@observable/throw-error";
 import { reduce } from "./mod.ts";
@@ -11,8 +12,7 @@ Deno.test("reduce should emit only the final accumulated value", () => {
   // Arrange
   const notifications: Array<ObserverNotification<number>> = [];
   const observable = pipe(
-    [1, 2, 3],
-    ofIterable(),
+    forOf([1, 2, 3]),
     reduce((previous, current) => previous + current, 0),
     materialize(),
   );
@@ -34,8 +34,7 @@ Deno.test("reduce should pass the index to the accumulator", () => {
   const notifications: Array<ObserverNotification<string>> = [];
   const indices: Array<number> = [];
   const observable = pipe(
-    ["a", "b", "c"],
-    ofIterable(),
+    forOf(["a", "b", "c"]),
     reduce((previous, current, index) => {
       indices.push(index);
       return previous + current;
@@ -130,8 +129,7 @@ Deno.test("reduce should throw if the accumulator function throws", () => {
   const error = new Error("test");
   const notifications: Array<ObserverNotification<number>> = [];
   const observable = pipe(
-    [1],
-    ofIterable(),
+    of(1),
     reduce(() => {
       throw error;
     }, 0),
@@ -151,8 +149,7 @@ Deno.test("reduce should work with different input and output types", () => {
   // Arrange
   const notifications: Array<ObserverNotification<Array<number>>> = [];
   const observable = pipe(
-    [1, 2, 3],
-    ofIterable(),
+    forOf([1, 2, 3]),
     reduce((previous, current) => [...previous, current], [] as Array<number>),
     materialize(),
   );
@@ -173,8 +170,7 @@ Deno.test("reduce should emit single value for source with one item", () => {
   // Arrange
   const notifications: Array<ObserverNotification<number>> = [];
   const observable = pipe(
-    [42],
-    ofIterable(),
+    of(42),
     reduce((previous, current) => previous + current, 0),
     materialize(),
   );
@@ -195,7 +191,7 @@ Deno.test("reduce should reset state per subscription", () => {
   // Arrange
   const notifications1: Array<ObserverNotification<number>> = [];
   const notifications2: Array<ObserverNotification<number>> = [];
-  const source = pipe([1, 2, 3], ofIterable());
+  const source = forOf([1, 2, 3]);
   const reduced = pipe(
     source,
     reduce((previous, current) => previous + current, 0),

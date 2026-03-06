@@ -1,5 +1,5 @@
 import { merge } from "./mod.ts";
-import { ofIterable } from "@observable/of-iterable";
+import { forOf } from "@observable/for-of";
 import { Observer } from "@observable/core";
 import { pipe } from "@observable/pipe";
 import { materialize, type ObserverNotification } from "@observable/materialize";
@@ -10,9 +10,9 @@ Deno.test("merge should merge the values", () => {
   // Arrange
   const notifications: Array<ObserverNotification> = [];
   const observable = merge([
-    pipe([1, 2, 3], ofIterable()),
-    pipe([4, 5, 6], ofIterable()),
-    pipe([7, 8, 9], ofIterable()),
+    forOf([1, 2, 3]),
+    forOf([4, 5, 6]),
+    forOf([7, 8, 9]),
   ]);
 
   // Act

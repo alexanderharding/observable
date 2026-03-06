@@ -1,12 +1,12 @@
 import { isObservable, type Observable } from "@observable/core";
-import { asObservable } from "@observable/as-observable";
+import { from } from "@observable/from";
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 import { pipe } from "@observable/pipe";
 import { map } from "@observable/map";
 import { filter } from "@observable/filter";
 import { pairwise } from "@observable/pairwise";
 import { flat } from "@observable/flat";
-import { ofIterable } from "@observable/of-iterable";
+import { of } from "@observable/of";
 
 /**
  * Flag indicating that no value has been emitted yet.
@@ -23,11 +23,11 @@ const noValue = Symbol("Flag indicating that no value has been emitted yet");
  * @example
  * ```ts
  * import { distinctUntilChanged } from "@observable/distinct-until-changed";
- * import { ofIterable } from "@observable/of-iterable";
+ * import { forOf } from "@observable/for-of";
  * import { pipe } from "@observable/pipe";
  *
  * const controller = new AbortController();
- * pipe([1, 1, 1, 2, 2, 3], ofIterable(), distinctUntilChanged()).subscribe({
+ * pipe(forOf([1, 1, 1, 2, 2, 3]), distinctUntilChanged()).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log(value),
  *   return: () => console.log("return"),
@@ -46,24 +46,22 @@ export function distinctUntilChanged<Value>(
   // strict equality checks.
   comparator: (previous: Value, current: Value) => boolean = Object.is,
 ): (source: Observable<Value>) => Observable<Value> {
-  if (typeof comparator !== "function") {
-    throw new ParameterTypeError(0, "Function");
-  }
+  if (typeof comparator !== "function") throw new ParameterTypeError(0, "Function");
   return function distinctUntilChangedFn(source) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
-    source = pipe(source, asObservable());
+    source = from(source);
     return pipe(
-      flat([pipe([noValue], ofIterable()), source]),
+      flat([of(noValue), source]),
       pairwise(),
       filter(isDistinct),
       map(([_, current]) => current),
     );
   };
 
-  function isDistinct(
-    [previous, current]: Readonly<[previous: Value | typeof noValue, current: Value]>,
-  ): boolean {
+  function isDistinct([previous, current]: Readonly<
+    [previous: Value | typeof noValue, current: Value]
+  >): boolean {
     return previous === noValue || !comparator(previous, current);
   }
 }

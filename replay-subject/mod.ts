@@ -6,8 +6,7 @@ import {
 } from "@observable/internal";
 import { flat } from "@observable/flat";
 import { defer } from "@observable/defer";
-import { ofIterable } from "@observable/of-iterable";
-import { pipe } from "@observable/pipe";
+import { forOf } from "@observable/for-of";
 
 /**
  * Object type that acts as a variant of [`Subject`](https://jsr.io/@observable/core/doc/~/Subject).
@@ -99,20 +98,18 @@ export const ReplaySubject: ReplaySubjectConstructor = class<Value> {
    * Tracking a known list of buffered values, so we don't have to clone
    * them while iterating to prevent reentrant behaviors.
    */
-  #bufferSnapshot?: ReadonlyArray<Value> = [];
+  #bufferSnapshot?: ReadonlyArray<Value>;
   readonly #buffer: Array<Value> = [];
   readonly #subject = new Subject<Value>();
   readonly signal = this.#subject.signal;
   readonly #observable = flat([
-    defer(() => (pipe(this.#bufferSnapshot ??= this.#buffer.slice(), ofIterable()))),
+    defer(() => forOf(this.#bufferSnapshot ??= this.#buffer.slice())),
     this.#subject,
   ]);
 
   constructor(count: number) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-    if (typeof count !== "number") {
-      throw new ParameterTypeError(0, "Number");
-    }
+    if (typeof count !== "number") throw new ParameterTypeError(0, "Number");
     Object.freeze(this);
     (this.#count = count) >= 0 ? this.#bufferSnapshot = undefined : this.return();
     if (this.signal.aborted || this.#count === 0) return;
