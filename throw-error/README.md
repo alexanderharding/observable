@@ -67,8 +67,7 @@ import { flatMap } from "@observable/flat-map";
 import { forOf } from "@observable/for-of";
 
 pipe(
-  [userId],
-  forOf([1, 2, 3]),
+  forOf([userId]),
   flatMap((id) =>
     id ? fetchUser(id) : throwError(new Error("User ID required"))
   )
