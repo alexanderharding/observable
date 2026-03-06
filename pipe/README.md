@@ -28,7 +28,6 @@ import { filter } from "@observable/filter";
 const controller = new AbortController();
 
 pipe(
-  [1, 2, 3, 4, 5],
   forOf([1, 2, 3]),
   filter((value) => value % 2 === 0),
   map((value) => value * 2),
@@ -70,7 +69,6 @@ import { filter } from "@observable/filter";
 const controller = new AbortController();
 
 pipe(
-  [1, 2, 3, 4, 5],
   forOf([1, 2, 3]),
   filter((value) => value % 2 === 0),
   map((value) => value * 2),

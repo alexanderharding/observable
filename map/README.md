@@ -84,7 +84,6 @@ forOf([1, 2, 3]).map(x => x * 2)  // This does NOT work!
 CHAINING WITH OTHER OPERATORS:
 ```ts
 pipe(
-  [1, 2, 3, 4, 5],
   forOf([1, 2, 3]),
   filter((x) => x % 2 === 0),
   map((x) => x * 10),

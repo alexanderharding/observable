@@ -61,7 +61,6 @@ import { pipe } from "@observable/pipe";
 const controller = new AbortController();
 
 pipe(
-  [1, 2, 3, 4, 5],
   forOf([1, 2, 3, 4, 5]),
   filter((value) => value % 2 === 0)
 ).subscribe({
