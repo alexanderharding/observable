@@ -35,14 +35,12 @@ const observableLookup = {
   3: forOf([7, 8, 9]),
 } as const;
 
-pipe(forOf([1, 2, 3]), switchMap((value) => observableLookup[value])).subscribe(
-  {
-    signal: controller.signal,
-    next: (value) => console.log("next", value),
-    return: () => console.log("return"),
-    throw: (value) => console.log("throw", value),
-  },
-);
+pipe(forOf([1, 2, 3]), switchMap((value) => observableLookup[value])).subscribe({
+  signal: controller.signal,
+  next: (value) => console.log("next", value),
+  return: () => console.log("return"),
+  throw: (value) => console.log("throw", value),
+});
 
 // Console output:
 // "next" 7
