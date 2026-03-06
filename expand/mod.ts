@@ -64,8 +64,7 @@ import { forOf } from "@observable/for-of";
  * const controller = new AbortController();
  *
  * pipe(
- *   [tree],
- *   of(root),
+ *   of(tree),
  *   expand((node) =>
  *     node.children.length ? forOf(node.children) : empty
  *   ),
