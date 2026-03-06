@@ -30,6 +30,17 @@ Deno.test("ReplaySubject.prototype should be frozen", () => {
 });
 
 Deno.test(
+  "ReplaySubject should not freeze Object.prototype",
+  () => {
+    // Arrange / Act
+    new ReplaySubject(Infinity);
+
+    // Assert
+    assertStrictEquals(Object.isFrozen(Object.prototype), false);
+  },
+);
+
+Deno.test(
   "ReplaySubject.constructor should not throw when creating with more than one argument",
   () => {
     // Arrange / Act / Assert
