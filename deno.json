@@ -22,6 +22,7 @@
     "flat",
     "flat-map",
     "for-await-of",
+    "for-in",
     "for-of",
     "from",
     "internal",
