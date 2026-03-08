@@ -16,9 +16,18 @@ import { share } from "@observable/share";
  * ```ts
  * import { lastValueFrom } from "@observable/last-value-from";
  * import { forOf } from "@observable/for-of";
- * import { pipe } from "@observable/pipe";
  *
  * console.log(await lastValueFrom(forOf([1, 2, 3])));
+ *
+ * // Console output:
+ * // 3
+ * ```
+ * @example
+ * ```ts
+ * import { lastValueFrom } from "@observable/last-value-from";
+ * import { of } from "@observable/of";
+ *
+ * console.log(await lastValueFrom(of(Promise.resolve(3))));
  *
  * // Console output:
  * // 3
@@ -64,7 +73,9 @@ import { share } from "@observable/share";
  * // TypeError: Cannot convert empty Observable to Promise
  * ```
  */
-export function lastValueFrom<Value>(observable: Observable<Value>): Promise<Value> {
+export function lastValueFrom<Value>(
+  observable: Observable<Value | PromiseLike<Value>>,
+): Promise<Value> {
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
   if (!isObservable(observable)) throw new ParameterTypeError(0, "Observable");
   return new Promise((resolve, reject) => {
