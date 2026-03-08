@@ -3,6 +3,7 @@ import { lastValueFrom } from "./mod.ts";
 import { forOf } from "@observable/for-of";
 import { throwError } from "@observable/throw-error";
 import { empty } from "@observable/empty";
+import { of } from "@observable/of";
 
 Deno.test("lastValueFrom should pump throw values right through the Promise", async () => {
   // Arrange
@@ -35,4 +36,16 @@ Deno.test("lastValueFrom should reject with TypeError when source is empty", asy
     TypeError,
     "Cannot convert empty Observable to Promise",
   );
+});
+
+Deno.test("lastValueFrom should unwrap recursive (nested) PromiseLike from the source", async () => {
+  // Arrange
+  const value = Symbol("value");
+  const observable = of(Promise.resolve(Promise.resolve(Promise.resolve(value))));
+
+  // Act
+  const result = await lastValueFrom(observable);
+
+  // Assert
+  assertStrictEquals(result, value);
 });
