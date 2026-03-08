@@ -16,7 +16,6 @@ import { share } from "@observable/share";
  * ```ts
  * import { lastValueFrom } from "@observable/last-value-from";
  * import { forOf } from "@observable/for-of";
- * import { pipe } from "@observable/pipe";
  *
  * console.log(await lastValueFrom(forOf([1, 2, 3])));
  *
@@ -27,7 +26,6 @@ import { share } from "@observable/share";
  * ```ts
  * import { lastValueFrom } from "@observable/last-value-from";
  * import { of } from "@observable/of";
- * import { pipe } from "@observable/pipe";
  *
  * console.log(await lastValueFrom(of(Promise.resolve(3))));
  *
