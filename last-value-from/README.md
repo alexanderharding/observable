@@ -38,6 +38,17 @@ console.log(await lastValueFrom(forOf([1, 2, 3])));
 
 ```ts
 import { lastValueFrom } from "@observable/last-value-from";
+import { of } from "@observable/of";
+import { pipe } from "@observable/pipe";
+
+console.log(await lastValueFrom(of(Promise.resolve(3))));
+
+// Console output:
+// 3
+```
+
+```ts
+import { lastValueFrom } from "@observable/last-value-from";
 import { throwError } from "@observable/throw-error";
 
 try {
