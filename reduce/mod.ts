@@ -1,11 +1,8 @@
 import { isObservable, type Observable } from "@observable/core";
-import { from } from "@observable/from";
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 import { scan } from "@observable/scan";
 import { pipe } from "@observable/pipe";
-import { share } from "@observable/share";
-import { AsyncSubject } from "@observable/async-subject";
-import { defer } from "@observable/defer";
+import { at } from "@observable/at";
 
 /**
  * {@linkcode reducer|Reduces} the [source](https://jsrio/@observable/core#source)
@@ -43,7 +40,6 @@ export function reduce<In, Out>(
   return function reduceFn(source) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
-    source = from(source);
-    return defer(() => pipe(source, scan(reducer, seed), share(() => new AsyncSubject())));
+    return pipe(source, scan(reducer, seed), at(-1));
   };
 }
