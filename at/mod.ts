@@ -7,9 +7,21 @@ import { take } from "@observable/take";
 import { drop } from "@observable/drop";
 import { defer } from "@observable/defer";
 import { empty } from "@observable/empty";
-import { tap } from "@observable/tap";
-import { finalize } from "@observable/finalize";
-import { ReplaySubject } from "@observable/replay-subject";
+import { of } from "@observable/of";
+import { scan } from "@observable/scan";
+import { map } from "@observable/map";
+import { from } from "@observable/from";
+
+/**
+ * Flag indicating that the source has returned.
+ * @internal Do NOT export.
+ */
+const sourceReturned = Symbol("Flag indicating that the source has returned");
+
+interface State<Value> {
+  readonly buffer: Array<Value>;
+  readonly hasSourceReturned: boolean;
+}
 
 /**
  * [`Next`](https://jsr.io/@observable/core/doc/~/Observer.next)s only the value at the specified {@linkcode index} integer in a sequence of
@@ -63,21 +75,21 @@ export function at<Value>(index: number): (source: Observable<Value>) => Observa
 
     if (index > 0) return pipe(source, filter((_, i) => i === index), take(1));
 
-    const replayCount = -index;
+    source = from(source);
+
+    const maxBufferLength = -index;
     return defer(() => {
-      let isBufferFull = false;
-      const buffer = new ReplaySubject<Value>(replayCount);
+      const initialState: State<Value> = { buffer: [], hasSourceReturned: false };
       return pipe(
-        flat([
-          pipe(
-            source,
-            tap((_, index) => !isBufferFull && (isBufferFull = index + 1 === replayCount)),
-            tap((value) => buffer.next(value)),
-            drop<never>(Infinity),
-          ),
-          pipe(defer(() => (isBufferFull ? pipe(buffer, take(1)) : empty))),
-        ]),
-        finalize(() => buffer.return()),
+        flat([source, of(sourceReturned)]),
+        scan(({ buffer }, value) => {
+          if (value !== sourceReturned) buffer.push(value);
+          if (buffer.length > maxBufferLength) buffer.shift();
+          return { buffer, hasSourceReturned: value === sourceReturned };
+        }, initialState),
+        filter(({ hasSourceReturned }) => hasSourceReturned),
+        filter(({ buffer }) => buffer.length === maxBufferLength),
+        map(({ buffer: [foundValue] }) => foundValue),
       );
     });
   };
