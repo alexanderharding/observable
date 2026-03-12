@@ -1,27 +1,11 @@
-import { isObservable, type Observable } from "@observable/core";
+import { isObservable, Observable } from "@observable/core";
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 import { pipe } from "@observable/pipe";
 import { filter } from "@observable/filter";
-import { flat } from "@observable/flat";
 import { take } from "@observable/take";
 import { drop } from "@observable/drop";
-import { defer } from "@observable/defer";
 import { empty } from "@observable/empty";
-import { of } from "@observable/of";
-import { scan } from "@observable/scan";
-import { map } from "@observable/map";
 import { from } from "@observable/from";
-
-/**
- * Flag indicating that the source has returned.
- * @internal Do NOT export.
- */
-const sourceReturned = Symbol("Flag indicating that the source has returned");
-
-interface State<Value> {
-  readonly buffer: Array<Value>;
-  readonly hasSourceReturned: boolean;
-}
 
 /**
  * [`Next`](https://jsr.io/@observable/core/doc/~/Observer.next)s only the value at the specified {@linkcode index} integer in a sequence of
@@ -67,30 +51,55 @@ export function at<Value>(index: number): (source: Observable<Value>) => Observa
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
 
+    // Early return for NaN index case, as this is not a valid index.
     if (Number.isNaN(index)) return empty;
 
+    // Early return for infinite index cases, as this can be handled by other operators.
     if (index === Infinity || index === -Infinity) return pipe(source, drop<never>(Infinity));
 
+    // Convert the index to an integer, rounding towards zero.
+    index = index >= 0 ? Math.floor(index) : Math.ceil(index);
+
+    // Early return for index 0 case, as this can be handled by other operators.
     if (index === 0) return pipe(source, take(1));
 
+    // Early return for positive index case, as this can be handled by other operators.
     if (index > 0) return pipe(source, filter((_, i) => i === index), take(1));
 
+    // Convert the source to an observable if it is not already so we don't have to do this on
+    // every subscription.
     source = from(source);
 
+    /**
+     * The maximum length of the buffer so we can be memory efficient. Because we are in the negative index case,
+     * we need to use the absolute value of the index to get the maximum length of the buffer.
+     */
     const maxBufferLength = -index;
-    return defer(() => {
-      const initialState: State<Value> = { buffer: [], hasSourceReturned: false };
-      return pipe(
-        flat([source, of(sourceReturned)]),
-        scan(({ buffer }, value) => {
-          if (value !== sourceReturned) buffer.push(value);
+
+    // Note that we could compose a few different operators to achieve the same result, but this is
+    // a more direct implementation that is easier to understand and reason about.
+    return new Observable((observer) => {
+      /**
+       * The buffer of potential matching values. Because we trim the buffer in subsequent logic,
+       * the matching value will always be the item at the index 0 of the buffer once we hit the maximum length.
+       */
+      const buffer: Array<Value> = [];
+
+      // Clear the buffer on teardown.
+      observer.signal.addEventListener("abort", () => buffer.length = 0, { once: true });
+
+      source.subscribe({
+        signal: observer.signal,
+        next(value) {
+          buffer.push(value);
           if (buffer.length > maxBufferLength) buffer.shift();
-          return { buffer, hasSourceReturned: value === sourceReturned };
-        }, initialState),
-        filter(({ hasSourceReturned }) => hasSourceReturned),
-        filter(({ buffer }) => buffer.length === maxBufferLength),
-        map(({ buffer: [foundValue] }) => foundValue),
-      );
+        },
+        return() {
+          if (buffer.length === maxBufferLength) observer.next(buffer[0]);
+          observer.return();
+        },
+        throw: (value) => observer.throw(value),
+      });
     });
   };
 }
