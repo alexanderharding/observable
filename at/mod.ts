@@ -8,22 +8,29 @@ import { empty } from "@observable/empty";
 import { from } from "@observable/from";
 
 /**
- * [`Next`](https://jsr.io/@observable/core/doc/~/Observer.next)s only the value at the specified {@linkcode index} integer in a sequence of
- * values from the [source](https://jsr.io/@observable/core#source) [`Observable`](https://jsr.io/@observable/core/doc/~/Observable).
- * Negative {@linkcode index} integers count back from the last item in the sequence.
+ * Filters [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values from the [source](https://jsr.io/@observable/core#source)
+ * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) to only the [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed
+ * value at the given {@linkcode index}. Negative {@linkcode index|indices} count back from the last
+ * [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed value in the sequence.
  * @example
  * ```ts
  * import { at } from "@observable/at";
  * import { forOf } from "@observable/for-of";
  * import { pipe } from "@observable/pipe";
+ * import { tap } from "@observable/tap";
  *
- * pipe(forOf([1, 2, 3]), at(1)).subscribe({
+ * const activeSubscriptionController = new AbortController();
+ *
+ * pipe(forOf([1, 2, 3]), tap((value) => console.log("tap next", value)), at(1)).subscribe({
+ *   signal: activeSubscriptionController.signal,
  *   next: (value) => console.log("next", value),
  *   return: () => console.log("return"),
  *   throw: (value) => console.log("throw", value),
  * });
  *
  * // Console output:
+ * // "tap next" 1
+ * // "tap next" 2
  * // "next" 2
  * // "return"
  * ```
@@ -32,21 +39,228 @@ import { from } from "@observable/from";
  * import { at } from "@observable/at";
  * import { forOf } from "@observable/for-of";
  * import { pipe } from "@observable/pipe";
+ * import { tap } from "@observable/tap";
  *
- * pipe(forOf([1, 2, 3]), at(-1)).subscribe({
+ * const activeSubscriptionController = new AbortController();
+ *
+ * pipe(forOf([1, 2, 3]), tap((value) => console.log("tap next", value)), at(1.7)).subscribe({
+ *   signal: activeSubscriptionController.signal,
  *   next: (value) => console.log("next", value),
  *   return: () => console.log("return"),
  *   throw: (value) => console.log("throw", value),
  * });
  *
  * // Console output:
+ * // "tap next" 1
+ * // "tap next" 2
+ * // "next" 2
+ * // "return"
+ * ```
+ * @example
+ * ```ts
+ * import { at } from "@observable/at";
+ * import { forOf } from "@observable/for-of";
+ * import { pipe } from "@observable/pipe";
+ * import { tap } from "@observable/tap";
+ *
+ * const activeSubscriptionController = new AbortController();
+ *
+ * pipe(forOf([1, 2, 3]), tap((value) => console.log("tap next", value)), at(0)).subscribe({
+ *   signal: activeSubscriptionController.signal,
+ *   next: (value) => console.log("next", value),
+ *   return: () => console.log("return"),
+ *   throw: (value) => console.log("throw", value),
+ * });
+ *
+ * // Console output:
+ * // "tap next" 1
+ * // "next" 1
+ * // "return"
+ * ```
+ * @example
+ * ```ts
+ * import { at } from "@observable/at";
+ * import { forOf } from "@observable/for-of";
+ * import { pipe } from "@observable/pipe";
+ * import { tap } from "@observable/tap";
+ *
+ * const activeSubscriptionController = new AbortController();
+ *
+ * pipe(forOf([1, 2, 3]), tap((value) => console.log("tap next", value)), at(0.2)).subscribe({
+ *   signal: activeSubscriptionController.signal,
+ *   next: (value) => console.log("next", value),
+ *   return: () => console.log("return"),
+ *   throw: (value) => console.log("throw", value),
+ * });
+ *
+ * // Console output:
+ * // "tap next" 1
+ * // "next" 1
+ * // "return"
+ * ```
+ * @example
+ * ```ts
+ * import { at } from "@observable/at";
+ * import { forOf } from "@observable/for-of";
+ * import { pipe } from "@observable/pipe";
+ * import { tap } from "@observable/tap";
+ *
+ * const activeSubscriptionController = new AbortController();
+ *
+ * pipe(forOf([1, 2, 3]), tap((value) => console.log("tap next", value)), at(-1)).subscribe({
+ *   signal: activeSubscriptionController.signal,
+ *   next: (value) => console.log("next", value),
+ *   return: () => console.log("return"),
+ *   throw: (value) => console.log("throw", value),
+ * });
+ *
+ * // Console output:
+ * // "tap next" 1
+ * // "tap next" 2
+ * // "tap next" 3
  * // "next" 3
+ * // "return"
+ * ```
+ * @example
+ * ```ts
+ * import { at } from "@observable/at";
+ * import { forOf } from "@observable/for-of";
+ * import { pipe } from "@observable/pipe";
+ * import { tap } from "@observable/tap";
+ *
+ * const activeSubscriptionController = new AbortController();
+ *
+ * pipe(forOf([1, 2, 3]), tap((value) => console.log("tap next", value)), at(-1.7)).subscribe({
+ *   signal: activeSubscriptionController.signal,
+ *   next: (value) => console.log("next", value),
+ *   return: () => console.log("return"),
+ *   throw: (value) => console.log("throw", value),
+ * });
+ *
+ * // Console output:
+ * // "tap next" 1
+ * // "tap next" 2
+ * // "tap next" 3
+ * // "next" 3
+ * // "return"
+ * ```
+ * @example
+ * ```ts
+ * import { at } from "@observable/at";
+ * import { forOf } from "@observable/for-of";
+ * import { pipe } from "@observable/pipe";
+ * import { tap } from "@observable/tap";
+ *
+ * const activeSubscriptionController = new AbortController();
+ *
+ * pipe(forOf([1, 2, 3]), tap((value) => console.log("tap next", value)), at(-2)).subscribe({
+ *   signal: activeSubscriptionController.signal,
+ *   next: (value) => console.log("next", value),
+ *   return: () => console.log("return"),
+ *   throw: (value) => console.log("throw", value),
+ * });
+ *
+ * // Console output:
+ * // "tap next" 1
+ * // "tap next" 2
+ * // "tap next" 3
+ * // "next" 2
+ * // "return"
+ * ```
+ * @example
+ * ```ts
+ * import { at } from "@observable/at";
+ * import { forOf } from "@observable/for-of";
+ * import { pipe } from "@observable/pipe";
+ * import { tap } from "@observable/tap";
+ *
+ * const activeSubscriptionController = new AbortController();
+ *
+ * pipe(forOf([1, 2, 3]), tap((value) => console.log("tap next", value)), at(-2.3)).subscribe({
+ *   signal: activeSubscriptionController.signal,
+ *   next: (value) => console.log("next", value),
+ *   return: () => console.log("return"),
+ *   throw: (value) => console.log("throw", value),
+ * });
+ *
+ * // Console output:
+ * // "tap next" 1
+ * // "tap next" 2
+ * // "tap next" 3
+ * // "next" 2
+ * // "return"
+ * ```
+ * @example
+ * ```ts
+ * import { at } from "@observable/at";
+ * import { forOf } from "@observable/for-of";
+ * import { pipe } from "@observable/pipe";
+ * import { tap } from "@observable/tap";
+ *
+ * const activeSubscriptionController = new AbortController();
+ *
+ * pipe(forOf([1, 2, 3]), tap((value) => console.log("tap next", value)), at(Infinity)).subscribe({
+ *   signal: activeSubscriptionController.signal,
+ *   next: (value) => console.log("next", value),
+ *   return: () => console.log("return"),
+ *   throw: (value) => console.log("throw", value),
+ * });
+ *
+ * // Console output:
+ * // "tap next" 1
+ * // "tap next" 2
+ * // "tap next" 3
+ * // "return"
+ * ```
+ * @example
+ * ```ts
+ * import { at } from "@observable/at";
+ * import { forOf } from "@observable/for-of";
+ * import { pipe } from "@observable/pipe";
+ * import { tap } from "@observable/tap";
+ *
+ * const activeSubscriptionController = new AbortController();
+ *
+ * pipe(forOf([1, 2, 3]), tap((value) => console.log("tap next", value)), at(-Infinity)).subscribe({
+ *   signal: activeSubscriptionController.signal,
+ *   next: (value) => console.log("next", value),
+ *   return: () => console.log("return"),
+ *   throw: (value) => console.log("throw", value),
+ * });
+ *
+ * // Console output:
+ * // "tap next" 1
+ * // "tap next" 2
+ * // "tap next" 3
+ * // "return"
+ * ```
+ * @example
+ * ```ts
+ * import { at } from "@observable/at";
+ * import { forOf } from "@observable/for-of";
+ * import { pipe } from "@observable/pipe";
+ * import { tap } from "@observable/tap";
+ *
+ * const activeSubscriptionController = new AbortController();
+ *
+ * pipe(forOf([1, 2, 3]), tap((value) => console.log("tap next", value)), at(NaN)).subscribe({
+ *   signal: activeSubscriptionController.signal,
+ *   next: (value) => console.log("next", value),
+ *   return: () => console.log("return"),
+ *   throw: (value) => console.log("throw", value),
+ * });
+ *
+ * // Console output:
  * // "return"
  * ```
  */
 export function at<Value>(index: number): (source: Observable<Value>) => Observable<Value> {
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
   if (typeof index !== "number") throw new ParameterTypeError(0, "Number");
+
+  // Convert the index to an integer by truncating toward zero (matches Array.prototype.at).
+  index = Math.trunc(index);
+
   return function atFn(source) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
@@ -56,9 +270,6 @@ export function at<Value>(index: number): (source: Observable<Value>) => Observa
 
     // Early return for infinite index cases, as this can be handled by other operators.
     if (index === Infinity || index === -Infinity) return pipe(source, drop<never>(Infinity));
-
-    // Convert the index to an integer, rounding towards zero.
-    index = index >= 0 ? Math.floor(index) : Math.ceil(index);
 
     // Early return for index 0 case, as this can be handled by other operators.
     if (index === 0) return pipe(source, take(1));

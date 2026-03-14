@@ -88,7 +88,7 @@ Deno.test("at(2) should emit only the third value", () => {
   assertEquals(notifications, [["next", 30], ["return"]]);
 });
 
-Deno.test("at(positive fractional) should floor index and emit value at floored position", () => {
+Deno.test("at(positive fractional) should truncate index and emit value at truncated position", () => {
   const notifications: Array<ObserverNotification<number>> = [];
   const observable = pipe(forOf([1, 2, 3]), at(1.7), materialize());
 
@@ -99,7 +99,18 @@ Deno.test("at(positive fractional) should floor index and emit value at floored 
   assertEquals(notifications, [["next", 2], ["return"]]);
 });
 
-Deno.test("at(positive fractional) should floor index 2.9 to 2", () => {
+Deno.test("at(1.1) should behave like at(1) (Array.at semantics)", () => {
+  const notifications: Array<ObserverNotification<number>> = [];
+  const observable = pipe(forOf([1, 2]), at(1.1), materialize());
+
+  observable.subscribe(
+    new Observer((notification) => notifications.push(notification)),
+  );
+
+  assertEquals(notifications, [["next", 2], ["return"]]);
+});
+
+Deno.test("at(positive fractional) should truncate index 2.9 to 2", () => {
   const notifications: Array<ObserverNotification<number>> = [];
   const observable = pipe(forOf([10, 20, 30]), at(2.9), materialize());
 
@@ -110,7 +121,7 @@ Deno.test("at(positive fractional) should floor index 2.9 to 2", () => {
   assertEquals(notifications, [["next", 30], ["return"]]);
 });
 
-Deno.test("at(negative fractional) should ceil index and emit value at ceiled position", () => {
+Deno.test("at(negative fractional) should truncate index and emit value at truncated position", () => {
   const notifications: Array<ObserverNotification<number>> = [];
   const observable = pipe(forOf([1, 2, 3]), at(-1.2), materialize());
 
@@ -121,7 +132,29 @@ Deno.test("at(negative fractional) should ceil index and emit value at ceiled po
   assertEquals(notifications, [["next", 3], ["return"]]);
 });
 
-Deno.test("at(negative fractional) should ceil index -2.8 to -2", () => {
+Deno.test("at(-0.1) should truncate to 0 and emit first value (Array.at semantics)", () => {
+  const notifications: Array<ObserverNotification<number>> = [];
+  const observable = pipe(forOf([1, 2]), at(-0.1), materialize());
+
+  observable.subscribe(
+    new Observer((notification) => notifications.push(notification)),
+  );
+
+  assertEquals(notifications, [["next", 1], ["return"]]);
+});
+
+Deno.test("at(-1.1) should truncate to -1 and emit last value (Array.at semantics)", () => {
+  const notifications: Array<ObserverNotification<number>> = [];
+  const observable = pipe(forOf([1, 2]), at(-1.1), materialize());
+
+  observable.subscribe(
+    new Observer((notification) => notifications.push(notification)),
+  );
+
+  assertEquals(notifications, [["next", 2], ["return"]]);
+});
+
+Deno.test("at(negative fractional) should truncate index -2.8 to -2", () => {
   const notifications: Array<ObserverNotification<number>> = [];
   const observable = pipe(forOf([10, 20, 30]), at(-2.8), materialize());
 
