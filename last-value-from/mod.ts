@@ -1,16 +1,15 @@
 import { isObservable, type Observable, Observer } from "@observable/core";
 import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
-import { AsyncSubject } from "@observable/async-subject";
 import { pipe } from "@observable/pipe";
-import { share } from "@observable/share";
+import { at } from "@observable/at";
 
 /**
- * Projects the provided {@linkcode observable|Observable} to a [`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)
+ * Projects the {@linkcode observable} to a [`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)
  * that either resolves with the last [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed value on
  * [`return`](https://jsr.io/@observable/core/doc/~/Observer.return), rejects with a
  * [`throw`](https://jsr.io/@observable/core/doc/~/Observer.throw)n value, or rejects with a
  * [`TypeError`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypeError)
- * if the  the provided {@linkcode observable|Observable} [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s
+ * if the {@linkcode observable} [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s
  * without [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ing a value.
  * @example
  * ```ts
@@ -79,7 +78,7 @@ export function lastValueFrom<Value>(
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
   if (!isObservable(observable)) throw new ParameterTypeError(0, "Observable");
   return new Promise((resolve, reject) => {
-    pipe(observable, share(() => new AsyncSubject())).subscribe(
+    pipe(observable, at(-1)).subscribe(
       new Observer({
         next: (value) => resolve(value),
         // Reject on return to avoid hanging promises if the source is empty.
