@@ -16,7 +16,9 @@ Automated by `.github\workflows\publish.yml`.
 Run `deno task test` or `deno task test:ci` to execute the unit tests via
 [Deno](https://deno.land/).
 
-## Example
+## Examples
+
+After return
 
 ```ts
 import { finalize } from "@observable/finalize";
@@ -37,6 +39,53 @@ pipe(forOf([1, 2, 3]), finalize(() => console.log("finalized"))).subscribe({
 // "next" 3
 // "finalized"
 // "return"
+```
+
+After throw
+
+```ts
+import { finalize } from "@observable/finalize";
+import { throwError } from "@observable/throw-error";
+import { pipe } from "@observable/pipe";
+import { forOf } from "@observable/for-of";
+import { flat } from "@observable/flat";
+
+const controller = new AbortController();
+const source = flat([forOf([1, 2, 3]), throwError(new Error("error"))]);
+pipe(source, finalize(() => console.log("finalized"))).subscribe({
+  signal: controller.signal,
+  next: (value) => console.log("next", value),
+  return: () => console.log("return"),
+  throw: (value) => console.log("throw", value),
+});
+
+// Console output:
+// "next" 1
+// "next" 2
+// "next" 3
+// "finalized"
+// "throw" Error: error
+```
+
+After unsubscribe
+
+```ts
+import { finalize } from "@observable/finalize";
+import { pipe } from "@observable/pipe";
+import { never } from "@observable/never";
+
+const controller = new AbortController();
+pipe(never, finalize(() => console.log("finalized"))).subscribe({
+  signal: controller.signal,
+  next: (value) => console.log("next", value),
+  return: () => console.log("return"),
+  throw: (value) => console.log("throw", value),
+});
+
+controller.abort();
+
+// Console output:
+// "finalized"
 ```
 
 # AI Prompt
