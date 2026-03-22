@@ -17,7 +17,7 @@ Automated by `.github\workflows\publish.yml`.
 Run `deno task test` or `deno task test:ci` to execute the unit tests via
 [Deno](https://deno.land/).
 
-## Example
+## Examples
 
 ```ts
 import { tap } from "@observable/tap";
@@ -28,7 +28,7 @@ const activeSubscriptionController = new AbortController();
 
 pipe(
   forOf([1, 2, 3]),
-  tap((value) => console.log("tap", value)),
+  tap((value) => console.log("tap callback", value)),
 ).subscribe({
   signal: activeSubscriptionController.signal,
   next: (value) => console.log("next", value),
@@ -37,11 +37,11 @@ pipe(
 });
 
 // Console output:
-// "tap" 1
+// "tap callback" 1
 // "next" 1
-// "tap" 2
+// "tap callback" 2
 // "next" 2
-// "tap" 3
+// "tap callback" 3
 // "next" 3
 // "return"
 ```
