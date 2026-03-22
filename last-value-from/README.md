@@ -25,6 +25,8 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 
 ## Examples
 
+Last emitted value
+
 ```ts
 import { lastValueFrom } from "@observable/last-value-from";
 import { forOf } from "@observable/for-of";
@@ -35,6 +37,8 @@ console.log(await lastValueFrom(forOf([1, 2, 3])));
 // 3
 ```
 
+Inner PromiseLike
+
 ```ts
 import { lastValueFrom } from "@observable/last-value-from";
 import { of } from "@observable/of";
@@ -44,6 +48,8 @@ console.log(await lastValueFrom(of(Promise.resolve(3))));
 // Console output:
 // 3
 ```
+
+take(1) count
 
 ```ts
 import { lastValueFrom } from "@observable/last-value-from";
@@ -56,6 +62,8 @@ console.log(await lastValueFrom(pipe(forOf([1, 2, 3]), take(1))));
 // Console output:
 // 1
 ```
+
+Source throws
 
 ```ts
 import { lastValueFrom } from "@observable/last-value-from";
@@ -70,6 +78,8 @@ try {
 // Console output:
 // Error: test
 ```
+
+Empty observable
 
 ```ts
 import { lastValueFrom } from "@observable/last-value-from";
