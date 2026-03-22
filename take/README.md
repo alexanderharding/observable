@@ -18,7 +18,9 @@ Automated by `.github\workflows\publish.yml`.
 Run `deno task test` or `deno task test:ci` to execute the unit tests via
 [Deno](https://deno.land/).
 
-## Example
+## Examples
+
+Positive integer count
 
 ```ts
 import { take } from "@observable/take";
@@ -36,6 +38,108 @@ pipe(forOf([1, 2, 3, 4, 5]), take(2)).subscribe({
 // Console output:
 // "next" 1
 // "next" 2
+// "return"
+```
+
+Positive fractional count
+
+```ts
+import { take } from "@observable/take";
+import { forOf } from "@observable/for-of";
+import { pipe } from "@observable/pipe";
+
+const controller = new AbortController();
+pipe(forOf([1, 2, 3, 4, 5]), take(2.7)).subscribe({
+  signal: controller.signal,
+  next: (value) => console.log("next", value),
+  return: () => console.log("return"),
+  throw: (value) => console.log("throw", value),
+});
+
+// Console output:
+// "next" 1
+// "next" 2
+// "return"
+```
+
+0 count
+
+```ts
+import { take } from "@observable/take";
+import { forOf } from "@observable/for-of";
+import { pipe } from "@observable/pipe";
+
+const controller = new AbortController();
+pipe(forOf([1, 2, 3, 4, 5]), take(0)).subscribe({
+  signal: controller.signal,
+  next: (value) => console.log("next", value),
+  return: () => console.log("return"),
+  throw: (value) => console.log("throw", value),
+});
+
+// Console output:
+// "return"
+```
+
+Negative integer count
+
+```ts
+import { take } from "@observable/take";
+import { forOf } from "@observable/for-of";
+import { pipe } from "@observable/pipe";
+
+const controller = new AbortController();
+pipe(forOf([1, 2, 3, 4, 5]), take(-1)).subscribe({
+  signal: controller.signal,
+  next: (value) => console.log("next", value),
+  return: () => console.log("return"),
+  throw: (value) => console.log("throw", value),
+});
+
+// Console output:
+// "return"
+```
+
+NaN count
+
+```ts
+import { take } from "@observable/take";
+import { forOf } from "@observable/for-of";
+import { pipe } from "@observable/pipe";
+
+const controller = new AbortController();
+pipe(forOf([1, 2, 3, 4, 5]), take(NaN)).subscribe({
+  signal: controller.signal,
+  next: (value) => console.log("next", value),
+  return: () => console.log("return"),
+  throw: (value) => console.log("throw", value),
+});
+
+// Console output:
+// "return"
+```
+
+Infinite count
+
+```ts
+import { take } from "@observable/take";
+import { forOf } from "@observable/for-of";
+import { pipe } from "@observable/pipe";
+
+const controller = new AbortController();
+pipe(forOf([1, 2, 3, 4, 5]), take(Infinity)).subscribe({
+  signal: controller.signal,
+  next: (value) => console.log("next", value),
+  return: () => console.log("return"),
+  throw: (value) => console.log("throw", value),
+});
+
+// Console output:
+// "next" 1
+// "next" 2
+// "next" 3
+// "next" 4
+// "next" 5
 // "return"
 ```
 
