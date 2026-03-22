@@ -18,6 +18,8 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 
 ## Examples
 
+Response
+
 ```ts
 import { fetch } from "@observable/fetch";
 
@@ -34,6 +36,8 @@ fetch("https://www.example.com/api/data").subscribe({
 // "return"
 ```
 
+JSON body
+
 ```ts
 import { fetch } from "@observable/fetch";
 import { Observable } from "@observable/core";
@@ -43,7 +47,7 @@ import { asyncAwait } from "@observable/async-await";
 
 const controller = new AbortController();
 const response = fetch("https://www.example.com/api/data", {
-  headers: { "Content-Type": "application/json" },
+  headers: { "Content-Type": "application/json" }
 });
 const data = pipe(
   response,
