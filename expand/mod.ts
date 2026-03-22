@@ -12,6 +12,7 @@ import { of } from "@observable/of";
  * to an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) which is merged in the output
  * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable).
  * @example
+ * Double until 16
  * ```ts
  * import { expand } from "@observable/expand";
  * import { of } from "@observable/of";
@@ -39,6 +40,7 @@ import { of } from "@observable/of";
  * // "return"
  * ```
  * @example
+ * Tree traversal
  * ```ts
  * import { expand } from "@observable/expand";
  * import { of } from "@observable/of";
