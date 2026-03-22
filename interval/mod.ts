@@ -14,6 +14,7 @@ const infiniteVoid = defer(() => forOf(generateInfiniteVoid()));
  * Repeatedly [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s a `void` value with a
  * fixed {@linkcode milliseconds|time delay} between each call.
  * @example
+ * Positive integer milliseconds
  * ```ts
  * import { interval } from "@observable/interval";
  * import { take } from "@observable/take";
@@ -22,18 +23,86 @@ const infiniteVoid = defer(() => forOf(generateInfiniteVoid()));
  * const controller = new AbortController();
  * pipe(interval(1000), take(3)).subscribe({
  *   signal: controller.signal,
- *   next: () => console.log("next"),
+ *   next: (value) => console.log("next", value),
  *   return: () => console.log("return"),
  *   throw: (value) => console.log("throw", value),
  * });
  *
  * // Console output (after 1 second):
- * // "next"
+ * // "next" undefined
  * // Console output (after 2 seconds):
- * // "next"
+ * // "next" undefined
  * // Console output (after 3 seconds):
- * // "next"
+ * // "next" undefined
  * // "return"
+ * ```
+ * @example
+ * 0 milliseconds
+ * ```ts
+ * import { interval } from "@observable/interval";
+ * import { take } from "@observable/take";
+ * import { pipe } from "@observable/pipe";
+ *
+ * const controller = new AbortController();
+ * pipe(interval(0), take(3)).subscribe({
+ *   signal: controller.signal,
+ *   next: (value) => console.log("next", value),
+ *   return: () => console.log("return"),
+ *   throw: (value) => console.log("throw", value),
+ * });
+ *
+ * // Console output (synchronously):
+ * // "next" undefined
+ * // "next" undefined
+ * // "next" undefined
+ * // "return"
+ * ```
+ * @example
+ * Negative integer milliseconds
+ * ```ts
+ * import { interval } from "@observable/interval";
+ *
+ * const controller = new AbortController();
+ * interval(-1).subscribe({
+ *   signal: controller.signal,
+ *   next: () => console.log("next"),
+ *   return: () => console.log("return"),
+ *   throw: (value) => console.log("throw", value),
+ * });
+ *
+ * // Console output (synchronously):
+ * // "return"
+ * ```
+ * @example
+ * NaN milliseconds
+ * ```ts
+ * import { interval } from "@observable/interval";
+ *
+ * const controller = new AbortController();
+ * interval(NaN).subscribe({
+ *   signal: controller.signal,
+ *   next: () => console.log("next"),
+ *   return: () => console.log("return"),
+ *   throw: (value) => console.log("throw", value),
+ * });
+ *
+ * // Console output (synchronously):
+ * // "return"
+ * ```
+ * @example
+ * Infinity milliseconds
+ * ```ts
+ * import { interval } from "@observable/interval";
+ *
+ * const controller = new AbortController();
+ * interval(Infinity).subscribe({
+ *   signal: controller.signal,
+ *   next: () => console.log("next"),
+ *   return: () => console.log("return"),
+ *   throw: (value) => console.log("throw", value),
+ * });
+ *
+ * // No console output
  * ```
  */
 export function interval(milliseconds: number): Observable<void> {
