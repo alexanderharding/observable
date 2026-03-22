@@ -393,11 +393,8 @@ export const ReplaySubject: ReplaySubjectConstructor = class<Value> {
   next(value: Value): void {
     if (!(this instanceof ReplaySubject)) throw new InstanceofError("this", stringTag);
     if (!this.signal.aborted && this.#count > 0) {
-      // Add the next value to the buffer.
       const length = this.#buffer.push(value);
-      // Trim the buffer, if needed.
       if (length > this.#count) this.#buffer.shift();
-      // Reset the buffer snapshot since it's now stale.
       this.#bufferSnapshot = undefined;
     }
     this.#subject.next(value);
