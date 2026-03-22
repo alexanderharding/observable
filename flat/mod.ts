@@ -15,6 +15,7 @@ import { empty } from "@observable/empty";
  * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) until it
  * [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s and then moves on to the next and so on.
  * @example
+ * Array of sources
  * ```ts
  * import { flat } from "@observable/flat";
  * import { forOf } from "@observable/for-of";
@@ -45,6 +46,22 @@ import { empty } from "@observable/empty";
  * // "next" 9
  * // "return"
  * ```
+ * @example
+ * Empty array
+ * ```ts
+ * import { flat } from "@observable/flat";
+ *
+ * const controller = new AbortController();
+ * flat([]).subscribe({
+ *   signal: controller.signal,
+ *   next: (value) => console.log("next", value),
+ *   return: () => console.log("return"),
+ *   throw: (value) => console.log("throw", value),
+ * });
+ *
+ * // Console output (synchronously):
+ * // "return"
+ * ```
  */
 export function flat<const Values extends ReadonlyArray<unknown>>(
   sources: Readonly<{ [Key in keyof Values]: Observable<Values[Key]> }>,
@@ -54,6 +71,7 @@ export function flat<const Values extends ReadonlyArray<unknown>>(
  * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) until it
  * [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s and then moves on to the next and so on.
  * @example
+ * Iterable of sources
  * ```ts
  * import { flat } from "@observable/flat";
  * import { forOf } from "@observable/for-of";
