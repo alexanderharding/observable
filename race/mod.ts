@@ -19,6 +19,7 @@ import { empty } from "@observable/empty";
  * [`next`](https://jsr.io/@observable/core/doc/~/Observer.next) or
  * [`throw`](https://jsr.io/@observable/core/doc/~/Observer.throw) a value.
  * @example
+ * Array of sources
  * ```ts
  * import { race } from "@observable/race";
  * import { Subject } from "@observable/core";
@@ -43,6 +44,22 @@ import { empty } from "@observable/empty";
  * source3.next(5);
  * source2.return(); // "return"
  * ```
+ * @example
+ * Empty array
+ * ```ts
+ * import { race } from "@observable/race";
+ *
+ * const controller = new AbortController();
+ * race([]).subscribe({
+ *   signal: controller.signal,
+ *   next: (value) => console.log("next", value),
+ *   return: () => console.log("return"),
+ *   throw: (value) => console.log("throw", value),
+ * });
+ *
+ * // Console output (synchronously):
+ * // "return"
+ * ```
  */
 export function race<const Values extends ReadonlyArray<unknown>>(
   sources: Readonly<{ [Key in keyof Values]: Observable<Values[Key]> }>,
@@ -53,6 +70,7 @@ export function race<const Values extends ReadonlyArray<unknown>>(
  * [`next`](https://jsr.io/@observable/core/doc/~/Observer.next) or
  * [`throw`](https://jsr.io/@observable/core/doc/~/Observer.throw) a value.
  * @example
+ * Iterable of sources
  * ```ts
  * import { race } from "@observable/race";
  * import { Subject } from "@observable/core";
@@ -78,17 +96,13 @@ export function race<const Values extends ReadonlyArray<unknown>>(
  * source2.return(); // "return"
  * ```
  */
-export function race<Value>(
-  sources: Iterable<Observable<Value>>,
-): Observable<Value>;
-export function race<Value>(
-  // Accepting any iterable is a design choice for performance (iterables are
-  // lazily evaluated) and flexibility.
-  sources: Iterable<Observable<Value>>,
-): Observable<Value> {
+export function race<Value>(sources: Iterable<Observable<Value>>): Observable<Value>;
+export function race<Value>(sources: Iterable<Observable<Value>>): Observable<Value> {
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
   if (!isIterable(sources)) throw new ParameterTypeError(0, "Iterable");
+
   if (Array.isArray(sources) && !sources.length) return empty;
+
   return defer(() => {
     const finished = new Subject<number>();
     return pipe(

@@ -18,7 +18,9 @@ Automated by `.github\workflows\publish.yml`.
 Run `deno task test` or `deno task test:ci` to execute the unit tests via
 [Deno](https://deno.land/).
 
-## Example
+## Examples
+
+Array of sources
 
 ```ts
 import { race } from "@observable/race";
@@ -43,6 +45,50 @@ source1.return();
 source2.next(4); // "next" 4
 source3.next(5);
 source2.return(); // "return"
+```
+
+Iterable of sources
+
+```ts
+import { race } from "@observable/race";
+import { Subject } from "@observable/core";
+
+const controller = new AbortController();
+const source1 = new Subject<number>();
+const source2 = source1;
+const source3 = new Subject<number>();
+
+race(new Set([source1, source2, source3])).subscribe({
+  signal: controller.signal,
+  next: (value) => console.log("next", value),
+  return: () => console.log("return"),
+  throw: (value) => console.log("throw", value),
+});
+
+source2.next(1); // "next" 1
+source1.next(2);
+source3.next(3);
+source1.return();
+source2.next(4); // "next" 4
+source3.next(5);
+source2.return(); // "return"
+```
+
+Empty array
+
+```ts
+import { race } from "@observable/race";
+
+const controller = new AbortController();
+race([]).subscribe({
+  signal: controller.signal,
+  next: (value) => console.log("next", value),
+  return: () => console.log("return"),
+  throw: (value) => console.log("throw", value),
+});
+
+// Console output (synchronously):
+// "return"
 ```
 
 # AI Prompt
