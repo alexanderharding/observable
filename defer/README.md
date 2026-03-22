@@ -21,7 +21,6 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 ```ts
 import { defer } from "@observable/defer";
 import { forOf } from "@observable/for-of";
-import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
 let values = [1, 2, 3];
