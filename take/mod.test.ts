@@ -98,6 +98,52 @@ Deno.test(
   },
 );
 
+Deno.test(
+  "take should truncate fractional counts toward zero",
+  () => {
+    // Arrange
+    const notifications: Array<ObserverNotification<number>> = [];
+    const source = forOf([1, 2, 3, 4, 5]);
+    const materialized = pipe(source, take(2.9), materialize());
+
+    // Act
+    materialized.subscribe(
+      new Observer((notification) => notifications.push(notification)),
+    );
+
+    // Assert
+    assertEquals(notifications, [["next", 1], ["next", 2], ["return"]]);
+  },
+);
+
+Deno.test(
+  "take should return an empty observable if the truncated count is 0",
+  () => {
+    // Arrange
+    const source = never;
+
+    // Act
+    const result = pipe(source, take(0.7));
+
+    // Assert
+    assertStrictEquals(result, empty);
+  },
+);
+
+Deno.test(
+  "take should return an empty observable if a negative fractional count truncates to 0",
+  () => {
+    // Arrange
+    const source = never;
+
+    // Act
+    const result = pipe(source, take(-0.3));
+
+    // Assert
+    assertStrictEquals(result, empty);
+  },
+);
+
 Deno.test("take should handle reentrant observers", () => {
   // Arrange
   const notifications: Array<ObserverNotification<number> | [type: "finalize"]> = [];
