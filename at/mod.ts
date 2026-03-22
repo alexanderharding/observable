@@ -258,34 +258,26 @@ export function at<Value>(index: number): (source: Observable<Value>) => Observa
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
   if (typeof index !== "number") throw new ParameterTypeError(0, "Number");
 
-  // Convert the index to an integer by truncating toward zero (matches Array.prototype.at).
   index = Math.trunc(index);
 
   return function atFn(source) {
     if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
 
-    // Early return for NaN index case, as this is not a valid index.
     if (Number.isNaN(index)) return empty;
 
-    // Early return for infinite index cases, as this can be handled by other operators.
     if (index === Infinity || index === -Infinity) return pipe(source, drop<never>(Infinity));
 
-    // Early return for index 0 case, as this can be handled by other operators.
     if (index === 0) return pipe(source, take(1));
 
-    // Early return for positive index case, as this can be handled by other operators.
     if (index > 0) return pipe(source, filter((_, i) => i === index), take(1));
 
-    // Convert the source to an observable if it is not already so we don't have to do this on
-    // every subscription.
     source = from(source);
 
     /**
-     * The maximum length of the buffer so we can be memory efficient. Because we are in the negative index case,
-     * we need to use the absolute value of the index to get the maximum length of the buffer.
+     * The maximum length of the buffer so we can be memory efficient.
      */
-    const maxBufferLength = -index;
+    const maxBufferLength = Math.abs(index);
 
     // Note that we could compose a few different operators to achieve the same result, but this is
     // a more direct implementation that is easier to understand and reason about.
