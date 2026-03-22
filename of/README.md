@@ -17,7 +17,7 @@ Automated by `.github\workflows\publish.yml`.
 Run `deno task test` or `deno task test:ci` to execute the unit tests via
 [Deno](https://deno.land/).
 
-## Examples
+## Example
 
 ```ts
 import { of } from "@observable/of";
