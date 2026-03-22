@@ -18,7 +18,9 @@ Automated by `.github\workflows\publish.yml`.
 Run `deno task test` or `deno task test:ci` to execute the unit tests via
 [Deno](https://deno.land/).
 
-## Example
+## Examples
+
+Positive integer milliseconds
 
 ```ts
 import { debounce } from "@observable/debounce";
@@ -37,10 +39,89 @@ pipe(source, debounce(100)).subscribe({
 
 source.next(1);
 source.next(2);
-source.next(3); // Only this value will be emitted after 100ms
+source.next(3);
 
 // Console output (after 100ms):
 // "next" 3
+```
+
+0 milliseconds
+
+```ts
+import { debounce } from "@observable/debounce";
+import { forOf } from "@observable/for-of";
+import { pipe } from "@observable/pipe";
+
+const controller = new AbortController();
+pipe(forOf([1, 2, 3]), debounce(0)).subscribe({
+  signal: controller.signal,
+  next: (value) => console.log("next", value),
+  return: () => console.log("return"),
+  throw: (value) => console.log("throw", value),
+});
+
+// Console output (synchronously):
+// "next" 1
+// "next" 2
+// "next" 3
+// "return"
+```
+
+Negative integer milliseconds
+
+```ts
+import { debounce } from "@observable/debounce";
+import { forOf } from "@observable/for-of";
+import { pipe } from "@observable/pipe";
+
+const controller = new AbortController();
+pipe(forOf([1, 2, 3]), debounce(-1)).subscribe({
+  signal: controller.signal,
+  next: (value) => console.log("next", value),
+  return: () => console.log("return"),
+  throw: (value) => console.log("throw", value),
+});
+
+// Console output (synchronously):
+// "return"
+```
+
+NaN milliseconds
+
+```ts
+import { debounce } from "@observable/debounce";
+import { forOf } from "@observable/for-of";
+import { pipe } from "@observable/pipe";
+
+const controller = new AbortController();
+pipe(forOf([1, 2, 3]), debounce(NaN)).subscribe({
+  signal: controller.signal,
+  next: (value) => console.log("next", value),
+  return: () => console.log("return"),
+  throw: (value) => console.log("throw", value),
+});
+
+// Console output (synchronously):
+// "return"
+```
+
+Infinity milliseconds
+
+```ts
+import { debounce } from "@observable/debounce";
+import { forOf } from "@observable/for-of";
+import { pipe } from "@observable/pipe";
+
+const controller = new AbortController();
+pipe(forOf([1, 2, 3]), debounce(Infinity)).subscribe({
+  signal: controller.signal,
+  next: (value) => console.log("next", value),
+  return: () => console.log("return"),
+  throw: (value) => console.log("throw", value),
+});
+
+// Console output (synchronously):
+// "return"
 ```
 
 # AI Prompt
