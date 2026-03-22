@@ -31,6 +31,34 @@ Deno.test("drop should return the source observable if the count is 0", () => {
   assertStrictEquals(result, source);
 });
 
+Deno.test(
+  "drop should return the source observable if a positive fractional count truncates to 0",
+  () => {
+    // Arrange
+    const source = forOf([1, 2, 3]);
+
+    // Act
+    const result = pipe(source, drop(0.8));
+
+    // Assert
+    assertStrictEquals(result, source);
+  },
+);
+
+Deno.test(
+  "drop should return the source observable if a negative fractional count truncates to 0",
+  () => {
+    // Arrange
+    const source = forOf([1, 2, 3]);
+
+    // Act
+    const result = pipe(source, drop(-0.2));
+
+    // Assert
+    assertStrictEquals(result, source);
+  },
+);
+
 Deno.test("drop should return empty if the count is NaN", () => {
   // Arrange
   const source = forOf([1, 2, 3]);
@@ -64,6 +92,29 @@ Deno.test(
     const source = forOf([1, 2, 3, 4, 5]);
     const notifications: Array<ObserverNotification<number>> = [];
     const materialized = pipe(source, drop(2), materialize());
+
+    // Act
+    materialized.subscribe(
+      new Observer((notification) => notifications.push(notification)),
+    );
+
+    // Assert
+    assertEquals(notifications, [
+      ["next", 3],
+      ["next", 4],
+      ["next", 5],
+      ["return"],
+    ]);
+  },
+);
+
+Deno.test(
+  "drop should truncate fractional counts toward zero when dropping",
+  () => {
+    // Arrange
+    const source = forOf([1, 2, 3, 4, 5]);
+    const notifications: Array<ObserverNotification<number>> = [];
+    const materialized = pipe(source, drop(2.7), materialize());
 
     // Act
     materialized.subscribe(
