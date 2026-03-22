@@ -10,6 +10,7 @@ import { take } from "@observable/take";
  * [`Next`](https://jsr.io/@observable/core/doc/~/Observer.next)s a `void` value after a specified number of
  * {@linkcode milliseconds} and then [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s.
  * @example
+ * Positive integer milliseconds
  * ```ts
  * import { timeout } from "@observable/timeout";
  *
@@ -26,6 +27,7 @@ import { take } from "@observable/take";
  * // "return"
  * ```
  * @example
+ * 0 milliseconds
  * ```ts
  * import { timeout } from "@observable/timeout";
  *
@@ -42,6 +44,7 @@ import { take } from "@observable/take";
  * // "return"
  * ```
  * @example
+ * Negative integer milliseconds
  * ```ts
  * import { timeout } from "@observable/timeout";
  *
@@ -57,6 +60,7 @@ import { take } from "@observable/take";
  * // "return"
  * ```
  * @example
+ * NaN milliseconds
  * ```ts
  * import { timeout } from "@observable/timeout";
  *
@@ -70,6 +74,22 @@ import { take } from "@observable/take";
  *
  * // Console output (synchronously):
  * // "return"
+ * ```
+ * @example
+ * Infinity milliseconds
+ * ```ts
+ * import { timeout } from "@observable/timeout";
+ *
+ * const controller = new AbortController();
+ * timeout(Infinity).subscribe({
+ *   signal: controller.signal,
+ *   next: (value) => console.log("next", value),
+ *   return: () => console.log("return"),
+ *   throw: (value) => console.log("throw", value),
+ * });
+ *
+ * // No `next`, `return`, or `throw` until the subscription is aborted (`never`).
+ * controller.abort();
  * ```
  */
 export function timeout(milliseconds: number): Observable<void> {
