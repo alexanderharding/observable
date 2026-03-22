@@ -38,7 +38,7 @@ pipe(forOf([1, 2, 2, 3, 1, 3]), distinct()).subscribe({
 // "next" 1
 // "next" 2
 // "next" 3
-// return
+// "return"
 ```
 
 # AI Prompt
