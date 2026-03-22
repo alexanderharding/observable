@@ -1,8 +1,8 @@
 {
   "workspace": [
     "all",
+    "async-await",
     "at",
-    "await-of",
     "behavior-subject",
     "broadcast-subject",
     "catch-error",

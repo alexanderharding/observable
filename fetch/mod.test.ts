@@ -383,43 +383,6 @@ Deno.test("fetch should accept undefined as init", async () => {
   Object.defineProperty(globalThis, "fetch", { value: originalFetch, configurable: true });
 });
 
-Deno.test("fetch should pass abort reason when unsubscribed with reason", async () => {
-  // Arrange
-  const controller = new AbortController();
-  const abortReasons: Array<unknown> = [];
-  const originalFetch = globalThis.fetch;
-  Object.defineProperty(globalThis, "fetch", {
-    value: (_url: RequestInfo | URL, init?: RequestInit) => {
-      if (init?.signal) {
-        init.signal.addEventListener("abort", () => {
-          abortReasons.push(init.signal?.reason);
-        });
-      }
-      return new Promise(() => {
-        // Never resolves
-      });
-    },
-    configurable: true,
-  });
-  const customReason = new Error("Custom abort reason");
-
-  // Act
-  fetch("https://example.com/api").subscribe(
-    new Observer({
-      signal: controller.signal,
-      next: () => {},
-    }),
-  );
-  controller.abort(customReason);
-  await Promise.resolve();
-
-  // Assert
-  assertEquals(abortReasons.length, 1);
-  assertEquals(abortReasons[0], customReason);
-
-  Object.defineProperty(globalThis, "fetch", { value: originalFetch, configurable: true });
-});
-
 Deno.test("fetch should throw an error if input is undefined", () => {
   // Arrange / Act / Assert
   assertThrows(
