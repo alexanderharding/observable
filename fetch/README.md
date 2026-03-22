@@ -18,6 +18,8 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 
 ## Examples
 
+Response
+
 ```ts
 import { fetch } from "@observable/fetch";
 
@@ -33,6 +35,8 @@ fetch("https://www.example.com/api/data").subscribe({
 // "next" Response { type: "cors", url: "https://www.example.com/api/data", redirected: false, status: 200, ok: true, ... }
 // "return"
 ```
+
+JSON body
 
 ```ts
 import { fetch } from "@observable/fetch";

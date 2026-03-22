@@ -17,7 +17,9 @@ Automated by `.github\workflows\publish.yml`.
 Run `deno task test` or `deno task test:ci` to execute the unit tests via
 [Deno](https://deno.land/).
 
-## Example
+## Examples
+
+Array of sources
 
 ```ts
 import { merge } from "@observable/merge";
@@ -43,6 +45,51 @@ source2.next(5); // "next" 5
 source1.return();
 source2.return();
 source3.return(); // "return"
+```
+
+Iterable of sources
+
+```ts
+import { merge } from "@observable/merge";
+import { Subject } from "@observable/core";
+
+const controller = new AbortController();
+const source1 = new Subject<number>();
+const source2 = source1;
+const source3 = new Subject<number>();
+
+merge(new Set([source1, source2, source3])).subscribe({
+  signal: controller.signal,
+  next: (value) => console.log("next", value),
+  return: () => console.log("return"),
+  throw: (value) => console.log("throw", value),
+});
+
+source1.next(1); // "next" 1
+source2.next(2); // "next" 2
+source3.next(3); // "next" 3
+source1.next(4); // "next" 4
+source2.next(5); // "next" 5
+source1.return();
+source2.return();
+source3.return(); // "return"
+```
+
+Empty array
+
+```ts
+import { merge } from "@observable/merge";
+
+const controller = new AbortController();
+merge([]).subscribe({
+  signal: controller.signal,
+  next: (value) => console.log("next", value),
+  return: () => console.log("return"),
+  throw: (value) => console.log("throw", value),
+});
+
+// Console output (synchronously):
+// "return"
 ```
 
 # AI Prompt

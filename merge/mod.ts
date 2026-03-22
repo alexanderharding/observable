@@ -14,6 +14,7 @@ import { empty } from "@observable/empty";
  * Concurrently [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s all values from every given
  * [source](https://jsr.io/@observable/core#source) [`Observable`](https://jsr.io/@observable/core/doc/~/Observable).
  * @example
+ * Array of sources
  * ```ts
  * import { merge } from "@observable/merge";
  * import { Subject } from "@observable/core";
@@ -39,6 +40,22 @@ import { empty } from "@observable/empty";
  * source2.return();
  * source3.return(); // "return"
  * ```
+ * @example
+ * Empty array
+ * ```ts
+ * import { merge } from "@observable/merge";
+ *
+ * const controller = new AbortController();
+ * merge([]).subscribe({
+ *   signal: controller.signal,
+ *   next: (value) => console.log("next", value),
+ *   return: () => console.log("return"),
+ *   throw: (value) => console.log("throw", value),
+ * });
+ *
+ * // Console output (synchronously):
+ * // "return"
+ * ```
  */
 export function merge<const Values extends ReadonlyArray<unknown>>(
   sources: Readonly<{ [Key in keyof Values]: Observable<Values[Key]> }>,
@@ -47,6 +64,7 @@ export function merge<const Values extends ReadonlyArray<unknown>>(
  * Concurrently [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s all values from every given
  * [source](https://jsr.io/@observable/core#source) [`Observable`](https://jsr.io/@observable/core/doc/~/Observable).
  * @example
+ * Iterable of sources
  * ```ts
  * import { merge } from "@observable/merge";
  * import { Subject } from "@observable/core";

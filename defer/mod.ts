@@ -9,7 +9,6 @@ import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/i
  * ```ts
  * import { defer } from "@observable/defer";
  * import { forOf } from "@observable/for-of";
- * import { pipe } from "@observable/pipe";
  *
  * const controller = new AbortController();
  * let values = [1, 2, 3];
@@ -41,6 +40,7 @@ import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/i
  * // "next" 5
  * // "next" 6
  * // "return"
+ * ```
  */
 export function defer<Value>(
   factory: () => Observable<Value>,

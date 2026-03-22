@@ -18,6 +18,7 @@ import { empty } from "@observable/empty";
  * Uses [the Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) to
  * make an HTTP request.
  * @example
+ * Response
  * ```ts
  * import { fetch } from "@observable/fetch";
  *
@@ -34,6 +35,7 @@ import { empty } from "@observable/empty";
  * // "return"
  * ```
  * @example
+ * JSON body
  * ```ts
  * import { fetch } from "@observable/fetch";
  * import { Observable } from "@observable/core";

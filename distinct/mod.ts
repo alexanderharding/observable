@@ -29,7 +29,7 @@ import { filter } from "@observable/filter";
  * // "next" 1
  * // "next" 2
  * // "next" 3
- * // return
+ * // "return"
  * ```
  */
 export function distinct<Value>(): (

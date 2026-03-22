@@ -24,18 +24,15 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 ## Example
 
 ```ts
+import { BehaviorSubject } from "@observable/behavior-subject";
 import { switchMap } from "@observable/switch-map";
-import { forOf } from "@observable/for-of";
+import { of } from "@observable/of";
 import { pipe } from "@observable/pipe";
+import type { Observable } from "@observable/core";
 
+const page = new BehaviorSubject(1);
 const controller = new AbortController();
-const observableLookup = {
-  1: forOf([1, 2, 3]),
-  2: forOf([4, 5, 6]),
-  3: forOf([7, 8, 9]),
-} as const;
-
-pipe(forOf([1, 2, 3]), switchMap((value) => observableLookup[value])).subscribe({
+pipe(page, switchMap((value) => of(`Page ${page}`))).subscribe({
   signal: controller.signal,
   next: (value) => console.log("next", value),
   return: () => console.log("return"),
@@ -43,9 +40,16 @@ pipe(forOf([1, 2, 3]), switchMap((value) => observableLookup[value])).subscribe(
 });
 
 // Console output:
-// "next" 7
-// "next" 8
-// "next" 9
+// "next" "Page 1"
+
+page.next(2);
+
+// Console output:
+// "next" "Page 2"
+
+page.return();
+
+// Console output:
 // "return"
 ```
 

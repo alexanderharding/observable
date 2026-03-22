@@ -6,6 +6,7 @@ import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/i
  * The [consumer](https://jsr.io/@observable/core#consumer) is telling the [producer](https://jsr.io/@observable/core#producer)
  * it's no longer interested in receiving {@linkcode Value|values}.
  * @example
+ * Return
  * ```ts
  * import { finalize } from "@observable/finalize";
  * import { forOf } from "@observable/for-of";
@@ -27,6 +28,7 @@ import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/i
  * // "return"
  * ```
  * @example
+ * Throw
  * ```ts
  * import { finalize } from "@observable/finalize";
  * import { throwError } from "@observable/throw-error";
@@ -49,6 +51,26 @@ import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/i
  * // "next" 3
  * // "finalized"
  * // "throw" Error: error
+ * ```
+ * @example
+ * Unsubscribe
+ * ```ts
+ * import { finalize } from "@observable/finalize";
+ * import { pipe } from "@observable/pipe";
+ * import { never } from "@observable/never";
+ *
+ * const controller = new AbortController();
+ * pipe(never, finalize(() => console.log("finalized"))).subscribe({
+ *   signal: controller.signal,
+ *   next: (value) => console.log("next", value),
+ *   return: () => console.log("return"),
+ *   throw: (value) => console.log("throw", value),
+ * });
+ *
+ * controller.abort();
+ *
+ * // Console output:
+ * // "finalized"
  * ```
  */
 export function finalize<Value>(

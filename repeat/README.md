@@ -30,11 +30,11 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 
 ```ts
 import { repeat } from "@observable/repeat";
-import { forOf } from "@observable/for-of";
 import { of } from "@observable/of";
 import { pipe } from "@observable/pipe";
 import { empty } from "@observable/empty";
 import { defer } from "@observable/defer";
+import { forOf } from "@observable/for-of";
 
 const source = forOf([1, 2, 3]);
 const controller = new AbortController();
@@ -50,7 +50,7 @@ const repeated = defer(() => {
 });
 
 repeated.subscribe({
-  signal: observer.signal,
+  signal: controller.signal,
   next: (value) => console.log("next", value),
   return: () => console.log("return"),
   throw: (value) => console.log("throw", value),

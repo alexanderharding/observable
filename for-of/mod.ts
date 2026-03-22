@@ -11,6 +11,7 @@ import { empty } from "@observable/empty";
  * to an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) that [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s
  * each {@linkcode Values|value} in order upon [`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe).
  * @example
+ * Populate array
  * ```ts
  * import { forOf } from "@observable/for-of";
  *
@@ -26,6 +27,22 @@ import { empty } from "@observable/empty";
  * // "next" 1
  * // "next" 2
  * // "next" 3
+ * // "return"
+ * ```
+ * @example
+ * Empty array
+ * ```ts
+ * import { forOf } from "@observable/for-of";
+ *
+ * const controller = new AbortController();
+ * forOf([]).subscribe({
+ *   signal: controller.signal,
+ *   next: (value) => console.log("next", value),
+ *   return: () => console.log("return"),
+ *   throw: (value) => console.error("throw", value),
+ * });
+ *
+ * // Console output (synchronously):
  * // "return"
  * ```
  */
@@ -48,7 +65,7 @@ export function forOf<const Values extends ReadonlyArray<unknown>>(
  *   throw: (value) => console.error("throw", value),
  * });
  *
- * // Console output:
+ * // Console output (synchronously):
  * // "next" 1
  * // "next" 2
  * // "next" 3

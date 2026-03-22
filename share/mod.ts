@@ -18,6 +18,7 @@ import { defer } from "@observable/defer";
  * [consumers](https://jsr.io/@observable/core#consumer)
  * [unsubscribe](https://jsr.io/@observable/core/doc/~/Observer.signal).
  * @example
+ * Basic usage
  * ```ts
  * import { share } from "@observable/share";
  * import { timeout } from "@observable/timeout";
@@ -41,14 +42,14 @@ import { defer } from "@observable/defer";
  * });
  *
  * // Console output (after 1 second):
- * // "next" 0
- * // "next" 0
+ * // "next" undefined
+ * // "next" undefined
  * // "return"
  * // "return"
  * ```
  *
  * @example
- * Using ReplaySubject to buffer values for consumers that join mid-stream:
+ * ReplaySubject factory
  * ```ts
  * import { share } from "@observable/share";
  * import { ReplaySubject } from "@observable/replay-subject";

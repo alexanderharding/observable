@@ -22,6 +22,7 @@ import { of } from "@observable/of";
  * import { pipe } from "@observable/pipe";
  * import { empty } from "@observable/empty";
  * import { defer } from "@observable/defer";
+ * import { forOf } from "@observable/for-of";
  *
  * const source = forOf([1, 2, 3]);
  * const controller = new AbortController();

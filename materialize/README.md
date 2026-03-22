@@ -17,7 +17,9 @@ Automated by `.github\workflows\publish.yml`.
 Run `deno task test` or `deno task test:ci` to execute the unit tests via
 [Deno](https://deno.land/).
 
-## Example
+## Examples
+
+Notifications as values
 
 ```ts
 import { materialize } from "@observable/materialize";
@@ -40,7 +42,27 @@ pipe(forOf([1, 2, 3]), materialize()).subscribe({
 // "return"
 ```
 
-## Unit testing example
+Throw notification
+
+```ts
+import { materialize } from "@observable/materialize";
+import { throwError } from "@observable/throw-error";
+import { pipe } from "@observable/pipe";
+
+const controller = new AbortController();
+pipe(throwError(new Error("error")), materialize()).subscribe({
+  signal: controller.signal,
+  next: (value) => console.log("next", value),
+  return: () => console.log("return"),
+  throw: (value) => console.log("throw", value),
+});
+
+// Console output:
+// ["throw", new Error("error")]
+// "return"
+```
+
+Unit testing
 
 ```ts
 import { materialize, ObserverNotification } from "@observable/materialize";
@@ -53,7 +75,7 @@ const observable = forOf([1, 2, 3]);
 describe("observable", () => {
   let activeSubscriptionController: AbortController;
 
-  beforeEach(() => (activeSubscriptionController = new AbortController()));
+  beforeEach(() => activeSubscriptionController = new AbortController());
 
   afterEach(() => activeSubscriptionController?.abort());
 

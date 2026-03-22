@@ -19,6 +19,8 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 
 ## Examples
 
+Double until 16
+
 ```ts
 import { expand } from "@observable/expand";
 import { of } from "@observable/of";
@@ -46,6 +48,8 @@ pipe(
 // "return"
 ```
 
+Tree traversal
+
 ```ts
 import { expand } from "@observable/expand";
 import { of } from "@observable/of";
@@ -53,6 +57,7 @@ import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 import { empty } from "@observable/empty";
 
+// Traverse a tree structure
 interface Node {
   id: string;
   children: Node[];

@@ -12,6 +12,7 @@ import { at } from "@observable/at";
  * if the {@linkcode observable} [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s
  * without [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ing a value.
  * @example
+ * Last emitted value
  * ```ts
  * import { lastValueFrom } from "@observable/last-value-from";
  * import { forOf } from "@observable/for-of";
@@ -22,6 +23,7 @@ import { at } from "@observable/at";
  * // 3
  * ```
  * @example
+ * Inner PromiseLike
  * ```ts
  * import { lastValueFrom } from "@observable/last-value-from";
  * import { of } from "@observable/of";
@@ -32,6 +34,7 @@ import { at } from "@observable/at";
  * // 3
  * ```
  * @example
+ * take(1) count
  * ```ts
  * import { lastValueFrom } from "@observable/last-value-from";
  * import { forOf } from "@observable/for-of";
@@ -44,6 +47,7 @@ import { at } from "@observable/at";
  * // 1
  * ```
  * @example
+ * Source throws
  * ```ts
  * import { lastValueFrom } from "@observable/last-value-from";
  * import { throwError } from "@observable/throw-error";
@@ -58,6 +62,7 @@ import { at } from "@observable/at";
  * // Error: test
  * ```
  * @example
+ * Empty observable
  * ```ts
  * import { lastValueFrom } from "@observable/last-value-from";
  * import { empty } from "@observable/empty";

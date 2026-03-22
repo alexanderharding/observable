@@ -20,19 +20,31 @@ import { mergeMap } from "@observable/merge-map";
  * import { switchMap } from "@observable/switch-map";
  * import { of } from "@observable/of";
  * import { pipe } from "@observable/pipe";
+ * import type { Observable } from "@observable/core";
  *
  * const page = new BehaviorSubject(1);
  * const controller = new AbortController();
- * pipe(page, switchMap((value) => fetchPage(value))).subscribe({
+ * pipe(page, switchMap((value) => of(`Page ${page}`))).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
  *   return: () => console.log("return"),
  *   throw: (value) => console.log("throw", value),
  * });
  *
- * function fetchPage(page: number): Observable<string> {
- *   return of(`Page ${page}`);
- * }
+ * // Console output:
+ * // "next" "Page 1"
+ *
+ * page.next(2);
+ *
+ * // Console output:
+ * // "next" "Page 2"
+ *
+ * page.return();
+ *
+ * // Console output:
+ * // "return"
+ *
+ * ```
  */
 export function switchMap<In, Out>(
   project: (value: In, index: number) => Observable<Out>,

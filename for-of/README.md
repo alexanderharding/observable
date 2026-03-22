@@ -19,13 +19,14 @@ Automated by `.github\workflows\publish.yml`.
 Run `deno task test` or `deno task test:ci` to execute the unit tests via
 [Deno](https://deno.land/).
 
-## Example
+## Examples
+
+Populate array
 
 ```ts
 import { forOf } from "@observable/for-of";
 
 const controller = new AbortController();
-
 forOf([1, 2, 3]).subscribe({
   signal: controller.signal,
   next: (value) => console.log("next", value),
@@ -40,6 +41,43 @@ forOf([1, 2, 3]).subscribe({
 // "return"
 ```
 
+Empty array
+
+```ts
+import { forOf } from "@observable/for-of";
+
+const controller = new AbortController();
+forOf([]).subscribe({
+  signal: controller.signal,
+  next: (value) => console.log("next", value),
+  return: () => console.log("return"),
+  throw: (value) => console.error("throw", value),
+});
+
+// Console output (synchronously):
+// "return"
+```
+
+Iterable
+
+```ts
+import { forOf } from "@observable/for-of";
+
+const controller = new AbortController();
+forOf(new Set([1, 2, 1, 2, 3, 3])).subscribe({
+  signal: controller.signal,
+  next: (value) => console.log("next", value),
+  return: () => console.log("return"),
+  throw: (value) => console.error("throw", value),
+});
+
+// Console output (synchronously):
+// "next" 1
+// "next" 2
+// "next" 3
+// "return"
+
 # Glossary And Semantics
 
 [@observable/core](https://jsr.io/@observable/core#glossary-and-semantics)
+```

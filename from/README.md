@@ -23,6 +23,8 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 
 ## Examples
 
+Observable instance
+
 ```ts
 import { Observable } from "@observable/core";
 import { from } from "@observable/from";
@@ -35,6 +37,8 @@ const result = from(observableInstance);
 result === observableInstance; // true
 result instanceof Observable; // true
 ```
+
+Custom observable
 
 ```ts
 import { Observable } from "@observable/core";
