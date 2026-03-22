@@ -306,6 +306,79 @@ Deno.test(
 );
 
 Deno.test(
+  "ReplaySubject should truncate fractional buffer sizes toward zero",
+  () => {
+    // Arrange
+    const subject = new ReplaySubject<string>(2.9);
+    const notifications: Array<ObserverNotification<string>> = [];
+
+    // Act
+    subject.next("first");
+    subject.next("second");
+    subject.next("third");
+    pipe(subject, materialize()).subscribe(
+      new Observer((notification) => notifications.push(notification)),
+    );
+
+    // Assert
+    assertEquals(notifications, [
+      ["next", "second"],
+      ["next", "third"],
+    ]);
+  },
+);
+
+Deno.test(
+  "ReplaySubject should treat a positive fractional count that truncates to 0 like count 0",
+  () => {
+    // Arrange
+    const subject = new ReplaySubject<string>(0.6);
+    const notifications: Array<ObserverNotification<string>> = [];
+
+    // Act
+    subject.next("first");
+    subject.next("second");
+    pipe(subject, materialize()).subscribe(
+      new Observer((notification) => notifications.push(notification)),
+    );
+    subject.next("third");
+    assertStrictEquals(subject.signal.aborted, false);
+    subject.return();
+
+    // Assert
+    assertEquals(notifications, [
+      ["next", "third"],
+      ["return"],
+    ]);
+  },
+);
+
+Deno.test(
+  "ReplaySubject should treat a negative fractional count that truncates to 0 like count 0",
+  () => {
+    // Arrange
+    const subject = new ReplaySubject<string>(-0.4);
+    const notifications: Array<ObserverNotification<string>> = [];
+
+    // Act
+    subject.next("first");
+    subject.next("second");
+    pipe(subject, materialize()).subscribe(
+      new Observer((notification) => notifications.push(notification)),
+    );
+    subject.next("third");
+    assertStrictEquals(subject.signal.aborted, false);
+    subject.return();
+
+    // Assert
+    assertEquals(notifications, [
+      ["next", "third"],
+      ["return"],
+    ]);
+  },
+);
+
+Deno.test(
   "ReplaySubject.constructor should be empty when count is NaN",
   () => {
     // Arrange
