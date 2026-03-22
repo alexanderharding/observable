@@ -47,7 +47,7 @@ import { asyncAwait } from "@observable/async-await";
 
 const controller = new AbortController();
 const response = fetch("https://www.example.com/api/data", {
-  headers: { "Content-Type": "application/json" }
+  headers: { "Content-Type": "application/json" },
 });
 const data = pipe(
   response,

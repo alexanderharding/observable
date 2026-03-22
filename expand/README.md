@@ -75,9 +75,7 @@ const controller = new AbortController();
 
 pipe(
   of(tree),
-  expand((node) =>
-    node.children.length ? forOf(node.children) : empty
-  ),
+  expand((node) => node.children.length ? forOf(node.children) : empty),
 ).subscribe({
   signal: controller.signal,
   next: (node) => console.log("visited", node.id),
