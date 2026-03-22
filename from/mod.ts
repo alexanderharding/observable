@@ -9,6 +9,7 @@ import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/i
  * in its prototype chain), it's returned directly. Otherwise, a new [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)
  * object is created that wraps the original provided {@linkcode value}.
  * @example
+ * Observable instance
  * ```ts
  * import { Observable } from "@observable/core";
  * import { from } from "@observable/from";
@@ -22,6 +23,7 @@ import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/i
  * result instanceof Observable; // true
  * ```
  * @example
+ * Custom observable
  * ```ts
  * import { Observable } from "@observable/core";
  * import { from } from "@observable/from";
