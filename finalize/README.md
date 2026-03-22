@@ -18,7 +18,7 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 
 ## Examples
 
-After return
+Return
 
 ```ts
 import { finalize } from "@observable/finalize";
@@ -41,7 +41,7 @@ pipe(forOf([1, 2, 3]), finalize(() => console.log("finalized"))).subscribe({
 // "return"
 ```
 
-After throw
+Throw
 
 ```ts
 import { finalize } from "@observable/finalize";
@@ -67,7 +67,7 @@ pipe(source, finalize(() => console.log("finalized"))).subscribe({
 // "throw" Error: error
 ```
 
-After unsubscribe
+Unsubscribe
 
 ```ts
 import { finalize } from "@observable/finalize";

@@ -6,7 +6,7 @@ import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/i
  * The [consumer](https://jsr.io/@observable/core#consumer) is telling the [producer](https://jsr.io/@observable/core#producer)
  * it's no longer interested in receiving {@linkcode Value|values}.
  * @example
- * After return
+ * Return
  * ```ts
  * import { finalize } from "@observable/finalize";
  * import { forOf } from "@observable/for-of";
@@ -28,7 +28,7 @@ import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/i
  * // "return"
  * ```
  * @example
- * After throw
+ * Throw
  * ```ts
  * import { finalize } from "@observable/finalize";
  * import { throwError } from "@observable/throw-error";
@@ -53,7 +53,7 @@ import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/i
  * // "throw" Error: error
  * ```
  * @example
- * After unsubscribe
+ * Unsubscribe
  * ```ts
  * import { finalize } from "@observable/finalize";
  * import { pipe } from "@observable/pipe";
