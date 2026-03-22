@@ -4,7 +4,7 @@ import { pipe } from "@observable/pipe";
 import { asyncAwait } from "./mod.ts";
 import { materialize, type ObserverNotification } from "@observable/materialize";
 
-Deno.test("asyncAwait should throw when called with no promise", () => {
+Deno.test("asyncAwait should throw when called with no arguments", () => {
   // Arrange / Act / Assert
   assertThrows(
     () => asyncAwait(...([] as unknown as Parameters<typeof asyncAwait>)),
