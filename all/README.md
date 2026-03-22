@@ -22,6 +22,8 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 
 ## Examples
 
+Array of sources
+
 ```ts
 import { all } from "@observable/all";
 import { forOf } from "@observable/for-of";
@@ -46,6 +48,8 @@ all([source1, source2, source3]).subscribe({
 // "return"
 ```
 
+Empty source ends immediately
+
 ```ts
 import { all } from "@observable/all";
 import { forOf } from "@observable/for-of";
@@ -57,6 +61,73 @@ const source2 = forOf([7, 8, 9]);
 
 const controller = new AbortController();
 all([source1, empty, source2]).subscribe({
+  signal: controller.signal,
+  next: (value) => console.log("next", value),
+  return: () => console.log("return"),
+  throw: (value) => console.log("throw", value),
+});
+
+// Console output:
+// "return"
+```
+
+Empty array
+
+```ts
+import { all } from "@observable/all";
+
+const controller = new AbortController();
+all([]).subscribe({
+  signal: controller.signal,
+  next: (value) => console.log("next", value),
+  return: () => console.log("return"),
+  throw: (value) => console.log("throw", value),
+});
+
+// Console output:
+// "return"
+```
+
+Iterable of sources
+
+```ts
+import { all } from "@observable/all";
+import { Subject } from "@observable/core";
+
+const source1 = new Subject<number>();
+const source2 = source1;
+const source3 = new Subject<number>();
+
+const controller = new AbortController();
+all(new Set([source1, source2, source3])).subscribe({
+  signal: controller.signal,
+  next: (value) => console.log("next", value),
+  return: () => console.log("return"),
+  throw: (value) => console.log("throw", value),
+});
+source2.next(1);
+source1.next(2);
+source3.next(3); // "next" [2, 3]
+source1.next(4); // "next" [4, 3]
+source2.next(5); // "next" [4, 5]
+source1.return();
+source3.return(); // "return"
+source2.return();
+```
+
+Iterable with empty member
+
+```ts
+import { all } from "@observable/all";
+import { forOf } from "@observable/for-of";
+import { pipe } from "@observable/pipe";
+import { empty } from "@observable/empty";
+
+const source1 = forOf([1, 2, 3]);
+const source2 = forOf([7, 8, 9]);
+
+const controller = new AbortController();
+all(new Set([source1, empty, source2])).subscribe({
   signal: controller.signal,
   next: (value) => console.log("next", value),
   return: () => console.log("return"),

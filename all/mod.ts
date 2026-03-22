@@ -20,6 +20,7 @@ import { finalize } from "@observable/finalize";
  * of the latest {@linkcode Values|values} from _all_ of {@linkcode input}'s [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)s, in
  * [index](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array#array_indices) order.
  * @example
+ * Array of sources
  * ```ts
  * import { all } from "@observable/all";
  * import { forOf } from "@observable/for-of";
@@ -44,6 +45,7 @@ import { finalize } from "@observable/finalize";
  * // "return"
  * ```
  * @example
+ * Empty source ends immediately
  * ```ts
  * import { all } from "@observable/all";
  * import { forOf } from "@observable/for-of";
@@ -64,6 +66,22 @@ import { finalize } from "@observable/finalize";
  * // Console output:
  * // "return"
  * ```
+ * @example
+ * Empty array
+ * ```ts
+ * import { all } from "@observable/all";
+ *
+ * const controller = new AbortController();
+ * all([]).subscribe({
+ *   signal: controller.signal,
+ *   next: (value) => console.log("next", value),
+ *   return: () => console.log("return"),
+ *   throw: (value) => console.log("throw", value),
+ * });
+ *
+ * // Console output:
+ * // "return"
+ * ```
  */
 export function all<const Values extends ReadonlyArray<unknown>>(
   input: Readonly<{ [Key in keyof Values]: Observable<Values[Key]> }>,
@@ -73,6 +91,7 @@ export function all<const Values extends ReadonlyArray<unknown>>(
  * of the latest {@linkcode Value|values} from _all_ of {@linkcode input}'s [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)s, in
  * [iteration](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#the_iterable_protocol) order.
  * @example
+ * Iterable of sources
  * ```ts
  * import { all } from "@observable/all";
  * import { Subject } from "@observable/core";
@@ -98,6 +117,7 @@ export function all<const Values extends ReadonlyArray<unknown>>(
  * source2.return();
  * ```
  * @example
+ * Iterable with empty member
  * ```ts
  * import { all } from "@observable/all";
  * import { forOf } from "@observable/for-of";
@@ -108,7 +128,7 @@ export function all<const Values extends ReadonlyArray<unknown>>(
  * const source2 = forOf([7, 8, 9]);
  *
  * const controller = new AbortController();
- * all([source1, empty, source2]).subscribe({
+ * all(new Set([source1, empty, source2])).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
  *   return: () => console.log("return"),
@@ -119,16 +139,11 @@ export function all<const Values extends ReadonlyArray<unknown>>(
  * // "return"
  * ```
  */
-export function all<Value>(
-  input: Iterable<Observable<Value>>,
-): Observable<ReadonlyArray<Value>>;
-export function all<Value>(
-  input: Iterable<Observable<Value>>,
-): Observable<ReadonlyArray<Value>> {
+export function all<Value>(input: Iterable<Observable<Value>>): Observable<ReadonlyArray<Value>>;
+export function all<Value>(input: Iterable<Observable<Value>>): Observable<ReadonlyArray<Value>> {
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
   if (!isIterable(input)) throw new ParameterTypeError(0, "Iterable");
 
-  // Early return if the iterable is an empty array.
   if (Array.isArray(input) && !input.length) return empty;
 
   // Use defer so we do not start iterating until subscription, we get a fresh iteration for each subscription,
