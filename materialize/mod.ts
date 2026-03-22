@@ -16,6 +16,7 @@ export type ObserverNotification<Value = unknown> = Readonly<
  * Projects all of the [`Observer`](https://jsr.io/@observable/core/doc/~/Observer) [notification](https://jsr.io/@observable/core#notification)
  * as [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values.
  * @example
+ * Notifications as values
  * ```ts
  * import { materialize } from "@observable/materialize";
  * import { forOf } from "@observable/for-of";
@@ -37,6 +38,7 @@ export type ObserverNotification<Value = unknown> = Readonly<
  * // "return"
  * ```
  * @example
+ * Throw notification
  * ```ts
  * import { materialize } from "@observable/materialize";
  * import { throwError } from "@observable/throw-error";
