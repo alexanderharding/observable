@@ -1,10 +1,18 @@
-import { Observable } from "@observable/core";
+import type { Observable } from "@observable/core";
 import {
   isObject,
   isURL,
   MinimumArgumentsRequiredError,
   ParameterTypeError,
 } from "@observable/internal";
+import { defer } from "@observable/defer";
+import { pipe } from "@observable/pipe";
+import { asyncAwait } from "@observable/async-await";
+import { tap } from "@observable/tap";
+import { finalize } from "@observable/finalize";
+import { catchError } from "@observable/catch-error";
+import { throwError } from "@observable/throw-error";
+import { empty } from "@observable/empty";
 
 /**
  * Uses [the Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) to
@@ -31,7 +39,7 @@ import {
  * import { Observable } from "@observable/core";
  * import { switchMap } from "@observable/switch-map";
  * import { pipe } from "@observable/pipe";
- * import { awaitOf } from "@observable/await-of";
+ * import { asyncAwait } from "@observable/async-await";
  *
  * const controller = new AbortController();
  * const response = fetch("https://www.example.com/api/data", {
@@ -39,7 +47,7 @@ import {
  * });
  * const data = pipe(
  *   response,
- *   switchMap((response) => awaitOf(response.json())),
+ *   switchMap((response) => asyncAwait(response.json())),
  * );
  *
  * data.subscribe({
@@ -63,30 +71,19 @@ export function fetch(
   // Normally we'd check the entire RequestInit interface, but it's complex and we don't need to be
   // that strict here. We'll still do minor type checking though.
   if (typeof init !== "undefined" && !isObject(init)) throw new ParameterTypeError(1, "Object");
-  return new Observable(
-    async (observer) => {
-      const unsubscribeListenerController = new AbortController();
-      const activeFetchController = new AbortController();
-      observer.signal.addEventListener(
-        "abort",
-        () => activeFetchController.abort(observer.signal.reason),
-        { once: true, signal: unsubscribeListenerController.signal },
-      );
-      try {
-        const response = await globalThis.fetch(
-          input,
-          { ...init, signal: activeFetchController.signal },
-        );
-        // Once the response is received, we no longer want to abort the fetch request on teardown.
-        // Aborting in such circumstances would also abort subsequent methods (like `json()`).
-        unsubscribeListenerController.abort();
-        observer.next(response);
-        observer.return();
-      } catch (value) {
+  return defer(() => {
+    let hasResponse = false;
+    const activeFetchController = new AbortController();
+    return pipe(
+      asyncAwait(globalThis.fetch(input, { ...init, signal: activeFetchController.signal })),
+      // Once the response is received, we no longer want to abort the fetch request on teardown.
+      // Aborting in such circumstances would also abort subsequent methods (like `json()`).
+      tap(() => hasResponse = true),
+      finalize(() => !hasResponse && activeFetchController.abort()),
+      catchError((error) =>
         // If the consumer has unsubscribed, we should NOT treat it as an error in Observables.
-        if (value instanceof DOMException && value.name === "AbortError") return;
-        observer.throw(value);
-      }
-    },
-  );
+        (error instanceof DOMException && error.name === "AbortError") ? empty : throwError(error)
+      ),
+    );
+  });
 }
