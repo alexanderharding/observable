@@ -25,15 +25,19 @@ Automated by `.github\workflows\publish.yml`.
 Run `deno task test` or `deno task test:ci` to execute the unit tests via
 [Deno](https://deno.land/).
 
-## Example
+## Examples
+
+Basic usage
 
 ```ts
 import { share } from "@observable/share";
 import { timeout } from "@observable/timeout";
 import { pipe } from "@observable/pipe";
 
-const shared = pipe(timeout(1_000), share());
 const controller = new AbortController();
+const shared = pipe(timeout(1_000), share());
+
+// Both consumers share the same timeout — it only runs once.
 shared.subscribe({
   signal: controller.signal,
   next: (value) => console.log("next", value),
@@ -48,10 +52,53 @@ shared.subscribe({
 });
 
 // Console output (after 1 second):
-// "next" 0
-// "next" 0
+// "next" undefined
+// "next" undefined
 // "return"
 // "return"
+```
+
+ReplaySubject factory
+
+```ts
+import { share } from "@observable/share";
+import { ReplaySubject } from "@observable/replay-subject";
+import { Subject } from "@observable/core";
+import { pipe } from "@observable/pipe";
+
+const controller = new AbortController();
+const source = new Subject<number>();
+const shared = pipe(source, share(() => new ReplaySubject<number>(1)));
+
+shared.subscribe({
+  signal: controller.signal,
+  next: (value) => console.log("1st", value),
+  return: () => console.log("1st return"),
+  throw: (value) => console.log("1st throw", value),
+});
+
+source.next(1);
+source.next(2);
+
+// A second consumer joins and receives the last buffered value (2) immediately.
+shared.subscribe({
+  signal: controller.signal,
+  next: (value) => console.log("2nd", value),
+  return: () => console.log("2nd return"),
+  throw: (value) => console.log("2nd throw", value),
+});
+
+source.next(3);
+source.return();
+
+// Console output:
+// "1st" 1
+// "1st" 2
+// "2nd" 2
+// "1st" 3
+// "2nd" 3
+// "1st return"
+// "2nd return"
 ```
 
 # AI Prompt
