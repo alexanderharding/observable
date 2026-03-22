@@ -22,6 +22,8 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 
 ## Examples
 
+Positive index integer
+
 ```ts
 import { at } from "@observable/at";
 import { forOf } from "@observable/for-of";
@@ -43,6 +45,8 @@ pipe(forOf([1, 2, 3]), tap((value) => console.log("tap next", value)), at(1)).su
 // "next" 2
 // "return"
 ```
+
+Positive index fractional
 
 ```ts
 import { at } from "@observable/at";
@@ -66,6 +70,8 @@ pipe(forOf([1, 2, 3]), tap((value) => console.log("tap next", value)), at(1.7)).
 // "return"
 ```
 
+0 index
+
 ```ts
 import { at } from "@observable/at";
 import { forOf } from "@observable/for-of";
@@ -87,26 +93,7 @@ pipe(forOf([1, 2, 3]), tap((value) => console.log("tap next", value)), at(0)).su
 // "return"
 ```
 
-```ts
-import { at } from "@observable/at";
-import { forOf } from "@observable/for-of";
-import { pipe } from "@observable/pipe";
-import { tap } from "@observable/tap";
-
-const activeSubscriptionController = new AbortController();
-
-pipe(forOf([1, 2, 3]), tap((value) => console.log("tap next", value)), at(0.2)).subscribe({
-  signal: activeSubscriptionController.signal,
-  next: (value) => console.log("next", value),
-  return: () => console.log("return"),
-  throw: (value) => console.log("throw", value),
-});
-
-// Console output:
-// "tap next" 1
-// "next" 1
-// "return"
-```
+Negative index integer
 
 ```ts
 import { at } from "@observable/at";
@@ -131,6 +118,8 @@ pipe(forOf([1, 2, 3]), tap((value) => console.log("tap next", value)), at(-1)).s
 // "return"
 ```
 
+Negative index fractional
+
 ```ts
 import { at } from "@observable/at";
 import { forOf } from "@observable/for-of";
@@ -154,51 +143,7 @@ pipe(forOf([1, 2, 3]), tap((value) => console.log("tap next", value)), at(-1.7))
 // "return"
 ```
 
-```ts
-import { at } from "@observable/at";
-import { forOf } from "@observable/for-of";
-import { pipe } from "@observable/pipe";
-import { tap } from "@observable/tap";
-
-const activeSubscriptionController = new AbortController();
-
-pipe(forOf([1, 2, 3]), tap((value) => console.log("tap next", value)), at(-2)).subscribe({
-  signal: activeSubscriptionController.signal,
-  next: (value) => console.log("next", value),
-  return: () => console.log("return"),
-  throw: (value) => console.log("throw", value),
-});
-
-// Console output:
-// "tap next" 1
-// "tap next" 2
-// "tap next" 3
-// "next" 2
-// "return"
-```
-
-```ts
-import { at } from "@observable/at";
-import { forOf } from "@observable/for-of";
-import { pipe } from "@observable/pipe";
-import { tap } from "@observable/tap";
-
-const activeSubscriptionController = new AbortController();
-
-pipe(forOf([1, 2, 3]), tap((value) => console.log("tap next", value)), at(-2.3)).subscribe({
-  signal: activeSubscriptionController.signal,
-  next: (value) => console.log("next", value),
-  return: () => console.log("return"),
-  throw: (value) => console.log("throw", value),
-});
-
-// Console output:
-// "tap next" 1
-// "tap next" 2
-// "tap next" 3
-// "next" 2
-// "return"
-```
+Infinity index
 
 ```ts
 import { at } from "@observable/at";
@@ -222,6 +167,8 @@ pipe(forOf([1, 2, 3]), tap((value) => console.log("tap next", value)), at(Infini
 // "return"
 ```
 
+-Infinity index
+
 ```ts
 import { at } from "@observable/at";
 import { forOf } from "@observable/for-of";
@@ -243,6 +190,8 @@ pipe(forOf([1, 2, 3]), tap((value) => console.log("tap next", value)), at(-Infin
 // "tap next" 3
 // "return"
 ```
+
+NaN index
 
 ```ts
 import { at } from "@observable/at";

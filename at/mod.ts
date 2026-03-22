@@ -13,6 +13,7 @@ import { from } from "@observable/from";
  * value at the given {@linkcode index}. Negative {@linkcode index|indices} count back from the last
  * [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed value in the sequence.
  * @example
+ * Positive index integer
  * ```ts
  * import { at } from "@observable/at";
  * import { forOf } from "@observable/for-of";
@@ -35,6 +36,7 @@ import { from } from "@observable/from";
  * // "return"
  * ```
  * @example
+ * Positive index fractional
  * ```ts
  * import { at } from "@observable/at";
  * import { forOf } from "@observable/for-of";
@@ -57,6 +59,7 @@ import { from } from "@observable/from";
  * // "return"
  * ```
  * @example
+ * 0 index
  * ```ts
  * import { at } from "@observable/at";
  * import { forOf } from "@observable/for-of";
@@ -78,27 +81,7 @@ import { from } from "@observable/from";
  * // "return"
  * ```
  * @example
- * ```ts
- * import { at } from "@observable/at";
- * import { forOf } from "@observable/for-of";
- * import { pipe } from "@observable/pipe";
- * import { tap } from "@observable/tap";
- *
- * const activeSubscriptionController = new AbortController();
- *
- * pipe(forOf([1, 2, 3]), tap((value) => console.log("tap next", value)), at(0.2)).subscribe({
- *   signal: activeSubscriptionController.signal,
- *   next: (value) => console.log("next", value),
- *   return: () => console.log("return"),
- *   throw: (value) => console.log("throw", value),
- * });
- *
- * // Console output:
- * // "tap next" 1
- * // "next" 1
- * // "return"
- * ```
- * @example
+ * Negative index integer
  * ```ts
  * import { at } from "@observable/at";
  * import { forOf } from "@observable/for-of";
@@ -122,6 +105,7 @@ import { from } from "@observable/from";
  * // "return"
  * ```
  * @example
+ * Negative index fractional
  * ```ts
  * import { at } from "@observable/at";
  * import { forOf } from "@observable/for-of";
@@ -145,52 +129,7 @@ import { from } from "@observable/from";
  * // "return"
  * ```
  * @example
- * ```ts
- * import { at } from "@observable/at";
- * import { forOf } from "@observable/for-of";
- * import { pipe } from "@observable/pipe";
- * import { tap } from "@observable/tap";
- *
- * const activeSubscriptionController = new AbortController();
- *
- * pipe(forOf([1, 2, 3]), tap((value) => console.log("tap next", value)), at(-2)).subscribe({
- *   signal: activeSubscriptionController.signal,
- *   next: (value) => console.log("next", value),
- *   return: () => console.log("return"),
- *   throw: (value) => console.log("throw", value),
- * });
- *
- * // Console output:
- * // "tap next" 1
- * // "tap next" 2
- * // "tap next" 3
- * // "next" 2
- * // "return"
- * ```
- * @example
- * ```ts
- * import { at } from "@observable/at";
- * import { forOf } from "@observable/for-of";
- * import { pipe } from "@observable/pipe";
- * import { tap } from "@observable/tap";
- *
- * const activeSubscriptionController = new AbortController();
- *
- * pipe(forOf([1, 2, 3]), tap((value) => console.log("tap next", value)), at(-2.3)).subscribe({
- *   signal: activeSubscriptionController.signal,
- *   next: (value) => console.log("next", value),
- *   return: () => console.log("return"),
- *   throw: (value) => console.log("throw", value),
- * });
- *
- * // Console output:
- * // "tap next" 1
- * // "tap next" 2
- * // "tap next" 3
- * // "next" 2
- * // "return"
- * ```
- * @example
+ * Infinity index
  * ```ts
  * import { at } from "@observable/at";
  * import { forOf } from "@observable/for-of";
@@ -213,6 +152,7 @@ import { from } from "@observable/from";
  * // "return"
  * ```
  * @example
+ * -Infinity index
  * ```ts
  * import { at } from "@observable/at";
  * import { forOf } from "@observable/for-of";
@@ -235,6 +175,7 @@ import { from } from "@observable/from";
  * // "return"
  * ```
  * @example
+ * NaN index
  * ```ts
  * import { at } from "@observable/at";
  * import { forOf } from "@observable/for-of";
