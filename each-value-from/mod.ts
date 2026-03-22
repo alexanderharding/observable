@@ -26,10 +26,10 @@ type Deferred<Value> = Omit<PromiseWithResolvers<Value>, "promise">;
  * that [`yield`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/yield)s each
  * [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed {@linkcode Value|value} in order.
  * @example
+ * Basic usage
  * ```ts
  * import { eachValueFrom } from "@observable/each-value-from";
  * import { forOf } from "@observable/for-of";
- * import { pipe } from "@observable/pipe";
  *
  * for await (const value of eachValueFrom(forOf([1, 2, 3]))) {
  *   console.log(value);
@@ -43,6 +43,7 @@ type Deferred<Value> = Omit<PromiseWithResolvers<Value>, "promise">;
  * // "Done!"
  * ```
  * @example
+ * Thrown value
  * ```ts
  * import { eachValueFrom } from "@observable/each-value-from";
  * import { throwError } from "@observable/throw-error";
@@ -58,6 +59,7 @@ type Deferred<Value> = Omit<PromiseWithResolvers<Value>, "promise">;
  * }
  * ```
  * @example
+ * Early break
  * ```ts
  * import { eachValueFrom } from "@observable/each-value-from";
  * import { interval } from "@observable/interval";
@@ -76,10 +78,10 @@ type Deferred<Value> = Omit<PromiseWithResolvers<Value>, "promise">;
  * // 5
  * ```
  * @example
+ * Empty source
  * ```ts
  * import { eachValueFrom } from "@observable/each-value-from";
  * import { empty } from "@observable/empty";
- * import { pipe } from "@observable/pipe";
  *
  * for await (const value of eachValueFrom(empty)) {
  *   console.log(value);

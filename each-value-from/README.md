@@ -7,10 +7,11 @@ each [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed value in or
 
 ## Examples
 
+Basic usage
+
 ```ts
 import { eachValueFrom } from "@observable/each-value-from";
 import { forOf } from "@observable/for-of";
-import { pipe } from "@observable/pipe";
 
 for await (const value of eachValueFrom(forOf([1, 2, 3]))) {
   console.log(value);
@@ -23,6 +24,8 @@ console.log("Done!");
 // 3
 // "Done!"
 ```
+
+Thrown value
 
 ```ts
 import { eachValueFrom } from "@observable/each-value-from";
@@ -38,6 +41,8 @@ try {
   // Error: test
 }
 ```
+
+Early break
 
 ```ts
 import { eachValueFrom } from "@observable/each-value-from";
@@ -57,10 +62,11 @@ for await (const value of eachValueFrom(interval(100))) {
 // 5
 ```
 
+Empty source
+
 ```ts
 import { eachValueFrom } from "@observable/each-value-from";
 import { empty } from "@observable/empty";
-import { pipe } from "@observable/pipe";
 
 for await (const value of eachValueFrom(empty)) {
   console.log(value);
