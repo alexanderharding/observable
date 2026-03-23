@@ -1,6 +1,5 @@
 import { assertStrictEquals } from "@std/assert";
 import { noop } from "./noop.ts";
-import { pickOne } from "./pick-one.ts";
 import { isEventTarget } from "./is-event-target.ts";
 
 Deno.test(
@@ -24,7 +23,7 @@ Deno.test(
     const value: EventTarget = {
       addEventListener: noop,
       removeEventListener: noop,
-      dispatchEvent: () => pickOne([true, false]),
+      dispatchEvent: () => false,
     };
 
     // Act
@@ -42,9 +41,9 @@ Deno.test(
     const value:
       & Omit<EventTarget, "addEventListener">
       & Readonly<Record<"addEventListener", unknown>> = {
-        addEventListener: pickOne([Math.random(), Math.random().toString(), []]),
+        addEventListener: [],
         removeEventListener: noop,
-        dispatchEvent: () => pickOne([true, false]),
+        dispatchEvent: () => true,
       };
 
     // Act
@@ -63,12 +62,8 @@ Deno.test(
       & Omit<EventTarget, "removeEventListener">
       & Readonly<Record<"removeEventListener", unknown>> = {
         addEventListener: noop,
-        removeEventListener: pickOne([
-          Math.random(),
-          Math.random().toString(),
-          [],
-        ]),
-        dispatchEvent: () => pickOne([true, false]),
+        removeEventListener: Math.random(),
+        dispatchEvent: () => true,
       };
 
     // Act
@@ -88,7 +83,7 @@ Deno.test(
       & Readonly<Record<"dispatchEvent", unknown>> = {
         addEventListener: noop,
         removeEventListener: noop,
-        dispatchEvent: pickOne([Math.random(), Math.random().toString(), []]),
+        dispatchEvent: [],
       };
 
     // Act

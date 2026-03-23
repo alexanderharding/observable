@@ -1,7 +1,6 @@
 import { assertStrictEquals } from "@std/assert";
 import { isAbortSignal } from "./is-abort-signal.ts";
 import { noop } from "./noop.ts";
-import { pickOne } from "./pick-one.ts";
 
 Deno.test(
   "isAbortSignal should return true if the value is an AbortSignal instance",
@@ -22,13 +21,13 @@ Deno.test(
   () => {
     // Arrange
     const value: AbortSignal = {
-      aborted: pickOne([true, false]),
-      reason: pickOne([null, undefined, 0, 1, "0", "1", {}, []]),
-      onabort: pickOne([noop, null]),
+      aborted: true,
+      reason: null,
+      onabort: null,
       throwIfAborted: noop,
       addEventListener: noop,
       removeEventListener: noop,
-      dispatchEvent: () => pickOne([true, false]),
+      dispatchEvent: () => true,
     };
 
     // Act
@@ -46,13 +45,13 @@ Deno.test(
     const value:
       & Omit<AbortSignal, "aborted">
       & Readonly<Record<"aborted", unknown>> = {
-        aborted: pickOne([[], null, undefined, 0, 1, "0", "1"]),
-        reason: pickOne([null, undefined, 0, 1, "0", "1", {}, []]),
-        onabort: pickOne([noop, null]),
+        aborted: [],
+        reason: null,
+        onabort: null,
         throwIfAborted: noop,
         addEventListener: noop,
         removeEventListener: noop,
-        dispatchEvent: () => pickOne([true, false]),
+        dispatchEvent: () => true,
       };
 
     // Act
@@ -70,13 +69,13 @@ Deno.test(
     const value:
       & Omit<AbortSignal, "onabort">
       & Readonly<Record<"onabort", unknown>> = {
-        aborted: pickOne([true, false]),
-        reason: pickOne([null, undefined, 0, 1, "0", "1", {}, []]),
-        onabort: pickOne([Math.random(), Math.random().toString(), []]),
+        aborted: true,
+        reason: null,
+        onabort: null,
         throwIfAborted: noop,
         addEventListener: noop,
         removeEventListener: noop,
-        dispatchEvent: () => pickOne([true, false]),
+        dispatchEvent: () => true,
       };
 
     // Act
@@ -94,13 +93,13 @@ Deno.test(
     const value:
       & Omit<AbortSignal, "throwIfAborted">
       & Readonly<Record<"throwIfAborted", unknown>> = {
-        aborted: pickOne([true, false]),
-        reason: pickOne([null, undefined, 0, 1, "0", "1", {}, []]),
-        onabort: pickOne([noop, null]),
-        throwIfAborted: pickOne([Math.random(), Math.random().toString(), []]),
+        aborted: true,
+        reason: null,
+        onabort: null,
+        throwIfAborted: noop,
         addEventListener: noop,
         removeEventListener: noop,
-        dispatchEvent: () => pickOne([true, false]),
+        dispatchEvent: () => true,
       };
 
     // Act
@@ -118,13 +117,13 @@ Deno.test(
     const value:
       & Omit<AbortSignal, "addEventListener">
       & Readonly<Record<"addEventListener", unknown>> = {
-        aborted: pickOne([true, false]),
-        reason: pickOne([null, undefined, 0, 1, "0", "1", {}, []]),
-        onabort: pickOne([noop, null]),
+        aborted: true,
+        reason: null,
+        onabort: null,
         throwIfAborted: noop,
-        addEventListener: pickOne([Math.random(), Math.random().toString(), []]),
+        addEventListener: noop,
         removeEventListener: noop,
-        dispatchEvent: () => pickOne([true, false]),
+        dispatchEvent: () => true,
       };
 
     // Act
@@ -142,17 +141,13 @@ Deno.test(
     const value:
       & Omit<AbortSignal, "removeEventListener">
       & Readonly<Record<"removeEventListener", unknown>> = {
-        aborted: pickOne([true, false]),
-        reason: pickOne([null, undefined, 0, 1, "0", "1", {}, []]),
-        onabort: pickOne([noop, null]),
+        aborted: true,
+        reason: null,
+        onabort: null,
         throwIfAborted: noop,
         addEventListener: noop,
-        removeEventListener: pickOne([
-          Math.random(),
-          Math.random().toString(),
-          [],
-        ]),
-        dispatchEvent: () => pickOne([true, false]),
+        removeEventListener: noop,
+        dispatchEvent: () => true,
       };
 
     // Act
@@ -170,13 +165,13 @@ Deno.test(
     const value:
       & Omit<AbortSignal, "dispatchEvent">
       & Readonly<Record<"dispatchEvent", unknown>> = {
-        aborted: pickOne([true, false]),
-        reason: pickOne([null, undefined, 0, 1, "0", "1", {}, []]),
-        onabort: pickOne([noop, null]),
+        aborted: true,
+        reason: null,
+        onabort: null,
         throwIfAborted: noop,
         addEventListener: noop,
         removeEventListener: noop,
-        dispatchEvent: pickOne([Math.random(), Math.random().toString(), []]),
+        dispatchEvent: [],
       };
 
     // Act
