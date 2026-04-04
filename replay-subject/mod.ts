@@ -1,5 +1,5 @@
 import { isObserver, type Observable, type Observer, Subject } from "@observable/core";
-import { InstanceofError, ParameterTypeError } from "@observable/internal";
+import { ParameterTypeError } from "@observable/internal";
 import { flat } from "@observable/flat";
 import { defer } from "@observable/defer";
 import { forOf } from "@observable/for-of";
@@ -387,7 +387,9 @@ export const ReplaySubject: ReplaySubjectConstructor = class<Value> {
   }
 
   next(value: Value): void {
-    if (!(this instanceof ReplaySubject)) throw new InstanceofError("this", stringTag);
+    if (!(this instanceof ReplaySubject)) {
+      throw new TypeError(`'this' is not instanceof '${stringTag}'`);
+    }
     if (!this.signal.aborted && this.#count > 0) {
       const length = this.#buffer.push(value);
       if (length > this.#count) this.#buffer.shift();
@@ -398,16 +400,18 @@ export const ReplaySubject: ReplaySubjectConstructor = class<Value> {
 
   return(): void {
     if (this instanceof ReplaySubject) this.#subject.return();
-    else throw new InstanceofError("this", stringTag);
+    else throw new TypeError(`'this' is not instanceof '${stringTag}'`);
   }
 
   throw(value: unknown): void {
     if (this instanceof ReplaySubject) this.#subject.throw(value);
-    else throw new InstanceofError("this", stringTag);
+    else throw new TypeError(`'this' is not instanceof '${stringTag}'`);
   }
 
   subscribe(observer: Observer<Value>): void {
-    if (!(this instanceof ReplaySubject)) throw new InstanceofError("this", stringTag);
+    if (!(this instanceof ReplaySubject)) {
+      throw new TypeError(`'this' is not instanceof '${stringTag}'`);
+    }
     if (!arguments.length) throw new TypeError("1 argument required but 0 present");
     if (!isObserver(observer)) throw new ParameterTypeError(0, "Observer");
     this.#observable.subscribe(observer);

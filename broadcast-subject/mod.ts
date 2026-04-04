@@ -1,5 +1,5 @@
 import { isObserver, type Observer, Subject } from "@observable/core";
-import { InstanceofError, ParameterTypeError } from "@observable/internal";
+import { ParameterTypeError } from "@observable/internal";
 
 /**
  * Object type that acts as a variant of [`Subject`](https://jsr.io/@observable/core/doc/~/Subject).
@@ -81,7 +81,9 @@ export const BroadcastSubject: BroadcastSubjectConstructor = class<Value> {
   }
 
   next(value: Value): void {
-    if (!(this instanceof BroadcastSubject)) throw new InstanceofError("this", stringTag);
+    if (!(this instanceof BroadcastSubject)) {
+      throw new TypeError(`'this' is not instanceof '${stringTag}'`);
+    }
     try {
       this.#channel.postMessage(value);
     } catch (error) {
@@ -91,16 +93,18 @@ export const BroadcastSubject: BroadcastSubjectConstructor = class<Value> {
 
   return(): void {
     if (this instanceof BroadcastSubject) this.#subject.return();
-    else throw new InstanceofError("this", stringTag);
+    else throw new TypeError(`'this' is not instanceof '${stringTag}'`);
   }
 
   throw(value: unknown): void {
     if (this instanceof BroadcastSubject) this.#subject.throw(value);
-    else throw new InstanceofError("this", stringTag);
+    else throw new TypeError(`'this' is not instanceof '${stringTag}'`);
   }
 
   subscribe(observer: Observer<Value>): void {
-    if (!(this instanceof BroadcastSubject)) throw new InstanceofError("this", stringTag);
+    if (!(this instanceof BroadcastSubject)) {
+      throw new TypeError(`'this' is not instanceof '${stringTag}'`);
+    }
     if (!arguments.length) throw new TypeError("1 argument required but 0 present");
     if (!isObserver(observer)) throw new ParameterTypeError(0, "Observer");
     this.#subject.subscribe(observer);

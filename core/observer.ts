@@ -1,4 +1,4 @@
-import { InstanceofError, ParameterTypeError } from "@observable/internal";
+import { ParameterTypeError } from "@observable/internal";
 import type { ObserverConstructor } from "./observer-constructor.ts";
 
 /**
@@ -61,7 +61,9 @@ export const Observer: ObserverConstructor = class<Value> {
   }
 
   next(value: Value): void {
-    if (!(this instanceof Observer)) throw new InstanceofError("this", stringTag);
+    if (!(this instanceof Observer)) {
+      throw new TypeError(`'this' is not instanceof '${stringTag}'`);
+    }
     // No arguments.length check because Value may be void, making next() with no args valid.
 
     // If this observer has been aborted there is nothing to do.
@@ -76,7 +78,9 @@ export const Observer: ObserverConstructor = class<Value> {
   }
 
   return(): void {
-    if (!(this instanceof Observer)) throw new InstanceofError("this", stringTag);
+    if (!(this instanceof Observer)) {
+      throw new TypeError(`'this' is not instanceof '${stringTag}'`);
+    }
 
     // If this observer has been aborted there is nothing to do.
     if (this.signal.aborted) return;
@@ -97,7 +101,9 @@ export const Observer: ObserverConstructor = class<Value> {
   }
 
   throw(value: unknown): void {
-    if (!(this instanceof Observer)) throw new InstanceofError("this", stringTag);
+    if (!(this instanceof Observer)) {
+      throw new TypeError(`'this' is not instanceof '${stringTag}'`);
+    }
     if (!arguments.length) throw new TypeError("1 argument required but 0 present");
 
     // If this observer has been aborted there is nothing to do.

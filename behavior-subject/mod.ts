@@ -1,5 +1,5 @@
 import { isObserver, type Observer, type Subject } from "@observable/core";
-import { InstanceofError, ParameterTypeError } from "@observable/internal";
+import { ParameterTypeError } from "@observable/internal";
 import { ReplaySubject } from "@observable/replay-subject";
 
 /**
@@ -76,21 +76,23 @@ export const BehaviorSubject: BehaviorSubjectConstructor = class<Value> {
 
   next(value: Value): void {
     if (this instanceof BehaviorSubject) this.#subject.next(value);
-    else throw new InstanceofError("this", stringTag);
+    else throw new TypeError(`'this' is not instanceof '${stringTag}'`);
   }
 
   return(): void {
     if (this instanceof BehaviorSubject) this.#subject.return();
-    else throw new InstanceofError("this", stringTag);
+    else throw new TypeError(`'this' is not instanceof '${stringTag}'`);
   }
 
   throw(value: unknown): void {
     if (this instanceof BehaviorSubject) this.#subject.throw(value);
-    else throw new InstanceofError("this", stringTag);
+    else throw new TypeError(`'this' is not instanceof '${stringTag}'`);
   }
 
   subscribe(observer: Observer<Value>): void {
-    if (!(this instanceof BehaviorSubject)) throw new InstanceofError("this", stringTag);
+    if (!(this instanceof BehaviorSubject)) {
+      throw new TypeError(`'this' is not instanceof '${stringTag}'`);
+    }
     if (!arguments.length) throw new TypeError("1 argument required but 0 present");
     if (!isObserver(observer)) throw new ParameterTypeError(0, "Observer");
     this.#subject.subscribe(observer);

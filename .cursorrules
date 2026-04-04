@@ -231,7 +231,7 @@ Each package is a Deno workspace member with its own `deno.json`.
 import { isObservable, isObserver, Observable, Observer, Subject } from "@observable/core";
 
 // Internal utilities (only for library code, not consumers)
-import { InstanceofError, ParameterTypeError } from "@observable/internal";
+import { ParameterTypeError } from "@observable/internal";
 
 // Operators
 import { map } from "@observable/map";
@@ -273,7 +273,7 @@ Methods MUST validate `this`:
 
 ```ts
 next(value: unknown): void {
-  if (!(this instanceof Observer)) throw new InstanceofError("this", "Observer");
+  if (!(this instanceof Observer)) throw new TypeError("'this' is not instance of 'Observer'");
   // ...
 }
 ```

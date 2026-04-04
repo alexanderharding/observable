@@ -1,4 +1,4 @@
-import { InstanceofError, ParameterTypeError } from "@observable/internal";
+import { ParameterTypeError } from "@observable/internal";
 import { isObserver, Observer } from "./observer.ts";
 import type { ObservableConstructor } from "./observable-constructor.ts";
 
@@ -32,7 +32,9 @@ export const Observable: ObservableConstructor = class<Value> {
   }
 
   subscribe(observer: Observer<Value>): void {
-    if (!(this instanceof Observable)) throw new InstanceofError("this", stringTag);
+    if (!(this instanceof Observable)) {
+      throw new TypeError(`'this' is not instanceof '${stringTag}'`);
+    }
     if (!arguments.length) throw new TypeError("1 argument required but 0 present");
     if (!isObserver(observer)) throw new ParameterTypeError(0, "Observer");
 

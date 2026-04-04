@@ -1,6 +1,6 @@
 import { isObserver, Observer } from "./observer.ts";
 import { Observable } from "./observable.ts";
-import { InstanceofError, ParameterTypeError } from "@observable/internal";
+import { ParameterTypeError } from "@observable/internal";
 import type { SubjectConstructor } from "./subject-constructor.ts";
 
 /**
@@ -95,21 +95,23 @@ export const Subject: SubjectConstructor = class {
 
   next(value: unknown): void {
     if (this instanceof Subject) this.#observer.next(value);
-    else throw new InstanceofError("this", stringTag);
+    else throw new TypeError(`'this' is not instanceof '${stringTag}'`);
   }
 
   return(): void {
     if (this instanceof Subject) this.#observer.return();
-    else throw new InstanceofError("this", stringTag);
+    else throw new TypeError(`'this' is not instanceof '${stringTag}'`);
   }
 
   throw(value: unknown): void {
     if (this instanceof Subject) this.#observer.throw(value);
-    else throw new InstanceofError("this", stringTag);
+    else throw new TypeError(`'this' is not instanceof '${stringTag}'`);
   }
 
   subscribe(observer: Observer): void {
-    if (!(this instanceof Subject)) throw new InstanceofError("this", stringTag);
+    if (!(this instanceof Subject)) {
+      throw new TypeError(`'this' is not instanceof '${stringTag}'`);
+    }
     if (!arguments.length) throw new TypeError("1 argument required but 0 present");
     if (!isObserver(observer)) throw new ParameterTypeError(0, "Observer");
     this.#observable.subscribe(observer);
