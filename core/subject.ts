@@ -1,6 +1,6 @@
 import { isObserver, Observer } from "./observer.ts";
 import { Observable } from "./observable.ts";
-import { ParameterTypeError } from "@observable/internal";
+
 import type { SubjectConstructor } from "./subject-constructor.ts";
 
 /**
@@ -113,7 +113,7 @@ export const Subject: SubjectConstructor = class {
       throw new TypeError(`'this' is not instanceof '${stringTag}'`);
     }
     if (!arguments.length) throw new TypeError("1 argument required but 0 present");
-    if (!isObserver(observer)) throw new ParameterTypeError(0, "Observer");
+    if (!isObserver(observer)) throw new TypeError("Parameter 1 is not of type 'Observer'");
     this.#observable.subscribe(observer);
   }
 };

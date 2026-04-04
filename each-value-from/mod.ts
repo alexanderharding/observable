@@ -1,6 +1,5 @@
 import { isObservable, type Observable } from "@observable/core";
 import { from } from "@observable/from";
-import { ParameterTypeError } from "@observable/internal";
 
 /**
  * Flag indicating that a value is not thrown.
@@ -96,7 +95,7 @@ export async function* eachValueFrom<Value>(
   observable: Observable<Value>,
 ): AsyncGenerator<Value, void, void> {
   if (!arguments.length) throw new TypeError("1 argument required but 0 present");
-  if (!isObservable(observable)) throw new ParameterTypeError(0, "Observable");
+  if (!isObservable(observable)) throw new TypeError("Parameter 1 is not of type 'Observable'");
   const activeSubscriptionController = new AbortController();
   let thrownValue: unknown = notThrown;
   let returned = false;

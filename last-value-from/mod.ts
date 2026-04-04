@@ -1,5 +1,5 @@
 import { isObservable, type Observable, Observer } from "@observable/core";
-import { ParameterTypeError } from "@observable/internal";
+
 import { pipe } from "@observable/pipe";
 import { at } from "@observable/at";
 
@@ -81,7 +81,7 @@ export function lastValueFrom<Value>(
   observable: Observable<Value | PromiseLike<Value>>,
 ): Promise<Value> {
   if (!arguments.length) throw new TypeError("1 argument required but 0 present");
-  if (!isObservable(observable)) throw new ParameterTypeError(0, "Observable");
+  if (!isObservable(observable)) throw new TypeError("Parameter 1 is not of type 'Observable'");
   return new Promise((resolve, reject) => {
     pipe(observable, at(-1)).subscribe(
       new Observer({

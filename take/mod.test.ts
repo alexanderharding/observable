@@ -1,6 +1,6 @@
 import { assertEquals, assertStrictEquals, assertThrows } from "@std/assert";
 import { Observable, Observer, Subject } from "@observable/core";
-import { ParameterTypeError } from "@observable/internal";
+
 import { empty } from "@observable/empty";
 import { never } from "@observable/never";
 import { forOf } from "@observable/for-of";
@@ -24,7 +24,8 @@ Deno.test("take should throw if count is not a number", () => {
   assertThrows(
     // @ts-expect-error: Testing invalid arguments
     () => take("not a number"),
-    ParameterTypeError,
+    TypeError,
+    "Parameter 1 is not of type 'Number'",
   );
 });
 

@@ -1,5 +1,4 @@
 import { isObservable, Observable } from "@observable/core";
-import { ParameterTypeError } from "@observable/internal";
 
 /**
  * Converts a custom [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) to a proper
@@ -44,7 +43,7 @@ export function from<Value>(
   value: Pick<Observable<Value>, keyof Observable<Value>>,
 ): Observable<Value> {
   if (!arguments.length) throw new TypeError("1 argument required but 0 present");
-  if (!isObservable(value)) throw new ParameterTypeError(0, "Observable");
+  if (!isObservable(value)) throw new TypeError("Parameter 1 is not of type 'Observable'");
   if (value instanceof Observable) return value;
   return new Observable((observer) => value.subscribe(observer));
 }

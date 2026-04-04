@@ -1,4 +1,3 @@
-import { ParameterTypeError } from "@observable/internal";
 import { isObserver, Observer } from "./observer.ts";
 import type { ObservableConstructor } from "./observable-constructor.ts";
 
@@ -26,7 +25,9 @@ export const Observable: ObservableConstructor = class<Value> {
 
   constructor(subscribe: (observer: Observer<Value>) => void) {
     if (!arguments.length) throw new TypeError("1 argument required but 0 present");
-    if (typeof subscribe !== "function") throw new ParameterTypeError(0, "Function");
+    if (typeof subscribe !== "function") {
+      throw new TypeError("Parameter 1 is not of type 'Function'");
+    }
     Object.freeze(this);
     this.#subscribe = subscribe;
   }
@@ -36,7 +37,7 @@ export const Observable: ObservableConstructor = class<Value> {
       throw new TypeError(`'this' is not instanceof '${stringTag}'`);
     }
     if (!arguments.length) throw new TypeError("1 argument required but 0 present");
-    if (!isObserver(observer)) throw new ParameterTypeError(0, "Observer");
+    if (!isObserver(observer)) throw new TypeError("Parameter 1 is not of type 'Observer'");
 
     // We need to ensure that we are working with an Observer instance from this library
     // so the resulting behavior is predictable.

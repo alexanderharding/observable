@@ -1,5 +1,5 @@
 import type { Observable } from "@observable/core";
-import { ParameterTypeError } from "@observable/internal";
+
 import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 import { mergeMap } from "@observable/merge-map";
@@ -89,7 +89,7 @@ export function merge<const Values extends ReadonlyArray<unknown>>(
 export function merge<Value>(sources: Iterable<Observable<Value>>): Observable<Value>;
 export function merge<Value>(sources: Iterable<Observable<Value>>): Observable<Value> {
   if (!arguments.length) throw new TypeError("1 argument required but 0 present");
-  if (!isIterable(sources)) throw new ParameterTypeError(0, "Iterable");
+  if (!isIterable(sources)) throw new TypeError("Parameter 1 is not of type 'Iterable'");
   if (Array.isArray(sources) && !sources.length) return empty;
   return pipe(forOf(sources), mergeMap((observable) => observable));
 }

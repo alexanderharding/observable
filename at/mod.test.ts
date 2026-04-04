@@ -1,6 +1,5 @@
 import { assertEquals, assertStrictEquals, assertThrows } from "@std/assert";
 import { Observable, Observer } from "@observable/core";
-import { ParameterTypeError } from "@observable/internal";
 import { empty } from "@observable/empty";
 import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
@@ -22,7 +21,8 @@ Deno.test("at should throw if index is not a number", () => {
   assertThrows(
     // @ts-expect-error: Testing invalid arguments
     () => at("not a number"),
-    ParameterTypeError,
+    TypeError,
+    "Parameter 1 is not of type 'number'",
   );
 });
 
@@ -39,7 +39,8 @@ Deno.test("at should throw if source is not an Observable (e.g. undefined)", () 
   const atOne = at(1);
   assertThrows(
     () => atOne(undefined as unknown as Observable<number>),
-    ParameterTypeError,
+    TypeError,
+    "Parameter 1 is not of type 'Observable'",
   );
 });
 
@@ -47,7 +48,8 @@ Deno.test("at should throw if source is not an Observable (invalid object)", () 
   const atOne = at(1);
   assertThrows(
     () => atOne({ subscribe: 1 } as unknown as Observable<number>),
-    ParameterTypeError,
+    TypeError,
+    "Parameter 1 is not of type 'Observable'",
   );
 });
 

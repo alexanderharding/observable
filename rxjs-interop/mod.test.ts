@@ -4,7 +4,7 @@ import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 import { throwError } from "@observable/throw-error";
 import { materialize, type ObserverNotification } from "@observable/materialize";
-import { ParameterTypeError } from "@observable/internal";
+
 import {
   Observable as RxJsObservable,
   of as rxJsOf,
@@ -125,7 +125,7 @@ Deno.test(
 );
 
 Deno.test(
-  "asObservable should throw ParameterTypeError when called with non-RxJS Observable",
+  "asObservable should throw TypeError when called with non-RxJS Observable",
   () => {
     // Arrange
     const operator = asObservable();
@@ -135,7 +135,7 @@ Deno.test(
     assertThrows(
       () => operator(notAnRxjsObservable as RxJsObservable<unknown>),
       TypeError,
-      "0 argument required but 1 present",
+      "Parameter 1 is not of type 'RxJsObservable'",
     );
   },
 );
@@ -252,7 +252,7 @@ Deno.test(
 );
 
 Deno.test(
-  "asRxJsObservable should throw ParameterTypeError when called with non-Observable",
+  "asRxJsObservable should throw TypeError when called with non-Observable",
   () => {
     // Arrange
     const operator = asRxJsObservable();
@@ -261,7 +261,8 @@ Deno.test(
     // Act & Assert
     assertThrows(
       () => operator(notAnObservable as Observable<unknown>),
-      ParameterTypeError,
+      TypeError,
+      "Parameter 1 is not of type 'Observable'",
     );
   },
 );

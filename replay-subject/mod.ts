@@ -1,5 +1,5 @@
 import { isObserver, type Observable, type Observer, Subject } from "@observable/core";
-import { ParameterTypeError } from "@observable/internal";
+
 import { flat } from "@observable/flat";
 import { defer } from "@observable/defer";
 import { forOf } from "@observable/for-of";
@@ -376,7 +376,7 @@ export const ReplaySubject: ReplaySubjectConstructor = class<Value> {
 
   constructor(count: number) {
     if (!arguments.length) throw new TypeError("1 argument required but 0 present");
-    if (typeof count !== "number") throw new ParameterTypeError(0, "Number");
+    if (typeof count !== "number") throw new TypeError("Parameter 1 is not of type 'Number'");
     Object.freeze(this);
     (this.#count = Math.trunc(count)) >= 0 ? this.#bufferSnapshot = undefined : this.return();
     if (this.signal.aborted || this.#count === 0) return;
@@ -413,7 +413,7 @@ export const ReplaySubject: ReplaySubjectConstructor = class<Value> {
       throw new TypeError(`'this' is not instanceof '${stringTag}'`);
     }
     if (!arguments.length) throw new TypeError("1 argument required but 0 present");
-    if (!isObserver(observer)) throw new ParameterTypeError(0, "Observer");
+    if (!isObserver(observer)) throw new TypeError("Parameter 1 is not of type 'Observer'");
     this.#observable.subscribe(observer);
   }
 };

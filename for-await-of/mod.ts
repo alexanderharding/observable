@@ -1,5 +1,4 @@
 import { Observable } from "@observable/core";
-import { ParameterTypeError } from "@observable/internal";
 
 /**
  * Projects an [`AsyncIterable`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#the_async_iterator_and_async_iterable_protocols)
@@ -32,7 +31,7 @@ import { ParameterTypeError } from "@observable/internal";
  */
 export function forAwaitOf<Value>(values: AsyncIterable<Value>): Observable<Value> {
   if (!arguments.length) throw new TypeError("1 argument required but 0 present");
-  if (!isAsyncIterable(values)) throw new ParameterTypeError(0, "AsyncIterable");
+  if (!isAsyncIterable(values)) throw new TypeError("Parameter 1 is not of type 'AsyncIterable'");
   return new Observable(async (observer) => {
     try {
       for await (const value of values) {

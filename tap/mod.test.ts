@@ -6,7 +6,7 @@ import { pipe } from "@observable/pipe";
 import { throwError } from "@observable/throw-error";
 import { tap } from "./mod.ts";
 import { materialize, type ObserverNotification } from "@observable/materialize";
-import { ParameterTypeError } from "@observable/internal";
+
 import { empty } from "@observable/empty";
 import { never } from "@observable/never";
 import { finalize } from "@observable/finalize";
@@ -24,7 +24,8 @@ Deno.test("tap should throw if callback is not a function", () => {
   assertThrows(
     // @ts-expect-error: Testing invalid arguments
     () => tap("not a function"),
-    ParameterTypeError,
+    TypeError,
+    "Parameter 1 is not of type 'Function'",
   );
 });
 
@@ -43,7 +44,8 @@ Deno.test("tap should throw if source is not an Observable", () => {
   assertThrows(
     // @ts-expect-error: Testing invalid arguments
     () => operatorFn("not an observable"),
-    ParameterTypeError,
+    TypeError,
+    "Parameter 1 is not of type 'Observable'",
   );
 });
 

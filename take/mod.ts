@@ -1,6 +1,6 @@
 import { isObservable, Observable } from "@observable/core";
 import { from } from "@observable/from";
-import { ParameterTypeError } from "@observable/internal";
+
 import { empty } from "@observable/empty";
 
 /**
@@ -127,13 +127,13 @@ import { empty } from "@observable/empty";
  */
 export function take<Value>(count: number): (source: Observable<Value>) => Observable<Value> {
   if (!arguments.length) throw new TypeError("1 argument required but 0 present");
-  if (typeof count !== "number") throw new ParameterTypeError(0, "Number");
+  if (typeof count !== "number") throw new TypeError("Parameter 1 is not of type 'Number'");
 
   count = Math.trunc(count);
 
   return function takeFn(source) {
     if (!arguments.length) throw new TypeError("1 argument required but 0 present");
-    if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
+    if (!isObservable(source)) throw new TypeError("Parameter 1 is not of type 'Observable'");
 
     if (count <= 0 || Number.isNaN(count)) return empty;
 

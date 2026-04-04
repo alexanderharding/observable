@@ -1,5 +1,5 @@
 import type { Observable } from "@observable/core";
-import { ParameterTypeError } from "@observable/internal";
+
 import { defer } from "@observable/defer";
 import { pipe } from "@observable/pipe";
 import { asyncAwait } from "@observable/async-await";
@@ -64,11 +64,13 @@ export function fetch(
   init?: Omit<RequestInit, "signal">,
 ): Observable<Response> {
   if (!arguments.length) throw new TypeError("1 argument required but 0 present");
-  if (typeof input !== "string" && !isURL(input)) throw new ParameterTypeError(0, "(String | URL)");
+  if (typeof input !== "string" && !isURL(input)) {
+    throw new TypeError("Parameter 1 is not of type '(String | URL)'");
+  }
   // Normally we'd check the entire RequestInit interface, but it's complex and we don't need to be
   // that strict here. We'll still do minor type checking though.
   if (typeof init !== "undefined" && (typeof init !== "object" || init === null)) {
-    throw new ParameterTypeError(1, "Object");
+    throw new TypeError("Parameter 2 is not of type 'Object'");
   }
   return defer(() => {
     let hasResponse = false;

@@ -1,6 +1,6 @@
 import { isObservable, type Observable } from "@observable/core";
 import { pipe } from "@observable/pipe";
-import { ParameterTypeError } from "@observable/internal";
+
 import { map } from "@observable/map";
 
 /**
@@ -38,10 +38,10 @@ export function tap<Value>(
   callback: (value: Value, index: number) => void,
 ): (source: Observable<Value>) => Observable<Value> {
   if (!arguments.length) throw new TypeError("1 argument required but 0 present");
-  if (typeof callback !== "function") throw new ParameterTypeError(0, "Function");
+  if (typeof callback !== "function") throw new TypeError("Parameter 1 is not of type 'Function'");
   return function tapFn(source) {
     if (!arguments.length) throw new TypeError("1 argument required but 0 present");
-    if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
+    if (!isObservable(source)) throw new TypeError("Parameter 1 is not of type 'Observable'");
     return pipe(
       source,
       map((value, index) => {

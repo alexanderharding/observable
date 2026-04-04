@@ -1,6 +1,6 @@
 import { isObservable, Observable, Subject } from "@observable/core";
 import { from } from "@observable/from";
-import { ParameterTypeError } from "@observable/internal";
+
 import { pipe } from "@observable/pipe";
 import { finalize } from "@observable/finalize";
 import { defer } from "@observable/defer";
@@ -94,10 +94,10 @@ import { defer } from "@observable/defer";
 export function share<Value>(
   factory: () => Subject<NoInfer<Value>> = () => new Subject(),
 ): (source: Observable<Value>) => Observable<Value> {
-  if (typeof factory !== "function") throw new ParameterTypeError(0, "Function");
+  if (typeof factory !== "function") throw new TypeError("Parameter 1 is not of type 'Function'");
   return function shareFn(source) {
     if (!arguments.length) throw new TypeError("1 argument required but 0 present");
-    if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
+    if (!isObservable(source)) throw new TypeError("Parameter 1 is not of type 'Observable'");
     let activeSubscriptions = 0;
     let shared: Observable<Value> | undefined;
     source = from(source);

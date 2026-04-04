@@ -1,6 +1,6 @@
 import { isObservable, type Observable } from "@observable/core";
 import { from } from "@observable/from";
-import { ParameterTypeError } from "@observable/internal";
+
 import { defer } from "@observable/defer";
 import { pipe } from "@observable/pipe";
 import { map } from "@observable/map";
@@ -38,10 +38,10 @@ export function scan<In, Out>(
   seed: Out,
 ): (source: Observable<In>) => Observable<Out> {
   if (!arguments.length) throw new TypeError("1 argument required but 0 present");
-  if (typeof reducer !== "function") throw new ParameterTypeError(0, "Function");
+  if (typeof reducer !== "function") throw new TypeError("Parameter 1 is not of type 'Function'");
   return function scanFn(source) {
     if (!arguments.length) throw new TypeError("1 argument required but 0 present");
-    if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
+    if (!isObservable(source)) throw new TypeError("Parameter 1 is not of type 'Observable'");
     source = from(source);
     return defer(() => {
       let previous = seed;

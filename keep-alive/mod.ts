@@ -1,6 +1,5 @@
 import { isObservable, Observable } from "@observable/core";
 import { from } from "@observable/from";
-import { ParameterTypeError } from "@observable/internal";
 
 const { signal: noopSignal } = new AbortController();
 
@@ -35,7 +34,7 @@ export function keepAlive<Value>(): (
 ) => Observable<Value> {
   return function keepAliveFn(source) {
     if (!arguments.length) throw new TypeError("1 argument required but 0 present");
-    if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
+    if (!isObservable(source)) throw new TypeError("Parameter 1 is not of type 'Observable'");
     source = from(source);
     return new Observable((observer) =>
       source.subscribe({

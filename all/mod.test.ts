@@ -9,7 +9,6 @@ import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 import { all } from "./mod.ts";
 import { ReplaySubject } from "@observable/replay-subject";
-import { ParameterTypeError } from "@observable/internal";
 
 Deno.test(
   "all should combine multiple input's Observables that next and return synchronously",
@@ -159,14 +158,16 @@ Deno.test("all should throw TypeError when called with no arguments", () => {
   );
 });
 
-Deno.test("all should throw ParameterTypeError when argument is not iterable", () => {
+Deno.test("all should throw TypeError when argument is not iterable", () => {
   // Act / Arrange / Assert
   assertThrows(
     () => (all as (iterable: unknown) => unknown)(null),
-    ParameterTypeError,
+    TypeError,
+    "Parameter 1 is not of type 'Iterable'",
   );
   assertThrows(
     () => (all as (iterable: unknown) => unknown)(42),
-    ParameterTypeError,
+    TypeError,
+    "Parameter 1 is not of type 'Iterable'",
   );
 });

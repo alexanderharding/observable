@@ -1,5 +1,4 @@
 import { isObserver, type Observer, Subject } from "@observable/core";
-import { ParameterTypeError } from "@observable/internal";
 
 /**
  * Object type that acts as a variant of [`Subject`](https://jsr.io/@observable/core/doc/~/Subject).
@@ -72,7 +71,7 @@ export const BroadcastSubject: BroadcastSubjectConstructor = class<Value> {
 
   constructor(name: string) {
     if (!arguments.length) throw new TypeError("1 argument required but 0 present");
-    if (typeof name !== "string") throw new ParameterTypeError(0, "String");
+    if (typeof name !== "string") throw new TypeError("Parameter 1 is not of type 'String'");
     Object.freeze(this);
     this.#channel = new BroadcastChannel(`${name}:${namespace}`);
     this.signal.addEventListener("abort", () => this.#channel.close(), { once: true });
@@ -106,7 +105,7 @@ export const BroadcastSubject: BroadcastSubjectConstructor = class<Value> {
       throw new TypeError(`'this' is not instanceof '${stringTag}'`);
     }
     if (!arguments.length) throw new TypeError("1 argument required but 0 present");
-    if (!isObserver(observer)) throw new ParameterTypeError(0, "Observer");
+    if (!isObserver(observer)) throw new TypeError("Parameter 1 is not of type 'Observer'");
     this.#subject.subscribe(observer);
   }
 };

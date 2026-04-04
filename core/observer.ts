@@ -1,4 +1,3 @@
-import { ParameterTypeError } from "@observable/internal";
 import type { ObserverConstructor } from "./observer-constructor.ts";
 
 /**
@@ -50,8 +49,7 @@ export const Observer: ObserverConstructor = class<Value> {
       typeof observer !== "function" &&
       !isPartialObserver(observer)
     ) {
-      const expected = "(Partial<Observer> or Observer['next'])";
-      throw new ParameterTypeError(0, expected);
+      throw new TypeError("Parameter 1 is not of type '(Partial<Observer> or Observer['next'])'");
     }
     this.#observer = typeof observer === "function" ? { next: observer } : observer;
     if (isAbortSignal(this.#observer?.signal)) {

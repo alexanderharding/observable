@@ -1,6 +1,5 @@
 import { pipe } from "./mod.ts";
 import { assertEquals, assertStrictEquals, assertThrows } from "@std/assert";
-import { ParameterTypeError } from "@observable/internal";
 
 Deno.test("pipe should throw TypeError when called with no arguments", () => {
   // Arrange / Act / Assert
@@ -12,27 +11,27 @@ Deno.test("pipe should throw TypeError when called with no arguments", () => {
   );
 });
 
-Deno.test("pipe should throw ParameterTypeError when second argument is not a function", () => {
+Deno.test("pipe should throw TypeError when second argument is not a function", () => {
   // Arrange / Act / Assert
   assertThrows(
     // @ts-expect-error: testing invalid usage
     () => pipe(1, "not a function"),
-    ParameterTypeError,
+    TypeError,
     "Parameter 2 is not of type 'Function'",
   );
 });
 
-Deno.test("pipe should throw ParameterTypeError when any argument after the first is not a function", () => {
+Deno.test("pipe should throw TypeError when any argument after the first is not a function", () => {
   // Arrange / Act / Assert
   assertThrows(
     // @ts-expect-error: testing invalid usage
     () => pipe(1, (x: number) => x + 1, null),
-    ParameterTypeError,
+    TypeError,
     "Parameter 3 is not of type 'Function'",
   );
 });
 
-Deno.test("pipe should throw ParameterTypeError when middle argument is not a function", () => {
+Deno.test("pipe should throw TypeError when middle argument is not a function", () => {
   // Arrange / Act / Assert
   assertThrows(
     () =>
@@ -43,7 +42,7 @@ Deno.test("pipe should throw ParameterTypeError when middle argument is not a fu
         42,
         (x: number) => x * 2,
       ),
-    ParameterTypeError,
+    TypeError,
     "Parameter 3 is not of type 'Function'",
   );
 });

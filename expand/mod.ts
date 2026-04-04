@@ -1,7 +1,7 @@
 import { isObservable, type Observable } from "@observable/core";
 import { from } from "@observable/from";
 import { pipe } from "@observable/pipe";
-import { ParameterTypeError } from "@observable/internal";
+
 import { mergeMap } from "@observable/merge-map";
 import { merge } from "@observable/merge";
 import { defer } from "@observable/defer";
@@ -88,10 +88,10 @@ export function expand<Value>(
   project: (value: Value, index: number) => Observable<Value>,
 ): (source: Observable<Value>) => Observable<Value> {
   if (!arguments.length) throw new TypeError("1 argument required but 0 present");
-  if (typeof project !== "function") throw new ParameterTypeError(0, "Function");
+  if (typeof project !== "function") throw new TypeError("Parameter 1 is not of type 'Function'");
   return function expandFn(source) {
     if (!arguments.length) throw new TypeError("1 argument required but 0 present");
-    if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
+    if (!isObservable(source)) throw new TypeError("Parameter 1 is not of type 'Observable'");
     source = from(source);
     return defer(() => {
       let index = 0;

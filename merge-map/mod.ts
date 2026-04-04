@@ -1,6 +1,5 @@
 import { isObservable, Observable } from "@observable/core";
 import { from } from "@observable/from";
-import { ParameterTypeError } from "@observable/internal";
 
 /**
  * {@linkcode project|Projects} each [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed
@@ -42,10 +41,10 @@ export function mergeMap<In, Out>(
   project: (value: In, index: number) => Observable<Out>,
 ): (source: Observable<In>) => Observable<Out> {
   if (!arguments.length) throw new TypeError("1 argument required but 0 present");
-  if (typeof project !== "function") throw new ParameterTypeError(0, "Function");
+  if (typeof project !== "function") throw new TypeError("Parameter 1 is not of type 'Function'");
   return function mergeMapFn(source) {
     if (!arguments.length) throw new TypeError("1 argument required but 0 present");
-    if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
+    if (!isObservable(source)) throw new TypeError("Parameter 1 is not of type 'Observable'");
     source = from(source);
     return new Observable((observer) => {
       let index = 0;

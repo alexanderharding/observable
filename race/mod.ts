@@ -1,5 +1,5 @@
 import { type Observable, Subject } from "@observable/core";
-import { ParameterTypeError } from "@observable/internal";
+
 import { defer } from "@observable/defer";
 import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
@@ -95,7 +95,7 @@ export function race<const Values extends ReadonlyArray<unknown>>(
 export function race<Value>(sources: Iterable<Observable<Value>>): Observable<Value>;
 export function race<Value>(sources: Iterable<Observable<Value>>): Observable<Value> {
   if (!arguments.length) throw new TypeError("1 argument required but 0 present");
-  if (!isIterable(sources)) throw new ParameterTypeError(0, "Iterable");
+  if (!isIterable(sources)) throw new TypeError("Parameter 1 is not of type 'Iterable'");
 
   if (Array.isArray(sources) && !sources.length) return empty;
 

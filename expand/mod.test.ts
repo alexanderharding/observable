@@ -1,6 +1,5 @@
 import { assertEquals, assertThrows } from "@std/assert";
 import { type Observable, Observer, Subject } from "@observable/core";
-import { ParameterTypeError } from "@observable/internal";
 import { pipe } from "@observable/pipe";
 import { materialize, type ObserverNotification } from "@observable/materialize";
 import { forOf } from "@observable/for-of";
@@ -24,7 +23,8 @@ Deno.test("expand should throw if project is not a function", () => {
   assertThrows(
     // @ts-expect-error: Testing invalid arguments
     () => expand("not a function"),
-    ParameterTypeError,
+    TypeError,
+    "Parameter 1 is not of type 'Function'",
   );
 });
 
@@ -43,7 +43,8 @@ Deno.test("expand operator function should throw if source is not an Observable"
   assertThrows(
     // @ts-expect-error: Testing invalid arguments
     () => operatorFn("not an observable"),
-    ParameterTypeError,
+    TypeError,
+    "Parameter 1 is not of type 'Observable'",
   );
 });
 

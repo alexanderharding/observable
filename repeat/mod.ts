@@ -1,6 +1,6 @@
 import { isObservable, type Observable } from "@observable/core";
 import { from } from "@observable/from";
-import { ParameterTypeError } from "@observable/internal";
+
 import { pipe } from "@observable/pipe";
 import { flat } from "@observable/flat";
 import { take } from "@observable/take";
@@ -59,11 +59,11 @@ import { of } from "@observable/of";
 export function repeat<Value>(
   notifier: Observable = of(undefined),
 ): (source: Observable<Value>) => Observable<Value> {
-  if (!isObservable(notifier)) throw new ParameterTypeError(0, "Observable");
+  if (!isObservable(notifier)) throw new TypeError("Parameter 1 is not of type 'Observable'");
   notifier = from(notifier);
   return function repeatFn(source) {
     if (!arguments.length) throw new TypeError("1 argument required but 0 present");
-    if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
+    if (!isObservable(source)) throw new TypeError("Parameter 1 is not of type 'Observable'");
     source = from(source);
     return flat([source, pipe(notifier, take(1), mergeMap(() => pipe(source, repeat(notifier))))]);
   };
