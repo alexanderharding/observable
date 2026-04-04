@@ -867,7 +867,7 @@ export function pipe<Value>(
   for (let index = 0; index < fns.length; index++) {
     const fn = fns[index];
     if (typeof fn !== "function") {
-      throw new TypeError(`Parameter ${index + 1} is not of type 'Function'`);
+      throw new TypeError(`Parameter ${index + 2} is not of type 'Function'`);
     }
     source = fn(source);
   }

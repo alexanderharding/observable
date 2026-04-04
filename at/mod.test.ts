@@ -22,7 +22,7 @@ Deno.test("at should throw if index is not a number", () => {
     // @ts-expect-error: Testing invalid arguments
     () => at("not a number"),
     TypeError,
-    "Parameter 1 is not of type 'number'",
+    "Parameter 1 is not of type 'Number'",
   );
 });
 
