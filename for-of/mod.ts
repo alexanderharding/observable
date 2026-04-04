@@ -1,5 +1,5 @@
 import { Observable } from "@observable/core";
-import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
+import { ParameterTypeError } from "@observable/internal";
 import { empty } from "@observable/empty";
 
 /**
@@ -70,7 +70,7 @@ export function forOf<const Values extends ReadonlyArray<unknown>>(
  */
 export function forOf<Value>(iterable: Iterable<Value>): Observable<Value>;
 export function forOf<Value>(iterable: Iterable<Value>): Observable<Value> {
-  if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
+  if (!arguments.length) throw new TypeError("1 argument required but 0 present");
   if (!isIterable(iterable)) throw new ParameterTypeError(0, "Iterable");
   if (Array.isArray(iterable) && !iterable.length) return empty;
   return new Observable((observer) => {
@@ -87,7 +87,7 @@ export function forOf<Value>(iterable: Iterable<Value>): Observable<Value> {
  * @internal Do NOT export
  */
 function isIterable(value: unknown): value is Iterable<unknown> {
-  if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
+  if (!arguments.length) throw new TypeError("1 argument required but 0 present");
   return (
     (typeof value === "object" && value !== null) &&
     Symbol.iterator in value &&

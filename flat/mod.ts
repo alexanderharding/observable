@@ -1,5 +1,5 @@
 import type { Observable } from "@observable/core";
-import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
+import { ParameterTypeError } from "@observable/internal";
 import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 import { flatMap } from "@observable/flat-map";
@@ -96,7 +96,7 @@ export function flat<const Values extends ReadonlyArray<unknown>>(
  */
 export function flat<Value>(sources: Iterable<Observable<Value>>): Observable<Value>;
 export function flat<Value>(sources: Iterable<Observable<Value>>): Observable<Value> {
-  if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
+  if (!arguments.length) throw new TypeError("1 argument required but 0 present");
   if (!isIterable(sources)) throw new ParameterTypeError(0, "Iterable");
   if (Array.isArray(sources) && !sources.length) return empty;
   return pipe(forOf(sources), flatMap((observable) => observable));
@@ -107,7 +107,7 @@ export function flat<Value>(sources: Iterable<Observable<Value>>): Observable<Va
  * @internal Do NOT export
  */
 function isIterable(value: unknown): value is Iterable<unknown> {
-  if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
+  if (!arguments.length) throw new TypeError("1 argument required but 0 present");
   return (
     (typeof value === "object" && value !== null) &&
     Symbol.iterator in value &&

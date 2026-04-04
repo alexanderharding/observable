@@ -1,8 +1,4 @@
-import {
-  InstanceofError,
-  MinimumArgumentsRequiredError,
-  ParameterTypeError,
-} from "@observable/internal";
+import { InstanceofError, ParameterTypeError } from "@observable/internal";
 import type { ObserverConstructor } from "./observer-constructor.ts";
 
 /**
@@ -102,7 +98,7 @@ export const Observer: ObserverConstructor = class<Value> {
 
   throw(value: unknown): void {
     if (!(this instanceof Observer)) throw new InstanceofError("this", stringTag);
-    if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
+    if (!arguments.length) throw new TypeError("1 argument required but 0 present");
 
     // If this observer has been aborted there is nothing to do.
     if (this.signal.aborted) return;
@@ -170,7 +166,7 @@ Object.freeze(Observer.prototype);
  * ```
  */
 export function isObserver(value: unknown): value is Observer {
-  if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
+  if (!arguments.length) throw new TypeError("1 argument required but 0 present");
   return (
     value instanceof Observer ||
     ((typeof value === "object" && value !== null) &&
@@ -205,7 +201,7 @@ function reportUnhandledError(value: unknown): void {
  * @internal Do NOT export.
  */
 function isPartialObserver(value: unknown): value is Partial<Observer> {
-  if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
+  if (!arguments.length) throw new TypeError("1 argument required but 0 present");
   return (
     value instanceof Observer ||
     ((typeof value === "object" && value !== null) &&
@@ -229,7 +225,7 @@ function isPartialObserver(value: unknown): value is Partial<Observer> {
  * @internal Do NOT export
  */
 function isAbortSignal(value: unknown): value is AbortSignal {
-  if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
+  if (!arguments.length) throw new TypeError("1 argument required but 0 present");
   return (
     value instanceof AbortSignal ||
     (isEventTarget(value) &&
@@ -248,7 +244,7 @@ function isAbortSignal(value: unknown): value is AbortSignal {
  * @internal Do NOT export
  */
 function isEventTarget(value: unknown): value is EventTarget {
-  if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
+  if (!arguments.length) throw new TypeError("1 argument required but 0 present");
   return (
     (typeof value === "object" && value !== null) &&
     "addEventListener" in value &&

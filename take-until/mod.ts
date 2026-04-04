@@ -1,6 +1,6 @@
 import { isObservable, Observable } from "@observable/core";
 import { from } from "@observable/from";
-import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
+import { ParameterTypeError } from "@observable/internal";
 
 /**
  * Takes [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values from the
@@ -33,11 +33,11 @@ import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/i
 export function takeUntil<Value>(
   notifier: Observable,
 ): (source: Observable<Value>) => Observable<Value> {
-  if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
+  if (!arguments.length) throw new TypeError("1 argument required but 0 present");
   if (!isObservable(notifier)) throw new ParameterTypeError(0, "Observable");
   notifier = from(notifier);
   return function takeUntilFn(source) {
-    if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
+    if (!arguments.length) throw new TypeError("1 argument required but 0 present");
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
     source = from(source);
     return new Observable((observer) => {

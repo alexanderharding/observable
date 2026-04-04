@@ -1,9 +1,5 @@
 import { isObserver, type Observable, type Observer, Subject } from "@observable/core";
-import {
-  InstanceofError,
-  MinimumArgumentsRequiredError,
-  ParameterTypeError,
-} from "@observable/internal";
+import { InstanceofError, ParameterTypeError } from "@observable/internal";
 import { flat } from "@observable/flat";
 import { defer } from "@observable/defer";
 import { forOf } from "@observable/for-of";
@@ -379,7 +375,7 @@ export const ReplaySubject: ReplaySubjectConstructor = class<Value> {
   ]);
 
   constructor(count: number) {
-    if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
+    if (!arguments.length) throw new TypeError("1 argument required but 0 present");
     if (typeof count !== "number") throw new ParameterTypeError(0, "Number");
     Object.freeze(this);
     (this.#count = Math.trunc(count)) >= 0 ? this.#bufferSnapshot = undefined : this.return();
@@ -412,7 +408,7 @@ export const ReplaySubject: ReplaySubjectConstructor = class<Value> {
 
   subscribe(observer: Observer<Value>): void {
     if (!(this instanceof ReplaySubject)) throw new InstanceofError("this", stringTag);
-    if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
+    if (!arguments.length) throw new TypeError("1 argument required but 0 present");
     if (!isObserver(observer)) throw new ParameterTypeError(0, "Observer");
     this.#observable.subscribe(observer);
   }

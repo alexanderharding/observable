@@ -1,5 +1,5 @@
 import { isObservable, Observable } from "@observable/core";
-import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
+import { ParameterTypeError } from "@observable/internal";
 import { from } from "@observable/from";
 
 /**
@@ -33,10 +33,10 @@ import { from } from "@observable/from";
 export function catchError<Value, ProjectedValue>(
   project: (error: unknown) => Observable<ProjectedValue>,
 ): (source: Observable<Value>) => Observable<Value | ProjectedValue> {
-  if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
+  if (!arguments.length) throw new TypeError("1 argument required but 0 present");
   if (typeof project !== "function") throw new ParameterTypeError(0, "Function");
   return function catchErrorFn(source) {
-    if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
+    if (!arguments.length) throw new TypeError("1 argument required but 0 present");
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
     source = from(source);
     return new Observable((observer) =>

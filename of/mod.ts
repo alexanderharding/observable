@@ -1,5 +1,4 @@
 import type { Observable } from "@observable/core";
-import { MinimumArgumentsRequiredError } from "@observable/internal";
 import { forOf } from "@observable/for-of";
 
 /**
@@ -25,6 +24,6 @@ import { forOf } from "@observable/for-of";
  * ```
  */
 export function of<const Value>(value: Value): Observable<Value> {
-  if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
+  if (!arguments.length) throw new TypeError("1 argument required but 0 present");
   return forOf([value]);
 }

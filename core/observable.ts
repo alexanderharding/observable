@@ -1,8 +1,4 @@
-import {
-  InstanceofError,
-  MinimumArgumentsRequiredError,
-  ParameterTypeError,
-} from "@observable/internal";
+import { InstanceofError, ParameterTypeError } from "@observable/internal";
 import { isObserver, Observer } from "./observer.ts";
 import type { ObservableConstructor } from "./observable-constructor.ts";
 
@@ -29,7 +25,7 @@ export const Observable: ObservableConstructor = class<Value> {
   readonly #subscribe: (observer: Observer<Value>) => void;
 
   constructor(subscribe: (observer: Observer<Value>) => void) {
-    if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
+    if (!arguments.length) throw new TypeError("1 argument required but 0 present");
     if (typeof subscribe !== "function") throw new ParameterTypeError(0, "Function");
     Object.freeze(this);
     this.#subscribe = subscribe;
@@ -37,7 +33,7 @@ export const Observable: ObservableConstructor = class<Value> {
 
   subscribe(observer: Observer<Value>): void {
     if (!(this instanceof Observable)) throw new InstanceofError("this", stringTag);
-    if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
+    if (!arguments.length) throw new TypeError("1 argument required but 0 present");
     if (!isObserver(observer)) throw new ParameterTypeError(0, "Observer");
 
     // We need to ensure that we are working with an Observer instance from this library

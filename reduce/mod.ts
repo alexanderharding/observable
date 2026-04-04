@@ -1,5 +1,5 @@
 import { isObservable, type Observable } from "@observable/core";
-import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
+import { ParameterTypeError } from "@observable/internal";
 import { scan } from "@observable/scan";
 import { pipe } from "@observable/pipe";
 import { at } from "@observable/at";
@@ -35,10 +35,10 @@ export function reduce<In, Out>(
   reducer: (previous: Out, current: In, index: number) => Out,
   seed: Out,
 ): (source: Observable<In>) => Observable<Out> {
-  if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
+  if (!arguments.length) throw new TypeError("1 argument required but 0 present");
   if (typeof reducer !== "function") throw new ParameterTypeError(0, "Function");
   return function reduceFn(source) {
-    if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
+    if (!arguments.length) throw new TypeError("1 argument required but 0 present");
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
     return pipe(source, scan(reducer, seed), at(-1));
   };

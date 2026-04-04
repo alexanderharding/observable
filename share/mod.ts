@@ -1,6 +1,6 @@
 import { isObservable, Observable, Subject } from "@observable/core";
 import { from } from "@observable/from";
-import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
+import { ParameterTypeError } from "@observable/internal";
 import { pipe } from "@observable/pipe";
 import { finalize } from "@observable/finalize";
 import { defer } from "@observable/defer";
@@ -96,7 +96,7 @@ export function share<Value>(
 ): (source: Observable<Value>) => Observable<Value> {
   if (typeof factory !== "function") throw new ParameterTypeError(0, "Function");
   return function shareFn(source) {
-    if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
+    if (!arguments.length) throw new TypeError("1 argument required but 0 present");
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
     let activeSubscriptions = 0;
     let shared: Observable<Value> | undefined;

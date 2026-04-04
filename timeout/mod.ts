@@ -1,4 +1,4 @@
-import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
+import { ParameterTypeError } from "@observable/internal";
 import { Observable } from "@observable/core";
 import { empty } from "@observable/empty";
 import { of } from "@observable/of";
@@ -93,7 +93,7 @@ import { take } from "@observable/take";
  * ```
  */
 export function timeout(milliseconds: number): Observable<void> {
-  if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
+  if (!arguments.length) throw new TypeError("1 argument required but 0 present");
   if (typeof milliseconds !== "number") throw new ParameterTypeError(0, "Number");
   if (milliseconds < 0 || Number.isNaN(milliseconds)) return empty;
   if (milliseconds === 0) return of(undefined);

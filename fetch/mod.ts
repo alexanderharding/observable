@@ -1,5 +1,5 @@
 import type { Observable } from "@observable/core";
-import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
+import { ParameterTypeError } from "@observable/internal";
 import { defer } from "@observable/defer";
 import { pipe } from "@observable/pipe";
 import { asyncAwait } from "@observable/async-await";
@@ -63,7 +63,7 @@ export function fetch(
   input: string | URL,
   init?: Omit<RequestInit, "signal">,
 ): Observable<Response> {
-  if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
+  if (!arguments.length) throw new TypeError("1 argument required but 0 present");
   if (typeof input !== "string" && !isURL(input)) throw new ParameterTypeError(0, "(String | URL)");
   // Normally we'd check the entire RequestInit interface, but it's complex and we don't need to be
   // that strict here. We'll still do minor type checking though.
@@ -92,7 +92,7 @@ export function fetch(
  * @internal Do NOT export
  */
 function isURL(value: unknown): value is URL {
-  if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
+  if (!arguments.length) throw new TypeError("1 argument required but 0 present");
   return (
     value instanceof URL ||
     ((typeof value === "object" && value !== null) &&

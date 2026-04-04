@@ -1,4 +1,3 @@
-import { MinimumArgumentsRequiredError } from "@observable/internal";
 import { Observer } from "./observer.ts";
 import { assertEquals, assertInstanceOf, assertStrictEquals, assertThrows } from "@std/assert";
 import { isObserver } from "./observer.ts";
@@ -253,7 +252,7 @@ Deno.test("Observer.throw should throw if called with no arguments", () => {
   // Arrange / Act / Assert
   assertThrows(
     () => new Observer().throw(...([] as unknown as Parameters<Observer["throw"]>)),
-    MinimumArgumentsRequiredError,
+    TypeError,
     "1 argument required but 0 present",
   );
 });

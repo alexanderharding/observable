@@ -1,5 +1,5 @@
 import { type Observable, Subject } from "@observable/core";
-import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
+import { ParameterTypeError } from "@observable/internal";
 import { defer } from "@observable/defer";
 import { empty } from "@observable/empty";
 import { forOf } from "@observable/for-of";
@@ -137,7 +137,7 @@ export function all<const Values extends ReadonlyArray<unknown>>(
  */
 export function all<Value>(input: Iterable<Observable<Value>>): Observable<ReadonlyArray<Value>>;
 export function all<Value>(input: Iterable<Observable<Value>>): Observable<ReadonlyArray<Value>> {
-  if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
+  if (!arguments.length) throw new TypeError("1 argument required but 0 present");
   if (!isIterable(input)) throw new ParameterTypeError(0, "Iterable");
 
   if (Array.isArray(input) && !input.length) return empty;
@@ -216,7 +216,7 @@ export function all<Value>(input: Iterable<Observable<Value>>): Observable<Reado
  * @internal Do NOT export
  */
 function isIterable(value: unknown): value is Iterable<unknown> {
-  if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
+  if (!arguments.length) throw new TypeError("1 argument required but 0 present");
   return (
     (typeof value === "object" && value !== null) &&
     Symbol.iterator in value &&

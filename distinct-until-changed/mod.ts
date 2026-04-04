@@ -1,6 +1,6 @@
 import { isObservable, type Observable } from "@observable/core";
 import { from } from "@observable/from";
-import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
+import { ParameterTypeError } from "@observable/internal";
 import { pipe } from "@observable/pipe";
 import { map } from "@observable/map";
 import { filter } from "@observable/filter";
@@ -48,7 +48,7 @@ export function distinctUntilChanged<Value>(
 ): (source: Observable<Value>) => Observable<Value> {
   if (typeof comparator !== "function") throw new ParameterTypeError(0, "Function");
   return function distinctUntilChangedFn(source) {
-    if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
+    if (!arguments.length) throw new TypeError("1 argument required but 0 present");
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
     source = from(source);
     return pipe(

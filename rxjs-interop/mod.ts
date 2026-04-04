@@ -1,5 +1,5 @@
 import { isObservable, Observable } from "@observable/core";
-import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
+import { ParameterTypeError } from "@observable/internal";
 import {
   from as rxJsFrom,
   isObservable as isRxJsObservable,
@@ -35,7 +35,7 @@ import { from } from "@observable/from";
  */
 export function asObservable<Value>(): (source: RxJsObservable<Value>) => Observable<Value> {
   return function asObservableFn(source) {
-    if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
+    if (!arguments.length) throw new TypeError("1 argument required but 0 present");
     if (!isRxJsObservable(source)) throw new ParameterTypeError(0, "RxJsObservable");
     return new Observable((observer) => {
       // Create a new subscriber to manually before subscribing to the source so we have precise
@@ -79,7 +79,7 @@ export function asObservable<Value>(): (source: RxJsObservable<Value>) => Observ
  */
 export function asRxJsObservable<Value>(): (source: Observable<Value>) => RxJsObservable<Value> {
   return function asRxJsObservableFn(source) {
-    if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
+    if (!arguments.length) throw new TypeError("1 argument required but 0 present");
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
     return new RxJsObservable((subscriber) => {
       if (subscriber.closed) return;

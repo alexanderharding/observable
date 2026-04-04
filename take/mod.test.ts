@@ -1,6 +1,6 @@
 import { assertEquals, assertStrictEquals, assertThrows } from "@std/assert";
 import { Observable, Observer, Subject } from "@observable/core";
-import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
+import { ParameterTypeError } from "@observable/internal";
 import { empty } from "@observable/empty";
 import { never } from "@observable/never";
 import { forOf } from "@observable/for-of";
@@ -14,7 +14,8 @@ Deno.test("take should throw if no arguments are provided", () => {
   assertThrows(
     // @ts-expect-error: Testing invalid arguments
     () => take(),
-    MinimumArgumentsRequiredError,
+    TypeError,
+    "1 argument required but 0 present",
   );
 });
 

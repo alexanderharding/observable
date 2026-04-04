@@ -1,9 +1,5 @@
 import { isObserver, type Observer, type Subject } from "@observable/core";
-import {
-  InstanceofError,
-  MinimumArgumentsRequiredError,
-  ParameterTypeError,
-} from "@observable/internal";
+import { InstanceofError, ParameterTypeError } from "@observable/internal";
 import { ReplaySubject } from "@observable/replay-subject";
 
 /**
@@ -73,7 +69,7 @@ export const BehaviorSubject: BehaviorSubjectConstructor = class<Value> {
   readonly signal = this.#subject.signal;
 
   constructor(value: Value) {
-    if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
+    if (!arguments.length) throw new TypeError("1 argument required but 0 present");
     Object.freeze(this);
     this.#subject.next(value);
   }
@@ -95,7 +91,7 @@ export const BehaviorSubject: BehaviorSubjectConstructor = class<Value> {
 
   subscribe(observer: Observer<Value>): void {
     if (!(this instanceof BehaviorSubject)) throw new InstanceofError("this", stringTag);
-    if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
+    if (!arguments.length) throw new TypeError("1 argument required but 0 present");
     if (!isObserver(observer)) throw new ParameterTypeError(0, "Observer");
     this.#subject.subscribe(observer);
   }

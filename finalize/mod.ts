@@ -1,6 +1,6 @@
 import { isObservable, Observable } from "@observable/core";
 import { from } from "@observable/from";
-import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
+import { ParameterTypeError } from "@observable/internal";
 
 /**
  * The [consumer](https://jsr.io/@observable/core#consumer) is telling the [producer](https://jsr.io/@observable/core#producer)
@@ -76,10 +76,10 @@ import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/i
 export function finalize<Value>(
   callback: () => void,
 ): (source: Observable<Value>) => Observable<Value> {
-  if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
+  if (!arguments.length) throw new TypeError("1 argument required but 0 present");
   if (typeof callback !== "function") throw new ParameterTypeError(0, "Function");
   return function finalizeFn(source) {
-    if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
+    if (!arguments.length) throw new TypeError("1 argument required but 0 present");
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
     source = from(source);
     return new Observable((observer) => {

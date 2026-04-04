@@ -1,10 +1,6 @@
 import { isObserver, Observer } from "./observer.ts";
 import { Observable } from "./observable.ts";
-import {
-  InstanceofError,
-  MinimumArgumentsRequiredError,
-  ParameterTypeError,
-} from "@observable/internal";
+import { InstanceofError, ParameterTypeError } from "@observable/internal";
 import type { SubjectConstructor } from "./subject-constructor.ts";
 
 /**
@@ -114,7 +110,7 @@ export const Subject: SubjectConstructor = class {
 
   subscribe(observer: Observer): void {
     if (!(this instanceof Subject)) throw new InstanceofError("this", stringTag);
-    if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
+    if (!arguments.length) throw new TypeError("1 argument required but 0 present");
     if (!isObserver(observer)) throw new ParameterTypeError(0, "Observer");
     this.#observable.subscribe(observer);
   }

@@ -1,13 +1,13 @@
 import { pipe } from "./mod.ts";
 import { assertEquals, assertStrictEquals, assertThrows } from "@std/assert";
-import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
+import { ParameterTypeError } from "@observable/internal";
 
-Deno.test("pipe should throw MinimumArgumentsRequiredError when called with no arguments", () => {
+Deno.test("pipe should throw TypeError when called with no arguments", () => {
   // Arrange / Act / Assert
   assertThrows(
     // @ts-expect-error: testing invalid usage
     () => pipe(),
-    MinimumArgumentsRequiredError,
+    TypeError,
     "1 argument required but 0 present",
   );
 });

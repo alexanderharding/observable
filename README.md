@@ -106,12 +106,10 @@ directly to the user's call site, making debugging straightforward.
 ```ts
 // ✓ Good: Validation at entry point produces a shallow stack trace
 function map<In, Out>(transform: (value: In) => Out): (source: In[]) => Out[] {
-  if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-  if (typeof transform !== "function") {
-    throw new ParameterTypeError(0, "Function");
-  }
+  if (!arguments.length) throw new TypeError("1 argument required but 0 present");
+  if (typeof transform !== "function") throw new ParameterTypeError(0, "Function");
   return function mapFn(source) {
-    if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
+    if (!arguments.length) throw new TypeError("1 argument required but 0 present");
     if (!Array.isArray(source)) throw new ParameterTypeError(0, "Array");
     // ...
   };
@@ -140,7 +138,7 @@ Provide `is*` type guard functions for all unique public interfaces. Type guards
 
 ```ts
 function isUser(value: unknown): value is User {
-  if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
+  if (!arguments.length) throw new TypeError("1 argument required but 0 present");
   return (
     value instanceof User ||
     ((typeof value === "object" && value !== null) &&

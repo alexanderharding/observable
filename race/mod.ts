@@ -1,5 +1,5 @@
 import { type Observable, Subject } from "@observable/core";
-import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
+import { ParameterTypeError } from "@observable/internal";
 import { defer } from "@observable/defer";
 import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
@@ -94,7 +94,7 @@ export function race<const Values extends ReadonlyArray<unknown>>(
  */
 export function race<Value>(sources: Iterable<Observable<Value>>): Observable<Value>;
 export function race<Value>(sources: Iterable<Observable<Value>>): Observable<Value> {
-  if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
+  if (!arguments.length) throw new TypeError("1 argument required but 0 present");
   if (!isIterable(sources)) throw new ParameterTypeError(0, "Iterable");
 
   if (Array.isArray(sources) && !sources.length) return empty;
@@ -123,7 +123,7 @@ export function race<Value>(sources: Iterable<Observable<Value>>): Observable<Va
  * @internal Do NOT export
  */
 function isIterable(value: unknown): value is Iterable<unknown> {
-  if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
+  if (!arguments.length) throw new TypeError("1 argument required but 0 present");
   return (
     (typeof value === "object" && value !== null) &&
     Symbol.iterator in value &&

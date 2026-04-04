@@ -1,4 +1,3 @@
-import { MinimumArgumentsRequiredError } from "@observable/internal";
 import { Observable } from "./observable.ts";
 
 /**
@@ -47,7 +46,7 @@ import { Observable } from "./observable.ts";
  * ```
  */
 export function isObservable(value: unknown): value is Observable {
-  if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
+  if (!arguments.length) throw new TypeError("1 argument required but 0 present");
   return (
     value instanceof Observable ||
     ((typeof value === "object" && value !== null) &&

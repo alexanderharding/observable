@@ -1,6 +1,6 @@
 import { isObservable, type Observable } from "@observable/core";
 import { from } from "@observable/from";
-import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
+import { ParameterTypeError } from "@observable/internal";
 import { defer } from "@observable/defer";
 import { pipe } from "@observable/pipe";
 import { map } from "@observable/map";
@@ -37,10 +37,10 @@ export function scan<In, Out>(
   reducer: (previous: Out, current: In, index: number) => Out,
   seed: Out,
 ): (source: Observable<In>) => Observable<Out> {
-  if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
+  if (!arguments.length) throw new TypeError("1 argument required but 0 present");
   if (typeof reducer !== "function") throw new ParameterTypeError(0, "Function");
   return function scanFn(source) {
-    if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
+    if (!arguments.length) throw new TypeError("1 argument required but 0 present");
     if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
     source = from(source);
     return defer(() => {

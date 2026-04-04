@@ -1,6 +1,6 @@
 import { assertEquals, assertThrows } from "@std/assert";
 import { type Observable, Observer, Subject } from "@observable/core";
-import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
+import { ParameterTypeError } from "@observable/internal";
 import { pipe } from "@observable/pipe";
 import { materialize, type ObserverNotification } from "@observable/materialize";
 import { forOf } from "@observable/for-of";
@@ -15,7 +15,8 @@ Deno.test("expand should throw if no arguments are provided", () => {
   assertThrows(
     // @ts-expect-error: Testing invalid arguments
     () => expand(),
-    MinimumArgumentsRequiredError,
+    TypeError,
+    "1 argument required but 0 present",
   );
 });
 
@@ -32,7 +33,8 @@ Deno.test("expand operator function should throw if no arguments are provided", 
   assertThrows(
     // @ts-expect-error: Testing invalid arguments
     () => operatorFn(),
-    MinimumArgumentsRequiredError,
+    TypeError,
+    "1 argument required but 0 present",
   );
 });
 

@@ -6,7 +6,7 @@ import { pipe } from "@observable/pipe";
 import { throwError } from "@observable/throw-error";
 import { tap } from "./mod.ts";
 import { materialize, type ObserverNotification } from "@observable/materialize";
-import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
+import { ParameterTypeError } from "@observable/internal";
 import { empty } from "@observable/empty";
 import { never } from "@observable/never";
 import { finalize } from "@observable/finalize";
@@ -15,7 +15,8 @@ Deno.test("tap should throw if no arguments are provided", () => {
   assertThrows(
     // @ts-expect-error: Testing invalid arguments
     () => tap(),
-    MinimumArgumentsRequiredError,
+    TypeError,
+    "1 argument required but 0 present",
   );
 });
 
@@ -32,7 +33,8 @@ Deno.test("tap should throw if no arguments are provided", () => {
   assertThrows(
     // @ts-expect-error: Testing invalid arguments
     () => operatorFn(),
-    MinimumArgumentsRequiredError,
+    TypeError,
+    "1 argument required but 0 present",
   );
 });
 

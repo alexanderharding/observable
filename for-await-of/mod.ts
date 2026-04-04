@@ -1,5 +1,5 @@
 import { Observable } from "@observable/core";
-import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
+import { ParameterTypeError } from "@observable/internal";
 
 /**
  * Projects an [`AsyncIterable`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#the_async_iterator_and_async_iterable_protocols)
@@ -31,7 +31,7 @@ import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/i
  * ```
  */
 export function forAwaitOf<Value>(values: AsyncIterable<Value>): Observable<Value> {
-  if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
+  if (!arguments.length) throw new TypeError("1 argument required but 0 present");
   if (!isAsyncIterable(values)) throw new ParameterTypeError(0, "AsyncIterable");
   return new Observable(async (observer) => {
     try {
@@ -51,7 +51,7 @@ export function forAwaitOf<Value>(values: AsyncIterable<Value>): Observable<Valu
  * @internal Do NOT export
  */
 function isAsyncIterable(value: unknown): value is AsyncIterable<unknown> {
-  if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
+  if (!arguments.length) throw new TypeError("1 argument required but 0 present");
   return (
     (typeof value === "object" && value !== null) &&
     Symbol.asyncIterator in value &&

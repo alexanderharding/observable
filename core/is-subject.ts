@@ -1,4 +1,3 @@
-import { MinimumArgumentsRequiredError } from "@observable/internal";
 import { Subject } from "./subject.ts";
 import { isObservable } from "./is-observable.ts";
 import { isObserver } from "./observer.ts";
@@ -71,6 +70,6 @@ import { isObserver } from "./observer.ts";
  * ```
  */
 export function isSubject(value: unknown): value is Subject {
-  if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
+  if (!arguments.length) throw new TypeError("1 argument required but 0 present");
   return value instanceof Subject || (isObservable(value) && isObserver(value));
 }

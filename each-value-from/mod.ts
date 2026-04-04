@@ -1,6 +1,6 @@
 import { isObservable, type Observable } from "@observable/core";
 import { from } from "@observable/from";
-import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
+import { ParameterTypeError } from "@observable/internal";
 
 /**
  * Flag indicating that a value is not thrown.
@@ -95,7 +95,7 @@ type Deferred<Value> = Omit<PromiseWithResolvers<Value>, "promise">;
 export async function* eachValueFrom<Value>(
   observable: Observable<Value>,
 ): AsyncGenerator<Value, void, void> {
-  if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
+  if (!arguments.length) throw new TypeError("1 argument required but 0 present");
   if (!isObservable(observable)) throw new ParameterTypeError(0, "Observable");
   const activeSubscriptionController = new AbortController();
   let thrownValue: unknown = notThrown;
