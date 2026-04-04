@@ -1,10 +1,5 @@
 import type { Observable } from "@observable/core";
-import {
-  isObject,
-  isURL,
-  MinimumArgumentsRequiredError,
-  ParameterTypeError,
-} from "@observable/internal";
+import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 import { defer } from "@observable/defer";
 import { pipe } from "@observable/pipe";
 import { asyncAwait } from "@observable/async-await";
@@ -72,7 +67,9 @@ export function fetch(
   if (typeof input !== "string" && !isURL(input)) throw new ParameterTypeError(0, "(String | URL)");
   // Normally we'd check the entire RequestInit interface, but it's complex and we don't need to be
   // that strict here. We'll still do minor type checking though.
-  if (typeof init !== "undefined" && !isObject(init)) throw new ParameterTypeError(1, "Object");
+  if (typeof init !== "undefined" && (typeof init !== "object" || init === null)) {
+    throw new ParameterTypeError(1, "Object");
+  }
   return defer(() => {
     let hasResponse = false;
     const activeFetchController = new AbortController();
@@ -88,4 +85,43 @@ export function fetch(
       ),
     );
   });
+}
+
+/**
+ * Checks if a {@linkcode value} is an object that implements the {@linkcode URL} interface.
+ * @internal Do NOT export
+ */
+function isURL(value: unknown): value is URL {
+  if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
+  return (
+    value instanceof URL ||
+    ((typeof value === "object" && value !== null) &&
+      "href" in value &&
+      typeof value.href === "string" &&
+      "origin" in value &&
+      typeof value.origin === "string" &&
+      "protocol" in value &&
+      typeof value.protocol === "string" &&
+      "username" in value &&
+      typeof value.username === "string" &&
+      "password" in value &&
+      typeof value.password === "string" &&
+      "host" in value &&
+      typeof value.host === "string" &&
+      "hostname" in value &&
+      typeof value.hostname === "string" &&
+      "port" in value &&
+      typeof value.port === "string" &&
+      "pathname" in value &&
+      typeof value.pathname === "string" &&
+      "search" in value &&
+      typeof value.search === "string" &&
+      "searchParams" in value &&
+      "hash" in value &&
+      typeof value.hash === "string" &&
+      "toString" in value &&
+      typeof value.toString === "function" &&
+      "toJSON" in value &&
+      typeof value.toJSON === "function")
+  );
 }

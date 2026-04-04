@@ -1,6 +1,5 @@
 import { assertEquals, assertStrictEquals, assertThrows } from "@std/assert";
 import { Observer } from "@observable/core";
-import { noop } from "@observable/internal";
 import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 import { materialize, type ObserverNotification } from "@observable/materialize";
@@ -212,7 +211,7 @@ Deno.test("ReplaySubject.throw should not notify late observers of buffered valu
   const error = new Error("test error");
   const subject = new ReplaySubject<string>(2);
   const notifications: Array<ObserverNotification<string>> = [];
-  subject.subscribe(new Observer({ throw: noop }));
+  subject.subscribe(new Observer({ throw: () => {} }));
 
   // Act
   subject.next("foo");

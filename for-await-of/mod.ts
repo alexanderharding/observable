@@ -1,9 +1,5 @@
 import { Observable } from "@observable/core";
-import {
-  isAsyncIterable,
-  MinimumArgumentsRequiredError,
-  ParameterTypeError,
-} from "@observable/internal";
+import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 
 /**
  * Projects an [`AsyncIterable`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#the_async_iterator_and_async_iterable_protocols)
@@ -48,4 +44,17 @@ export function forAwaitOf<Value>(values: AsyncIterable<Value>): Observable<Valu
       observer.throw(value);
     }
   });
+}
+
+/**
+ * Checks if a {@linkcode value} is an object that implements the {@linkcode AsyncIterable} interface.
+ * @internal Do NOT export
+ */
+function isAsyncIterable(value: unknown): value is AsyncIterable<unknown> {
+  if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
+  return (
+    (typeof value === "object" && value !== null) &&
+    Symbol.asyncIterator in value &&
+    typeof value[Symbol.asyncIterator] === "function"
+  );
 }

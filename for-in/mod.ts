@@ -1,5 +1,5 @@
 import { Observable } from "@observable/core";
-import { isObject, MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
+import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 
 /**
  * Projects an [`Object`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)'s keys
@@ -28,7 +28,7 @@ import { isObject, MinimumArgumentsRequiredError, ParameterTypeError } from "@ob
  */
 export function forIn(object: object): Observable<string> {
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-  if (!isObject(object)) throw new ParameterTypeError(0, "Object");
+  if (typeof object !== "object" || object === null) throw new ParameterTypeError(0, "Object");
   return new Observable((observer) => {
     for (const key in object) {
       observer.next(key);

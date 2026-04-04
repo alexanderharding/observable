@@ -1,9 +1,5 @@
 import { Observable } from "@observable/core";
-import {
-  isIterable,
-  MinimumArgumentsRequiredError,
-  ParameterTypeError,
-} from "@observable/internal";
+import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 import { empty } from "@observable/empty";
 
 /**
@@ -84,4 +80,17 @@ export function forOf<Value>(iterable: Iterable<Value>): Observable<Value> {
     }
     observer.return();
   });
+}
+
+/**
+ * Checks if a {@linkcode value} is an object that implements the {@linkcode Iterable} interface.
+ * @internal Do NOT export
+ */
+function isIterable(value: unknown): value is Iterable<unknown> {
+  if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
+  return (
+    (typeof value === "object" && value !== null) &&
+    Symbol.iterator in value &&
+    typeof value[Symbol.iterator] === "function"
+  );
 }

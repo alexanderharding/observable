@@ -1,6 +1,6 @@
 import { assertEquals, assertStrictEquals, assertThrows } from "@std/assert";
 import { Observable, Observer } from "@observable/core";
-import { MinimumArgumentsRequiredError, noop, ParameterTypeError } from "@observable/internal";
+import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 import { empty } from "@observable/empty";
 import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
@@ -50,7 +50,7 @@ Deno.test("at should throw if source is not an Observable (invalid object)", () 
 });
 
 Deno.test("at should return empty observable when index is NaN", () => {
-  const source = new Observable(noop);
+  const source = new Observable(() => {});
   const result = pipe(source, at(NaN));
   assertStrictEquals(result, empty);
 });

@@ -1,8 +1,5 @@
 import {
   InstanceofError,
-  isAbortSignal,
-  isNil,
-  isObject,
   MinimumArgumentsRequiredError,
   ParameterTypeError,
 } from "@observable/internal";
@@ -53,7 +50,7 @@ export const Observer: ObserverConstructor = class<Value> {
 
   constructor(observer?: Partial<Observer<Value>> | Observer<Value>["next"] | null) {
     if (
-      !isNil(observer) &&
+      (typeof observer !== "undefined" && observer !== null) &&
       typeof observer !== "function" &&
       !isPartialObserver(observer)
     ) {
@@ -132,6 +129,63 @@ Object.freeze(Observer);
 Object.freeze(Observer.prototype);
 
 /**
+ * Checks if a {@linkcode value} is an object that implements the {@linkcode Observer} interface.
+ * @example
+ * ```ts
+ * import { isObserver, Observer } from "@observable/core";
+ *
+ * const instance = new Observer((value) => {
+ *   // Implementation omitted for brevity.
+ * });
+ * isObserver(instance); // true
+ *
+ * const literal: Observer = {
+ *   signal: {
+ *     aborted: false,
+ *     onabort: null,
+ *     throwIfAborted() {
+ *       // Implementation omitted for brevity.
+ *     },
+ *     addEventListener() {
+ *       // Implementation omitted for brevity.
+ *     },
+ *     removeEventListener() {
+ *       // Implementation omitted for brevity.
+ *     },
+ *     dispatchEvent() {
+ *       // Implementation omitted for brevity.
+ *     },
+ *   },
+ *   next(value) {
+ *     // Implementation omitted for brevity.
+ *   },
+ *   return() {
+ *     // Implementation omitted for brevity.
+ *   },
+ *   throw(value) {
+ *     // Implementation omitted for brevity.
+ *   },
+ * };
+ * isObserver(literal); // true
+ * ```
+ */
+export function isObserver(value: unknown): value is Observer {
+  if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
+  return (
+    value instanceof Observer ||
+    ((typeof value === "object" && value !== null) &&
+      "next" in value &&
+      typeof value.next === "function" &&
+      "return" in value &&
+      typeof value.return === "function" &&
+      "throw" in value &&
+      typeof value.throw === "function" &&
+      "signal" in value &&
+      isAbortSignal(value.signal))
+  );
+}
+
+/**
  * Reports an unhandled error asynchronously to prevent
  * [producer interference](https://jsr.io/@observable/core#producer-interference).
  * @internal Do NOT export.
@@ -154,7 +208,7 @@ function isPartialObserver(value: unknown): value is Partial<Observer> {
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
   return (
     value instanceof Observer ||
-    (isObject(value) &&
+    ((typeof value === "object" && value !== null) &&
       (!("next" in value) ||
         typeof value.next === "undefined" ||
         typeof value.next === "function") &&
@@ -167,5 +221,41 @@ function isPartialObserver(value: unknown): value is Partial<Observer> {
       (!("signal" in value) ||
         typeof value.signal === "undefined" ||
         isAbortSignal(value.signal)))
+  );
+}
+
+/**
+ * Checks if a {@linkcode value} is an object that implements the {@linkcode AbortSignal} interface.
+ * @internal Do NOT export
+ */
+function isAbortSignal(value: unknown): value is AbortSignal {
+  if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
+  return (
+    value instanceof AbortSignal ||
+    (isEventTarget(value) &&
+      "aborted" in value &&
+      typeof value.aborted === "boolean" &&
+      "onabort" in value &&
+      (typeof value.onabort === "function" || value.onabort === null) &&
+      "throwIfAborted" in value &&
+      typeof value.throwIfAborted === "function" &&
+      "reason" in value)
+  );
+}
+
+/**
+ * Checks if a {@linkcode value} is an object that implements the {@linkcode EventTarget} interface.
+ * @internal Do NOT export
+ */
+function isEventTarget(value: unknown): value is EventTarget {
+  if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
+  return (
+    (typeof value === "object" && value !== null) &&
+    "addEventListener" in value &&
+    typeof value.addEventListener === "function" &&
+    "removeEventListener" in value &&
+    typeof value.removeEventListener === "function" &&
+    "dispatchEvent" in value &&
+    typeof value.dispatchEvent === "function"
   );
 }

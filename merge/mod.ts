@@ -1,10 +1,5 @@
 import type { Observable } from "@observable/core";
-import {
-  identity,
-  isIterable,
-  MinimumArgumentsRequiredError,
-  ParameterTypeError,
-} from "@observable/internal";
+import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 import { mergeMap } from "@observable/merge-map";
@@ -91,16 +86,23 @@ export function merge<const Values extends ReadonlyArray<unknown>>(
  * source3.return(); // "return"
  * ```
  */
-export function merge<Value>(
-  sources: Iterable<Observable<Value>>,
-): Observable<Value>;
-export function merge<Value>(
-  // Accepting any iterable is a design choice for performance (iterables are
-  // lazily evaluated) and flexibility.
-  sources: Iterable<Observable<Value>>,
-): Observable<Value> {
+export function merge<Value>(sources: Iterable<Observable<Value>>): Observable<Value>;
+export function merge<Value>(sources: Iterable<Observable<Value>>): Observable<Value> {
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
   if (!isIterable(sources)) throw new ParameterTypeError(0, "Iterable");
   if (Array.isArray(sources) && !sources.length) return empty;
-  return pipe(forOf(sources), mergeMap(identity));
+  return pipe(forOf(sources), mergeMap((observable) => observable));
+}
+
+/**
+ * Checks if a {@linkcode value} is an object that implements the {@linkcode Iterable} interface.
+ * @internal Do NOT export
+ */
+function isIterable(value: unknown): value is Iterable<unknown> {
+  if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
+  return (
+    (typeof value === "object" && value !== null) &&
+    Symbol.iterator in value &&
+    typeof value[Symbol.iterator] === "function"
+  );
 }

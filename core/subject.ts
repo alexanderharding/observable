@@ -1,5 +1,4 @@
-import { Observer } from "./observer.ts";
-import { isObserver } from "./is-observer.ts";
+import { isObserver, Observer } from "./observer.ts";
 import { Observable } from "./observable.ts";
 import {
   InstanceofError,

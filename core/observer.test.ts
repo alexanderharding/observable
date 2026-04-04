@@ -1,7 +1,7 @@
-import { MinimumArgumentsRequiredError, noop } from "@observable/internal";
+import { MinimumArgumentsRequiredError } from "@observable/internal";
 import { Observer } from "./observer.ts";
 import { assertEquals, assertInstanceOf, assertStrictEquals, assertThrows } from "@std/assert";
-import { isObserver } from "./is-observer.ts";
+import { isObserver } from "./observer.ts";
 
 Deno.test("Observer should allow empty next when created with void type", () => {
   // Arrange
@@ -486,44 +486,54 @@ Deno.test(
   },
 );
 
+Deno.test("isObserver should return false if the value is null", () => {
+  // Arrange
+  const value = null;
+
+  // Act
+  const result = isObserver(value);
+
+  // Assert
+  assertStrictEquals(result, false);
+});
+
+Deno.test("isObserver should return false if the value is undefined", () => {
+  // Arrange
+  const value = undefined;
+
+  // Act
+  const result = isObserver(value);
+
+  // Assert
+  assertStrictEquals(result, false);
+});
+
+Deno.test("isObserver should return false if 'next' is not a function", () => {
+  // Arrange
+  const value: Omit<Observer, "next"> & { next: unknown } = {
+    next: "not a function",
+    return: () => {},
+    throw: () => {},
+    signal: new AbortController().signal,
+  };
+
+  // Act
+  const result = isObserver(value);
+
+  // Assert
+  assertStrictEquals(result, false);
+});
+
 Deno.test(
-  "isObserver should return true if the value is an instance of Observer",
+  "isObserver should return false if 'return' is not a function",
   () => {
     // Arrange
-    const observer = new Observer();
-
-    // Act
-    const result = isObserver(observer);
-
-    // Assert
-    assertStrictEquals(result, true);
-  },
-);
-
-Deno.test(
-  "isObserver should return true if the value is a custom Observer",
-  () => {
-    // Arrange
-    const observer: Observer = {
-      next: noop,
-      return: noop,
-      throw: noop,
+    const value: Omit<Observer, "return"> & { return: unknown } = {
+      next: () => {},
+      return: "not a function",
+      throw: () => {},
       signal: new AbortController().signal,
     };
-
-    // Act
-    const result = isObserver(observer);
-
-    // Assert
-    assertStrictEquals(result, true);
-  },
-);
-
-Deno.test(
-  "isObserver should return false if the value is not an empty object",
-  () => {
-    // Arrange
-    const value = {};
 
     // Act
     const result = isObserver(value);
@@ -532,3 +542,62 @@ Deno.test(
     assertStrictEquals(result, false);
   },
 );
+
+Deno.test("isObserver should return false if 'throw' is not a function", () => {
+  // Arrange
+  const value: Omit<Observer, "throw"> & { throw: unknown } = {
+    next: () => {},
+    return: () => {},
+    throw: "not a function",
+    signal: new AbortController().signal,
+  };
+
+  // Act
+  const result = isObserver(value);
+
+  // Assert
+  assertStrictEquals(result, false);
+});
+
+Deno.test(
+  "isObserver should return false if 'signal' is not an AbortSignal",
+  () => {
+    // Arrange
+    const value: Omit<Observer, "signal"> & { signal: unknown } = {
+      next: () => {},
+      return: () => {},
+      throw: () => {},
+      signal: "not an AbortSignal",
+    };
+
+    // Act
+    const result = isObserver(value);
+
+    // Assert
+    assertStrictEquals(result, false);
+  },
+);
+
+Deno.test("isObserver should return true if 'signal' is an AbortSignal", () => {
+  // Arrange
+  const value: Observer = {
+    next: () => {},
+    return: () => {},
+    throw: () => {},
+    signal: {
+      aborted: false,
+      reason: null,
+      onabort: () => {},
+      addEventListener: () => {},
+      removeEventListener: () => {},
+      dispatchEvent: () => true,
+      throwIfAborted: () => {},
+    },
+  };
+
+  // Act
+  const result = isObserver(value);
+
+  // Assert
+  assertStrictEquals(result, true);
+});

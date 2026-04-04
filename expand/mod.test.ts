@@ -1,6 +1,6 @@
 import { assertEquals, assertThrows } from "@std/assert";
 import { type Observable, Observer, Subject } from "@observable/core";
-import { MinimumArgumentsRequiredError, noop, ParameterTypeError } from "@observable/internal";
+import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 import { pipe } from "@observable/pipe";
 import { materialize, type ObserverNotification } from "@observable/materialize";
 import { forOf } from "@observable/for-of";
@@ -272,7 +272,7 @@ Deno.test("expand should propagate first error when both inner and outer throw",
   const notifications: Array<ObserverNotification<number>> = [];
   const innerSubject = new Subject<number>();
   const source = new Subject<number>();
-  source.subscribe(new Observer({ throw: noop }));
+  source.subscribe(new Observer({ throw: () => {} }));
   const observable = pipe(
     source,
     expand(() => innerSubject),

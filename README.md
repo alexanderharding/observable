@@ -143,7 +143,7 @@ function isUser(value: unknown): value is User {
   if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
   return (
     value instanceof User ||
-    (isObject(value) &&
+    ((typeof value === "object" && value !== null) &&
       "id" in value &&
       typeof value.id === "string" &&
       "name" in value &&

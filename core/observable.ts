@@ -3,8 +3,7 @@ import {
   MinimumArgumentsRequiredError,
   ParameterTypeError,
 } from "@observable/internal";
-import { isObserver } from "./is-observer.ts";
-import { Observer } from "./observer.ts";
+import { isObserver, Observer } from "./observer.ts";
 import type { ObservableConstructor } from "./observable-constructor.ts";
 
 /**

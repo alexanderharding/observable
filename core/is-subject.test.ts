@@ -1,7 +1,6 @@
 import { assertEquals } from "@std/assert";
 import { isSubject } from "./is-subject.ts";
 import { Subject } from "./subject.ts";
-import { noop } from "@observable/internal";
 
 Deno.test(
   "isSubject should return true if the value is an instance of Subject",
@@ -22,11 +21,11 @@ Deno.test(
   () => {
     // Arrange
     const subject: Subject = {
-      subscribe: noop,
+      subscribe: () => {},
       signal: new AbortController().signal,
-      next: noop,
-      return: noop,
-      throw: noop,
+      next: () => {},
+      return: () => {},
+      throw: () => {},
     };
 
     // Act
@@ -82,9 +81,9 @@ Deno.test(
       & Record<"subscribe", "not a function"> = {
         subscribe: "not a function",
         signal: new AbortController().signal,
-        next: noop,
-        return: noop,
-        throw: noop,
+        next: () => {},
+        return: () => {},
+        throw: () => {},
       };
 
     // Act
@@ -102,11 +101,11 @@ Deno.test(
     const value:
       & Omit<Subject, "signal">
       & Record<"signal", "not an AbortSignal"> = {
-        subscribe: noop,
+        subscribe: () => {},
         signal: "not an AbortSignal",
-        next: noop,
-        return: noop,
-        throw: noop,
+        next: () => {},
+        return: () => {},
+        throw: () => {},
       };
 
     // Act
@@ -120,11 +119,11 @@ Deno.test(
 Deno.test("isSubject should return false if 'next' is not a function", () => {
   // Arrange
   const value: Omit<Subject, "next"> & Record<"next", "not a function"> = {
-    subscribe: noop,
+    subscribe: () => {},
     signal: new AbortController().signal,
     next: "not a function",
-    return: noop,
-    throw: noop,
+    return: () => {},
+    throw: () => {},
   };
 
   // Act
@@ -137,11 +136,11 @@ Deno.test("isSubject should return false if 'next' is not a function", () => {
 Deno.test("isSubject should return false if 'return' is not a function", () => {
   // Arrange
   const value: Omit<Subject, "return"> & Record<"return", "not a function"> = {
-    subscribe: noop,
+    subscribe: () => {},
     signal: new AbortController().signal,
-    next: noop,
+    next: () => {},
     return: "not a function",
-    throw: noop,
+    throw: () => {},
   };
 
   // Act
@@ -154,10 +153,10 @@ Deno.test("isSubject should return false if 'return' is not a function", () => {
 Deno.test("isSubject should return false if 'throw' is not a function", () => {
   // Arrange
   const value: Omit<Subject, "throw"> & Record<"throw", "not a function"> = {
-    subscribe: noop,
+    subscribe: () => {},
     signal: new AbortController().signal,
-    next: noop,
-    return: noop,
+    next: () => {},
+    return: () => {},
     throw: "not a function",
   };
 
@@ -175,11 +174,11 @@ Deno.test(
     const value:
       & Omit<Subject, "signal">
       & Record<"signal", "not an AbortSignal"> = {
-        subscribe: noop,
+        subscribe: () => {},
         signal: "not an AbortSignal",
-        next: noop,
-        return: noop,
-        throw: noop,
+        next: () => {},
+        return: () => {},
+        throw: () => {},
       };
 
     // Act

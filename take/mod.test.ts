@@ -1,6 +1,6 @@
 import { assertEquals, assertStrictEquals, assertThrows } from "@std/assert";
 import { Observable, Observer, Subject } from "@observable/core";
-import { MinimumArgumentsRequiredError, noop, ParameterTypeError } from "@observable/internal";
+import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 import { empty } from "@observable/empty";
 import { never } from "@observable/never";
 import { forOf } from "@observable/for-of";
@@ -59,7 +59,7 @@ Deno.test(
   "take should return the source observable if the count is Infinity",
   () => {
     // Arrange
-    const source = new Observable(noop);
+    const source = new Observable(() => {});
 
     // Act
     const result = pipe(source, take(Infinity));
@@ -71,7 +71,7 @@ Deno.test(
 
 Deno.test("take should return empty observable if the count is NaN", () => {
   // Arrange
-  const source = new Observable(noop);
+  const source = new Observable(() => {});
 
   // Act
   const result = pipe(source, take(NaN));

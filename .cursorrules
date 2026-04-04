@@ -232,13 +232,8 @@ import { isObservable, isObserver, Observable, Observer, Subject } from "@observ
 
 // Internal utilities (only for library code, not consumers)
 import {
-  identity,
   InstanceofError,
-  isIterable,
-  isNil,
-  isObject,
   MinimumArgumentsRequiredError,
-  noop,
   ParameterTypeError,
 } from "@observable/internal";
 

@@ -1,11 +1,10 @@
 import { assertEquals, assertInstanceOf, assertStrictEquals, assertThrows } from "@std/assert";
 import { Observer } from "./observer.ts";
 import { Observable } from "./observable.ts";
-import { noop } from "@observable/internal";
 
 Deno.test("Observable.toString should be '[object Observable]'", () => {
   // Arrange / Act / Assert
-  assertStrictEquals(`${new Observable(noop)}`, "[object Observable]");
+  assertStrictEquals(`${new Observable(() => {})}`, "[object Observable]");
 });
 
 Deno.test("Observable.constructor should be frozen", () => {
@@ -15,7 +14,7 @@ Deno.test("Observable.constructor should be frozen", () => {
 
 Deno.test("Observable.constructor should be created as frozen", () => {
   // Arrange / Act / Assert
-  assertStrictEquals(Object.isFrozen(new Observable(noop)), true);
+  assertStrictEquals(Object.isFrozen(new Observable(() => {})), true);
 });
 
 Deno.test("Observable.prototype should be frozen", () => {
@@ -27,7 +26,7 @@ Deno.test(
   "Observable should not freeze Object.prototype",
   () => {
     // Arrange / Act
-    new Observable(noop);
+    new Observable(() => {});
 
     // Assert
     assertStrictEquals(Object.isFrozen(Object.prototype), false);
@@ -83,7 +82,7 @@ Deno.test(
   () => {
     // Arrange / Act / Assert
     new Observable(
-      ...([noop, noop] as unknown as ConstructorParameters<typeof Observable>),
+      ...([() => {}, () => {}] as unknown as ConstructorParameters<typeof Observable>),
     );
   },
 );
@@ -112,7 +111,7 @@ Deno.test(
   () => {
     // Arrange
     assertThrows(
-      () => new Observable(noop).subscribe.apply(null, [new Observer()]),
+      () => new Observable(() => {}).subscribe.apply(null, [new Observer()]),
       TypeError,
       "'this' is not instanceof 'Observable'",
     );
@@ -124,7 +123,7 @@ Deno.test(
   () => {
     // Arrange
     assertThrows(
-      () => new Observable(noop).subscribe(1 as unknown as Observer),
+      () => new Observable(() => {}).subscribe(1 as unknown as Observer),
       TypeError,
       "Parameter 1 is not of type 'Observer'",
     );
@@ -134,7 +133,7 @@ Deno.test(
 Deno.test("Observable.subscribe should throw when observer is null", () => {
   // Arrange
   assertThrows(
-    () => new Observable(noop).subscribe(null as unknown as Observer),
+    () => new Observable(() => {}).subscribe(null as unknown as Observer),
     TypeError,
     "Parameter 1 is not of type 'Observer'",
   );
@@ -145,7 +144,7 @@ Deno.test(
   () => {
     // Arrange
     assertThrows(
-      () => new Observable(noop).subscribe(undefined as unknown as Observer),
+      () => new Observable(() => {}).subscribe(undefined as unknown as Observer),
       TypeError,
       "Parameter 1 is not of type 'Observer'",
     );
@@ -158,8 +157,8 @@ Deno.test(
     // Arrange
     assertThrows(
       () =>
-        new Observable(noop).subscribe({
-          next: noop,
+        new Observable(() => {}).subscribe({
+          next: () => {},
         } as unknown as Observer),
       TypeError,
       "Parameter 1 is not of type 'Observer'",

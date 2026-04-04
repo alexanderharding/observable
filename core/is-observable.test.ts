@@ -1,5 +1,4 @@
 import { assertStrictEquals } from "@std/assert";
-import { noop } from "@observable/internal";
 import { isObservable } from "./is-observable.ts";
 import { Observable } from "./observable.ts";
 
@@ -7,7 +6,7 @@ Deno.test(
   "isObservable should return true if the value is an instance of Observable",
   () => {
     // Arrange
-    const observable = new Observable(noop);
+    const observable = new Observable(() => {});
 
     // Act
     const result = isObservable(observable);
@@ -21,7 +20,7 @@ Deno.test(
   "isObservable should return true if the value is a custom Observable",
   () => {
     // Arrange
-    const observable: Observable = { subscribe: noop };
+    const observable: Observable = { subscribe: () => {} };
 
     // Act
     const result = isObservable(observable);

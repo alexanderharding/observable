@@ -1,13 +1,3 @@
 export { MinimumArgumentsRequiredError } from "./minimum-arguments-required-error.ts";
 export { ParameterTypeError } from "./parameter-type-error.ts";
 export { InstanceofError } from "./instanceof-error.ts";
-export { noop } from "./noop.ts";
-export { isIterable } from "./is-iterable.ts";
-export { isEventTarget } from "./is-event-target.ts";
-export { isAbortSignal } from "./is-abort-signal.ts";
-export { isObject } from "./is-object.ts";
-export { isNil } from "./is-nil.ts";
-export { identity } from "./identity.ts";
-export { isAsyncIterable } from "./is-async-iterable.ts";
-export { isPromiseLike } from "./is-promise-like.ts";
-export { isURL } from "./is-url.ts";

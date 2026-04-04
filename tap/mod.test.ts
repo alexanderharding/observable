@@ -6,7 +6,7 @@ import { pipe } from "@observable/pipe";
 import { throwError } from "@observable/throw-error";
 import { tap } from "./mod.ts";
 import { materialize, type ObserverNotification } from "@observable/materialize";
-import { MinimumArgumentsRequiredError, noop, ParameterTypeError } from "@observable/internal";
+import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 import { empty } from "@observable/empty";
 import { never } from "@observable/never";
 import { finalize } from "@observable/finalize";
@@ -28,7 +28,7 @@ Deno.test("tap should throw if callback is not a function", () => {
 });
 
 Deno.test("tap should throw if no arguments are provided", () => {
-  const operatorFn = tap(noop);
+  const operatorFn = tap(() => {});
   assertThrows(
     // @ts-expect-error: Testing invalid arguments
     () => operatorFn(),
@@ -37,7 +37,7 @@ Deno.test("tap should throw if no arguments are provided", () => {
 });
 
 Deno.test("tap should throw if source is not an Observable", () => {
-  const operatorFn = tap(noop);
+  const operatorFn = tap(() => {});
   assertThrows(
     // @ts-expect-error: Testing invalid arguments
     () => operatorFn("not an observable"),
@@ -79,7 +79,7 @@ Deno.test("tap should pass values through unchanged", () => {
   const notifications: Array<ObserverNotification<string>> = [];
   const observable = pipe(
     forOf(["a", "b", "c"]),
-    tap(noop),
+    tap(() => {}),
     materialize(),
   );
 
@@ -143,7 +143,7 @@ Deno.test("tap should handle unsubscribe", () => {
   let sourceAborted = false;
   const controller = new AbortController();
   const source = pipe(never, finalize(() => (sourceAborted = true)));
-  const observable = pipe(source, tap(noop));
+  const observable = pipe(source, tap(() => {}));
 
   // Act
   observable.subscribe(new Observer({ signal: controller.signal }));

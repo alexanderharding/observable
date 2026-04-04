@@ -1,6 +1,6 @@
 import { isObservable, Observable } from "@observable/core";
 import { from } from "@observable/from";
-import { MinimumArgumentsRequiredError, noop, ParameterTypeError } from "@observable/internal";
+import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 
 /**
  * Takes [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values from the
@@ -44,7 +44,7 @@ export function takeUntil<Value>(
       notifier.subscribe({
         signal: observer.signal,
         next: () => observer.return(),
-        return: noop,
+        return: () => {},
         throw: (value) => observer.throw(value),
       });
       source.subscribe(observer);
