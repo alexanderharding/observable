@@ -1,6 +1,5 @@
 import { Observable } from "@observable/core";
 import { from } from "@observable/from";
-import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 
 /**
  * {@linkcode factory|Creates} a new [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)
@@ -45,7 +44,7 @@ import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/i
 export function defer<Value>(
   factory: () => Observable<Value>,
 ): Observable<Value> {
-  if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-  if (typeof factory !== "function") throw new ParameterTypeError(0, "Function");
+  if (!arguments.length) throw new TypeError("1 argument required but 0 present");
+  if (typeof factory !== "function") throw new TypeError("Parameter 1 is not of type 'Function'");
   return new Observable((observer) => from(factory()).subscribe(observer));
 }

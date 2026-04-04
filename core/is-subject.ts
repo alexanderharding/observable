@@ -1,18 +1,24 @@
-import { MinimumArgumentsRequiredError } from "@observable/internal";
 import { Subject } from "./subject.ts";
 import { isObservable } from "./is-observable.ts";
-import { isObserver } from "./is-observer.ts";
+import { isObserver } from "./observer.ts";
 
 /**
  * Checks if a {@linkcode value} is an object that implements the {@linkcode Subject} interface.
  * @example
+ * Instance
  * ```ts
  * import { isSubject, Subject } from "@observable/core";
  *
- * const subjectInstance = new Subject();
- * isSubject(subjectInstance); // true
+ * const value = new Subject();
  *
- * const subjectLiteral: Subject = {
+ * isSubject(value); // true
+ * ```
+ * @example
+ * Literal
+ * ```ts
+ * import { isSubject, Subject } from "@observable/core";
+ *
+ * const value: Subject = {
  *   signal: {
  *     aborted: false,
  *     onabort: null,
@@ -42,13 +48,28 @@ import { isObserver } from "./is-observer.ts";
  *     // Implementation omitted for brevity.
  *   },
  * };
- * isSubject(subjectLiteral); // true
  *
- * const notASubject = {};
- * isSubject(notASubject); // false
+ * isSubject(value); // true
+ * ```
+ * @example
+ * Empty Object
+ * ```ts
+ * import { isSubject } from "@observable/core";
+ *
+ * const value = {};
+ * isSubject(value); // false
+ * ```
+ * @example
+ * Primitive
+ * ```ts
+ * import { isSubject } from "@observable/core";
+ *
+ * const value = 1;
+ *
+ * isSubject(value); // false
  * ```
  */
 export function isSubject(value: unknown): value is Subject {
-  if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
+  if (!arguments.length) throw new TypeError("1 argument required but 0 present");
   return value instanceof Subject || (isObservable(value) && isObserver(value));
 }

@@ -4,7 +4,6 @@ import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 import { throwError } from "@observable/throw-error";
 import { materialize, type ObserverNotification } from "@observable/materialize";
-import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 import {
   Observable as RxJsObservable,
   of as rxJsOf,
@@ -110,7 +109,7 @@ Deno.test("asObservable should emit values before abort signal", () => {
 });
 
 Deno.test(
-  "asObservable should throw MinimumArgumentsRequiredError when called with no arguments",
+  "asObservable should throw TypeError when called with no arguments",
   () => {
     // Arrange
     const operator = asObservable();
@@ -118,13 +117,14 @@ Deno.test(
     // Act & Assert
     assertThrows(
       () => (operator as () => Observable<unknown>)(),
-      MinimumArgumentsRequiredError,
+      TypeError,
+      "1 argument required but 0 present",
     );
   },
 );
 
 Deno.test(
-  "asObservable should throw ParameterTypeError when called with non-RxJS Observable",
+  "asObservable should throw TypeError when called with non-RxJS Observable",
   () => {
     // Arrange
     const operator = asObservable();
@@ -133,7 +133,8 @@ Deno.test(
     // Act & Assert
     assertThrows(
       () => operator(notAnRxjsObservable as RxJsObservable<unknown>),
-      ParameterTypeError,
+      TypeError,
+      "Parameter 1 is not of type 'RxJsObservable'",
     );
   },
 );
@@ -235,7 +236,7 @@ Deno.test("asRxJsObservable should emit values before unsubscription", () => {
 });
 
 Deno.test(
-  "asRxJsObservable should throw MinimumArgumentsRequiredError when called with no arguments",
+  "asRxJsObservable should throw TypeError when called with no arguments",
   () => {
     // Arrange
     const operator = asRxJsObservable();
@@ -243,13 +244,14 @@ Deno.test(
     // Act & Assert
     assertThrows(
       () => (operator as () => RxJsObservable<unknown>)(),
-      MinimumArgumentsRequiredError,
+      TypeError,
+      "1 argument required but 0 present",
     );
   },
 );
 
 Deno.test(
-  "asRxJsObservable should throw ParameterTypeError when called with non-Observable",
+  "asRxJsObservable should throw TypeError when called with non-Observable",
   () => {
     // Arrange
     const operator = asRxJsObservable();
@@ -258,7 +260,8 @@ Deno.test(
     // Act & Assert
     assertThrows(
       () => operator(notAnObservable as Observable<unknown>),
-      ParameterTypeError,
+      TypeError,
+      "Parameter 1 is not of type 'Observable'",
     );
   },
 );

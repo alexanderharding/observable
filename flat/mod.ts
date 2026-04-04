@@ -1,10 +1,4 @@
 import type { Observable } from "@observable/core";
-import {
-  identity,
-  isIterable,
-  MinimumArgumentsRequiredError,
-  ParameterTypeError,
-} from "@observable/internal";
 import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 import { flatMap } from "@observable/flat-map";
@@ -99,16 +93,23 @@ export function flat<const Values extends ReadonlyArray<unknown>>(
  * // "return"
  * ```
  */
-export function flat<Value>(
-  sources: Iterable<Observable<Value>>,
-): Observable<Value>;
-export function flat<Value>(
-  // Accepting any iterable is a design choice for performance (iterables are
-  // lazily evaluated) and flexibility.
-  sources: Iterable<Observable<Value>>,
-): Observable<Value> {
-  if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-  if (!isIterable(sources)) throw new ParameterTypeError(0, "Iterable");
+export function flat<Value>(sources: Iterable<Observable<Value>>): Observable<Value>;
+export function flat<Value>(sources: Iterable<Observable<Value>>): Observable<Value> {
+  if (!arguments.length) throw new TypeError("1 argument required but 0 present");
+  if (!isIterable(sources)) throw new TypeError("Parameter 1 is not of type 'Iterable'");
   if (Array.isArray(sources) && !sources.length) return empty;
-  return pipe(forOf(sources), flatMap(identity));
+  return pipe(forOf(sources), flatMap((observable) => observable));
+}
+
+/**
+ * Checks if a {@linkcode value} is an object that implements the {@linkcode Iterable} interface.
+ * @internal Do NOT export
+ */
+function isIterable(value: unknown): value is Iterable<unknown> {
+  if (!arguments.length) throw new TypeError("1 argument required but 0 present");
+  return (
+    (typeof value === "object" && value !== null) &&
+    Symbol.iterator in value &&
+    typeof value[Symbol.iterator] === "function"
+  );
 }

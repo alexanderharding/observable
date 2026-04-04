@@ -1,9 +1,4 @@
 import { Observable } from "@observable/core";
-import {
-  isIterable,
-  MinimumArgumentsRequiredError,
-  ParameterTypeError,
-} from "@observable/internal";
 import { empty } from "@observable/empty";
 
 /**
@@ -74,8 +69,8 @@ export function forOf<const Values extends ReadonlyArray<unknown>>(
  */
 export function forOf<Value>(iterable: Iterable<Value>): Observable<Value>;
 export function forOf<Value>(iterable: Iterable<Value>): Observable<Value> {
-  if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-  if (!isIterable(iterable)) throw new ParameterTypeError(0, "Iterable");
+  if (!arguments.length) throw new TypeError("1 argument required but 0 present");
+  if (!isIterable(iterable)) throw new TypeError("Parameter 1 is not of type 'Iterable'");
   if (Array.isArray(iterable) && !iterable.length) return empty;
   return new Observable((observer) => {
     for (const value of iterable) {
@@ -84,4 +79,17 @@ export function forOf<Value>(iterable: Iterable<Value>): Observable<Value> {
     }
     observer.return();
   });
+}
+
+/**
+ * Checks if a {@linkcode value} is an object that implements the {@linkcode Iterable} interface.
+ * @internal Do NOT export
+ */
+function isIterable(value: unknown): value is Iterable<unknown> {
+  if (!arguments.length) throw new TypeError("1 argument required but 0 present");
+  return (
+    (typeof value === "object" && value !== null) &&
+    Symbol.iterator in value &&
+    typeof value[Symbol.iterator] === "function"
+  );
 }

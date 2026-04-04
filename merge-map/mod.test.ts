@@ -1,6 +1,5 @@
 import { assertEquals } from "@std/assert";
 import { Observer, Subject } from "@observable/core";
-import { noop } from "@observable/internal";
 import { pipe } from "@observable/pipe";
 import { map } from "@observable/map";
 import { materialize, type ObserverNotification } from "@observable/materialize";
@@ -261,7 +260,7 @@ Deno.test(
       mergeMap((value) => observableLookup[value]),
       materialize(),
     );
-    source.subscribe(new Observer({ throw: noop }));
+    source.subscribe(new Observer({ throw: () => {} }));
 
     // Act
     materialized.subscribe(

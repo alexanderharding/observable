@@ -1,5 +1,4 @@
 import { Observable } from "@observable/core";
-import { noop } from "@observable/internal";
 
 /**
  * Does nothing on [`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe).
@@ -17,4 +16,4 @@ import { noop } from "@observable/internal";
  * });
  * ```
  */
-export const never: Observable<never> = new Observable(noop);
+export const never: Observable<never> = new Observable(() => {});

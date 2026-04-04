@@ -2,7 +2,6 @@ import { Observer } from "@observable/core";
 import { forOf } from "@observable/for-of";
 import { BroadcastSubject } from "./mod.ts";
 import { assertEquals, assertInstanceOf, assertStrictEquals, assertThrows } from "@std/assert";
-import { noop } from "@observable/internal";
 import { pipe } from "@observable/pipe";
 import { materialize, type ObserverNotification } from "@observable/materialize";
 
@@ -235,7 +234,7 @@ Deno.test(
   () => {
     // Arrange
     const subject = new BroadcastSubject<string>("test");
-    subject.subscribe(new Observer({ throw: noop }));
+    subject.subscribe(new Observer({ throw: () => {} }));
     subject.throw(new Error("test error"));
 
     // Act / Assert
@@ -309,7 +308,7 @@ Deno.test("BroadcastSubject.throw should abort signal", () => {
   // Arrange
   const error = new Error("test error");
   const subject = new BroadcastSubject<string>("test");
-  subject.subscribe(new Observer({ throw: noop }));
+  subject.subscribe(new Observer({ throw: () => {} }));
 
   // Act
   subject.throw(error);

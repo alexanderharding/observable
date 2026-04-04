@@ -176,18 +176,17 @@ All operators follow this exact pattern:
 ```ts
 import { isObservable, Observable } from "@observable/core";
 import { from } from "@observable/from";
-import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 
 export function operatorName<Value>(
   // operator arguments (if any)
 ): (source: Observable<Value>) => Observable<NewValue> {
   // Validate arguments
-  if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
+  if (!arguments.length) throw new TypeError("1 argument required but 0 present");
   // More validation as needed...
 
   return function operatorNameFn(source) {
-    if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-    if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
+    if (!arguments.length) throw new TypeError("1 argument required but 0 present");
+    if (!isObservable(source)) throw new TypeError("Parameter 1 is not of type 'Observable'");
     source = from(source);
     return new Observable((observer) => {
       source.subscribe({
@@ -211,7 +210,6 @@ export function operatorName<Value>(
 ```
 observable/
 ├── core/           # Observable, Observer, Subject, type guards
-├── internal/       # Shared utilities (errors, type checks, etc.)
 ├── pipe/           # Composition utility
 ├── [operator]/     # Each operator is its own package
 │   ├── deno.json   # Package configuration
@@ -229,18 +227,6 @@ Each package is a Deno workspace member with its own `deno.json`.
 ```ts
 // Core types and classes
 import { isObservable, isObserver, Observable, Observer, Subject } from "@observable/core";
-
-// Internal utilities (only for library code, not consumers)
-import {
-  identity,
-  InstanceofError,
-  isIterable,
-  isNil,
-  isObject,
-  MinimumArgumentsRequiredError,
-  noop,
-  ParameterTypeError,
-} from "@observable/internal";
 
 // Operators
 import { map } from "@observable/map";
@@ -273,8 +259,8 @@ All public functions MUST validate arguments:
 
 ```ts
 function example(value: string): void {
-  if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-  if (typeof value !== "string") throw new ParameterTypeError(0, "String");
+  if (!arguments.length) throw new TypeError("1 argument required but 0 present");
+  if (typeof value !== "string") throw new TypeError("Parameter 1 is not of type 'String'");
 }
 ```
 
@@ -282,7 +268,7 @@ Methods MUST validate `this`:
 
 ```ts
 next(value: unknown): void {
-  if (!(this instanceof Observer)) throw new InstanceofError("this", "Observer");
+  if (!(this instanceof Observer)) throw new TypeError("'this' is not instance of 'Observer'");
   // ...
 }
 ```

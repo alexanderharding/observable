@@ -1,4 +1,3 @@
-import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 import { Observable } from "@observable/core";
 import { defer } from "@observable/defer";
 import { forOf } from "@observable/for-of";
@@ -106,8 +105,8 @@ const infiniteVoid = defer(() => forOf(generateInfiniteVoid()));
  * ```
  */
 export function interval(milliseconds: number): Observable<void> {
-  if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-  if (typeof milliseconds !== "number") throw new ParameterTypeError(0, "Number");
+  if (!arguments.length) throw new TypeError("1 argument required but 0 present");
+  if (typeof milliseconds !== "number") throw new TypeError("Parameter 1 is not of type 'Number'");
   if (milliseconds < 0 || Number.isNaN(milliseconds)) return empty;
   if (milliseconds === 0) return infiniteVoid;
   if (milliseconds === Infinity) return never;

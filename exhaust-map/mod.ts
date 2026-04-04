@@ -1,5 +1,4 @@
 import { isObservable, type Observable } from "@observable/core";
-import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 import { defer } from "@observable/defer";
 import { pipe } from "@observable/pipe";
 import { filter } from "@observable/filter";
@@ -41,11 +40,11 @@ import { finalize } from "@observable/finalize";
 export function exhaustMap<In, Out>(
   project: (value: In, index: number) => Observable<Out>,
 ): (source: Observable<In>) => Observable<Out> {
-  if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-  if (typeof project !== "function") throw new ParameterTypeError(0, "Function");
+  if (!arguments.length) throw new TypeError("1 argument required but 0 present");
+  if (typeof project !== "function") throw new TypeError("Parameter 1 is not of type 'Function'");
   return function exhaustMapFn(source) {
-    if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-    if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
+    if (!arguments.length) throw new TypeError("1 argument required but 0 present");
+    if (!isObservable(source)) throw new TypeError("Parameter 1 is not of type 'Observable'");
     return defer(() => {
       let activeInnerSubscription = false;
       return pipe(

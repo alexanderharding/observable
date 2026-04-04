@@ -1,5 +1,4 @@
 import { Observable } from "@observable/core";
-import { MinimumArgumentsRequiredError } from "@observable/internal";
 
 /**
  * Uses the [async function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function)
@@ -74,7 +73,7 @@ import { MinimumArgumentsRequiredError } from "@observable/internal";
 export function asyncAwait<const Expression>(
   expression: Expression,
 ): Observable<Awaited<Expression>> {
-  if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
+  if (!arguments.length) throw new TypeError("1 argument required but 0 present");
   return new Observable(async (observer) => {
     try {
       observer.next(await expression);

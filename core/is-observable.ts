@@ -1,33 +1,55 @@
-import { isObject, MinimumArgumentsRequiredError } from "@observable/internal";
 import { Observable } from "./observable.ts";
 
 /**
  * Checks if a {@linkcode value} is an object that implements the {@linkcode Observable} interface.
  * @example
+ * Instance
  * ```ts
  * import { isObservable, Observable } from "@observable/core";
  *
- * const observableInstance = new Observable((observer) => {
+ * const value = new Observable((observer) => {
  *   // Implementation omitted for brevity.
  * });
- * isObservable(observableInstance); // true
  *
- * const observableLiteral: Observable = {
+ * isObservable(value); // true
+ * ```
+ * @example
+ * Object Literal
+ * ```ts
+ * import { isObservable, Observable } from "@observable/core";
+ *
+ * const value: Observable = {
  *   subscribe(observer) {
  *     // Implementation omitted for brevity.
  *   },
  * };
- * isObservable(observableLiteral); // true
  *
- * const notAnObservable = {};
- * isObservable(notAnObservable); // false
+ * isObservable(value); // true
+ * ```
+ * @example
+ * Empty Object Literal
+ * ```ts
+ * import { isObservable } from "@observable/core";
+ *
+ * const value = {};
+ *
+ * isObservable(value); // false
+ * ```
+ * @example
+ * Primitive
+ * ```ts
+ * import { isObservable } from "@observable/core";
+ *
+ * const value = 1;
+ *
+ * isObservable(value); // false
  * ```
  */
 export function isObservable(value: unknown): value is Observable {
-  if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
+  if (!arguments.length) throw new TypeError("1 argument required but 0 present");
   return (
     value instanceof Observable ||
-    (isObject(value) &&
+    ((typeof value === "object" && value !== null) &&
       "subscribe" in value &&
       typeof value.subscribe === "function")
   );

@@ -1,5 +1,4 @@
 import { isObservable, Observable } from "@observable/core";
-import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 import { pipe } from "@observable/pipe";
 import { filter } from "@observable/filter";
 import { take } from "@observable/take";
@@ -196,14 +195,14 @@ import { from } from "@observable/from";
  * ```
  */
 export function at<Value>(index: number): (source: Observable<Value>) => Observable<Value> {
-  if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-  if (typeof index !== "number") throw new ParameterTypeError(0, "Number");
+  if (!arguments.length) throw new TypeError("1 argument required but 0 present");
+  if (typeof index !== "number") throw new TypeError("Parameter 1 is not of type 'Number'");
 
   index = Math.trunc(index);
 
   return function atFn(source) {
-    if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-    if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
+    if (!arguments.length) throw new TypeError("1 argument required but 0 present");
+    if (!isObservable(source)) throw new TypeError("Parameter 1 is not of type 'Observable'");
 
     if (Number.isNaN(index)) return empty;
 

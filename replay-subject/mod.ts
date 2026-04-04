@@ -1,9 +1,4 @@
 import { isObserver, type Observable, type Observer, Subject } from "@observable/core";
-import {
-  InstanceofError,
-  MinimumArgumentsRequiredError,
-  ParameterTypeError,
-} from "@observable/internal";
 import { flat } from "@observable/flat";
 import { defer } from "@observable/defer";
 import { forOf } from "@observable/for-of";
@@ -379,8 +374,8 @@ export const ReplaySubject: ReplaySubjectConstructor = class<Value> {
   ]);
 
   constructor(count: number) {
-    if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-    if (typeof count !== "number") throw new ParameterTypeError(0, "Number");
+    if (!arguments.length) throw new TypeError("1 argument required but 0 present");
+    if (typeof count !== "number") throw new TypeError("Parameter 1 is not of type 'Number'");
     Object.freeze(this);
     (this.#count = Math.trunc(count)) >= 0 ? this.#bufferSnapshot = undefined : this.return();
     if (this.signal.aborted || this.#count === 0) return;
@@ -391,7 +386,9 @@ export const ReplaySubject: ReplaySubjectConstructor = class<Value> {
   }
 
   next(value: Value): void {
-    if (!(this instanceof ReplaySubject)) throw new InstanceofError("this", stringTag);
+    if (!(this instanceof ReplaySubject)) {
+      throw new TypeError(`'this' is not instanceof '${stringTag}'`);
+    }
     if (!this.signal.aborted && this.#count > 0) {
       const length = this.#buffer.push(value);
       if (length > this.#count) this.#buffer.shift();
@@ -402,18 +399,20 @@ export const ReplaySubject: ReplaySubjectConstructor = class<Value> {
 
   return(): void {
     if (this instanceof ReplaySubject) this.#subject.return();
-    else throw new InstanceofError("this", stringTag);
+    else throw new TypeError(`'this' is not instanceof '${stringTag}'`);
   }
 
   throw(value: unknown): void {
     if (this instanceof ReplaySubject) this.#subject.throw(value);
-    else throw new InstanceofError("this", stringTag);
+    else throw new TypeError(`'this' is not instanceof '${stringTag}'`);
   }
 
   subscribe(observer: Observer<Value>): void {
-    if (!(this instanceof ReplaySubject)) throw new InstanceofError("this", stringTag);
-    if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-    if (!isObserver(observer)) throw new ParameterTypeError(0, "Observer");
+    if (!(this instanceof ReplaySubject)) {
+      throw new TypeError(`'this' is not instanceof '${stringTag}'`);
+    }
+    if (!arguments.length) throw new TypeError("1 argument required but 0 present");
+    if (!isObserver(observer)) throw new TypeError("Parameter 1 is not of type 'Observer'");
     this.#observable.subscribe(observer);
   }
 };

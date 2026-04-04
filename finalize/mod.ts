@@ -1,6 +1,5 @@
 import { isObservable, Observable } from "@observable/core";
 import { from } from "@observable/from";
-import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 
 /**
  * The [consumer](https://jsr.io/@observable/core#consumer) is telling the [producer](https://jsr.io/@observable/core#producer)
@@ -74,18 +73,16 @@ import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/i
  * ```
  */
 export function finalize<Value>(
-  teardown: () => void,
+  callback: () => void,
 ): (source: Observable<Value>) => Observable<Value> {
-  if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-  if (typeof teardown !== "function") throw new ParameterTypeError(0, "Function");
+  if (!arguments.length) throw new TypeError("1 argument required but 0 present");
+  if (typeof callback !== "function") throw new TypeError("Parameter 1 is not of type 'Function'");
   return function finalizeFn(source) {
-    if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-    if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
+    if (!arguments.length) throw new TypeError("1 argument required but 0 present");
+    if (!isObservable(source)) throw new TypeError("Parameter 1 is not of type 'Observable'");
     source = from(source);
     return new Observable((observer) => {
-      observer.signal.addEventListener("abort", () => teardown(), {
-        once: true,
-      });
+      observer.signal.addEventListener("abort", () => callback(), { once: true });
       source.subscribe(observer);
     });
   };

@@ -1,5 +1,3 @@
-import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
-
 /**
  * A unary function that takes a {@linkcode source|value} and returns it.
  * @param source - The {@linkcode source|value} to return.
@@ -865,10 +863,12 @@ export function pipe<Value>(
   source: Value,
   ...fns: ReadonlyArray<(value: Value) => Value>
 ): Value {
-  if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
+  if (!arguments.length) throw new TypeError("1 argument required but 0 present");
   for (let index = 0; index < fns.length; index++) {
     const fn = fns[index];
-    if (typeof fn !== "function") throw new ParameterTypeError(index + 1, "Function");
+    if (typeof fn !== "function") {
+      throw new TypeError(`Parameter ${index + 2} is not of type 'Function'`);
+    }
     source = fn(source);
   }
   return source;
