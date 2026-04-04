@@ -1,5 +1,4 @@
 import { Observable } from "@observable/core";
-
 import { empty } from "@observable/empty";
 
 /**

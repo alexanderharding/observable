@@ -1,5 +1,4 @@
 import { isObservable, type Observable } from "@observable/core";
-
 import { empty } from "@observable/empty";
 import { pipe } from "@observable/pipe";
 import { switchMap } from "@observable/switch-map";

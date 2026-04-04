@@ -1,5 +1,4 @@
 import type { Observable } from "@observable/core";
-
 import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 import { mergeMap } from "@observable/merge-map";

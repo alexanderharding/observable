@@ -1,6 +1,5 @@
 import { isObservable, type Observable } from "@observable/core";
 import { from } from "@observable/from";
-
 import { defer } from "@observable/defer";
 import { pipe } from "@observable/pipe";
 import { tap } from "@observable/tap";

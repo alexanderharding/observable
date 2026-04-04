@@ -6,7 +6,6 @@ import { pipe } from "@observable/pipe";
 import { throwError } from "@observable/throw-error";
 import { tap } from "./mod.ts";
 import { materialize, type ObserverNotification } from "@observable/materialize";
-
 import { empty } from "@observable/empty";
 import { never } from "@observable/never";
 import { finalize } from "@observable/finalize";

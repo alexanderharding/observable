@@ -1,5 +1,4 @@
 import type { Observable } from "@observable/core";
-
 import { defer } from "@observable/defer";
 import { pipe } from "@observable/pipe";
 import { asyncAwait } from "@observable/async-await";

@@ -1,6 +1,5 @@
 import { isObserver, Observer } from "./observer.ts";
 import { Observable } from "./observable.ts";
-
 import type { SubjectConstructor } from "./subject-constructor.ts";
 
 /**

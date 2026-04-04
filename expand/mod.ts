@@ -1,7 +1,6 @@
 import { isObservable, type Observable } from "@observable/core";
 import { from } from "@observable/from";
 import { pipe } from "@observable/pipe";
-
 import { mergeMap } from "@observable/merge-map";
 import { merge } from "@observable/merge";
 import { defer } from "@observable/defer";

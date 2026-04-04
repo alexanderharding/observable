@@ -1,5 +1,4 @@
 import { type Observable, Subject } from "@observable/core";
-
 import { defer } from "@observable/defer";
 import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";

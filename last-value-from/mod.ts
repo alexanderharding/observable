@@ -1,5 +1,4 @@
 import { isObservable, type Observable, Observer } from "@observable/core";
-
 import { pipe } from "@observable/pipe";
 import { at } from "@observable/at";
 

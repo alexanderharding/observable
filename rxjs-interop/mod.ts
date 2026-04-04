@@ -1,5 +1,4 @@
 import { isObservable, Observable } from "@observable/core";
-
 import {
   from as rxJsFrom,
   isObservable as isRxJsObservable,

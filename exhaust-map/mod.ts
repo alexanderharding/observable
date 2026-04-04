@@ -1,5 +1,4 @@
 import { isObservable, type Observable } from "@observable/core";
-
 import { defer } from "@observable/defer";
 import { pipe } from "@observable/pipe";
 import { filter } from "@observable/filter";

@@ -1,5 +1,4 @@
 import { isObserver, type Observable, type Observer, Subject } from "@observable/core";
-
 import { flat } from "@observable/flat";
 import { defer } from "@observable/defer";
 import { forOf } from "@observable/for-of";

@@ -1,6 +1,5 @@
 import { isObservable, Observable, Subject } from "@observable/core";
 import { from } from "@observable/from";
-
 import { pipe } from "@observable/pipe";
 import { finalize } from "@observable/finalize";
 import { defer } from "@observable/defer";

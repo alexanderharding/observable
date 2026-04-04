@@ -1,6 +1,5 @@
 import { isObservable, type Observable } from "@observable/core";
 import { pipe } from "@observable/pipe";
-
 import { map } from "@observable/map";
 
 /**

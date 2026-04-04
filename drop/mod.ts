@@ -1,6 +1,5 @@
 import { isObservable, type Observable } from "@observable/core";
 import { from } from "@observable/from";
-
 import { empty } from "@observable/empty";
 import { pipe } from "@observable/pipe";
 import { filter } from "@observable/filter";
