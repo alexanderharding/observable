@@ -18,5 +18,6 @@ import { Observable } from "@observable/core";
  * ```
  */
 export function throwError(value: unknown): Observable<never> {
+  if (!arguments.length) throw new TypeError("1 argument required but 0 present");
   return new Observable((observer) => observer.throw(value));
 }
