@@ -1,11 +1,98 @@
 import { isObserver, Observer } from "./observer.ts";
-import { Observable } from "./observable.ts";
-import type { SubjectConstructor } from "./subject-constructor.ts";
+import { isObservable, Observable } from "./observable.ts";
 
 /**
  * Object type that is an {@linkcode Observer} and an {@linkcode Observable}.
  */
 export type Subject<Value = unknown> = Observer<Value> & Observable<Value>;
+
+/**
+ * Object interface for a {@linkcode Subject} factory.
+ */
+export interface SubjectConstructor {
+  /**
+   * Creates and returns an object that acts as a [multicast](https://jsr.io/@observable/core#multicast)
+   * [`Observer`](https://jsr.io/@observable/core/doc/~/Observer) and a [hot](https://jsr.io/@observable/core#hot)
+   * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) replaying
+   * [`return`](https://jsr.io/@observable/core/doc/~/Observer.return) and [`throw`](https://jsr.io/@observable/core/doc/~/Observer.throw)
+   * to late [consumers](https://jsr.io/@observable/core#consumer) upon [`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe).
+   * @example
+   * ```ts
+   * import { Subject } from "@observable/core";
+   *
+   * const subject = new Subject<number>();
+   * const controller = new AbortController();
+   *
+   * subject.subscribe({
+   *   signal: controller.signal,
+   *   next: (value) => console.log("next", value),
+   *   return: () => console.log("return"),
+   *   throw: (value) => console.log("throw", value),
+   * });
+   *
+   * subject.next(1);
+   *
+   * // Console output:
+   * // "next" 1
+   *
+   * subject.subscribe({
+   *   signal: controller.signal,
+   *   next: (value) => console.log("next", value),
+   *   return: () => console.log("return"),
+   *   throw: (value) => console.log("throw", value),
+   * });
+   *
+   * subject.next(2);
+   *
+   * // Console output:
+   * // "next" 2
+   * // "next" 2
+   *
+   * subject.return();
+   *
+   * // Console output:
+   * // "return"
+   * // "return"
+   *
+   * subject.subscribe({
+   *   signal: controller.signal,
+   *   next: (value) => console.log("next", value),
+   *   return: () => console.log("return"),
+   *   throw: (value) => console.log("throw", value),
+   * });
+   *
+   * // Console output:
+   * // "return"
+   * ```
+   * @example
+   * ```ts
+   * import { Subject, Observable } from "@observable/core";
+   *
+   * class Authenticator {
+   *   readonly #events = new Subject<Event>();
+   *   // Hide the Observer from the public API by exposing the Subject as an Observable.
+   *   readonly events = new Observable((observer) => this.#events.subscribe(observer));
+   *
+   *   [Symbol.dispose]() {
+   *     this.#events.return(); // Cleanup resources.
+   *   }
+   *
+   *   login() {
+   *     // Execute some login logic...
+   *     this.#events.next(new Event("login"));
+   *   }
+   *
+   *   logout() {
+   *     // Execute some logout logic...
+   *     this.#events.next(new Event("logout"));
+   *   }
+   * }
+   * ```
+   */
+  new (): Subject;
+  new <Value>(): Subject<Value>;
+  readonly prototype: Subject;
+}
 
 /**
  * Flag indicating that a value is not thrown.
@@ -119,3 +206,75 @@ export const Subject: SubjectConstructor = class {
 
 Object.freeze(Subject);
 Object.freeze(Subject.prototype);
+
+/**
+ * Checks if a {@linkcode value} is an object that implements the {@linkcode Subject} interface.
+ * @example
+ * Instance
+ * ```ts
+ * import { isSubject, Subject } from "@observable/core";
+ *
+ * const value = new Subject();
+ *
+ * isSubject(value); // true
+ * ```
+ * @example
+ * Literal
+ * ```ts
+ * import { isSubject, Subject } from "@observable/core";
+ *
+ * const value: Subject = {
+ *   signal: {
+ *     aborted: false,
+ *     onabort: null,
+ *     throwIfAborted() {
+ *       // Implementation omitted for brevity.
+ *     },
+ *     addEventListener() {
+ *       // Implementation omitted for brevity.
+ *     },
+ *     removeEventListener() {
+ *       // Implementation omitted for brevity.
+ *     },
+ *     dispatchEvent() {
+ *       // Implementation omitted for brevity.
+ *     },
+ *   },
+ *   next(value) {
+ *     // Implementation omitted for brevity.
+ *   },
+ *   return() {
+ *     // Implementation omitted for brevity.
+ *   },
+ *   throw(value) {
+ *     // Implementation omitted for brevity.
+ *   },
+ *   subscribe(observer) {
+ *     // Implementation omitted for brevity.
+ *   },
+ * };
+ *
+ * isSubject(value); // true
+ * ```
+ * @example
+ * Empty Object
+ * ```ts
+ * import { isSubject } from "@observable/core";
+ *
+ * const value = {};
+ * isSubject(value); // false
+ * ```
+ * @example
+ * Primitive
+ * ```ts
+ * import { isSubject } from "@observable/core";
+ *
+ * const value = 1;
+ *
+ * isSubject(value); // false
+ * ```
+ */
+export function isSubject(value: unknown): value is Subject {
+  if (!arguments.length) throw new TypeError("1 argument required but 0 present");
+  return value instanceof Subject || (isObservable(value) && isObserver(value));
+}
