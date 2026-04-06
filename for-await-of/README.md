@@ -30,9 +30,10 @@ async function* generateValues(): AsyncGenerator<1 | 2 | 3, void, unknown> {
   yield await Promise.resolve(3 as const);
 }
 
-const activeSubscriptionController = new AbortController();
+const controller = new AbortController();
+
 forAwaitOf(generateValues()).subscribe({
-  signal: activeSubscriptionController.signal,
+  signal: controller.signal,
   next: (value) => console.log("next", value),
   return: () => console.log("return"),
   throw: (value) => console.error("throw", value),
@@ -73,8 +74,10 @@ async function* fetchPages() {
   yield await fetch("/api/page/2").then((r) => r.json());
 }
 
+const controller = new AbortController();
+
 forAwaitOf(fetchPages()).subscribe({
-  signal: new AbortController().signal,
+  signal: controller.signal,
   next: (page) => console.log(page),
   return: () => console.log("done"),
   throw: (error) => console.error(error),

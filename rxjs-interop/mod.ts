@@ -17,8 +17,8 @@ import { from } from "@observable/from";
  * import { pipe } from "@observable/pipe";
  *
  * const controller = new AbortController();
- * const observable = pipe(rxJsOf(1, 2, 3), asObservable());
- * observable.subscribe({
+ *
+ * pipe(rxJsOf(1, 2, 3), asObservable()).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
  *   return: () => console.log("return"),
@@ -63,7 +63,6 @@ export function asObservable<Value>(): (source: RxJsObservable<Value>) => Observ
  * import { forOf } from "@observable/for-of";
  * import { pipe } from "@observable/pipe";
  *
- * const controller = new AbortController();
  * const observable = pipe(forOf([1, 2, 3]), asRxJsObservable());
  * const subscription = observable.subscribe({
  *   next: (value) => console.log("next", value),
@@ -84,14 +83,17 @@ export function asRxJsObservable<Value>(): (source: Observable<Value>) => RxJsOb
     if (!isObservable(source)) throw new TypeError("Parameter 1 is not of type 'Observable'");
     return new RxJsObservable((subscriber) => {
       if (subscriber.closed) return;
-      const activeSubscriptionController = new AbortController();
+
+      const controller = new AbortController();
+
       from(source).subscribe({
-        signal: activeSubscriptionController.signal,
+        signal: controller.signal,
         next: (value) => subscriber.next(value),
         return: () => subscriber.complete(),
         throw: (value) => subscriber.error(value),
       });
-      return () => activeSubscriptionController.abort();
+
+      return () => controller.abort();
     });
   };
 }

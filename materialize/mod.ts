@@ -22,6 +22,7 @@ export type ObserverNotification<Value = unknown> = Readonly<
  * import { pipe } from "@observable/pipe";
  *
  * const controller = new AbortController();
+ *
  * pipe(forOf([1, 2, 3]), materialize()).subscribe({
  *  signal: controller.signal,
  *  next: (value) => console.log(value),
@@ -44,6 +45,7 @@ export type ObserverNotification<Value = unknown> = Readonly<
  * import { pipe } from "@observable/pipe";
  *
  * const controller = new AbortController();
+ *
  * pipe(throwError(new Error("error")), materialize()).subscribe({
  *  signal: controller.signal,
  *  next: (value) => console.log("next", value),
@@ -63,23 +65,21 @@ export type ObserverNotification<Value = unknown> = Readonly<
  * import { forOf } from "@observable/for-of";
  * import { Observer } from "@observable/core";
  *
- * const observable = forOf([1, 2, 3]);
+ * describe("example", () => {
+ *  let controller: AbortController;
  *
- * describe("observable", () => {
- *  let activeSubscriptionController: AbortController;
+ *  beforeEach(() => (controller = new AbortController()));
  *
- *  beforeEach(() => activeSubscriptionController = new AbortController());
- *
- *  afterEach(() => activeSubscriptionController?.abort());
+ *  afterEach(() => controller?.abort());
  *
  *  it("should emit the notifications", () => {
  *    // Arrange
  *    const notifications: Array<ObserverNotification<number>> = [];
  *
  *    // Act
- *    pipe(observable, materialize()).subscribe(
+ *    pipe(forOf([1, 2, 3]), materialize()).subscribe(
  *      new Observer({
- *        signal: activeSubscriptionController.signal,
+ *        signal: controller.signal,
  *        next: (notification) => notifications.push(notification),
  *      }),
  *    );

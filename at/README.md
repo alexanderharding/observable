@@ -30,10 +30,10 @@ import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 import { tap } from "@observable/tap";
 
-const activeSubscriptionController = new AbortController();
+const controller = new AbortController();
 
 pipe(forOf([1, 2, 3]), tap((value) => console.log("tap next", value)), at(1)).subscribe({
-  signal: activeSubscriptionController.signal,
+  signal: controller.signal,
   next: (value) => console.log("next", value),
   return: () => console.log("return"),
   throw: (value) => console.log("throw", value),
@@ -54,10 +54,10 @@ import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 import { tap } from "@observable/tap";
 
-const activeSubscriptionController = new AbortController();
+const controller = new AbortController();
 
 pipe(forOf([1, 2, 3]), tap((value) => console.log("tap next", value)), at(1.7)).subscribe({
-  signal: activeSubscriptionController.signal,
+  signal: controller.signal,
   next: (value) => console.log("next", value),
   return: () => console.log("return"),
   throw: (value) => console.log("throw", value),
@@ -78,10 +78,10 @@ import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 import { tap } from "@observable/tap";
 
-const activeSubscriptionController = new AbortController();
+const controller = new AbortController();
 
 pipe(forOf([1, 2, 3]), tap((value) => console.log("tap next", value)), at(0)).subscribe({
-  signal: activeSubscriptionController.signal,
+  signal: controller.signal,
   next: (value) => console.log("next", value),
   return: () => console.log("return"),
   throw: (value) => console.log("throw", value),
@@ -101,10 +101,10 @@ import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 import { tap } from "@observable/tap";
 
-const activeSubscriptionController = new AbortController();
+const controller = new AbortController();
 
 pipe(forOf([1, 2, 3]), tap((value) => console.log("tap next", value)), at(-1)).subscribe({
-  signal: activeSubscriptionController.signal,
+  signal: controller.signal,
   next: (value) => console.log("next", value),
   return: () => console.log("return"),
   throw: (value) => console.log("throw", value),
@@ -126,10 +126,10 @@ import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 import { tap } from "@observable/tap";
 
-const activeSubscriptionController = new AbortController();
+const controller = new AbortController();
 
 pipe(forOf([1, 2, 3]), tap((value) => console.log("tap next", value)), at(-1.7)).subscribe({
-  signal: activeSubscriptionController.signal,
+  signal: controller.signal,
   next: (value) => console.log("next", value),
   return: () => console.log("return"),
   throw: (value) => console.log("throw", value),
@@ -151,10 +151,10 @@ import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 import { tap } from "@observable/tap";
 
-const activeSubscriptionController = new AbortController();
+const controller = new AbortController();
 
 pipe(forOf([1, 2, 3]), tap((value) => console.log("tap next", value)), at(Infinity)).subscribe({
-  signal: activeSubscriptionController.signal,
+  signal: controller.signal,
   next: (value) => console.log("next", value),
   return: () => console.log("return"),
   throw: (value) => console.log("throw", value),
@@ -175,10 +175,10 @@ import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 import { tap } from "@observable/tap";
 
-const activeSubscriptionController = new AbortController();
+const controller = new AbortController();
 
 pipe(forOf([1, 2, 3]), tap((value) => console.log("tap next", value)), at(-Infinity)).subscribe({
-  signal: activeSubscriptionController.signal,
+  signal: controller.signal,
   next: (value) => console.log("next", value),
   return: () => console.log("return"),
   throw: (value) => console.log("throw", value),
@@ -199,10 +199,10 @@ import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 import { tap } from "@observable/tap";
 
-const activeSubscriptionController = new AbortController();
+const controller = new AbortController();
 
 pipe(forOf([1, 2, 3]), tap((value) => console.log("tap next", value)), at(NaN)).subscribe({
-  signal: activeSubscriptionController.signal,
+  signal: controller.signal,
   next: (value) => console.log("next", value),
   return: () => console.log("return"),
   throw: (value) => console.log("throw", value),

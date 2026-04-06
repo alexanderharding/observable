@@ -9,10 +9,10 @@ import { forOf } from "@observable/for-of";
  * ```ts
  * import { of } from "@observable/of";
  *
- * const activeSubscriptionController = new AbortController();
+ * const controller = new AbortController();
  *
  * of(1).subscribe({
- *   signal: activeSubscriptionController.signal,
+ *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
  *   return: () => console.log("return"),
  *   throw: (value) => console.error("throw", value),

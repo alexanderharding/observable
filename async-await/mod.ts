@@ -11,8 +11,10 @@ import { Observable } from "@observable/core";
  * ```ts
  * import { asyncAwait } from "@observable/async-await";
  *
+ * const controller = new AbortController();
+ *
  * asyncAwait(Promise.resolve(42)).subscribe({
- *   signal: new AbortController().signal,
+ *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
  *   return: () => console.log("return"),
  *   throw: (value) => console.error("throw", value),
@@ -27,8 +29,10 @@ import { Observable } from "@observable/core";
  * ```ts
  * import { asyncAwait } from "@observable/async-await";
  *
+ * const controller = new AbortController();
+ *
  * asyncAwait({ then: (onfulfilled: (value: 7) => void) => onfulfilled(7) }).subscribe({
- *   signal: new AbortController().signal,
+ *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
  *   return: () => console.log("return"),
  *   throw: (value) => console.error("throw", value),
@@ -43,8 +47,10 @@ import { Observable } from "@observable/core";
  * ```ts
  * import { asyncAwait } from "@observable/async-await";
  *
+ * const controller = new AbortController();
+ *
  * asyncAwait(8).subscribe({
- *   signal: new AbortController().signal,
+ *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
  *   return: () => console.log("return"),
  *   throw: (value) => console.error("throw", value),
@@ -59,8 +65,10 @@ import { Observable } from "@observable/core";
  * ```ts
  * import { asyncAwait } from "@observable/async-await";
  *
+ * const controller = new AbortController();
+ *
  * asyncAwait(Promise.reject(new Error("test"))).subscribe({
- *   signal: new AbortController().signal,
+ *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
  *   return: () => console.log("return"),
  *   throw: (value) => console.error("throw", value),
