@@ -11,13 +11,13 @@ import { map } from "@observable/map";
  * import { forOf } from "@observable/for-of";
  * import { pipe } from "@observable/pipe";
  *
- * const activeSubscriptionController = new AbortController();
+ * const controller = new AbortController();
  *
  * pipe(
  *   forOf([1, 2, 3]),
  *   tap((value) => console.log("tap callback", value)),
  * ).subscribe({
- *   signal: activeSubscriptionController.signal,
+ *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
  *   return: () => console.log("return"),
  *   throw: (value) => console.log("throw", value),

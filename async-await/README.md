@@ -28,8 +28,10 @@ Resolved promise
 ```ts
 import { asyncAwait } from "@observable/async-await";
 
+const controller = new AbortController();
+
 asyncAwait(Promise.resolve(42)).subscribe({
-  signal: new AbortController().signal,
+  signal: controller.signal,
   next: (value) => console.log("next", value),
   return: () => console.log("return"),
   throw: (value) => console.error("throw", value),
@@ -45,8 +47,10 @@ Thenable object
 ```ts
 import { asyncAwait } from "@observable/async-await";
 
+const controller = new AbortController();
+
 asyncAwait({ then: (onfulfilled: (value: 7) => void) => onfulfilled(7) }).subscribe({
-  signal: new AbortController().signal,
+  signal: controller.signal,
   next: (value) => console.log("next", value),
   return: () => console.log("return"),
   throw: (value) => console.error("throw", value),
@@ -62,8 +66,10 @@ Primitive value
 ```ts
 import { asyncAwait } from "@observable/async-await";
 
+const controller = new AbortController();
+
 asyncAwait(8).subscribe({
-  signal: new AbortController().signal,
+  signal: controller.signal,
   next: (value) => console.log("next", value),
   return: () => console.log("return"),
   throw: (value) => console.error("throw", value),
@@ -79,8 +85,10 @@ Rejected promise
 ```ts
 import { asyncAwait } from "@observable/async-await";
 
+const controller = new AbortController();
+
 asyncAwait(Promise.reject(new Error("test"))).subscribe({
-  signal: new AbortController().signal,
+  signal: controller.signal,
   next: (value) => console.log("next", value),
   return: () => console.log("return"),
   throw: (value) => console.error("throw", value),
@@ -109,8 +117,10 @@ USAGE PATTERN:
 ```ts
 import { asyncAwait } from "@observable/async-await";
 
+const controller = new AbortController();
+
 asyncAwait(fetch("/api/data")).subscribe({
-  signal: new AbortController().signal,
+  signal: controller.signal,
   next: (response) => console.log(response),
   return: () => console.log("done"),
   throw: (error) => console.error(error),
@@ -119,8 +129,10 @@ asyncAwait(fetch("/api/data")).subscribe({
 
 ERROR HANDLING:
 ```ts
+const controller = new AbortController();
+
 asyncAwait(Promise.reject(new Error("failed"))).subscribe({
-  signal: new AbortController().signal,
+  signal: controller.signal,
   next: (value) => console.log(value),
   return: () => console.log("done"),
   throw: (error) => console.error("Caught:", error), // Caught: Error: failed

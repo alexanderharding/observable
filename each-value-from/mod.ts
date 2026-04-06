@@ -96,14 +96,15 @@ export async function* eachValueFrom<Value>(
 ): AsyncGenerator<Value, void, void> {
   if (!arguments.length) throw new TypeError("1 argument required but 0 present");
   if (!isObservable(observable)) throw new TypeError("Parameter 1 is not of type 'Observable'");
-  const activeSubscriptionController = new AbortController();
+
   let thrownValue: unknown = notThrown;
   let returned = false;
+  const controller = new AbortController();
   const buffer: Array<Value> = [];
   const deferreds: Array<Deferred<Value | typeof doneValue>> = [];
 
   from(observable).subscribe({
-    signal: activeSubscriptionController.signal,
+    signal: controller.signal,
     next(value) {
       const deferred = deferreds.shift();
       if (deferred) deferred.resolve(value);
@@ -138,7 +139,7 @@ export async function* eachValueFrom<Value>(
       }
     }
   } finally {
-    activeSubscriptionController.abort();
+    controller.abort();
     deferreds.length = 0;
     buffer.length = 0;
   }
