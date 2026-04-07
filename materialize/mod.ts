@@ -12,8 +12,7 @@ export type ObserverNotification<Value = unknown> = Readonly<
 >;
 
 /**
- * Projects all of the [`Observer`](https://jsr.io/@observable/core/doc/~/Observer) [notification](https://jsr.io/@observable/core#notification)
- * as [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values.
+ * [`Next`](https://jsr.io/@observable/core/doc/~/Observer.next)s all [notifications](https://jsr.io/@observable/core#notification) as values.
  * @example
  * Notifications as values
  * ```ts

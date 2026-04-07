@@ -11,22 +11,22 @@ import { takeUntil } from "@observable/take-until";
 import { finalize } from "@observable/finalize";
 
 /**
- * [`Next`](https://jsr.io/@observable/core/doc/~/Observer.next)s an [`Array`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)
- * of the latest {@linkcode Values|values} from _all_ of {@linkcode input}'s [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)s, in
- * [index](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array#array_indices) order.
+ * [`Next`](https://jsr.io/@observable/core/doc/~/Observer.next)s {@linkcode Values|values} from _all_ of the given
+ * {@linkcode observables} in [index](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array#array_indices)
+ * order.
  * @example
- * Array of sources
+ * Array of observables
  * ```ts
  * import { all } from "@observable/all";
  * import { forOf } from "@observable/for-of";
  * import { pipe } from "@observable/pipe";
  *
- * const source1 = forOf([1, 2, 3]);
- * const source2 = forOf([4, 5, 6]);
- * const source3 = forOf([7, 8, 9]);
- *
+ * const observable1 = forOf([1, 2, 3]);
+ * const observable2 = forOf([4, 5, 6]);
+ * const observable3 = forOf([7, 8, 9]);
  * const controller = new AbortController();
- * all([source1, source2, source3]).subscribe({
+ *
+ * all([observable1, observable2, observable3]).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
  *   return: () => console.log("return"),
@@ -40,18 +40,18 @@ import { finalize } from "@observable/finalize";
  * // "return"
  * ```
  * @example
- * Empty source ends immediately
+ * Array with an empty observable
  * ```ts
  * import { all } from "@observable/all";
  * import { forOf } from "@observable/for-of";
  * import { pipe } from "@observable/pipe";
  * import { empty } from "@observable/empty";
  *
- * const source1 = forOf([1, 2, 3]);
- * const source2 = forOf([7, 8, 9]);
- *
+ * const observable1 = forOf([1, 2, 3]);
+ * const observable2 = forOf([7, 8, 9]);
  * const controller = new AbortController();
- * all([source1, empty, source2]).subscribe({
+ *
+ * all([observable1, empty, observable2]).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
  *   return: () => console.log("return"),
@@ -62,11 +62,12 @@ import { finalize } from "@observable/finalize";
  * // "return"
  * ```
  * @example
- * Empty array
+ * Empty observable array
  * ```ts
  * import { all } from "@observable/all";
  *
  * const controller = new AbortController();
+ *
  * all([]).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
@@ -79,51 +80,51 @@ import { finalize } from "@observable/finalize";
  * ```
  */
 export function all<const Values extends ReadonlyArray<unknown>>(
-  input: Readonly<{ [Key in keyof Values]: Observable<Values[Key]> }>,
+  observables: Readonly<{ [Key in keyof Values]: Observable<Values[Key]> }>,
 ): Observable<Values>;
 /**
  * [`Next`](https://jsr.io/@observable/core/doc/~/Observer.next)s an [`Array`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)
- * of the latest {@linkcode Value|values} from _all_ of {@linkcode input}'s [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)s, in
- * [iteration](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#the_iterable_protocol) order.
+ * of {@linkcode Value|values} from _all_ of the given {@linkcode observables} in [iteration](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#the_iterable_protocol)
+ * order.
  * @example
- * Iterable of sources
+ * Iterable of observables
  * ```ts
  * import { all } from "@observable/all";
  * import { Subject } from "@observable/core";
  *
- * const source1 = new Subject<number>();
- * const source2 = source1;
- * const source3 = new Subject<number>();
- *
+ * const subject1 = new Subject<number>();
+ * const subject2 = subject1;
+ * const subject3 = new Subject<number>();
  * const controller = new AbortController();
- * all(new Set([source1, source2, source3])).subscribe({
+ *
+ * all(new Set([subject1, subject2, subject3])).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
  *   return: () => console.log("return"),
  *   throw: (value) => console.log("throw", value),
  * });
- * source2.next(1);
- * source1.next(2);
- * source3.next(3); // "next" [2, 3]
- * source1.next(4); // "next" [4, 3]
- * source2.next(5); // "next" [4, 5]
- * source1.return();
- * source3.return(); // "return"
- * source2.return();
+ * subject2.next(1);
+ * subject1.next(2);
+ * subject3.next(3); // "next" [2, 3]
+ * subject1.next(4); // "next" [4, 3]
+ * subject2.next(5); // "next" [4, 5]
+ * subject1.return();
+ * subject3.return(); // "return"
+ * subject2.return();
  * ```
  * @example
- * Iterable with empty member
+ * Iterable with an empty observable
  * ```ts
  * import { all } from "@observable/all";
  * import { forOf } from "@observable/for-of";
  * import { pipe } from "@observable/pipe";
  * import { empty } from "@observable/empty";
  *
- * const source1 = forOf([1, 2, 3]);
- * const source2 = forOf([7, 8, 9]);
- *
+ * const observable1 = forOf([1, 2, 3]);
+ * const observable2 = forOf([7, 8, 9]);
  * const controller = new AbortController();
- * all(new Set([source1, empty, source2])).subscribe({
+ *
+ * all(new Set([observable1, empty, observable2])).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
  *   return: () => console.log("return"),
@@ -134,12 +135,16 @@ export function all<const Values extends ReadonlyArray<unknown>>(
  * // "return"
  * ```
  */
-export function all<Value>(input: Iterable<Observable<Value>>): Observable<ReadonlyArray<Value>>;
-export function all<Value>(input: Iterable<Observable<Value>>): Observable<ReadonlyArray<Value>> {
+export function all<Value>(
+  observables: Iterable<Observable<Value>>,
+): Observable<ReadonlyArray<Value>>;
+export function all<Value>(
+  observables: Iterable<Observable<Value>>,
+): Observable<ReadonlyArray<Value>> {
   if (!arguments.length) throw new TypeError("1 argument required but 0 present");
-  if (!isIterable(input)) throw new TypeError("Parameter 1 is not of type 'Iterable'");
+  if (!isIterable(observables)) throw new TypeError("Parameter 1 is not of type 'Iterable'");
 
-  if (Array.isArray(input) && !input.length) return empty;
+  if (Array.isArray(observables) && !observables.length) return empty;
 
   // Use defer so we do not start iterating until subscription, we get a fresh iteration for each subscription,
   // and we get a fresh variable scope for each subscription.
@@ -149,15 +154,15 @@ export function all<Value>(input: Iterable<Observable<Value>>): Observable<Reado
      */
     let receivedFirstValueCount = 0;
     /**
-     * The normalized {@linkcode input} which has a known length for subsequent logic.
+     * The normalized {@linkcode observables} which has a known length for subsequent logic.
      */
-    const inputArray: ReadonlyArray<Observable<Value>> = Array.isArray(input)
-      ? input
-      : Array.from(input);
+    const observableArray: ReadonlyArray<Observable<Value>> = Array.isArray(observables)
+      ? observables
+      : Array.from(observables);
     /**
      * Tracking the expected number of first values that need to be received before the first snapshot is emitted.
      */
-    const expectedFirstValueCount = inputArray.length;
+    const expectedFirstValueCount = observableArray.length;
 
     /**
      * Tracking a known list of buffered values, so we don't have to clone them while nexting to prevent reentrant behaviors.
@@ -175,7 +180,7 @@ export function all<Value>(input: Iterable<Observable<Value>>): Observable<Reado
     const stop = new Subject<void>();
 
     return pipe(
-      forOf(inputArray),
+      forOf(observableArray),
       mergeMap((observable, index) => {
         /**
          * Tracking if the observable is empty to be evaluated by subsequent logic.

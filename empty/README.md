@@ -1,7 +1,6 @@
 # [@observable/empty](https://jsr.io/@observable/empty)
 
-Immediately [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s each
-[`Observer`](https://jsr.io/@observable/core/doc/~/Observer) on
+Immediately [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s on
 [`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe).
 
 ## Build

@@ -2,20 +2,16 @@ import { isObservable, Observable } from "@observable/core";
 import { from } from "@observable/from";
 
 /**
- * {@linkcode project|Projects} each [source](https://jsr.io/@observable/core#source)
- * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)'s
- * [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed value to an
- * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) which is merged in the output
- * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable), in a serialized fashion
- * waiting for each one to [`return`](https://jsr.io/@observable/core/doc/~/Observer.return) before
- * merging the next.
+ * Sequentially {@linkcode project|projects} each {@linkcode In|value} to an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)
+ * waiting for each {@linkcode project|projected} [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)
+ * to [`return`](https://jsr.io/@observable/core/doc/~/Observer.return) before moving on to the next.
  * @example
  * ```ts
  * import { flatMap } from "@observable/flat-map";
  * import { forOf } from "@observable/for-of";
  * import { pipe } from "@observable/pipe";
  *
- * const source = forOf(["a", "b", "c"]);
+ * const observable = forOf(["a", "b", "c"]);
  * const controller = new AbortController();
  * const observableLookup = {
  *   a: forOf([1, 2, 3]),
@@ -23,7 +19,7 @@ import { from } from "@observable/from";
  *   c: forOf([7, 8, 9]),
  * } as const;
  *
- * pipe(source, flatMap((value) => observableLookup[value])).subscribe({
+ * pipe(observable, flatMap((value) => observableLookup[value])).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
  *   return: () => console.log("return"),

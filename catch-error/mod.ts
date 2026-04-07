@@ -3,9 +3,7 @@ import { from } from "@observable/from";
 
 /**
  * {@linkcode project|Projects} each [`throw`](https://jsr.io/@observable/core/doc/~/Observer.throw)n
- * value from the [source](https://jsr.io/@observable/core#source)
- * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) to a new
- * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable).
+ * value to an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable).
  * @example
  * ```ts
  * import { catchError } from "@observable/catch-error";

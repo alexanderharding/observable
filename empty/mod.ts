@@ -1,10 +1,8 @@
 import { Observable } from "@observable/core";
 
 /**
- * Immediately [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s the
- * [`Observer`](https://jsr.io/@observable/core/doc/~/Observer) on
- * [`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe) without
- * [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ing a value.
+ * Immediately [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s on
+ * [`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe).
  * @example
  * ```ts
  * import { empty } from "@observable/empty";

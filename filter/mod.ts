@@ -2,8 +2,7 @@ import { isObservable, Observable } from "@observable/core";
 import { from } from "@observable/from";
 
 /**
- * Filters [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values from the
- * [source](https://jsr.io/@observable/core#source) that satisfy a specified {@linkcode predicate}.
+ * Filters {@linkcode Value|values} that satisfy the given {@linkcode predicate} function.
  * @example
  * ```ts
  * import { filter } from "@observable/filter";
@@ -11,6 +10,7 @@ import { from } from "@observable/from";
  * import { pipe } from "@observable/pipe";
  *
  * const controller = new AbortController();
+ *
  * pipe(forOf([1, 2, 3, 4, 5]), filter((value) => value % 2 === 0)).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),

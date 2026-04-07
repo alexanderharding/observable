@@ -5,10 +5,9 @@ import { mergeMap } from "@observable/merge-map";
 import { empty } from "@observable/empty";
 
 /**
- * Concurrently [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s all values from every given
- * [source](https://jsr.io/@observable/core#source) [`Observable`](https://jsr.io/@observable/core/doc/~/Observable).
+ * Concurrently mirrors all of the given {@linkcode observables}.
  * @example
- * Array of sources
+ * Array of observables
  * ```ts
  * import { merge } from "@observable/merge";
  * import { Subject } from "@observable/core";
@@ -52,13 +51,13 @@ import { empty } from "@observable/empty";
  * ```
  */
 export function merge<const Values extends ReadonlyArray<unknown>>(
-  sources: Readonly<{ [Key in keyof Values]: Observable<Values[Key]> }>,
+  observables: Readonly<{ [Key in keyof Values]: Observable<Values[Key]> }>,
 ): Observable<Values[number]>;
 /**
- * Concurrently [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s all values from every given
- * [source](https://jsr.io/@observable/core#source) [`Observable`](https://jsr.io/@observable/core/doc/~/Observable).
+ * Concurrently [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s all values from all
+ * given {@linkcode observables}.
  * @example
- * Iterable of sources
+ * Iterable of observables
  * ```ts
  * import { merge } from "@observable/merge";
  * import { Subject } from "@observable/core";
@@ -85,12 +84,12 @@ export function merge<const Values extends ReadonlyArray<unknown>>(
  * source3.return(); // "return"
  * ```
  */
-export function merge<Value>(sources: Iterable<Observable<Value>>): Observable<Value>;
-export function merge<Value>(sources: Iterable<Observable<Value>>): Observable<Value> {
+export function merge<Value>(observables: Iterable<Observable<Value>>): Observable<Value>;
+export function merge<Value>(observables: Iterable<Observable<Value>>): Observable<Value> {
   if (!arguments.length) throw new TypeError("1 argument required but 0 present");
-  if (!isIterable(sources)) throw new TypeError("Parameter 1 is not of type 'Iterable'");
-  if (Array.isArray(sources) && !sources.length) return empty;
-  return pipe(forOf(sources), mergeMap((observable) => observable));
+  if (!isIterable(observables)) throw new TypeError("Parameter 1 is not of type 'Iterable'");
+  if (Array.isArray(observables) && !observables.length) return empty;
+  return pipe(forOf(observables), mergeMap((observable) => observable));
 }
 
 /**

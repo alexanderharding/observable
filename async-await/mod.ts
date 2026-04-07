@@ -1,11 +1,9 @@
 import { Observable } from "@observable/core";
 
 /**
- * Uses the [async function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function)
- * syntax to [`await`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/await) the provided
- * {@linkcode expression} and [`next`](https://jsr.io/@observable/core/doc/~/Observer.next) it's resolved value through
- * the returned [`Observable`](https://jsr.io/@observable/core/doc/~/Observable).
- * @param expression - A [`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise), a [thenable object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise#thenables), or any value to wait for.
+ * [`Await`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/await)s the given
+ * {@linkcode expression}, [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s its resolved value, and then
+ * [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s.
  * @example
  * Resolved promise
  * ```ts

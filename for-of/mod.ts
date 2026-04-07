@@ -2,9 +2,8 @@ import { Observable } from "@observable/core";
 import { empty } from "@observable/empty";
 
 /**
- * Projects an [`Iterable`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols)
- * to an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) that [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s
- * each {@linkcode Values|value} in order upon [`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe).
+ * [`Next`](https://jsr.io/@observable/core/doc/~/Observer.next)s each [iterated](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols)
+ * value in order and then [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s.
  * @example
  * Populate array
  * ```ts
@@ -45,9 +44,8 @@ export function forOf<const Values extends ReadonlyArray<unknown>>(
   values: Values,
 ): Observable<Values[number]>;
 /**
- * Projects an [`Iterable`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols)
- * to an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) that [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s
- * each {@linkcode Value|value} in order upon [`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe).
+ * [`Next`](https://jsr.io/@observable/core/doc/~/Observer.next)s each [iterated](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols)
+ * {@linkcode Value|value} in order and then [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s.
  * @example
  * ```ts
  * import { forOf } from "@observable/for-of";

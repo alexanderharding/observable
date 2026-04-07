@@ -1,10 +1,8 @@
 # [@observable/for-of](https://jsr.io/@observable/for-of)
 
-Projects an
-[`Iterable`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols)
-to an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) that
-[`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s each value in order, then
-[`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s.
+[`Next`](https://jsr.io/@observable/core/doc/~/Observer.next)s each
+[iterated](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols)
+value in order and then [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s.
 
 ## Build
 

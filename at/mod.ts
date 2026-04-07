@@ -7,10 +7,9 @@ import { empty } from "@observable/empty";
 import { from } from "@observable/from";
 
 /**
- * Filters [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values from the [source](https://jsr.io/@observable/core#source)
- * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) to only the [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed
- * value at the given {@linkcode index}. Negative {@linkcode index|indices} count back from the last
- * [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed value in the sequence.
+ * [`Next`](https://jsr.io/@observable/core/doc/~/Observer.next)s the first {@linkcode Value|value} at the given
+ * {@linkcode index} and then [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s. Negative
+ * {@linkcode index|indices} count back from the last {@linkcode Value|value} in the sequence.
  * @example
  * Positive index integer
  * ```ts

@@ -10,9 +10,7 @@ import { timeout } from "@observable/timeout";
 import { drop } from "@observable/drop";
 
 /**
- * Throttles the [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values from the
- * [source](https://jsr.io/@observable/core#source) [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)
- * by the specified number of {@linkcode milliseconds}.
+ * Throttles each {@linkcode Value|value} by the given {@linkcode milliseconds}.
  * @example
  * Positive integer milliseconds
  * ```ts
@@ -21,21 +19,21 @@ import { drop } from "@observable/drop";
  * import { pipe } from "@observable/pipe";
  *
  * const controller = new AbortController();
- * const source = new Subject<number>();
+ * const subject = new Subject<number>();
  *
- * pipe(source, throttle(100)).subscribe({
+ * pipe(subject, throttle(100)).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
  *   return: () => console.log("return"),
  *   throw: (value) => console.log("throw", value),
  * });
  *
- * source.next(1); // Emitted immediately
- * source.next(2); // Ignored (within throttle window)
- * source.next(3); // Ignored (within throttle window)
+ * subject.next(1); // Emitted immediately
+ * subject.next(2); // Ignored (within throttle window)
+ * subject.next(3); // Ignored (within throttle window)
  *
  * // After 100ms, the next value will be emitted
- * source.next(4); // Emitted after throttle window
+ * subject.next(4); // Emitted after throttle window
  *
  * // Console output:
  * // "next" 1
@@ -50,6 +48,7 @@ import { drop } from "@observable/drop";
  * import { pipe } from "@observable/pipe";
  *
  * const controller = new AbortController();
+ *
  * pipe(forOf([1, 2, 3]), throttle(0)).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
@@ -71,6 +70,7 @@ import { drop } from "@observable/drop";
  * import { pipe } from "@observable/pipe";
  *
  * const controller = new AbortController();
+ *
  * pipe(forOf([1, 2, 3]), throttle(-1)).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
@@ -89,6 +89,7 @@ import { drop } from "@observable/drop";
  * import { pipe } from "@observable/pipe";
  *
  * const controller = new AbortController();
+ *
  * pipe(forOf([1, 2, 3]), throttle(NaN)).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
@@ -107,17 +108,18 @@ import { drop } from "@observable/drop";
  * import { pipe } from "@observable/pipe";
  *
  * const controller = new AbortController();
- * const source = new Subject<number>();
- * pipe(source, throttle(Infinity)).subscribe({
+ * const subject = new Subject<number>();
+ *
+ * pipe(subject, throttle(Infinity)).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
  *   return: () => console.log("return"),
  *   throw: (value) => console.log("throw", value),
  * });
  *
- * source.next(1);
- * source.next(2);
- * source.return();
+ * subject.next(1);
+ * subject.next(2);
+ * subject.return();
  *
  * // Console output (synchronously):
  * // "next" 1

@@ -3,13 +3,14 @@ import { pipe } from "@observable/pipe";
 import { at } from "@observable/at";
 
 /**
- * Projects the {@linkcode observable} to a [`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)
- * that either resolves with the last [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed value on
- * [`return`](https://jsr.io/@observable/core/doc/~/Observer.return), rejects with a
- * [`throw`](https://jsr.io/@observable/core/doc/~/Observer.throw)n value, or rejects with a
+ * [`Resolve`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/resolve)s with the
+ * last {@linkcode Value|value} of the given {@linkcode observable} on [`return`](https://jsr.io/@observable/core/doc/~/Observer.return),
+ * [`reject`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/reject)s with
+ * a [`throw`](https://jsr.io/@observable/core/doc/~/Observer.throw)n value of the given {@linkcode observable}, or
+ * [`reject`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/reject)s with a
  * [`TypeError`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypeError)
- * if the {@linkcode observable} [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s
- * without [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ing a value.
+ * if the given {@linkcode observable} [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s
+ * without [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ing a {@linkcode Value|value}.
  * @example
  * Last emitted value
  * ```ts
@@ -85,7 +86,7 @@ export function lastValueFrom<Value>(
     pipe(observable, at(-1)).subscribe(
       new Observer({
         next: (value) => resolve(value),
-        // Reject on return to avoid hanging promises if the source is empty.
+        // Reject on return to avoid hanging promises if the observable is empty.
         return: () => reject(new TypeError("Cannot convert empty Observable to Promise")),
         throw: (value) => reject(value),
       }),

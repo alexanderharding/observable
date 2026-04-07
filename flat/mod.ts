@@ -5,23 +5,22 @@ import { flatMap } from "@observable/flat-map";
 import { empty } from "@observable/empty";
 
 /**
- * Sequentially [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s all values from the first given
- * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) until it
- * [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s and then moves on to the next and so on.
+ * Sequentially mirrors each given {@linkcode observables} waiting for each one to [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)
+ * before moving on to the next.
  * @example
- * Array of sources
+ * Array of observables
  * ```ts
  * import { flat } from "@observable/flat";
  * import { forOf } from "@observable/for-of";
  * import { pipe } from "@observable/pipe";
  *
- * const source1 = forOf([1, 2, 3]);
- * const source2 = forOf([4, 5, 6]);
- * const source3 = forOf([7, 8, 9]);
+ * const observable1 = forOf([1, 2, 3]);
+ * const observable2 = forOf([4, 5, 6]);
+ * const observable3 = forOf([7, 8, 9]);
  *
  * const controller = new AbortController();
  *
- * flat([source1, source2, source3]).subscribe({
+ * flat([observable1, observable2, observable3]).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
  *   return: () => console.log("return"),
@@ -58,25 +57,24 @@ import { empty } from "@observable/empty";
  * ```
  */
 export function flat<const Values extends ReadonlyArray<unknown>>(
-  sources: Readonly<{ [Key in keyof Values]: Observable<Values[Key]> }>,
+  observables: Readonly<{ [Key in keyof Values]: Observable<Values[Key]> }>,
 ): Observable<Values[number]>;
 /**
- * Sequentially [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s all values from the first given
- * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) until it
- * [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s and then moves on to the next and so on.
+ * Sequentially mirrors each given {@linkcode observables} waiting for each one to [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)
+ * before moving on to the next.
  * @example
- * Iterable of sources
+ * Iterable of observables
  * ```ts
  * import { flat } from "@observable/flat";
  * import { forOf } from "@observable/for-of";
  * import { pipe } from "@observable/pipe";
  *
  * const controller = new AbortController();
- * const source1 = forOf([1, 2, 3]);
- * const source2 = source1;
- * const source3 = forOf([4, 5, 6]);
+ * const observable1 = forOf([1, 2, 3]);
+ * const observable2 = observable1;
+ * const observable3 = forOf([4, 5, 6]);
  *
- * flat(new Set([source1, source2, source3])).subscribe({
+ * flat(new Set([observable1, observable2, observable3])).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
  *   return: () => console.log("return"),
@@ -93,12 +91,12 @@ export function flat<const Values extends ReadonlyArray<unknown>>(
  * // "return"
  * ```
  */
-export function flat<Value>(sources: Iterable<Observable<Value>>): Observable<Value>;
-export function flat<Value>(sources: Iterable<Observable<Value>>): Observable<Value> {
+export function flat<Value>(observables: Iterable<Observable<Value>>): Observable<Value>;
+export function flat<Value>(observables: Iterable<Observable<Value>>): Observable<Value> {
   if (!arguments.length) throw new TypeError("1 argument required but 0 present");
-  if (!isIterable(sources)) throw new TypeError("Parameter 1 is not of type 'Iterable'");
-  if (Array.isArray(sources) && !sources.length) return empty;
-  return pipe(forOf(sources), flatMap((observable) => observable));
+  if (!isIterable(observables)) throw new TypeError("Parameter 1 is not of type 'Iterable'");
+  if (Array.isArray(observables) && !observables.length) return empty;
+  return pipe(forOf(observables), flatMap((observable) => observable));
 }
 
 /**

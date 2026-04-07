@@ -1,6 +1,9 @@
 import { isObservable, Observable } from "@observable/core";
 import { from } from "@observable/from";
 
+/**
+ * @internal Do NOT export.
+ */
 const { signal: noopSignal } = new AbortController();
 
 /**
@@ -12,6 +15,7 @@ const { signal: noopSignal } = new AbortController();
  * import { pipe } from "@observable/pipe";
  *
  * const controller = new AbortController();
+ *
  * pipe(forOf([1, 2, 3]), keepAlive()).subscribe({
  *   signal: controller.signal,
  *   next: (value) => {
@@ -29,9 +33,7 @@ const { signal: noopSignal } = new AbortController();
  * // "return"
  * ```
  */
-export function keepAlive<Value>(): (
-  source: Observable<Value>,
-) => Observable<Value> {
+export function keepAlive<Value>(): (source: Observable<Value>) => Observable<Value> {
   return function keepAliveFn(source) {
     if (!arguments.length) throw new TypeError("1 argument required but 0 present");
     if (!isObservable(source)) throw new TypeError("Parameter 1 is not of type 'Observable'");

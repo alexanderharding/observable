@@ -1,11 +1,7 @@
 # [@observable/reduce](https://jsr.io/@observable/reduce)
 
-Reduces the [source](https://jsrio/@observable/core#source)
-[`Observable`](https://jsr.io/@observable/core/doc/~/Observable)'s
-[`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values to a single value when the
-[source](https://jsr.io/@observable/core#source)
-[`Observable`](https://jsr.io/@observable/core/doc/~/Observable)
-[`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s.
+Reduces each value to a single value on
+[`return`](https://jsr.io/@observable/core/doc/~/Observer.return).
 
 ## Build
 
@@ -28,8 +24,9 @@ import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
-const source = forOf([1, 2, 3]);
-pipe(source, reduce((previous, current) => previous + current, 0)).subscribe({
+const observable = forOf([1, 2, 3]);
+
+pipe(observable, reduce((previous, current) => previous + current, 0)).subscribe({
   signal: controller.signal,
   next: (value) => console.log("next", value),
   return: () => console.log("return"),
@@ -96,6 +93,10 @@ reduce((previous, current, index) => {
 
 EMPTY SOURCE:
 If the source returns without emitting any values, `reduce` will also return without emitting.
+
+SEE ALSO:
+
+- `scan()` — same accumulator, but `next`s every intermediate value (not only the final one)
 ````
 
 # Glossary And Semantics

@@ -10,7 +10,7 @@ import { empty } from "@observable/empty";
 import { finalize } from "@observable/finalize";
 import { never } from "@observable/never";
 
-Deno.test("scan should accumulate values with a seed", () => {
+Deno.test("scan should accumulate values with an initial value", () => {
   // Arrange
   const notifications: Array<ObserverNotification<number>> = [];
   const observable = pipe(

@@ -6,13 +6,9 @@ import { takeUntil } from "@observable/take-until";
 import { mergeMap } from "@observable/merge-map";
 
 /**
- * {@linkcode project|Projects} each [source](https://jsr.io/@observable/core#source)
- * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)'s
- * [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed value to an
- * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) which is merged in the output
- * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable), switching to latest
- * {@linkcode project|projected} [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) and
- * [`unsubscribing`](https://jsr.io/@observable/core/doc/~/Observer.signal) the previous one.
+ * {@linkcode project|Projects} each {@linkcode In|value} to an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)
+ * and [`unsubscribes`](https://jsr.io/@observable/core/doc/~/Observer.signal) from any previously
+ * {@linkcode project|projected} [`Observable`](https://jsr.io/@observable/core/doc/~/Observable).
  * @example
  * ```ts
  * import { BehaviorSubject } from "@observable/behavior-subject";

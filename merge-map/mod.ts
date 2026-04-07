@@ -2,8 +2,7 @@ import { isObservable, Observable } from "@observable/core";
 import { from } from "@observable/from";
 
 /**
- * {@linkcode project|Projects} each [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed
- * value to an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) which is merged in the output
+ * Concurrently {@linkcode project|projects} each {@linkcode In|value} to an
  * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable).
  * @example
  * ```ts

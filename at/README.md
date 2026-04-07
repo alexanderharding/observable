@@ -1,11 +1,8 @@
 # [@observable/at](https://jsr.io/@observable/at)
 
-Filters [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values from the
-[source](https://jsr.io/@observable/core#source)
-[`Observable`](https://jsr.io/@observable/core/doc/~/Observable) to only the
-[`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed value at the given `index`. Negative
-`indices` count back from the last [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed
-value in the sequence.
+[`Next`](https://jsr.io/@observable/core/doc/~/Observer.next)s the first value at the given `index`
+and then [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s. Negative indices count
+back from the last value in the sequence.
 
 ## Build
 

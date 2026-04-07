@@ -1,12 +1,8 @@
 # [@observable/async-await](https://jsr.io/@observable/async-await)
 
-Uses the
-[async function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function)
-syntax to
-[`await`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/await) the
-provided `expression` and [`next`](https://jsr.io/@observable/core/doc/~/Observer.next) it's
-resolved value through the returned
-[`Observable`](https://jsr.io/@observable/core/doc/~/Observable).
+[`Await`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/await)s the
+given `expression`, [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s its resolved
+value, and then [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s.
 
 ## Build
 
@@ -106,7 +102,9 @@ Use the following prompt with AI assistants to help them understand this library
 You are helping me with code that uses @observable/async-await from the @observable library ecosystem.
 
 WHAT IT DOES:
-`asyncAwait(promise)` converts a Promise/PromiseLike into an Observable that emits the resolved value, then calls `return()`. If the promise rejects, it calls `throw()` with the error.
+`asyncAwait(expression)` applies `await` to the given expression, then `next`s the resolved value and
+`return`s. The argument may be a `Promise`, a thenable, or any other value (same rules as `await` in
+an async function — non-thenables are `next`ed as-is). Rejection surfaces as `throw()`.
 
 CRITICAL DIFFERENCES FROM RxJS:
 - Observer uses `return`/`throw` — NOT `complete`/`error`

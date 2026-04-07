@@ -1,9 +1,6 @@
 # [@observable/scan](https://jsr.io/@observable/scan)
 
-Reduces the [source](https://jsrio/@observable/core#source)
-[`Observable`](https://jsr.io/@observable/core/doc/~/Observable)'s
-[`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values to a single value, and
-[`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s each intermediate reduced value.
+Reduces each value to a single value.
 
 ## Build
 
@@ -26,8 +23,9 @@ import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
-const source = forOf([1, 2, 3]);
-pipe(source, scan((previous, current) => previous + current, 0)).subscribe({
+const observable = forOf([1, 2, 3]);
+
+pipe(observable, scan((previous, current) => previous + current, 0)).subscribe({
   signal: controller.signal,
   next: (value) => console.log("next", value),
   return: () => console.log("return"),
@@ -93,6 +91,10 @@ scan((previous, current, index) => {
   return previous + current;
 }, 0)
 ```
+
+SEE ALSO:
+
+- `reduce()` — same accumulator idea, but only `next`s the final accumulated value on source `return`
 ````
 
 # Glossary And Semantics

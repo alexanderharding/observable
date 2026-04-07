@@ -1,7 +1,6 @@
 # [@observable/expand](https://jsr.io/@observable/expand)
 
-Recursively projects each [source](https://jsr.io/@observable/core#source) value to an
-[`Observable`](https://jsr.io/@observable/core/doc/~/Observable) which is merged in the output
+Recursively projects each value to an
 [`Observable`](https://jsr.io/@observable/core/doc/~/Observable).
 
 ## Build
@@ -102,9 +101,11 @@ WHAT IT DOES:
 `expand(project)` recursively projects each value to an Observable:
 1. Emits the source value
 2. Projects it to an inner Observable
-3. Emits values from the inner Observable
-4. Recursively projects those values too
+3. Emits values from the inner Observable (merged into the same output stream)
+4. Recursively expands those emissions the same way
 5. Continues until all inner Observables return
+
+Inner Observable emissions are merged into one flattened output (not nested streams).
 
 CRITICAL: This library is NOT RxJS. Key differences:
 - Observer uses `return`/`throw` — NOT `complete`/`error`

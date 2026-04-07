@@ -1,8 +1,6 @@
 # [@observable/merge](https://jsr.io/@observable/merge)
 
-Concurrently [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s all values from every
-given [source](https://jsr.io/@observable/core#source)
-[`Observable`](https://jsr.io/@observable/core/doc/~/Observable).
+Concurrently mirrors all of the given `observables`
 
 ## Build
 
@@ -19,7 +17,7 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 
 ## Examples
 
-Array of sources
+Array of observables
 
 ```ts
 import { merge } from "@observable/merge";
@@ -47,7 +45,7 @@ source2.return();
 source3.return(); // "return"
 ```
 
-Iterable of sources
+Iterable of observables
 
 ```ts
 import { merge } from "@observable/merge";
@@ -100,7 +98,7 @@ Use the following prompt with AI assistants to help them understand this library
 You are helping me with code that uses @observable/merge from the @observable library ecosystem.
 
 WHAT IT DOES:
-`merge(sources)` creates an Observable that concurrently emits all values from every given source Observable. Returns when all sources return.
+`merge(observables)` creates an Observable that concurrently emits all values from every given source Observable. Returns when all observables return.
 
 CRITICAL: This library is NOT RxJS. Key differences:
 - Observer uses `return`/`throw` — NOT `complete`/`error`
@@ -134,13 +132,13 @@ source3.return();  // logs: "done" (when ALL return)
 ```
 
 RETURN BEHAVIOR:
-- Emits values from all sources as they arrive
-- Only calls `return()` when ALL sources have returned
+- Emits values from all observables as they arrive
+- Only calls `return()` when ALL observables have returned
 - If any source throws, the merged Observable throws
 
 SEE ALSO:
 - `race` — mirrors only the first source to emit
-- `all` — emits arrays of latest values from all sources
+- `all` — emits arrays of latest values from all observables
 ````
 
 # Glossary And Semantics

@@ -1,9 +1,7 @@
 # [@observable/take-until](https://jsr.io/@observable/take-until)
 
-Takes [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values from the
-[source](https://jsr.io/@observable/core#source) until
-[notified](https://jsr.io/@observable/core#notifier) to
-[`return`](https://jsr.io/@observable/core/doc/~/Observer.return).
+Takes values until the given `notifier`
+[`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s a value.
 
 ## Build
 
@@ -26,21 +24,21 @@ import { takeUntil } from "@observable/take-until";
 import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
-const source = new Subject<number>();
+const subject = new Subject<number>();
 const notifier = new Subject<void>();
 
-pipe(source, takeUntil(notifier)).subscribe({
+pipe(subject, takeUntil(notifier)).subscribe({
   signal: controller.signal,
   next: (value) => console.log("next", value),
   return: () => console.log("return"),
   throw: (value) => console.log("throw", value),
 });
 
-source.next(1); // "next" 1
-source.next(2); // "next" 2
+subject.next(1); // "next" 1
+subject.next(2); // "next" 2
 notifier.next(); // "return"
-source.next(3);
-source.return();
+subject.next(3);
+subject.return();
 ```
 
 # AI Prompt
