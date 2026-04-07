@@ -1,9 +1,7 @@
 # [@observable/each-value-from](https://jsr.io/@observable/each-value-from)
 
-Projects the provided [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) to an
-[`AsyncGenerator`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/AsyncGenerator)
-that [`yield`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/yield)s
-each [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed value in order.
+[`Yield`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/yield)s each
+value in order.
 
 ## Examples
 
@@ -62,7 +60,7 @@ for await (const value of eachValueFrom(interval(100))) {
 // 5
 ```
 
-Empty source
+Empty observable
 
 ```ts
 import { eachValueFrom } from "@observable/each-value-from";

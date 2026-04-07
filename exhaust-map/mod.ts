@@ -6,11 +6,9 @@ import { switchMap } from "@observable/switch-map";
 import { finalize } from "@observable/finalize";
 
 /**
- * {@linkcode project|Projects} each [source](https://jsr.io/@observable/core#source) value to an
- * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) which is merged in the output
- * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) only if the previous
- * {@linkcode project|projected} [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) has
- * [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)ed.
+ * {@linkcode project|Projects} each {@linkcode In|value} to an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) ignoring any new
+ * {@linkcode In|values} until the {@linkcode project|projected} [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)
+ * [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s.
  * @example
  * ```ts
  * import { exhaustMap } from "@observable/exhaust-map";
@@ -20,10 +18,10 @@ import { finalize } from "@observable/finalize";
  * import { map } from "@observable/map";
  *
  * const controller = new AbortController();
- * const source = forOf([1, 2, 3]);
+ * const observable = forOf([1, 2, 3]);
  *
  * pipe(
- *   source,
+ *   observable,
  *   exhaustMap((value) => pipe(timeout(100), map(() => value))),
  * ).subscribe({
  *   signal: controller.signal,

@@ -20,10 +20,7 @@ const doneValue = Symbol("Flag indicating that we are done yielding values.");
 type Deferred<Value> = Omit<PromiseWithResolvers<Value>, "promise">;
 
 /**
- * Projects the provided {@linkcode observable|Observable} to an
- * [`AsyncGenerator`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/AsyncGenerator)
- * that [`yield`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/yield)s each
- * [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed {@linkcode Value|value} in order.
+ * [`Yield`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/yield)s each {@linkcode Value|value} in order.
  * @example
  * Basic usage
  * ```ts
@@ -77,7 +74,7 @@ type Deferred<Value> = Omit<PromiseWithResolvers<Value>, "promise">;
  * // 5
  * ```
  * @example
- * Empty source
+ * Empty observable
  * ```ts
  * import { eachValueFrom } from "@observable/each-value-from";
  * import { empty } from "@observable/empty";
@@ -126,9 +123,9 @@ export async function* eachValueFrom<Value>(
     while (true) {
       // If we already have some values in our buffer, we'll yield the next one.
       if (buffer.length > 0) yield buffer.shift()!;
-      // If the source has returned, we're done.
+      // If the observable has returned, we're done.
       else if (returned) return;
-      // If the source has thrown an error, we'll rethrow it.
+      // If the observable has thrown an error, we'll rethrow it.
       else if (thrownValue !== notThrown) throw thrownValue;
       // Otherwise, we'll wait for the next value.
       else {

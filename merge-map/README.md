@@ -1,7 +1,6 @@
 # [@observable/merge-map](https://jsr.io/@observable/merge-map)
 
-Projects each [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed value to an
-[`Observable`](https://jsr.io/@observable/core/doc/~/Observable) which is merged in the output
+Concurrently projects each value to an
 [`Observable`](https://jsr.io/@observable/core/doc/~/Observable).
 
 ## Build

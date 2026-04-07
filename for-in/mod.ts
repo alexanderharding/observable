@@ -1,9 +1,8 @@
 import { Observable } from "@observable/core";
 
 /**
- * Projects an [`Object`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)'s keys
- * to an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) that [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s
- * each key in order upon [`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe).
+ * [`Next`](https://jsr.io/@observable/core/doc/~/Observer.next)s each key of the given {@linkcode object} in order and then
+ * [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s.
  * @example
  * ```ts
  * import { forIn } from "@observable/for-in";

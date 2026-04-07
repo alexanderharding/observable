@@ -5,17 +5,13 @@ import { finalize } from "@observable/finalize";
 import { defer } from "@observable/defer";
 
 /**
- * Shares a single [subscription](https://jsr.io/@observable/core#subscription) to the
- * [source](https://jsr.io/@observable/core#source)
- * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable), forwarding
+ * Shares a single [subscription](https://jsr.io/@observable/core#subscription) forwarding
  * [`notifications`](https://jsr.io/@observable/core#notification) to all
- * [consumers](https://jsr.io/@observable/core#consumer) of the output
- * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) through a
- * [`Subject`](https://jsr.io/@observable/core/doc/~/Subject) created by a
- * {@linkcode factory} function. Resets on [`return`](https://jsr.io/@observable/core/doc/~/Observer.return),
+ * [consumers](https://jsr.io/@observable/core#consumer) through a
+ * [`Subject`](https://jsr.io/@observable/core/doc/~/Subject) created the
+ * given {@linkcode factory} function. Resets on [`return`](https://jsr.io/@observable/core/doc/~/Observer.return),
  * [`throw`](https://jsr.io/@observable/core/doc/~/Observer.throw), or when on all
- * [consumers](https://jsr.io/@observable/core#consumer)
- * [unsubscribe](https://jsr.io/@observable/core/doc/~/Observer.signal).
+ * [consumers](https://jsr.io/@observable/core#consumer) [unsubscribe](https://jsr.io/@observable/core/doc/~/Observer.signal).
  * @example
  * Basic usage
  * ```ts
@@ -56,8 +52,8 @@ import { defer } from "@observable/defer";
  * import { pipe } from "@observable/pipe";
  *
  * const controller = new AbortController();
- * const source = new Subject<number>();
- * const shared = pipe(source, share(() => new ReplaySubject<number>(1)));
+ * const subject = new Subject<number>();
+ * const shared = pipe(subject, share(() => new ReplaySubject<number>(1)));
  *
  * shared.subscribe({
  *   signal: controller.signal,
@@ -66,8 +62,8 @@ import { defer } from "@observable/defer";
  *   throw: (value) => console.log("1st throw", value),
  * });
  *
- * source.next(1);
- * source.next(2);
+ * subject.next(1);
+ * subject.next(2);
  *
  * // A second consumer joins and receives the last buffered value (2) immediately.
  * shared.subscribe({
@@ -77,8 +73,8 @@ import { defer } from "@observable/defer";
  *   throw: (value) => console.log("2nd throw", value),
  * });
  *
- * source.next(3);
- * source.return();
+ * subject.next(3);
+ * subject.return();
  *
  * // Console output:
  * // "1st" 1

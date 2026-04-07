@@ -1,8 +1,6 @@
 # [@observable/map](https://jsr.io/@observable/map)
 
-Projects each [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed value from the
-[source](https://jsr.io/@observable/core#source)
-[`Observable`](https://jsr.io/@observable/core/doc/~/Observable) to a new value.
+Projects each value to another value.
 
 ## Build
 

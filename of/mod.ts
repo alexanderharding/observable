@@ -2,9 +2,8 @@ import type { Observable } from "@observable/core";
 import { forOf } from "@observable/for-of";
 
 /**
- * [`Next`](https://jsr.io/@observable/core/doc/~/Observer.next)s a provided {@linkcode value}
- * on [`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe) and then
- * [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s.
+ * [`Next`](https://jsr.io/@observable/core/doc/~/Observer.next)s the given {@linkcode value}
+ * and then [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s.
  * @example
  * ```ts
  * import { of } from "@observable/of";

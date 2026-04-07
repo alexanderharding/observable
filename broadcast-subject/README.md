@@ -8,7 +8,7 @@ only to [consumers](https://jsr.io/@observable/core#consumer) of _other_
 with the same name even if they are in different browsing contexts (e.g. browser tabs). Logically,
 [consumers](https://jsr.io/@observable/core#consumer) of the
 [`BroadcastSubject`](https://jsr.io/@observable/broadcast-subject/doc/~/BroadcastSubject) do not
-receive it's _own_ [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values.
+receive its _own_ [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values.
 
 ## Build
 

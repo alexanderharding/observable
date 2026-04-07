@@ -1,6 +1,6 @@
 # [@observable/defer](https://jsr.io/@observable/defer)
 
-Creates a new [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) for each
+Registers the given `factory` function to be invoked on
 [`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe).
 
 ## Build

@@ -9,12 +9,11 @@ import { filter } from "@observable/filter";
 import { empty } from "@observable/empty";
 
 /**
- * Mirrors the first [source](https://jsr.io/@observable/core#source)
- * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) to
+ * Mirrors the first of the given {@linkcode observables} to
  * [`next`](https://jsr.io/@observable/core/doc/~/Observer.next) or
  * [`throw`](https://jsr.io/@observable/core/doc/~/Observer.throw) a value.
  * @example
- * Array of sources
+ * Array of observables
  * ```ts
  * import { race } from "@observable/race";
  * import { Subject } from "@observable/core";
@@ -57,15 +56,14 @@ import { empty } from "@observable/empty";
  * ```
  */
 export function race<const Values extends ReadonlyArray<unknown>>(
-  sources: Readonly<{ [Key in keyof Values]: Observable<Values[Key]> }>,
+  observables: Readonly<{ [Key in keyof Values]: Observable<Values[Key]> }>,
 ): Observable<Values[number]>;
 /**
- * Mirrors the first [source](https://jsr.io/@observable/core#source)
- * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) to
+ * Mirrors the first of the given {@linkcode observables} to
  * [`next`](https://jsr.io/@observable/core/doc/~/Observer.next) or
  * [`throw`](https://jsr.io/@observable/core/doc/~/Observer.throw) a value.
  * @example
- * Iterable of sources
+ * Iterable of observables
  * ```ts
  * import { race } from "@observable/race";
  * import { Subject } from "@observable/core";
@@ -91,21 +89,21 @@ export function race<const Values extends ReadonlyArray<unknown>>(
  * source2.return(); // "return"
  * ```
  */
-export function race<Value>(sources: Iterable<Observable<Value>>): Observable<Value>;
-export function race<Value>(sources: Iterable<Observable<Value>>): Observable<Value> {
+export function race<Value>(observables: Iterable<Observable<Value>>): Observable<Value>;
+export function race<Value>(observables: Iterable<Observable<Value>>): Observable<Value> {
   if (!arguments.length) throw new TypeError("1 argument required but 0 present");
-  if (!isIterable(sources)) throw new TypeError("Parameter 1 is not of type 'Iterable'");
+  if (!isIterable(observables)) throw new TypeError("Parameter 1 is not of type 'Iterable'");
 
-  if (Array.isArray(sources) && !sources.length) return empty;
+  if (Array.isArray(observables) && !observables.length) return empty;
 
   return defer(() => {
     const finished = new Subject<number>();
     return pipe(
-      forOf(sources),
+      forOf(observables),
       takeUntil(finished),
-      mergeMap((source, index) =>
+      mergeMap((observable, index) =>
         pipe(
-          source,
+          observable,
           tap(() => {
             finished.next(index);
             finished.return();

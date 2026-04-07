@@ -2,9 +2,7 @@ import { isObservable, Observable } from "@observable/core";
 import { from } from "@observable/from";
 
 /**
- * {@linkcode project|Projects} each [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed
- * {@linkcode In|value} from the [source](https://jsr.io/@observable/core#source)
- * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) to a new {@linkcode Out|value}.
+ * {@linkcode project|Projects} each {@linkcode In|value} to another {@linkcode Out|value}.
  * @example
  * ```ts
  * import { map } from "@observable/map";

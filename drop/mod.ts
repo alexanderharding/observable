@@ -5,8 +5,7 @@ import { pipe } from "@observable/pipe";
 import { filter } from "@observable/filter";
 
 /**
- * Drops the first {@linkcode count} of [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed
- * values from the [source](https://jsr.io/@observable/core#source) [`Observable`](https://jsr.io/@observable/core/doc/~/Observable).
+ * Drops the first {@linkcode count} of {@linkcode Value|values}.
  * @example
  * Positive integer count
  * ```ts
@@ -15,6 +14,7 @@ import { filter } from "@observable/filter";
  * import { pipe } from "@observable/pipe";
  *
  * const controller = new AbortController();
+ *
  * pipe(forOf([1, 2, 3, 4, 5]), drop(2)).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
@@ -36,6 +36,7 @@ import { filter } from "@observable/filter";
  * import { pipe } from "@observable/pipe";
  *
  * const controller = new AbortController();
+ *
  * pipe(forOf([1, 2, 3, 4, 5]), drop(2.3)).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
@@ -57,6 +58,7 @@ import { filter } from "@observable/filter";
  * import { pipe } from "@observable/pipe";
  *
  * const controller = new AbortController();
+ *
  * pipe(forOf([1, 2, 3, 4, 5]), drop(0)).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
@@ -80,6 +82,7 @@ import { filter } from "@observable/filter";
  * import { pipe } from "@observable/pipe";
  *
  * const controller = new AbortController();
+ *
  * pipe(forOf([1, 2, 3, 4, 5]), drop(-1)).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
@@ -98,6 +101,7 @@ import { filter } from "@observable/filter";
  * import { pipe } from "@observable/pipe";
  *
  * const controller = new AbortController();
+ *
  * pipe(forOf([1, 2, 3, 4, 5]), drop(NaN)).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),

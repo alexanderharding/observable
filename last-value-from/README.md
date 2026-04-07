@@ -1,13 +1,15 @@
 # [@observable/last-value-from](https://jsr.io/@observable/last-value-from)
 
-Projects the provided [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) to a
-[`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)
-that either resolves with the last [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed
-value on [`return`](https://jsr.io/@observable/core/doc/~/Observer.return), rejects with a
-[`throw`](https://jsr.io/@observable/core/doc/~/Observer.throw)n value, or rejects with a
+[`Resolve`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/resolve)s
+with the last value of the given `observable` on
+[`return`](https://jsr.io/@observable/core/doc/~/Observer.return),
+[`reject`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/reject)s
+with a [`throw`](https://jsr.io/@observable/core/doc/~/Observer.throw)n value of the given
+`observable`, or
+[`reject`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/reject)s
+with a
 [`TypeError`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypeError)
-if the the provided [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)
-[`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s without
+if the given `observable` [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s without
 [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ing a value.
 
 ## Build

@@ -1,7 +1,6 @@
 # [@observable/race](https://jsr.io/@observable/race)
 
-Mirrors the first [source](https://jsr.io/@observable/core#source)
-[`Observable`](https://jsr.io/@observable/core/doc/~/Observable) to
+Mirrors the first of the given `observables` to
 [`next`](https://jsr.io/@observable/core/doc/~/Observer.next) or
 [`throw`](https://jsr.io/@observable/core/doc/~/Observer.throw) a value.
 
@@ -20,7 +19,7 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 
 ## Examples
 
-Array of sources
+Array of observables
 
 ```ts
 import { race } from "@observable/race";
@@ -47,7 +46,7 @@ source3.next(5);
 source2.return(); // "return"
 ```
 
-Iterable of sources
+Iterable of observables
 
 ```ts
 import { race } from "@observable/race";
@@ -99,7 +98,7 @@ Use the following prompt with AI assistants to help them understand this library
 You are helping me with code that uses @observable/race from the @observable library ecosystem.
 
 WHAT IT DOES:
-`race(sources)` creates an Observable that mirrors the first source Observable to emit or throw a value. All other sources are unsubscribed once a winner is determined.
+`race(observables)` creates an Observable that mirrors the first source Observable to emit or throw a value. All other observables are unsubscribed once a winner is determined.
 
 CRITICAL: This library is NOT RxJS. Key differences:
 - Observer uses `return`/`throw` — NOT `complete`/`error`
@@ -132,12 +131,12 @@ source2.return(); // logs: "done"
 
 USE CASES:
 - Timeout patterns (race between data and timeout)
-- First-response-wins from multiple sources
+- First-response-wins from multiple observables
 - Fallback strategies
 
 SEE ALSO:
-- `merge` — emits from all sources concurrently
-- `all` — combines latest values from all sources
+- `merge` — emits from all observables concurrently
+- `all` — combines latest values from all observables
 ````
 
 # Glossary And Semantics

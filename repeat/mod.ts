@@ -7,13 +7,9 @@ import { mergeMap } from "@observable/merge-map";
 import { of } from "@observable/of";
 
 /**
- * Re-[`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe)s to the
- * [source](https://jsr.io/@observable/core#source) [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) each time it
- * [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s, as long as the {@linkcode notifier}
- * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) then [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s a value.
- * Stops repeating if the {@linkcode notifier} [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)
- * [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s without [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ing a
- * value or it [`throw`](https://jsr.io/@observable/core/doc/~/Observer.throw)s a value.
+ * Re-[`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe)s on
+ * [`return`](https://jsr.io/@observable/core/doc/~/Observer.return) as long as the given {@linkcode notifier}
+ * then [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s a value.
  * @example
  * ```ts
  * import { repeat } from "@observable/repeat";
@@ -23,12 +19,12 @@ import { of } from "@observable/of";
  * import { defer } from "@observable/defer";
  * import { forOf } from "@observable/for-of";
  *
- * const source = forOf([1, 2, 3]);
+ * const observable = forOf([1, 2, 3]);
  * const controller = new AbortController();
  * const repeated = defer(() => {
  *   let count = 0;
  *   return pipe(
- *     source,
+ *     observable,
  *     repeat(defer(() => {
  *      console.log("notifier subscribed");
  *      return ++count === 2 ? empty : of(undefined);
@@ -56,7 +52,7 @@ import { of } from "@observable/of";
  * ```
  */
 export function repeat<Value>(
-  notifier: Observable = of(undefined),
+  notifier: Observable = of(void 0),
 ): (source: Observable<Value>) => Observable<Value> {
   if (!isObservable(notifier)) throw new TypeError("Parameter 1 is not of type 'Observable'");
   notifier = from(notifier);

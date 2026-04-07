@@ -1,8 +1,6 @@
 # [@observable/tap](https://jsr.io/@observable/tap)
 
-Performs a side-effect for each [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed
-value from the [source](https://jsr.io/@observable/core#source)
-[`Observable`](https://jsr.io/@observable/core/doc/~/Observable).
+Registers the given `callback` to be invoked for each value.
 
 ## Build
 

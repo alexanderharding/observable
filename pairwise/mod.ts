@@ -1,5 +1,4 @@
 import { isObservable, type Observable } from "@observable/core";
-import { from } from "@observable/from";
 import { pipe } from "@observable/pipe";
 import { filter } from "@observable/filter";
 import { scan } from "@observable/scan";
@@ -11,13 +10,12 @@ import { scan } from "@observable/scan";
 const noValue = Symbol("Flag indicating that no value has been emitted yet");
 
 /**
- * Object type that represents a pair of consecutive values.
+ * Object type that represents a pair of consecutive {@linkcode Value|values}.
  */
 export type Pair<Value = unknown> = Readonly<[previous: Value, current: Value]>;
 
 /**
- * [`Next`](https://jsr.io/@observable/core/doc/~/Observer.next)s {@linkcode Pair|pair}s of consecutive values
- * from the [source](https://jsr.io/@observable/core#source) [`Observable`](https://jsr.io/@observable/core/doc/~/Observable).
+ * [`Next`](https://jsr.io/@observable/core/doc/~/Observer.next)s {@linkcode Pair|pair}s of consecutive {@linkcode Value|values}.
  * @example
  * ```ts
  * import { pairwise } from "@observable/pairwise";
@@ -39,17 +37,14 @@ export type Pair<Value = unknown> = Readonly<[previous: Value, current: Value]>;
  * // "return"
  * ```
  */
-export function pairwise<Value>(): (
-  source: Observable<Value>,
-) => Observable<Pair<Value>> {
+export function pairwise<Value>(): (source: Observable<Value>) => Observable<Pair<Value>> {
   return function pairwiseFn(source) {
     if (!arguments.length) throw new TypeError("1 argument required but 0 present");
     if (!isObservable(source)) throw new TypeError("Parameter 1 is not of type 'Observable'");
-    const seed: Pair<Value | typeof noValue> = [noValue, noValue];
-    source = from(source);
+    const initialValue: Pair<Value | typeof noValue> = [noValue, noValue];
     return pipe(
       source,
-      scan(([, previous], current) => [previous, current] as const, seed),
+      scan(([, previous], current) => [previous, current] as const, initialValue),
       filter((pair) => pair.every((value) => value !== noValue)),
     );
   };

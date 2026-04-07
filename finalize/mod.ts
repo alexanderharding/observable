@@ -2,8 +2,7 @@ import { isObservable, Observable } from "@observable/core";
 import { from } from "@observable/from";
 
 /**
- * The [consumer](https://jsr.io/@observable/core#consumer) is telling the [producer](https://jsr.io/@observable/core#producer)
- * it's no longer interested in receiving {@linkcode Value|values}.
+ * Registers a {@linkcode callback} to be invoked on [`unsubscribe`](https://jsr.io/@observable/core/doc/~/Observer.signal).
  * @example
  * Return
  * ```ts
@@ -12,6 +11,7 @@ import { from } from "@observable/from";
  * import { pipe } from "@observable/pipe";
  *
  * const controller = new AbortController();
+ *
  * pipe(forOf([1, 2, 3]), finalize(() => console.log("finalized"))).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
@@ -36,8 +36,9 @@ import { from } from "@observable/from";
  * import { flat } from "@observable/flat";
  *
  * const controller = new AbortController();
- * const source = flat([forOf([1, 2, 3]), throwError(new Error("error"))]);
- * pipe(source, finalize(() => console.log("finalized"))).subscribe({
+ * const observable = flat([forOf([1, 2, 3]), throwError(new Error("error"))]);
+ *
+ * pipe(observable, finalize(() => console.log("finalized"))).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
  *   return: () => console.log("return"),
@@ -59,6 +60,7 @@ import { from } from "@observable/from";
  * import { never } from "@observable/never";
  *
  * const controller = new AbortController();
+ *
  * pipe(never, finalize(() => console.log("finalized"))).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),

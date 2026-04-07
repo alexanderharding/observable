@@ -1,7 +1,6 @@
 # [@observable/filter](https://jsr.io/@observable/filter)
 
-Filters [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values from the
-[source](https://jsr.io/@observable/core#source) that satisfy a specified predicate.
+Filters values that satisfy the given `predicate` function.
 
 ## Build
 
@@ -24,6 +23,7 @@ import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
+
 pipe(forOf([1, 2, 3, 4, 5]), filter((value) => value % 2 === 0)).subscribe({
   signal: controller.signal,
   next: (value) => console.log("next", value),

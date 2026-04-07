@@ -6,10 +6,8 @@ import { tap } from "@observable/tap";
 import { filter } from "@observable/filter";
 
 /**
- * Only [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s values from the
- * [source](https://jsr.io/@observable/core#source) [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)
- * that are [distinct](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/is)
- * from all previously [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values.
+ * Filters {@linkcode Value|values} that are [distinct](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/is)
+ * from all previous {@linkcode Value|values}.
  * @example
  * ```ts
  * import { distinct } from "@observable/distinct";
@@ -31,9 +29,7 @@ import { filter } from "@observable/filter";
  * // "return"
  * ```
  */
-export function distinct<Value>(): (
-  source: Observable<Value>,
-) => Observable<Value> {
+export function distinct<Value>(): (source: Observable<Value>) => Observable<Value> {
   return function distinctFn(source) {
     if (!arguments.length) throw new TypeError("1 argument required but 0 present");
     if (!isObservable(source)) throw new TypeError("Parameter 1 is not of type 'Observable'");

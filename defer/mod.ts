@@ -2,8 +2,7 @@ import { Observable } from "@observable/core";
 import { from } from "@observable/from";
 
 /**
- * {@linkcode factory|Creates} a new [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)
- * for each [`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe).
+ * Registers the given {@linkcode factory} function to be invoked on [`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe).
  * @example
  * ```ts
  * import { defer } from "@observable/defer";
@@ -41,9 +40,7 @@ import { from } from "@observable/from";
  * // "return"
  * ```
  */
-export function defer<Value>(
-  factory: () => Observable<Value>,
-): Observable<Value> {
+export function defer<Value>(factory: () => Observable<Value>): Observable<Value> {
   if (!arguments.length) throw new TypeError("1 argument required but 0 present");
   if (typeof factory !== "function") throw new TypeError("Parameter 1 is not of type 'Function'");
   return new Observable((observer) => from(factory()).subscribe(observer));

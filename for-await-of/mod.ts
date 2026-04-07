@@ -1,9 +1,8 @@
 import { Observable } from "@observable/core";
 
 /**
- * Projects an [`AsyncIterable`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#the_async_iterator_and_async_iterable_protocols)
- * to an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) that [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s
- * each {@linkcode Value|value} in order, then [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s.
+ * [`Next`](https://jsr.io/@observable/core/doc/~/Observer.next)s each [`await`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/await)ed
+ * {@linkcode Value|value} of the given {@linkcode values} in order and then [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s.
  * @example
  * ```ts
  * import { forAwaitOf } from "@observable/for-await-of";

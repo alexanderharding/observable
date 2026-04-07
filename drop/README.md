@@ -1,8 +1,6 @@
 # [@observable/drop](https://jsr.io/@observable/drop)
 
-Drops the first count of [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values from
-the [source](https://jsr.io/@observable/core#source)
-[`Observable`](https://jsr.io/@observable/core/doc/~/Observable).
+Drops the first `count` of values.
 
 ## Build
 
@@ -27,6 +25,7 @@ import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
+
 pipe(forOf([1, 2, 3, 4, 5]), drop(2)).subscribe({
   signal: controller.signal,
   next: (value) => console.log("next", value),
@@ -49,6 +48,7 @@ import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
+
 pipe(forOf([1, 2, 3, 4, 5]), drop(2.3)).subscribe({
   signal: controller.signal,
   next: (value) => console.log("next", value),
@@ -71,6 +71,7 @@ import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
+
 pipe(forOf([1, 2, 3, 4, 5]), drop(0)).subscribe({
   signal: controller.signal,
   next: (value) => console.log("next", value),
@@ -95,6 +96,7 @@ import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
+
 pipe(forOf([1, 2, 3, 4, 5]), drop(-1)).subscribe({
   signal: controller.signal,
   next: (value) => console.log("next", value),
@@ -114,6 +116,7 @@ import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
+
 pipe(forOf([1, 2, 3, 4, 5]), drop(NaN)).subscribe({
   signal: controller.signal,
   next: (value) => console.log("next", value),

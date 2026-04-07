@@ -1,10 +1,8 @@
 # [@observable/distinct](https://jsr.io/@observable/distinct)
 
-Only [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s values from the
-[source](https://jsr.io/@observable/core#source)
-[`Observable`](https://jsr.io/@observable/core/doc/~/Observable) that are
+Filters values that are
 [distinct](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/is)
-from all previously [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values.
+from all previous values.
 
 ## Build
 

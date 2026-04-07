@@ -3,8 +3,7 @@ import { pipe } from "@observable/pipe";
 import { map } from "@observable/map";
 
 /**
- * Performs a {@linkcode callback|side-effect} for each [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed value
- * from the [source](https://jsr.io/@observable/core#source) [`Observable`](https://jsr.io/@observable/core/doc/~/Observable).
+ * Registers the given {@linkcode callback} to be invoked for each {@linkcode Value|value}.
  * @example
  * ```ts
  * import { tap } from "@observable/tap";
