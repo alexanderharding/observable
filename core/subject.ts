@@ -106,7 +106,7 @@ const notThrown = Symbol("Flag indicating that a value is not thrown.");
  */
 const stringTag = "Subject";
 
-export const Subject: SubjectConstructor = class {
+export const Subject: SubjectConstructor = class<Value> {
   readonly [Symbol.toStringTag] = stringTag;
   /**
    * Tracking the value that was thrown by the [producer](https://jsr.io/@observable/core#producer), if any.
@@ -117,10 +117,10 @@ export const Subject: SubjectConstructor = class {
    * Tracking a known list of unique {@linkcode Observer|observers}, so we don't have to clone them while
    * iterating to prevent reentrant behaviors.
    */
-  #observersSnapshot?: ReadonlySet<Observer>;
-  readonly #observers = new Set<Observer>();
+  #observersSnapshot?: ReadonlySet<Observer<Value>>;
+  readonly #observers = new Set<Observer<Value>>();
 
-  readonly #observer = new Observer({
+  readonly #observer = new Observer<Value>({
     next: (value) => {
       // Multicast this notification.
       (this.#observersSnapshot ??= new Set(this.#observers)).forEach(
@@ -179,9 +179,11 @@ export const Subject: SubjectConstructor = class {
     Object.freeze(this);
   }
 
-  next(value: unknown): void {
-    if (this instanceof Subject) this.#observer.next(value);
-    else throw new TypeError(`'this' is not instanceof '${stringTag}'`);
+  next(value: Value): void {
+    if (!(this instanceof Subject)) throw new TypeError(`'this' is not instanceof '${stringTag}'`);
+    // No arguments.length check because Value may be void, making next() with no args valid.
+
+    this.#observer.next(value);
   }
 
   return(): void {
@@ -190,14 +192,13 @@ export const Subject: SubjectConstructor = class {
   }
 
   throw(value: unknown): void {
-    if (this instanceof Subject) this.#observer.throw(value);
-    else throw new TypeError(`'this' is not instanceof '${stringTag}'`);
+    if (!(this instanceof Subject)) throw new TypeError(`'this' is not instanceof '${stringTag}'`);
+    if (!arguments.length) throw new TypeError("1 argument required but 0 present");
+    this.#observer.throw(value);
   }
 
   subscribe(observer: Observer): void {
-    if (!(this instanceof Subject)) {
-      throw new TypeError(`'this' is not instanceof '${stringTag}'`);
-    }
+    if (!(this instanceof Subject)) throw new TypeError(`'this' is not instanceof '${stringTag}'`);
     if (!arguments.length) throw new TypeError("1 argument required but 0 present");
     if (!isObserver(observer)) throw new TypeError("Parameter 1 is not of type 'Observer'");
     this.#observable.subscribe(observer);
