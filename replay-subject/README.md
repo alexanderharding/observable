@@ -1,8 +1,8 @@
 # [@observable/replay-subject](https://jsr.io/@observable/replay-subject)
 
 A variant of [`Subject`](https://jsr.io/@observable/core/doc/~/Subject) that replays the last
-integer `count` of buffered [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values
-upon [`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe).
+integer `count` of buffered values upon
+[`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe).
 
 ## Build
 

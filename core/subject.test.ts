@@ -701,6 +701,15 @@ Deno.test("Subject should handle reentrant observers when returning", () => {
   ]);
 });
 
+Deno.test("Subject.throw should throw if called with no arguments", () => {
+  // Arrange / Act / Assert
+  assertThrows(
+    () => new Subject().throw(...([] as unknown as Parameters<Observer["throw"]>)),
+    TypeError,
+    "1 argument required but 0 present",
+  );
+});
+
 Deno.test("Subject should handle reentrant observers when throwing", () => {
   // Arrange
   const error = new Error("test");

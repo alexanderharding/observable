@@ -12,7 +12,7 @@ export type BehaviorSubject<Value = unknown> = Subject<Value>;
 export interface BehaviorSubjectConstructor {
   /**
    * Creates and returns an object that acts as a [`Subject`](https://jsr.io/@observable/core/doc/~/Subject) that keeps track of its current
-   * value and replays it to [`consumers`](https://jsr.io/@observable/core#consumer) upon
+   * {@linkcode value} and replays it to [`consumers`](https://jsr.io/@observable/core#consumer) upon
    * [`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe).
    * @example
    * ```ts
@@ -74,8 +74,12 @@ export const BehaviorSubject: BehaviorSubjectConstructor = class<Value> {
   }
 
   next(value: Value): void {
-    if (this instanceof BehaviorSubject) this.#subject.next(value);
-    else throw new TypeError(`'this' is not instanceof '${stringTag}'`);
+    if (!(this instanceof BehaviorSubject)) {
+      throw new TypeError(`'this' is not instanceof '${stringTag}'`);
+    }
+    // No arguments.length check because Value may be void, making next() with no args valid.
+
+    this.#subject.next(value);
   }
 
   return(): void {
@@ -84,8 +88,11 @@ export const BehaviorSubject: BehaviorSubjectConstructor = class<Value> {
   }
 
   throw(value: unknown): void {
-    if (this instanceof BehaviorSubject) this.#subject.throw(value);
-    else throw new TypeError(`'this' is not instanceof '${stringTag}'`);
+    if (!(this instanceof BehaviorSubject)) {
+      throw new TypeError(`'this' is not instanceof '${stringTag}'`);
+    }
+    if (!arguments.length) throw new TypeError("1 argument required but 0 present");
+    this.#subject.throw(value);
   }
 
   subscribe(observer: Observer<Value>): void {

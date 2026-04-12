@@ -168,6 +168,30 @@ Deno.test(
   },
 );
 
+Deno.test(
+  "BroadcastSubject.next should allow empty next when created with void type",
+  () => {
+    // Arrange
+    const subject = new BroadcastSubject<void>("test");
+    const postMessageCalls: Array<Parameters<BroadcastChannel["postMessage"]>> = [];
+    Object.defineProperty(BroadcastChannel.prototype, "postMessage", {
+      value: new Proxy(BroadcastChannel.prototype.postMessage, {
+        apply: (target, thisArg, argumentsList: [message: unknown]) => {
+          postMessageCalls.push(argumentsList);
+          return target.apply(thisArg, argumentsList);
+        },
+      }),
+    });
+
+    // Act
+    subject.next();
+
+    // Assert
+    assertEquals(postMessageCalls, [[undefined]]);
+    subject.return();
+  },
+);
+
 Deno.test("BroadcastSubject.next should not abort signal", () => {
   // Arrange
   const subject = new BroadcastSubject<string>("test");
@@ -261,6 +285,19 @@ Deno.test(
     assertInstanceOf(notifications[0][1], DOMException);
   },
 );
+
+Deno.test("BroadcastSubject.throw should throw if called with no arguments", () => {
+  // Arrange
+  const subject = new BroadcastSubject("test");
+  subject.return(); // Prevent memory leaks
+
+  // Act / Assert
+  assertThrows(
+    () => subject.throw(...([] as unknown as Parameters<Observer["throw"]>)),
+    TypeError,
+    "1 argument required but 0 present",
+  );
+});
 
 Deno.test("BroadcastSubject.throw should pass through this subject", () => {
   // Arrange

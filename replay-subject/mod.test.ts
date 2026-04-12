@@ -165,6 +165,24 @@ Deno.test("ReplaySubject.next should emit values to observers", () => {
   ]);
 });
 
+Deno.test(
+  "ReplaySubject.next should allow empty next when created with void type",
+  () => {
+    // Arrange
+    const subject = new ReplaySubject<void>(1);
+    const notifications: Array<ObserverNotification<void>> = [];
+    pipe(subject, materialize()).subscribe(
+      new Observer((notification) => notifications.push(notification)),
+    );
+
+    // Act
+    subject.next();
+
+    // Assert
+    assertEquals(notifications, [["next", undefined]]);
+  },
+);
+
 Deno.test("ReplaySubject.next should store values for late observers", () => {
   // Arrange
   const subject = new ReplaySubject<string>(2);
@@ -182,6 +200,15 @@ Deno.test("ReplaySubject.next should store values for late observers", () => {
     ["next", "foo"],
     ["next", "bar"],
   ]);
+});
+
+Deno.test("ReplaySubject.throw should throw if called with no arguments", () => {
+  // Arrange / Act / Assert
+  assertThrows(
+    () => new ReplaySubject(1).throw(...([] as unknown as Parameters<Observer["throw"]>)),
+    TypeError,
+    "1 argument required but 0 present",
+  );
 });
 
 Deno.test("ReplaySubject.throw should pass through this subject", () => {
