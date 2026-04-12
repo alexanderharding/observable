@@ -1,11 +1,10 @@
 import { assertEquals, assertInstanceOf, assertStrictEquals, assertThrows } from "@std/assert";
 import { Observer } from "./observer.ts";
-import { Observable } from "./observable.ts";
-import { noop } from "@observable/internal";
+import { isObservable, Observable } from "./observable.ts";
 
 Deno.test("Observable.toString should be '[object Observable]'", () => {
   // Arrange / Act / Assert
-  assertStrictEquals(`${new Observable(noop)}`, "[object Observable]");
+  assertStrictEquals(`${new Observable(() => {})}`, "[object Observable]");
 });
 
 Deno.test("Observable.constructor should be frozen", () => {
@@ -15,13 +14,24 @@ Deno.test("Observable.constructor should be frozen", () => {
 
 Deno.test("Observable.constructor should be created as frozen", () => {
   // Arrange / Act / Assert
-  assertStrictEquals(Object.isFrozen(new Observable(noop)), true);
+  assertStrictEquals(Object.isFrozen(new Observable(() => {})), true);
 });
 
 Deno.test("Observable.prototype should be frozen", () => {
   // Arrange / Act / Assert
   assertStrictEquals(Object.isFrozen(Observable.prototype), true);
 });
+
+Deno.test(
+  "Observable should not freeze Object.prototype",
+  () => {
+    // Arrange / Act
+    new Observable(() => {});
+
+    // Assert
+    assertStrictEquals(Object.isFrozen(Object.prototype), false);
+  },
+);
 
 Deno.test(
   "Observable.constructor should throw when creating with no arguments",
@@ -72,7 +82,7 @@ Deno.test(
   () => {
     // Arrange / Act / Assert
     new Observable(
-      ...([noop, noop] as unknown as ConstructorParameters<typeof Observable>),
+      ...([() => {}, () => {}] as unknown as ConstructorParameters<typeof Observable>),
     );
   },
 );
@@ -101,7 +111,7 @@ Deno.test(
   () => {
     // Arrange
     assertThrows(
-      () => new Observable(noop).subscribe.apply(null, [new Observer()]),
+      () => new Observable(() => {}).subscribe.apply(null, [new Observer()]),
       TypeError,
       "'this' is not instanceof 'Observable'",
     );
@@ -113,7 +123,7 @@ Deno.test(
   () => {
     // Arrange
     assertThrows(
-      () => new Observable(noop).subscribe(1 as unknown as Observer),
+      () => new Observable(() => {}).subscribe(1 as unknown as Observer),
       TypeError,
       "Parameter 1 is not of type 'Observer'",
     );
@@ -123,7 +133,7 @@ Deno.test(
 Deno.test("Observable.subscribe should throw when observer is null", () => {
   // Arrange
   assertThrows(
-    () => new Observable(noop).subscribe(null as unknown as Observer),
+    () => new Observable(() => {}).subscribe(null as unknown as Observer),
     TypeError,
     "Parameter 1 is not of type 'Observer'",
   );
@@ -134,7 +144,7 @@ Deno.test(
   () => {
     // Arrange
     assertThrows(
-      () => new Observable(noop).subscribe(undefined as unknown as Observer),
+      () => new Observable(() => {}).subscribe(undefined as unknown as Observer),
       TypeError,
       "Parameter 1 is not of type 'Observer'",
     );
@@ -147,8 +157,8 @@ Deno.test(
     // Arrange
     assertThrows(
       () =>
-        new Observable(noop).subscribe({
-          next: noop,
+        new Observable(() => {}).subscribe({
+          next: () => {},
         } as unknown as Observer),
       TypeError,
       "Parameter 1 is not of type 'Observer'",
@@ -246,12 +256,90 @@ Deno.test(
 );
 
 Deno.test(
-  "Subject should enforce the correct 'this' binding when calling instance methods",
+  "Observable should enforce the correct 'this' binding when calling instance methods",
   () => {
     assertThrows(
       () => Observable.prototype.subscribe(new Observer()),
       TypeError,
       "'this' is not instanceof 'Observable'",
     );
+  },
+);
+
+Deno.test(
+  "isObservable should return true if the value is an instance of Observable",
+  () => {
+    // Arrange
+    const observable = new Observable(() => {});
+
+    // Act
+    const result = isObservable(observable);
+
+    // Assert
+    assertStrictEquals(result, true);
+  },
+);
+
+Deno.test(
+  "isObservable should return true if the value is a custom Observable",
+  () => {
+    // Arrange
+    const observable: Observable = { subscribe: () => {} };
+
+    // Act
+    const result = isObservable(observable);
+
+    // Assert
+    assertStrictEquals(result, true);
+  },
+);
+
+Deno.test(
+  "isObservable should return false if the value is not an empty object",
+  () => {
+    // Arrange
+    const value = {};
+
+    // Act
+    const result = isObservable(value);
+
+    // Assert
+    assertStrictEquals(result, false);
+  },
+);
+
+Deno.test("isObservable should return false if the value is not null", () => {
+  // Arrange
+  const value = null;
+
+  // Act
+  const result = isObservable(value);
+
+  // Assert
+  assertStrictEquals(result, false);
+});
+
+Deno.test("isObservable should return false if the value is undefined", () => {
+  // Arrange
+  const value = undefined;
+
+  // Act
+  const result = isObservable(value);
+
+  // Assert
+  assertStrictEquals(result, false);
+});
+
+Deno.test(
+  "isObservable should return false if 'subscribe' is not a function",
+  () => {
+    // Arrange
+    const value = { subscribe: "not a function" };
+
+    // Act
+    const result = isObservable(value);
+
+    // Assert
+    assertStrictEquals(result, false);
   },
 );

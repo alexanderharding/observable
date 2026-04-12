@@ -1,11 +1,12 @@
 import { isObservable, Observable } from "@observable/core";
-import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 import {
+  from as rxJsFrom,
   isObservable as isRxJsObservable,
   Observable as RxJsObservable,
   type Observer as RxJsObserver,
   Subscriber,
 } from "rxjs";
+import { from } from "@observable/from";
 
 /**
  * Converts an [RxJS Observable](https://rxjs.dev/api/index/class/Observable) to an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable).
@@ -16,8 +17,8 @@ import {
  * import { pipe } from "@observable/pipe";
  *
  * const controller = new AbortController();
- * const observable = pipe(rxJsOf(1, 2, 3), asObservable());
- * observable.subscribe({
+ *
+ * pipe(rxJsOf(1, 2, 3), asObservable()).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
  *   return: () => console.log("return"),
@@ -33,8 +34,10 @@ import {
  */
 export function asObservable<Value>(): (source: RxJsObservable<Value>) => Observable<Value> {
   return function asObservableFn(source) {
-    if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-    if (!isRxJsObservable(source)) throw new ParameterTypeError(0, "RxJsObservable");
+    if (!arguments.length) throw new TypeError("1 argument required but 0 present");
+    if (!isRxJsObservable(source)) {
+      throw new TypeError("Parameter 1 is not of type 'RxJsObservable'");
+    }
     return new Observable((observer) => {
       // Create a new subscriber to manually before subscribing to the source so we have precise
       // control over teardown timing which is crucial to prevent reentrancy issues. We'll swap
@@ -47,7 +50,7 @@ export function asObservable<Value>(): (source: RxJsObservable<Value>) => Observ
         } satisfies RxJsObserver<Value>,
       );
       observer.signal.addEventListener("abort", () => subscriber.unsubscribe(), { once: true });
-      source.subscribe(subscriber);
+      rxJsFrom(source).subscribe(subscriber);
     });
   };
 }
@@ -57,11 +60,10 @@ export function asObservable<Value>(): (source: RxJsObservable<Value>) => Observ
  * @example
  * ```ts
  * import { asRxJsObservable } from "@observable/rxjs-interop";
- * import { ofIterable } from "@observable/of-iterable";
+ * import { forOf } from "@observable/for-of";
  * import { pipe } from "@observable/pipe";
  *
- * const controller = new AbortController();
- * const observable = pipe([1, 2, 3], ofIterable(), asRxJsObservable());
+ * const observable = pipe(forOf([1, 2, 3]), asRxJsObservable());
  * const subscription = observable.subscribe({
  *   next: (value) => console.log("next", value),
  *   complete: () => console.log("complete"),
@@ -77,18 +79,21 @@ export function asObservable<Value>(): (source: RxJsObservable<Value>) => Observ
  */
 export function asRxJsObservable<Value>(): (source: Observable<Value>) => RxJsObservable<Value> {
   return function asRxJsObservableFn(source) {
-    if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-    if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
+    if (!arguments.length) throw new TypeError("1 argument required but 0 present");
+    if (!isObservable(source)) throw new TypeError("Parameter 1 is not of type 'Observable'");
     return new RxJsObservable((subscriber) => {
       if (subscriber.closed) return;
-      const activeSubscriptionController = new AbortController();
-      source.subscribe({
-        signal: activeSubscriptionController.signal,
+
+      const controller = new AbortController();
+
+      from(source).subscribe({
+        signal: controller.signal,
         next: (value) => subscriber.next(value),
         return: () => subscriber.complete(),
         throw: (value) => subscriber.error(value),
       });
-      return () => activeSubscriptionController.abort();
+
+      return () => controller.abort();
     });
   };
 }

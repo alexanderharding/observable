@@ -1,13 +1,7 @@
 import { isObserver, type Observable, type Observer, Subject } from "@observable/core";
-import {
-  InstanceofError,
-  MinimumArgumentsRequiredError,
-  ParameterTypeError,
-} from "@observable/internal";
 import { flat } from "@observable/flat";
 import { defer } from "@observable/defer";
-import { ofIterable } from "@observable/of-iterable";
-import { pipe } from "@observable/pipe";
+import { forOf } from "@observable/for-of";
 import { empty } from "@observable/empty";
 
 /**
@@ -20,10 +14,11 @@ export type ReplaySubject<Value = unknown> = Subject<Value>;
  */
 export interface ReplaySubjectConstructor {
   /**
-   * Creates and returns an object that acts as a [`Subject`](https://jsr.io/@observable/core/doc/~/Subject) that replays
-   * {@linkcode count} buffered [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values upon
-   * [`subscription`](https://jsr.io/@observable/core/doc/~/Observable.subscribe).
+   * Creates and returns an object that acts as a variant of [`Subject`](https://jsr.io/@observable/core/doc/~/Subject) that replays
+   * the last integer {@linkcode count} of buffered {@linkcode Value|values} to [consumers](https://jsr.io/@observable/core#consumer) upon
+   * [`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe).
    * @example
+   * Positive integer count
    * ```ts
    * import { ReplaySubject } from "@observable/replay-subject";
    *
@@ -82,6 +77,275 @@ export interface ReplaySubjectConstructor {
    * // Console output:
    * // "return"
    * ```
+   * @example
+   * Positive fractional count
+   * ```ts
+   * import { ReplaySubject } from "@observable/replay-subject";
+   *
+   * const subject = new ReplaySubject<number>(3.7);
+   * const controller = new AbortController();
+   *
+   * subject.next(1); // Stored in buffer
+   * subject.next(2); // Stored in buffer
+   * subject.next(3); // Stored in buffer
+   * subject.next(4); // Stored in buffer and 1 gets trimmed off
+   *
+   * subject.subscribe({
+   *   signal: controller.signal,
+   *   next: (value) => console.log("next", value),
+   *   return: () => console.log("return"),
+   *   throw: (value) => console.log("throw", value),
+   * });
+   *
+   * // Console output:
+   * // "next" 2
+   * // "next" 3
+   * // "next" 4
+   *
+   * // Values pushed after the subscribe will emit immediately
+   * // unless the subject is already finalized.
+   * subject.next(5); // Stored in buffer and 2 gets trimmed off
+   *
+   * // Console output:
+   * // "next" 5
+   *
+   * subject.subscribe({
+   *   signal: controller.signal,
+   *   next: (value) => console.log("next", value),
+   *   return: () => console.log("return"),
+   *   throw: (value) => console.log("throw", value),
+   * });
+   *
+   * // Console output:
+   * // "next" 3
+   * // "next" 4
+   * // "next" 5
+   *
+   * subject.return();
+   *
+   * // Console output:
+   * // "return"
+   * // "return"
+   *
+   * subject.subscribe({
+   *   signal: controller.signal,
+   *   next: (value) => console.log("next", value),
+   *   return: () => console.log("return"),
+   *   throw: (value) => console.log("throw", value),
+   * });
+   *
+   * // Console output:
+   * // "return"
+   * ```
+   * @example
+   * 0 count
+   * ```ts
+   * import { ReplaySubject } from "@observable/replay-subject";
+   *
+   * const subject = new ReplaySubject<number>(0);
+   * const controller = new AbortController();
+   *
+   * subject.next(1);
+   * subject.next(2);
+   * subject.next(3);
+   * subject.next(4);
+   *
+   * subject.subscribe({
+   *   signal: controller.signal,
+   *   next: (value) => console.log("next", value),
+   *   return: () => console.log("return"),
+   *   throw: (value) => console.log("throw", value),
+   * });
+   *
+   * subject.next(5);
+   *
+   * // Console output:
+   * // "next" 5
+   *
+   * subject.subscribe({
+   *   signal: controller.signal,
+   *   next: (value) => console.log("next", value),
+   *   return: () => console.log("return"),
+   *   throw: (value) => console.log("throw", value),
+   * });
+   *
+   * subject.return();
+   *
+   * // Console output:
+   * // "return"
+   * // "return"
+   *
+   * subject.subscribe({
+   *   signal: controller.signal,
+   *   next: (value) => console.log("next", value),
+   *   return: () => console.log("return"),
+   *   throw: (value) => console.log("throw", value),
+   * });
+   *
+   * // Console output:
+   * // "return"
+   * ```
+   * @example
+   * Negative integer count
+   * ```ts
+   * import { ReplaySubject } from "@observable/replay-subject";
+   *
+   * const subject = new ReplaySubject<number>(-3);
+   * const controller = new AbortController();
+   *
+   * subject.next(1);
+   * subject.next(2);
+   * subject.next(3);
+   * subject.next(4);
+   *
+   * subject.subscribe({
+   *   signal: controller.signal,
+   *   next: (value) => console.log("next", value),
+   *   return: () => console.log("return"),
+   *   throw: (value) => console.log("throw", value),
+   * });
+   *
+   * // Console output:
+   * // "return"
+   *
+   * subject.next(5);
+   *
+   * // (no output — subject is finalized)
+   *
+   * subject.subscribe({
+   *   signal: controller.signal,
+   *   next: (value) => console.log("next", value),
+   *   return: () => console.log("return"),
+   *   throw: (value) => console.log("throw", value),
+   * });
+   *
+   * // Console output:
+   * // "return"
+   * ```
+   * @example
+   * Negative fractional count
+   * ```ts
+   * import { ReplaySubject } from "@observable/replay-subject";
+   *
+   * const subject = new ReplaySubject<number>(-3.7);
+   * const controller = new AbortController();
+   *
+   * subject.subscribe({
+   *   signal: controller.signal,
+   *   next: (value) => console.log("next", value),
+   *   return: () => console.log("return"),
+   *   throw: (value) => console.log("throw", value),
+   * });
+   *
+   * // Console output:
+   * // "return"
+   *
+   * subject.subscribe({
+   *   signal: controller.signal,
+   *   next: (value) => console.log("next", value),
+   *   return: () => console.log("return"),
+   *   throw: (value) => console.log("throw", value),
+   * });
+   *
+   * // Console output:
+   * // "return"
+   * ```
+   * @example
+   * Infinite count
+   * ```ts
+   * import { ReplaySubject } from "@observable/replay-subject";
+   *
+   * const subject = new ReplaySubject<number>(Infinity);
+   * const controller = new AbortController();
+   *
+   * subject.next(1);
+   * subject.next(2);
+   * subject.next(3);
+   * subject.next(4);
+   *
+   * subject.subscribe({
+   *   signal: controller.signal,
+   *   next: (value) => console.log("next", value),
+   *   return: () => console.log("return"),
+   *   throw: (value) => console.log("throw", value),
+   * });
+   *
+   * // Console output:
+   * // "next" 1
+   * // "next" 2
+   * // "next" 3
+   * // "next" 4
+   *
+   * subject.next(5);
+   *
+   * // Console output:
+   * // "next" 5
+   *
+   * subject.subscribe({
+   *   signal: controller.signal,
+   *   next: (value) => console.log("next", value),
+   *   return: () => console.log("return"),
+   *   throw: (value) => console.log("throw", value),
+   * });
+   *
+   * // Console output:
+   * // "next" 1
+   * // "next" 2
+   * // "next" 3
+   * // "next" 4
+   * // "next" 5
+   *
+   * subject.return();
+   *
+   * // Console output:
+   * // "return"
+   * // "return"
+   *
+   * subject.subscribe({
+   *   signal: controller.signal,
+   *   next: (value) => console.log("next", value),
+   *   return: () => console.log("return"),
+   *   throw: (value) => console.log("throw", value),
+   * });
+   *
+   * // Console output:
+   * // "return"
+   * ```
+   * @example
+   * NaN count
+   * ```ts
+   * import { ReplaySubject } from "@observable/replay-subject";
+   *
+   * const subject = new ReplaySubject<number>(NaN);
+   * const controller = new AbortController();
+   *
+   * subject.next(1);
+   * subject.next(2);
+   * subject.next(3);
+   * subject.next(4);
+   *
+   * subject.subscribe({
+   *   signal: controller.signal,
+   *   next: (value) => console.log("next", value),
+   *   return: () => console.log("return"),
+   *   throw: (value) => console.log("throw", value),
+   * });
+   *
+   * // Console output:
+   * // "return"
+   *
+   * subject.next(5);
+   *
+   * subject.subscribe({
+   *   signal: controller.signal,
+   *   next: (value) => console.log("next", value),
+   *   return: () => console.log("return"),
+   *   throw: (value) => console.log("throw", value),
+   * });
+   *
+   * // Console output:
+   * // "return"
+   * ```
    */
   new <Value>(count: number): ReplaySubject<Value>;
   readonly prototype: ReplaySubject;
@@ -93,29 +357,27 @@ export interface ReplaySubjectConstructor {
  */
 const stringTag = "ReplaySubject";
 
-export const ReplaySubject: ReplaySubjectConstructor = class {
+export const ReplaySubject: ReplaySubjectConstructor = class<Value> {
   readonly [Symbol.toStringTag] = stringTag;
   readonly #count: number;
   /**
-   * Tracking a known list of buffered values as an Observable, so we don't have to clone
-   * them while iterating to prevent reentrant behaviors.
+   * Tracking a known list of buffered values as an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable),
+   * so we don't have to clone them while iterating to prevent reentrant behaviors.
    */
-  #bufferSnapshot?: Observable = empty;
-  readonly #buffer: Array<unknown> = [];
-  readonly #subject = new Subject();
+  #bufferSnapshot?: Observable<Value> = empty;
+  readonly #buffer: Array<Value> = [];
+  readonly #subject = new Subject<Value>();
   readonly signal = this.#subject.signal;
   readonly #observable = flat([
-    defer(() => (this.#bufferSnapshot ??= pipe(this.#buffer.slice(), ofIterable()))),
+    defer(() => (this.#bufferSnapshot ??= forOf(this.#buffer.slice()))),
     this.#subject,
   ]);
 
   constructor(count: number) {
-    if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-    if (typeof count !== "number") {
-      throw new ParameterTypeError(0, "Number");
-    }
+    if (!arguments.length) throw new TypeError("1 argument required but 0 present");
+    if (typeof count !== "number") throw new TypeError("Parameter 1 is not of type 'Number'");
     Object.freeze(this);
-    (this.#count = count) >= 0 ? this.#bufferSnapshot = undefined : this.return();
+    (this.#count = Math.trunc(count)) >= 0 ? this.#bufferSnapshot = undefined : this.return();
     if (this.signal.aborted || this.#count === 0) return;
     this.signal.addEventListener("abort", () => {
       this.#buffer.length = 0;
@@ -123,33 +385,39 @@ export const ReplaySubject: ReplaySubjectConstructor = class {
     }, { once: true });
   }
 
-  next(value: unknown): void {
-    if (!(this instanceof ReplaySubject)) throw new InstanceofError("this", stringTag);
+  next(value: Value): void {
+    if (!(this instanceof ReplaySubject)) {
+      throw new TypeError(`'this' is not instanceof '${stringTag}'`);
+    }
+    // No arguments.length check because Value may be void, making next() with no args valid.
+
     if (!this.signal.aborted && this.#count > 0) {
-      // Add the next value to the buffer.
       const length = this.#buffer.push(value);
-      // Trim the buffer, if needed.
       if (length > this.#count) this.#buffer.shift();
-      // Reset the buffer snapshot since it's now stale.
       this.#bufferSnapshot = undefined;
     }
+
     this.#subject.next(value);
   }
 
   return(): void {
     if (this instanceof ReplaySubject) this.#subject.return();
-    else throw new InstanceofError("this", stringTag);
+    else throw new TypeError(`'this' is not instanceof '${stringTag}'`);
   }
 
   throw(value: unknown): void {
-    if (this instanceof ReplaySubject) this.#subject.throw(value);
-    else throw new InstanceofError("this", stringTag);
+    if (!(this instanceof ReplaySubject)) {
+      throw new TypeError(`'this' is not instanceof '${stringTag}'`);
+    }
+    if (!arguments.length) throw new TypeError("1 argument required but 0 present");
+    this.#subject.throw(value);
   }
-
-  subscribe(observer: Observer): void {
-    if (!(this instanceof ReplaySubject)) throw new InstanceofError("this", stringTag);
-    if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-    if (!isObserver(observer)) throw new ParameterTypeError(0, "Observer");
+  subscribe(observer: Observer<Value>): void {
+    if (!(this instanceof ReplaySubject)) {
+      throw new TypeError(`'this' is not instanceof '${stringTag}'`);
+    }
+    if (!arguments.length) throw new TypeError("1 argument required but 0 present");
+    if (!isObserver(observer)) throw new TypeError("Parameter 1 is not of type 'Observer'");
     this.#observable.subscribe(observer);
   }
 };

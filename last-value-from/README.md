@@ -1,0 +1,157 @@
+# [@observable/last-value-from](https://jsr.io/@observable/last-value-from)
+
+[`Resolve`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/resolve)s
+with the last value of the given `observable` on
+[`return`](https://jsr.io/@observable/core/doc/~/Observer.return),
+[`reject`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/reject)s
+with a [`throw`](https://jsr.io/@observable/core/doc/~/Observer.throw)n value of the given
+`observable`, or
+[`reject`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/reject)s
+with a
+[`TypeError`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypeError)
+if the given `observable` [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s without
+[`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ing a value.
+
+## Build
+
+Automated by [JSR](https://jsr.io/)
+
+## Publishing
+
+Automated by `.github\workflows\publish.yml`.
+
+## Running unit tests
+
+Run `deno task test` or `deno task test:ci` to execute the unit tests via
+[Deno](https://deno.land/).
+
+## Examples
+
+Last emitted value
+
+```ts
+import { lastValueFrom } from "@observable/last-value-from";
+import { forOf } from "@observable/for-of";
+
+console.log(await lastValueFrom(forOf([1, 2, 3])));
+
+// Console output:
+// 3
+```
+
+Inner PromiseLike
+
+```ts
+import { lastValueFrom } from "@observable/last-value-from";
+import { of } from "@observable/of";
+
+console.log(await lastValueFrom(of(Promise.resolve(3))));
+
+// Console output:
+// 3
+```
+
+take(1) count
+
+```ts
+import { lastValueFrom } from "@observable/last-value-from";
+import { forOf } from "@observable/for-of";
+import { pipe } from "@observable/pipe";
+import { take } from "@observable/take";
+
+console.log(await lastValueFrom(pipe(forOf([1, 2, 3]), take(1))));
+
+// Console output:
+// 1
+```
+
+Source throws
+
+```ts
+import { lastValueFrom } from "@observable/last-value-from";
+import { throwError } from "@observable/throw-error";
+
+try {
+  await lastValueFrom(throwError(new Error("test")));
+} catch (error) {
+  console.log(error);
+}
+
+// Console output:
+// Error: test
+```
+
+Empty observable
+
+```ts
+import { lastValueFrom } from "@observable/last-value-from";
+import { empty } from "@observable/empty";
+
+try {
+  await lastValueFrom(empty);
+} catch (error) {
+  console.log(error);
+}
+
+// Console output:
+// TypeError: Cannot convert empty Observable to Promise
+```
+
+# AI Prompt
+
+Use the following prompt with AI assistants to help them understand this library:
+
+````
+You are helping me with code that uses @observable/last-value-from from the @observable library ecosystem.
+
+WHAT IT DOES:
+`lastValueFrom(observable)` converts an Observable to a Promise that resolves with the LAST emitted value. Rejects if the source throws, or if the source returns without emitting any value.
+
+CRITICAL: This library is NOT RxJS. Key differences:
+- Observer uses `return`/`throw` — NOT `complete`/`error`
+- Unsubscription via `AbortController.abort()` — NOT `subscription.unsubscribe()`
+- `lastValueFrom` is a standalone function
+
+USAGE PATTERN:
+```ts
+import { lastValueFrom } from "@observable/last-value-from";
+import { forOf } from "@observable/for-of";
+import { pipe } from "@observable/pipe";
+
+const result = await lastValueFrom(forOf([1, 2, 3]));
+console.log(result);  // 3 (last value)
+```
+
+ERROR HANDLING:
+```ts
+import { lastValueFrom } from "@observable/last-value-from";
+import { throwError } from "@observable/throw-error";
+
+try {
+  await lastValueFrom(throwError(new Error("test")));
+} catch (error) {
+  console.error(error);  // Error: test
+}
+```
+
+EMPTY OBSERVABLE REJECTION:
+```ts
+import { lastValueFrom } from "@observable/last-value-from";
+import { empty } from "@observable/empty";
+
+try {
+  await lastValueFrom(empty);
+} catch (error) {
+  console.error(error);  // TypeError: Cannot convert empty Observable to Promise
+}
+```
+
+IMPORTANT:
+- Resolves with the LAST value, not the first
+- Rejects with TypeError if Observable returns without emitting
+- Rejects with the thrown value if Observable throws
+````
+
+# Glossary And Semantics
+
+[@observable/core](https://jsr.io/@observable/core#glossary-and-semantics)

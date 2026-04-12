@@ -1,17 +1,20 @@
 import { assertEquals } from "@std/assert";
-import { Observable, Observer } from "@observable/core";
-import { ofIterable } from "@observable/of-iterable";
+import { Observer } from "@observable/core";
+import { forOf } from "@observable/for-of";
+import { of } from "@observable/of";
 import { pipe } from "@observable/pipe";
 import { throwError } from "@observable/throw-error";
 import { scan } from "./mod.ts";
 import { materialize, type ObserverNotification } from "@observable/materialize";
+import { empty } from "@observable/empty";
+import { finalize } from "@observable/finalize";
+import { never } from "@observable/never";
 
-Deno.test("scan should accumulate values with a seed", () => {
+Deno.test("scan should accumulate values with an initial value", () => {
   // Arrange
   const notifications: Array<ObserverNotification<number>> = [];
   const observable = pipe(
-    [1, 2, 3],
-    ofIterable(),
+    forOf([1, 2, 3]),
     scan((previous, current) => previous + current, 0),
     materialize(),
   );
@@ -35,8 +38,7 @@ Deno.test("scan should pass the index to the accumulator", () => {
   const notifications: Array<ObserverNotification<string>> = [];
   const indices: Array<number> = [];
   const observable = pipe(
-    ["a", "b", "c"],
-    ofIterable(),
+    forOf(["a", "b", "c"]),
     scan((previous, current, index) => {
       indices.push(index);
       return previous + current;
@@ -82,8 +84,7 @@ Deno.test("scan should pump returns through itself", () => {
   // Arrange
   const notifications: Array<ObserverNotification<number>> = [];
   const observable = pipe(
-    [],
-    ofIterable(),
+    empty,
     scan((previous, current) => previous + current, 0),
     materialize(),
   );
@@ -101,15 +102,8 @@ Deno.test("scan should handle unsubscribe", () => {
   // Arrange
   let sourceAborted = false;
   const controller = new AbortController();
-  const source = new Observable<number>((observer) =>
-    observer.signal.addEventListener("abort", () => (sourceAborted = true), {
-      once: true,
-    })
-  );
-  const scanned = pipe(
-    source,
-    scan((previous, current) => previous + current, 0),
-  );
+  const source = pipe(never, finalize(() => (sourceAborted = true)));
+  const scanned = pipe(source, scan((previous, current) => previous + current, 0));
 
   // Act
   scanned.subscribe(new Observer({ signal: controller.signal }));
@@ -124,8 +118,7 @@ Deno.test("scan should throw if the accumulator function throws", () => {
   const error = new Error("test");
   const notifications: Array<ObserverNotification<number>> = [];
   const observable = pipe(
-    [1],
-    ofIterable(),
+    of(1),
     scan(() => {
       throw error;
     }, 0),
@@ -133,9 +126,7 @@ Deno.test("scan should throw if the accumulator function throws", () => {
   );
 
   // Act
-  observable.subscribe(
-    new Observer((notification) => notifications.push(notification)),
-  );
+  observable.subscribe(new Observer((notification) => notifications.push(notification)));
 
   // Assert
   assertEquals(notifications, [["throw", error]]);
@@ -145,16 +136,13 @@ Deno.test("scan should work with different input and output types", () => {
   // Arrange
   const notifications: Array<ObserverNotification<Array<number>>> = [];
   const observable = pipe(
-    [1, 2, 3],
-    ofIterable(),
+    forOf([1, 2, 3]),
     scan((previous, current) => [...previous, current], [] as Array<number>),
     materialize(),
   );
 
   // Act
-  observable.subscribe(
-    new Observer((notification) => notifications.push(notification)),
-  );
+  observable.subscribe(new Observer((notification) => notifications.push(notification)));
 
   // Assert
   assertEquals(notifications, [
@@ -169,7 +157,7 @@ Deno.test("scan should reset state per subscription when using defer", () => {
   // Arrange
   const notifications1: Array<ObserverNotification<number>> = [];
   const notifications2: Array<ObserverNotification<number>> = [];
-  const source = pipe([1, 2, 3], ofIterable());
+  const source = forOf([1, 2, 3]);
   const scanned = pipe(
     source,
     scan((previous, current) => previous + current, 0),

@@ -1,17 +1,21 @@
 import { assertEquals, assertThrows } from "@std/assert";
-import { Observable, Observer, Subject } from "@observable/core";
-import { MinimumArgumentsRequiredError, noop, ParameterTypeError } from "@observable/internal";
+import { type Observable, Observer, Subject } from "@observable/core";
 import { pipe } from "@observable/pipe";
 import { materialize, type ObserverNotification } from "@observable/materialize";
-import { ofIterable } from "@observable/of-iterable";
+import { forOf } from "@observable/for-of";
+import { of } from "@observable/of";
 import { empty } from "@observable/empty";
 import { expand } from "./mod.ts";
+import { finalize } from "@observable/finalize";
+import { never } from "@observable/never";
+import { flat } from "@observable/flat";
 
 Deno.test("expand should throw if no arguments are provided", () => {
   assertThrows(
     // @ts-expect-error: Testing invalid arguments
     () => expand(),
-    MinimumArgumentsRequiredError,
+    TypeError,
+    "1 argument required but 0 present",
   );
 });
 
@@ -19,7 +23,8 @@ Deno.test("expand should throw if project is not a function", () => {
   assertThrows(
     // @ts-expect-error: Testing invalid arguments
     () => expand("not a function"),
-    ParameterTypeError,
+    TypeError,
+    "Parameter 1 is not of type 'Function'",
   );
 });
 
@@ -28,7 +33,8 @@ Deno.test("expand operator function should throw if no arguments are provided", 
   assertThrows(
     // @ts-expect-error: Testing invalid arguments
     () => operatorFn(),
-    MinimumArgumentsRequiredError,
+    TypeError,
+    "1 argument required but 0 present",
   );
 });
 
@@ -37,17 +43,18 @@ Deno.test("expand operator function should throw if source is not an Observable"
   assertThrows(
     // @ts-expect-error: Testing invalid arguments
     () => operatorFn("not an observable"),
-    ParameterTypeError,
+    TypeError,
+    "Parameter 1 is not of type 'Observable'",
   );
 });
 
 Deno.test("expand should emit source values and recursively expand", () => {
   // Arrange
   const notifications: Array<ObserverNotification<number>> = [];
-  const source = pipe([2], ofIterable<number>());
+  const source = of(2);
   const observable = pipe(
     source,
-    expand((value) => value < 16 ? pipe([value * 2], ofIterable()) : empty),
+    expand((value) => value < 16 ? of(value * 2) : empty),
     materialize(),
   );
 
@@ -69,12 +76,10 @@ Deno.test("expand should emit source values and recursively expand", () => {
 Deno.test("expand should handle multiple source values", () => {
   // Arrange
   const notifications: Array<ObserverNotification<number>> = [];
-  const source = pipe([1, 10], ofIterable<number>());
+  const source = forOf([1, 10] as number[]);
   const observable = pipe(
     source,
-    expand((value) =>
-      value < 4 || (value >= 10 && value < 40) ? pipe([value * 2], ofIterable()) : empty
-    ),
+    expand((value) => value < 4 || (value >= 10 && value < 40) ? of(value * 2) : empty),
     materialize(),
   );
 
@@ -99,12 +104,12 @@ Deno.test("expand should pass index to project function", () => {
   // Arrange
   const notifications: Array<ObserverNotification<number>> = [];
   const indices: number[] = [];
-  const source = pipe([1], ofIterable<number>());
+  const source = of(1);
   const observable = pipe(
     source,
     expand((value, index) => {
       indices.push(index);
-      return value < 4 ? pipe([value + 1], ofIterable()) : empty;
+      return value < 4 ? of(value + 1) : empty;
     }),
     materialize(),
   );
@@ -270,7 +275,7 @@ Deno.test("expand should propagate first error when both inner and outer throw",
   const notifications: Array<ObserverNotification<number>> = [];
   const innerSubject = new Subject<number>();
   const source = new Subject<number>();
-  source.subscribe(new Observer({ throw: noop }));
+  source.subscribe(new Observer({ throw: () => {} }));
   const observable = pipe(
     source,
     expand(() => innerSubject),
@@ -317,7 +322,7 @@ Deno.test("expand should propagate error when project throws synchronously", () 
   assertEquals(notifications, [["next", 1], ["throw", projectError]]);
 });
 
-Deno.test("expand should propagate asObservable error when project returns non-observable", () => {
+Deno.test("expand should propagate from error when project returns non-observable", () => {
   // Arrange
   const notifications: Array<ObserverNotification<unknown>> = [];
   const source = new Subject<number>();
@@ -349,14 +354,12 @@ Deno.test("expand should return immediately when source is empty", () => {
   const notifications: Array<ObserverNotification<number>> = [];
   const observable = pipe(
     empty as Observable<number>,
-    expand((value) => pipe([value * 2], ofIterable())),
+    expand((value) => of(value * 2)),
     materialize(),
   );
 
   // Act
-  observable.subscribe(
-    new Observer((notification) => notifications.push(notification)),
-  );
+  observable.subscribe(new Observer((notification) => notifications.push(notification)));
 
   // Assert
   assertEquals(notifications, [["return"]]);
@@ -367,25 +370,8 @@ Deno.test("expand should handle unsubscription", () => {
   let sourceAborted = false;
   let innerAborted = false;
   const controller = new AbortController();
-  const source = new Observable<number>((observer) => {
-    observer.signal.addEventListener("abort", () => (sourceAborted = true), {
-      once: true,
-    });
-    observer.next(1);
-  });
-  const observable = pipe(
-    source,
-    expand(
-      () =>
-        new Observable<number>((observer) => {
-          observer.signal.addEventListener(
-            "abort",
-            () => (innerAborted = true),
-            { once: true },
-          );
-        }),
-    ),
-  );
+  const source = pipe(flat([of(1), never]), finalize(() => (sourceAborted = true)));
+  const observable = pipe(source, expand(() => pipe(never, finalize(() => (innerAborted = true)))));
 
   // Act
   observable.subscribe(new Observer({ signal: controller.signal }));
@@ -413,9 +399,7 @@ Deno.test("expand should not return until all inner subscriptions return", () =>
   );
 
   // Act
-  observable.subscribe(
-    new Observer((notification) => notifications.push(notification)),
-  );
+  observable.subscribe(new Observer((notification) => notifications.push(notification)));
   source.next(1);
   inner1.next(2);
   source.return();
@@ -423,53 +407,40 @@ Deno.test("expand should not return until all inner subscriptions return", () =>
   inner2.return();
 
   // Assert
-  assertEquals(notifications, [
-    ["next", 1],
-    ["next", 2],
-    ["return"],
-  ]);
+  assertEquals(notifications, [["next", 1], ["next", 2], ["return"]]);
 });
 
 Deno.test("expand should handle deeply nested expansion", () => {
   // Arrange
   const notifications: Array<ObserverNotification<number>> = [];
-  const source = pipe([1], ofIterable<number>());
+  const source = of(1);
   const observable = pipe(
     source,
-    expand((value) => (value < 5 ? pipe([value + 1], ofIterable()) : empty)),
+    expand((value) => (value < 5 ? of(value + 1) : empty)),
     materialize(),
   );
 
   // Act
-  observable.subscribe(
-    new Observer((notification) => notifications.push(notification)),
-  );
+  observable.subscribe(new Observer((notification) => notifications.push(notification)));
 
   // Assert
-  assertEquals(notifications, [
-    ["next", 1],
-    ["next", 2],
-    ["next", 3],
-    ["next", 4],
-    ["next", 5],
-    ["return"],
-  ]);
+  assertEquals(notifications, [["next", 1], ["next", 2], ["next", 3], ["next", 4], ["next", 5], [
+    "return",
+  ]]);
 });
 
 Deno.test("expand should handle branching expansion (multiple values from inner)", () => {
   // Arrange
   const notifications: Array<ObserverNotification<number>> = [];
-  const source = pipe([1], ofIterable<number>());
+  const source = of(1);
   const observable = pipe(
     source,
-    expand((value) => value < 3 ? pipe([value * 2, value * 3], ofIterable()) : empty),
+    expand((value) => value < 3 ? forOf([value * 2, value * 3]) : empty),
     materialize(),
   );
 
   // Act
-  observable.subscribe(
-    new Observer((notification) => notifications.push(notification)),
-  );
+  observable.subscribe(new Observer((notification) => notifications.push(notification)));
 
   // Assert
   assertEquals(notifications, [
@@ -482,20 +453,17 @@ Deno.test("expand should handle branching expansion (multiple values from inner)
   ]);
 });
 
-Deno.test("expand should have unique index counter per subscriber", () => {
+Deno.test("expand should have unique index counter per subscription", () => {
   // Arrange
   const indices1: number[] = [];
   const indices2: number[] = [];
-  const source = pipe([1], ofIterable<number>());
+  const source = of(1);
   const observable = pipe(
     source,
     expand((value, index) => {
-      if (indices1.length < 4 && indices2.length === 0) {
-        indices1.push(index);
-      } else {
-        indices2.push(index);
-      }
-      return value < 4 ? pipe([value + 1], ofIterable()) : empty;
+      if (indices1.length < 4 && indices2.length === 0) indices1.push(index);
+      else indices2.push(index);
+      return value < 4 ? of(value + 1) : empty;
     }),
   );
 
@@ -508,23 +476,23 @@ Deno.test("expand should have unique index counter per subscriber", () => {
   assertEquals(indices2, [0, 1, 2, 3]);
 });
 
-Deno.test("expand should reset index for each new subscriber", () => {
+Deno.test("expand should reset index for each new subscription", () => {
   // Arrange
   const allIndices1: number[] = [];
   const allIndices2: number[] = [];
-  const source = pipe([1], ofIterable<number>());
+  const source = of(1);
   const observable = pipe(
     source,
     expand((value, index) => {
       allIndices1.push(index);
-      return value < 3 ? pipe([value + 1], ofIterable()) : empty;
+      return value < 3 ? of(value + 1) : empty;
     }),
   );
   const observable2 = pipe(
     source,
     expand((value, index) => {
       allIndices2.push(index);
-      return value < 3 ? pipe([value + 1], ofIterable()) : empty;
+      return value < 3 ? of(value + 1) : empty;
     }),
   );
 
@@ -541,19 +509,19 @@ Deno.test("expand should have independent index counters for separate subscripti
   // Arrange
   const subscription1Indices: number[] = [];
   const subscription2Indices: number[] = [];
-  const source = pipe([1], ofIterable<number>());
+  const source = of(1);
   const wrapperObservable1 = pipe(
     source,
     expand((value, index) => {
       subscription1Indices.push(index);
-      return value < 3 ? pipe([value + 1], ofIterable()) : empty;
+      return value < 3 ? of(value + 1) : empty;
     }),
   );
   const wrapperObservable2 = pipe(
     source,
     expand((value, index) => {
       subscription2Indices.push(index);
-      return value < 3 ? pipe([value + 1], ofIterable()) : empty;
+      return value < 3 ? of(value + 1) : empty;
     }),
   );
 
@@ -569,13 +537,13 @@ Deno.test("expand should have independent index counters for separate subscripti
 Deno.test("expand should share index counter across all recursion levels within single subscription", () => {
   // Arrange
   const indicesWithValues: Array<[number, number]> = [];
-  const source = pipe([1, 10], ofIterable<number>());
+  const source = forOf([1, 10] as number[]);
   const observable = pipe(
     source,
     expand((value, index) => {
       indicesWithValues.push([value, index]);
-      if (value === 1) return pipe([2], ofIterable());
-      if (value === 10) return pipe([20], ofIterable());
+      if (value === 1) return of(2);
+      if (value === 10) return of(20);
       return empty;
     }),
   );

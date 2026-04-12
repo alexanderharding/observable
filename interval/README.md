@@ -16,7 +16,9 @@ Automated by `.github\workflows\publish.yml`.
 Run `deno task test` or `deno task test:ci` to execute the unit tests via
 [Deno](https://deno.land/).
 
-## Example
+## Examples
+
+Positive integer milliseconds
 
 ```ts
 import { interval } from "@observable/interval";
@@ -26,43 +28,90 @@ import { pipe } from "@observable/pipe";
 const controller = new AbortController();
 pipe(interval(1000), take(3)).subscribe({
   signal: controller.signal,
-  next: () => console.log("next"),
+  next: (value) => console.log("next", value),
   return: () => console.log("return"),
   throw: (value) => console.log("throw", value),
 });
 
 // Console output (after 1 second):
-// "next"
+// "next" undefined
 // Console output (after 2 seconds):
-// "next"
+// "next" undefined
 // Console output (after 3 seconds):
-// "next"
+// "next" undefined
 // "return"
 ```
 
-## Edge cases
+0 milliseconds
 
 ```ts
 import { interval } from "@observable/interval";
+import { take } from "@observable/take";
+import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
-
-// 0ms interval emits synchronously
-let count = 0;
-interval(0).subscribe({
+pipe(interval(0), take(3)).subscribe({
   signal: controller.signal,
-  next: () => {
-    console.log("next");
-    if (++count === 3) controller.abort();
-  },
+  next: (value) => console.log("next", value),
   return: () => console.log("return"),
   throw: (value) => console.log("throw", value),
 });
 
 // Console output (synchronously):
-// "next"
-// "next"
-// "next"
+// "next" undefined
+// "next" undefined
+// "next" undefined
+// "return"
+```
+
+Negative integer milliseconds
+
+```ts
+import { interval } from "@observable/interval";
+
+const controller = new AbortController();
+interval(-1).subscribe({
+  signal: controller.signal,
+  next: () => console.log("next"),
+  return: () => console.log("return"),
+  throw: (value) => console.log("throw", value),
+});
+
+// Console output (synchronously):
+// "return"
+```
+
+NaN milliseconds
+
+```ts
+import { interval } from "@observable/interval";
+
+const controller = new AbortController();
+interval(NaN).subscribe({
+  signal: controller.signal,
+  next: () => console.log("next"),
+  return: () => console.log("return"),
+  throw: (value) => console.log("throw", value),
+});
+
+// Console output (synchronously):
+// "return"
+```
+
+Infinity milliseconds
+
+```ts
+import { interval } from "@observable/interval";
+
+const controller = new AbortController();
+interval(Infinity).subscribe({
+  signal: controller.signal,
+  next: () => console.log("next"),
+  return: () => console.log("return"),
+  throw: (value) => console.log("throw", value),
+});
+
+// No console output
 ```
 
 # AI Prompt

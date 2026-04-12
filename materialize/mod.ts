@@ -1,7 +1,5 @@
 import { isObservable, Observable, type Observer } from "@observable/core";
-import { asObservable } from "@observable/as-observable";
-import { pipe } from "@observable/pipe";
-import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
+import { from } from "@observable/from";
 
 /**
  * Represents any type of [`Observer`](https://jsr.io/@observable/core/doc/~/Observer)
@@ -14,16 +12,17 @@ export type ObserverNotification<Value = unknown> = Readonly<
 >;
 
 /**
- * Projects all of the [`Observer`](https://jsr.io/@observable/core/doc/~/Observer) [notification](https://jsr.io/@observable/core#notification)
- * as [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values.
+ * [`Next`](https://jsr.io/@observable/core/doc/~/Observer.next)s all [notifications](https://jsr.io/@observable/core#notification) as values.
  * @example
+ * Notifications as values
  * ```ts
  * import { materialize } from "@observable/materialize";
- * import { ofIterable } from "@observable/of-iterable";
+ * import { forOf } from "@observable/for-of";
  * import { pipe } from "@observable/pipe";
  *
  * const controller = new AbortController();
- * pipe([1, 2, 3], ofIterable(), materialize()).subscribe({
+ *
+ * pipe(forOf([1, 2, 3]), materialize()).subscribe({
  *  signal: controller.signal,
  *  next: (value) => console.log(value),
  *  return: () => console.log("return"),
@@ -38,12 +37,14 @@ export type ObserverNotification<Value = unknown> = Readonly<
  * // "return"
  * ```
  * @example
+ * Throw notification
  * ```ts
  * import { materialize } from "@observable/materialize";
  * import { throwError } from "@observable/throw-error";
  * import { pipe } from "@observable/pipe";
  *
  * const controller = new AbortController();
+ *
  * pipe(throwError(new Error("error")), materialize()).subscribe({
  *  signal: controller.signal,
  *  next: (value) => console.log("next", value),
@@ -60,26 +61,24 @@ export type ObserverNotification<Value = unknown> = Readonly<
  * ```ts
  * import { materialize, ObserverNotification } from "@observable/materialize";
  * import { pipe } from "@observable/pipe";
- * import { ofIterable } from "@observable/of-iterable";
+ * import { forOf } from "@observable/for-of";
  * import { Observer } from "@observable/core";
  *
- * const observable = pipe([1, 2, 3], ofIterable());
+ * describe("example", () => {
+ *  let controller: AbortController;
  *
- * describe("observable", () => {
- *  let activeSubscriptionController: AbortController;
+ *  beforeEach(() => (controller = new AbortController()));
  *
- *  beforeEach(() => activeSubscriptionController = new AbortController());
- *
- *  afterEach(() => activeSubscriptionController?.abort());
+ *  afterEach(() => controller?.abort());
  *
  *  it("should emit the notifications", () => {
  *    // Arrange
  *    const notifications: Array<ObserverNotification<number>> = [];
  *
  *    // Act
- *    pipe(observable, materialize()).subscribe(
+ *    pipe(forOf([1, 2, 3]), materialize()).subscribe(
  *      new Observer({
- *        signal: activeSubscriptionController.signal,
+ *        signal: controller.signal,
  *        next: (notification) => notifications.push(notification),
  *      }),
  *    );
@@ -99,9 +98,9 @@ export function materialize<Value>(): (
   source: Observable<Value>,
 ) => Observable<ObserverNotification<Value>> {
   return function materializeFn(source) {
-    if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-    if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
-    source = pipe(source, asObservable());
+    if (!arguments.length) throw new TypeError("1 argument required but 0 present");
+    if (!isObservable(source)) throw new TypeError("Parameter 1 is not of type 'Observable'");
+    source = from(source);
     return new Observable((observer) =>
       source.subscribe({
         signal: observer.signal,

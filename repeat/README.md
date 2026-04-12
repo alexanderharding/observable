@@ -1,17 +1,8 @@
 # [@observable/repeat](https://jsr.io/@observable/repeat)
 
-Re-[`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe)s to the
-[source](https://jsr.io/@observable/core#source)
-[`Observable`](https://jsr.io/@observable/core/doc/~/Observable) each time it
-[`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s, as long as the
-[notifier](https://jsr.io/@observable/core#notifier)
-[`Observable`](https://jsr.io/@observable/core/doc/~/Observable) then
-[`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s a value. Stops repeating if the
-[notifier](https://jsr.io/@observable/core#notifier)
-[`Observable`](https://jsr.io/@observable/core/doc/~/Observable)
-[`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s without
-[`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ing a value or it
-[`throw`](https://jsr.io/@observable/core/doc/~/Observer.throw)s a value.
+Re-[`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe)s on
+[`return`](https://jsr.io/@observable/core/doc/~/Observer.return) as long as the given `notifier`
+then [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s a value.
 
 ## Build
 
@@ -30,26 +21,27 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 
 ```ts
 import { repeat } from "@observable/repeat";
-import { ofIterable } from "@observable/of-iterable";
+import { of } from "@observable/of";
 import { pipe } from "@observable/pipe";
 import { empty } from "@observable/empty";
 import { defer } from "@observable/defer";
+import { forOf } from "@observable/for-of";
 
-const source = pipe([1, 2, 3], ofIterable());
+const observable = forOf([1, 2, 3]);
 const controller = new AbortController();
 const repeated = defer(() => {
   let count = 0;
   return pipe(
-    source,
+    observable,
     repeat(defer(() => {
       console.log("notifier subscribed");
-      return ++count === 2 ? empty : pipe([undefined], ofIterable());
+      return ++count === 2 ? empty : of(undefined);
     })),
   );
 });
 
 repeated.subscribe({
-  signal: observer.signal,
+  signal: controller.signal,
   next: (value) => console.log("next", value),
   return: () => console.log("return"),
   throw: (value) => console.log("throw", value),
@@ -86,19 +78,20 @@ CRITICAL: This library is NOT RxJS. Key differences:
 USAGE PATTERN:
 ```ts
 import { repeat } from "@observable/repeat";
-import { ofIterable } from "@observable/of-iterable";
+import { forOf } from "@observable/for-of";
+import { of } from "@observable/of";
 import { pipe } from "@observable/pipe";
 import { defer } from "@observable/defer";
 import { empty } from "@observable/empty";
 
-const source = pipe([1, 2, 3], ofIterable());
+const source = forOf([1, 2, 3]);
 const controller = new AbortController();
 
 let count = 0;
 pipe(
   source,
   repeat(defer(() => {
-    return ++count < 3 ? pipe([undefined], ofIterable()) : empty;
+    return ++count < 3 ? of(undefined) : empty;
   }))
 ).subscribe({
   signal: controller.signal,

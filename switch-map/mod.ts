@@ -1,49 +1,55 @@
 import { isObservable, type Observable, Subject } from "@observable/core";
-import { asObservable } from "@observable/as-observable";
-import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
+import { from } from "@observable/from";
 import { defer } from "@observable/defer";
 import { pipe } from "@observable/pipe";
 import { takeUntil } from "@observable/take-until";
 import { mergeMap } from "@observable/merge-map";
 
 /**
- * {@linkcode project|Projects} each [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed
- * value from the [source](https://jsr.io/@observable/core#source)
- * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) to an inner
- * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable), [subscribing](https://jsr.io/@observable/core/doc/~/Observable.subscribe) only to the most
- * recently {@linkcode project|projected} inner [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)
- * and canceling any previous inner [subscription](https://jsr.io/@observable/core#subscription).
+ * {@linkcode project|Projects} each {@linkcode In|value} to an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)
+ * and [`unsubscribes`](https://jsr.io/@observable/core/doc/~/Observer.signal) from any previously
+ * {@linkcode project|projected} [`Observable`](https://jsr.io/@observable/core/doc/~/Observable).
  * @example
  * ```ts
  * import { BehaviorSubject } from "@observable/behavior-subject";
  * import { switchMap } from "@observable/switch-map";
- * import { ofIterable } from "@observable/of-iterable";
+ * import { of } from "@observable/of";
  * import { pipe } from "@observable/pipe";
+ * import type { Observable } from "@observable/core";
  *
  * const page = new BehaviorSubject(1);
  * const controller = new AbortController();
- * pipe(page, switchMap((value) => fetchPage(value))).subscribe({
+ * pipe(page, switchMap((value) => of(`Page ${page}`))).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
  *   return: () => console.log("return"),
  *   throw: (value) => console.log("throw", value),
  * });
  *
- * function fetchPage(page: number): Observable<string> {
- *   return pipe([`Page ${page}`], ofIterable());
- * }
+ * // Console output:
+ * // "next" "Page 1"
+ *
+ * page.next(2);
+ *
+ * // Console output:
+ * // "next" "Page 2"
+ *
+ * page.return();
+ *
+ * // Console output:
+ * // "return"
+ *
+ * ```
  */
 export function switchMap<In, Out>(
   project: (value: In, index: number) => Observable<Out>,
 ): (source: Observable<In>) => Observable<Out> {
-  if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-  if (typeof project !== "function") {
-    throw new ParameterTypeError(0, "Function");
-  }
+  if (!arguments.length) throw new TypeError("1 argument required but 0 present");
+  if (typeof project !== "function") throw new TypeError("Parameter 1 is not of type 'Function'");
   return function switchMapFn(source) {
-    if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-    if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
-    source = pipe(source, asObservable());
+    if (!arguments.length) throw new TypeError("1 argument required but 0 present");
+    if (!isObservable(source)) throw new TypeError("Parameter 1 is not of type 'Observable'");
+    source = from(source);
     return defer(() => {
       const switching = new Subject<void>();
       return pipe(

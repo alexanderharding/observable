@@ -1,8 +1,6 @@
 # [@observable/catch-error](https://jsr.io/@observable/catch-error)
 
-Projects each [`throw`](https://jsr.io/@observable/core/doc/~/Observer.throw)n value from the
-[source](https://jsr.io/@observable/core#source)
-[`Observable`](https://jsr.io/@observable/core/doc/~/Observable) to a new
+Projects each [`throw`](https://jsr.io/@observable/core/doc/~/Observer.throw)n value to an
 [`Observable`](https://jsr.io/@observable/core/doc/~/Observable).
 
 ## Build
@@ -23,13 +21,13 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 ```ts
 import { catchError } from "@observable/catch-error";
 import { throwError } from "@observable/throw-error";
-import { ofIterable } from "@observable/of-iterable";
+import { of } from "@observable/of";
 import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
 pipe(
   throwError(new Error("error")),
-  catchError(() => pipe(["fallback"], ofIterable())),
+  catchError(() => of("fallback")),
 ).subscribe({
   signal: controller.signal,
   next: (value) => console.log("next", value),
@@ -61,14 +59,14 @@ USAGE PATTERN:
 ```ts
 import { catchError } from "@observable/catch-error";
 import { throwError } from "@observable/throw-error";
-import { ofIterable } from "@observable/of-iterable";
+import { of } from "@observable/of";
 import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
 
 pipe(
   throwError(new Error("something went wrong")),
-  catchError((error) => pipe(["fallback value"], ofIterable()))
+  catchError((error) => of("fallback value"))
 ).subscribe({
   signal: controller.signal,
   next: (value) => console.log(value),  // "fallback value"
@@ -84,7 +82,7 @@ pipe(
   catchError((error) => {
     console.error("Caught:", error);
     // Return a fallback Observable
-    return pipe(["default"], ofIterable());
+    return of("default");
   })
 ).subscribe({ ... });
 ```
@@ -97,7 +95,7 @@ pipe(
   someObservable,
   catchError((error) => {
     if (error instanceof RecoverableError) {
-      return pipe(["recovered"], ofIterable());
+      return of("recovered");
     }
     // Re-throw unrecoverable errors
     return throwError(error);

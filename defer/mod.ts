@@ -1,20 +1,16 @@
 import { Observable } from "@observable/core";
-import { asObservable } from "@observable/as-observable";
-import { pipe } from "@observable/pipe";
-import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
+import { from } from "@observable/from";
 
 /**
- * {@linkcode factory|Creates} a new [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)
- * for each [`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe).
+ * Registers the given {@linkcode factory} function to be invoked on [`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe).
  * @example
  * ```ts
  * import { defer } from "@observable/defer";
- * import { ofIterable } from "@observable/of-iterable";
- * import { pipe } from "@observable/pipe";
+ * import { forOf } from "@observable/for-of";
  *
  * const controller = new AbortController();
  * let values = [1, 2, 3];
- * const observable = defer(() => pipe(values, ofIterable()));
+ * const observable = defer(() => forOf(values));
  *
  * observable.subscribe({
  *   signal: controller.signal,
@@ -42,11 +38,10 @@ import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/i
  * // "next" 5
  * // "next" 6
  * // "return"
+ * ```
  */
-export function defer<Value>(
-  factory: () => Observable<Value>,
-): Observable<Value> {
-  if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-  if (typeof factory !== "function") throw new ParameterTypeError(0, "Function");
-  return new Observable((observer) => pipe(factory(), asObservable()).subscribe(observer));
+export function defer<Value>(factory: () => Observable<Value>): Observable<Value> {
+  if (!arguments.length) throw new TypeError("1 argument required but 0 present");
+  if (typeof factory !== "function") throw new TypeError("Parameter 1 is not of type 'Function'");
+  return new Observable((observer) => from(factory()).subscribe(observer));
 }

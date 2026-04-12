@@ -1,25 +1,21 @@
 import { isObservable, type Observable } from "@observable/core";
-import { asObservable } from "@observable/as-observable";
-import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
+import { from } from "@observable/from";
 import { defer } from "@observable/defer";
 import { pipe } from "@observable/pipe";
 import { map } from "@observable/map";
 
 /**
- * {@linkcode reducer|Reduces} the [source](https://jsrio/@observable/core#source)
- * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)'s
- * [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values to a single
- * value, and [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s each
- * intermediate reduced value.
+ * {@linkcode reducer|Reduces} each {@linkcode In|value} to a single {@linkcode Out|value}.
  * @example
  * ```ts
  * import { scan } from "@observable/scan";
- * import { ofIterable } from "@observable/of-iterable";
+ * import { forOf } from "@observable/for-of";
  * import { pipe } from "@observable/pipe";
  *
  * const controller = new AbortController();
- * const source = pipe([1, 2, 3], ofIterable());
- * pipe(source, scan((previous, current) => previous + current, 0)).subscribe({
+ * const observable = forOf([1, 2, 3]);
+ *
+ * pipe(observable, scan((previous, current) => previous + current, 0)).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
  *   return: () => console.log("return"),
@@ -35,19 +31,19 @@ import { map } from "@observable/map";
  */
 export function scan<In, Out>(
   reducer: (previous: Out, current: In, index: number) => Out,
-  seed: Out,
+  initialValue: Out,
 ): (source: Observable<In>) => Observable<Out> {
-  if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-  if (typeof reducer !== "function") throw new ParameterTypeError(0, "Function");
+  if (!arguments.length) throw new TypeError("1 argument required but 0 present");
+  if (typeof reducer !== "function") throw new TypeError("Parameter 1 is not of type 'Function'");
   return function scanFn(source) {
-    if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-    if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
-    source = pipe(source, asObservable());
+    if (!arguments.length) throw new TypeError("1 argument required but 0 present");
+    if (!isObservable(source)) throw new TypeError("Parameter 1 is not of type 'Observable'");
+    source = from(source);
     return defer(() => {
-      let previous = seed;
+      let previous = initialValue;
       return pipe(
         source,
-        map((current, index) => previous = reducer(previous, current, index)),
+        map((current, index) => (previous = reducer(previous, current, index))),
       );
     });
   };

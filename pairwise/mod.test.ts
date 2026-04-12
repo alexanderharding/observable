@@ -3,14 +3,16 @@ import { flat } from "@observable/flat";
 import { Observer, Subject } from "@observable/core";
 import { throwError } from "@observable/throw-error";
 import { pipe } from "@observable/pipe";
-import { ofIterable } from "@observable/of-iterable";
+import { forOf } from "@observable/for-of";
+import { of } from "@observable/of";
 import { materialize, type ObserverNotification } from "@observable/materialize";
 import { pairwise } from "./mod.ts";
+import { empty } from "@observable/empty";
 
 Deno.test("pairwise should emit pairs of consecutive values", () => {
   // Arrange
   const notifications: Array<ObserverNotification<readonly [number, number]>> = [];
-  const source = pipe([1, 2, 3, 4, 5], ofIterable());
+  const source = forOf([1, 2, 3, 4, 5]);
   const materialized = pipe(source, pairwise(), materialize());
 
   // Act
@@ -31,7 +33,7 @@ Deno.test("pairwise should emit pairs of consecutive values", () => {
 Deno.test("pairwise should not emit if source emits only one value", () => {
   // Arrange
   const notifications: Array<ObserverNotification<readonly [number, number]>> = [];
-  const source = pipe([1], ofIterable());
+  const source = of(1);
   const materialized = pipe(source, pairwise(), materialize());
 
   // Act
@@ -46,8 +48,7 @@ Deno.test("pairwise should not emit if source emits only one value", () => {
 Deno.test("pairwise should not emit if source is empty", () => {
   // Arrange
   const notifications: Array<ObserverNotification<readonly [number, number]>> = [];
-  const source = pipe([], ofIterable<number>());
-  const materialized = pipe(source, pairwise(), materialize());
+  const materialized = pipe(empty, pairwise(), materialize());
 
   // Act
   materialized.subscribe(
@@ -61,7 +62,7 @@ Deno.test("pairwise should not emit if source is empty", () => {
 Deno.test("pairwise should emit exactly one pair when source emits two values", () => {
   // Arrange
   const notifications: Array<ObserverNotification<readonly [string, string]>> = [];
-  const source = pipe(["a", "b"], ofIterable());
+  const source = forOf(["a", "b"]);
   const materialized = pipe(source, pairwise(), materialize());
 
   // Act
@@ -77,7 +78,7 @@ Deno.test("pairwise should pump throws right through itself", () => {
   // Arrange
   const error = new Error("test error");
   const notifications: Array<ObserverNotification<readonly [number, number]>> = [];
-  const source = flat([pipe([1, 2, 3], ofIterable()), throwError(error)]);
+  const source = flat([forOf([1, 2, 3]), throwError(error)]);
   const materialized = pipe(source, pairwise(), materialize());
 
   // Act
@@ -98,7 +99,7 @@ Deno.test("pairwise should honor unsubscribe", () => {
   const controller = new AbortController();
   const notifications: Array<ObserverNotification<readonly [number, number]>> = [];
   const source = flat([
-    pipe([1, 2, 3, 4, 5], ofIterable()),
+    forOf([1, 2, 3, 4, 5]),
     throwError(new Error("Should not make it here")),
   ]);
   const materialized = pipe(source, pairwise(), materialize());
@@ -109,9 +110,7 @@ Deno.test("pairwise should honor unsubscribe", () => {
       signal: controller.signal,
       next: (notification) => {
         notifications.push(notification);
-        if (notification[0] === "next" && notification[1][1] === 3) {
-          controller.abort();
-        }
+        if (notification[0] === "next" && notification[1][1] === 3) controller.abort();
       },
     }),
   );
@@ -175,7 +174,7 @@ Deno.test("pairwise should reset state for each subscription", () => {
   // Arrange
   const notifications1: Array<ObserverNotification<readonly [number, number]>> = [];
   const notifications2: Array<ObserverNotification<readonly [number, number]>> = [];
-  const source = pipe([1, 2, 3], ofIterable());
+  const source = forOf([1, 2, 3]);
   const pairwiseSource = pipe(source, pairwise());
 
   // Act
@@ -202,7 +201,7 @@ Deno.test("pairwise should reset state for each subscription", () => {
 Deno.test("pairwise should work with different types", () => {
   // Arrange
   const notifications: Array<ObserverNotification<readonly [string, string]>> = [];
-  const source = pipe(["first", "second", "third"], ofIterable());
+  const source = forOf(["first", "second", "third"]);
   const materialized = pipe(source, pairwise(), materialize());
 
   // Act

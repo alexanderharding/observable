@@ -1,20 +1,19 @@
 import { isObservable, type Observable } from "@observable/core";
-import { asObservable } from "@observable/as-observable";
+import { from } from "@observable/from";
 import { pipe } from "@observable/pipe";
-import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 import { mergeMap } from "@observable/merge-map";
 import { merge } from "@observable/merge";
 import { defer } from "@observable/defer";
-import { ofIterable } from "@observable/of-iterable";
+import { of } from "@observable/of";
 
 /**
- * Recursively {@linkcode project|projects} each [source](https://jsr.io/@observable/core#source) value
- * to an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) which is merged in the output
+ * Recursively {@linkcode project|projects} each {@linkcode Value|value} to an
  * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable).
  * @example
+ * Double until 16
  * ```ts
  * import { expand } from "@observable/expand";
- * import { ofIterable } from "@observable/of-iterable";
+ * import { of } from "@observable/of";
  * import { pipe } from "@observable/pipe";
  * import { empty } from "@observable/empty";
  *
@@ -22,9 +21,8 @@ import { ofIterable } from "@observable/of-iterable";
  *
  * // Recursively double values until >= 16
  * pipe(
- *   [2],
- *   ofIterable(),
- *   expand((value) => value < 16 ? pipe([value * 2], ofIterable()) : empty),
+ *   of(2),
+ *   expand((value) => value < 16 ? of(value * 2) : empty),
  * ).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
@@ -40,9 +38,11 @@ import { ofIterable } from "@observable/of-iterable";
  * // "return"
  * ```
  * @example
+ * Tree traversal
  * ```ts
  * import { expand } from "@observable/expand";
- * import { ofIterable } from "@observable/of-iterable";
+ * import { of } from "@observable/of";
+ * import { forOf } from "@observable/for-of";
  * import { pipe } from "@observable/pipe";
  * import { empty } from "@observable/empty";
  *
@@ -63,10 +63,9 @@ import { ofIterable } from "@observable/of-iterable";
  * const controller = new AbortController();
  *
  * pipe(
- *   [tree],
- *   ofIterable(),
+ *   of(tree),
  *   expand((node) =>
- *     node.children.length ? pipe(node.children, ofIterable()) : empty
+ *     node.children.length ? forOf(node.children) : empty
  *   ),
  * ).subscribe({
  *   signal: controller.signal,
@@ -86,21 +85,19 @@ import { ofIterable } from "@observable/of-iterable";
 export function expand<Value>(
   project: (value: Value, index: number) => Observable<Value>,
 ): (source: Observable<Value>) => Observable<Value> {
-  if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-  if (typeof project !== "function") {
-    throw new ParameterTypeError(0, "Function");
-  }
+  if (!arguments.length) throw new TypeError("1 argument required but 0 present");
+  if (typeof project !== "function") throw new TypeError("Parameter 1 is not of type 'Function'");
   return function expandFn(source) {
-    if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-    if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
-    source = pipe(source, asObservable());
+    if (!arguments.length) throw new TypeError("1 argument required but 0 present");
+    if (!isObservable(source)) throw new TypeError("Parameter 1 is not of type 'Observable'");
+    source = from(source);
     return defer(() => {
       let index = 0;
       return pipe(
         source,
         mergeMap((value) =>
           merge([
-            pipe([value], ofIterable()),
+            of(value),
             pipe(defer(() => project(value, index++)), expand((value) => project(value, index++))),
           ])
         ),

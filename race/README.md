@@ -1,7 +1,6 @@
 # [@observable/race](https://jsr.io/@observable/race)
 
-Mirrors the first [source](https://jsr.io/@observable/core#source)
-[`Observable`](https://jsr.io/@observable/core/doc/~/Observable) to
+Mirrors the first of the given `observables` to
 [`next`](https://jsr.io/@observable/core/doc/~/Observer.next) or
 [`throw`](https://jsr.io/@observable/core/doc/~/Observer.throw) a value.
 
@@ -18,7 +17,9 @@ Automated by `.github\workflows\publish.yml`.
 Run `deno task test` or `deno task test:ci` to execute the unit tests via
 [Deno](https://deno.land/).
 
-## Example
+## Examples
+
+Array of observables
 
 ```ts
 import { race } from "@observable/race";
@@ -45,6 +46,50 @@ source3.next(5);
 source2.return(); // "return"
 ```
 
+Iterable of observables
+
+```ts
+import { race } from "@observable/race";
+import { Subject } from "@observable/core";
+
+const controller = new AbortController();
+const source1 = new Subject<number>();
+const source2 = source1;
+const source3 = new Subject<number>();
+
+race(new Set([source1, source2, source3])).subscribe({
+  signal: controller.signal,
+  next: (value) => console.log("next", value),
+  return: () => console.log("return"),
+  throw: (value) => console.log("throw", value),
+});
+
+source2.next(1); // "next" 1
+source1.next(2);
+source3.next(3);
+source1.return();
+source2.next(4); // "next" 4
+source3.next(5);
+source2.return(); // "return"
+```
+
+Empty array
+
+```ts
+import { race } from "@observable/race";
+
+const controller = new AbortController();
+race([]).subscribe({
+  signal: controller.signal,
+  next: (value) => console.log("next", value),
+  return: () => console.log("return"),
+  throw: (value) => console.log("throw", value),
+});
+
+// Console output (synchronously):
+// "return"
+```
+
 # AI Prompt
 
 Use the following prompt with AI assistants to help them understand this library:
@@ -53,7 +98,7 @@ Use the following prompt with AI assistants to help them understand this library
 You are helping me with code that uses @observable/race from the @observable library ecosystem.
 
 WHAT IT DOES:
-`race(sources)` creates an Observable that mirrors the first source Observable to emit or throw a value. All other sources are unsubscribed once a winner is determined.
+`race(observables)` creates an Observable that mirrors the first source Observable to emit or throw a value. All other observables are unsubscribed once a winner is determined.
 
 CRITICAL: This library is NOT RxJS. Key differences:
 - Observer uses `return`/`throw` — NOT `complete`/`error`
@@ -86,12 +131,12 @@ source2.return(); // logs: "done"
 
 USE CASES:
 - Timeout patterns (race between data and timeout)
-- First-response-wins from multiple sources
+- First-response-wins from multiple observables
 - Fallback strategies
 
 SEE ALSO:
-- `merge` — emits from all sources concurrently
-- `all` — combines latest values from all sources
+- `merge` — emits from all observables concurrently
+- `all` — combines latest values from all observables
 ````
 
 # Glossary And Semantics

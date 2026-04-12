@@ -1,19 +1,13 @@
 import type { Observable } from "@observable/core";
-import {
-  identity,
-  isIterable,
-  MinimumArgumentsRequiredError,
-  ParameterTypeError,
-} from "@observable/internal";
-import { ofIterable } from "@observable/of-iterable";
+import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 import { mergeMap } from "@observable/merge-map";
 import { empty } from "@observable/empty";
 
 /**
- * Concurrently [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s all values from every given
- * [source](https://jsr.io/@observable/core#source) [`Observable`](https://jsr.io/@observable/core/doc/~/Observable).
+ * Concurrently mirrors all of the given {@linkcode observables}.
  * @example
+ * Array of observables
  * ```ts
  * import { merge } from "@observable/merge";
  * import { Subject } from "@observable/core";
@@ -39,14 +33,31 @@ import { empty } from "@observable/empty";
  * source2.return();
  * source3.return(); // "return"
  * ```
+ * @example
+ * Empty array
+ * ```ts
+ * import { merge } from "@observable/merge";
+ *
+ * const controller = new AbortController();
+ * merge([]).subscribe({
+ *   signal: controller.signal,
+ *   next: (value) => console.log("next", value),
+ *   return: () => console.log("return"),
+ *   throw: (value) => console.log("throw", value),
+ * });
+ *
+ * // Console output (synchronously):
+ * // "return"
+ * ```
  */
 export function merge<const Values extends ReadonlyArray<unknown>>(
-  sources: Readonly<{ [Key in keyof Values]: Observable<Values[Key]> }>,
+  observables: Readonly<{ [Key in keyof Values]: Observable<Values[Key]> }>,
 ): Observable<Values[number]>;
 /**
- * Concurrently [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s all values from every given
- * [source](https://jsr.io/@observable/core#source) [`Observable`](https://jsr.io/@observable/core/doc/~/Observable).
+ * Concurrently [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s all values from all
+ * given {@linkcode observables}.
  * @example
+ * Iterable of observables
  * ```ts
  * import { merge } from "@observable/merge";
  * import { Subject } from "@observable/core";
@@ -73,16 +84,23 @@ export function merge<const Values extends ReadonlyArray<unknown>>(
  * source3.return(); // "return"
  * ```
  */
-export function merge<Value>(
-  sources: Iterable<Observable<Value>>,
-): Observable<Value>;
-export function merge<Value>(
-  // Accepting any iterable is a design choice for performance (iterables are
-  // lazily evaluated) and flexibility.
-  sources: Iterable<Observable<Value>>,
-): Observable<Value> {
-  if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-  if (!isIterable(sources)) throw new ParameterTypeError(0, "Iterable");
-  if (Array.isArray(sources) && !sources.length) return empty;
-  return pipe(sources, ofIterable(), mergeMap(identity));
+export function merge<Value>(observables: Iterable<Observable<Value>>): Observable<Value>;
+export function merge<Value>(observables: Iterable<Observable<Value>>): Observable<Value> {
+  if (!arguments.length) throw new TypeError("1 argument required but 0 present");
+  if (!isIterable(observables)) throw new TypeError("Parameter 1 is not of type 'Iterable'");
+  if (Array.isArray(observables) && !observables.length) return empty;
+  return pipe(forOf(observables), mergeMap((observable) => observable));
+}
+
+/**
+ * Checks if a {@linkcode value} is an object that implements the {@linkcode Iterable} interface.
+ * @internal Do NOT export
+ */
+function isIterable(value: unknown): value is Iterable<unknown> {
+  if (!arguments.length) throw new TypeError("1 argument required but 0 present");
+  return (
+    (typeof value === "object" && value !== null) &&
+    Symbol.iterator in value &&
+    typeof value[Symbol.iterator] === "function"
+  );
 }

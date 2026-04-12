@@ -1,7 +1,7 @@
 # [@observable/timeout](https://jsr.io/@observable/timeout)
 
-[`Next`](https://jsr.io/@observable/core/doc/~/Observer.next)s a `void` value after a specified
-number of milliseconds and then [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s.
+[`Next`](https://jsr.io/@observable/core/doc/~/Observer.next)s a `void` value after the given number
+of `milliseconds` and then [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s.
 
 ## Build
 
@@ -16,7 +16,9 @@ Automated by `.github\workflows\publish.yml`.
 Run `deno task test` or `deno task test:ci` to execute the unit tests via
 [Deno](https://deno.land/).
 
-## Example
+## Examples
+
+Positive integer milliseconds
 
 ```ts
 import { timeout } from "@observable/timeout";
@@ -34,7 +36,7 @@ timeout(1_000).subscribe({
 // "return"
 ```
 
-## Synchronous return with 0ms
+0 milliseconds
 
 ```ts
 import { timeout } from "@observable/timeout";
@@ -52,14 +54,12 @@ timeout(0).subscribe({
 // "return"
 ```
 
-## Edge cases
+Negative integer milliseconds
 
 ```ts
 import { timeout } from "@observable/timeout";
 
 const controller = new AbortController();
-
-// Negative values return immediately
 timeout(-1).subscribe({
   signal: controller.signal,
   next: (value) => console.log("next", value),
@@ -69,6 +69,40 @@ timeout(-1).subscribe({
 
 // Console output (synchronously):
 // "return"
+```
+
+NaN milliseconds
+
+```ts
+import { timeout } from "@observable/timeout";
+
+const controller = new AbortController();
+timeout(NaN).subscribe({
+  signal: controller.signal,
+  next: (value) => console.log("next", value),
+  return: () => console.log("return"),
+  throw: (value) => console.log("throw", value),
+});
+
+// Console output (synchronously):
+// "return"
+```
+
+Infinity milliseconds
+
+```ts
+import { timeout } from "@observable/timeout";
+
+const controller = new AbortController();
+timeout(Infinity).subscribe({
+  signal: controller.signal,
+  next: (value) => console.log("next", value),
+  return: () => console.log("return"),
+  throw: (value) => console.log("throw", value),
+});
+
+// No `next`, `return`, or `throw` until the subscription is aborted (`never`).
+controller.abort();
 ```
 
 # AI Prompt

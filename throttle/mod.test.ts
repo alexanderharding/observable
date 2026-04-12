@@ -1,14 +1,17 @@
 import { assertEquals, assertStrictEquals, assertThrows } from "@std/assert";
-import { Observable, Observer, Subject } from "@observable/core";
+import { Observer, Subject } from "@observable/core";
 import { empty } from "@observable/empty";
 import { pipe } from "@observable/pipe";
-import { ofIterable } from "@observable/of-iterable";
+import { forOf } from "@observable/for-of";
 import { materialize, type ObserverNotification } from "@observable/materialize";
 import { throttle } from "./mod.ts";
+import { flat } from "@observable/flat";
+import { of } from "@observable/of";
+import { throwError } from "@observable/throw-error";
 
 Deno.test("throttle should return empty if milliseconds is negative", () => {
   // Arrange
-  const source = pipe([1, 2, 3], ofIterable());
+  const source = forOf([1, 2, 3]);
 
   // Act
   const result = pipe(source, throttle(-1));
@@ -19,7 +22,7 @@ Deno.test("throttle should return empty if milliseconds is negative", () => {
 
 Deno.test("throttle should return empty if milliseconds is NaN", () => {
   // Arrange
-  const source = pipe([1, 2, 3], ofIterable());
+  const source = forOf([1, 2, 3]);
 
   // Act
   const result = pipe(source, throttle(NaN));
@@ -102,10 +105,7 @@ Deno.test("throttle should pump throws right through itself", () => {
     },
   });
 
-  const source = new Observable<number>((observer) => {
-    observer.next(1);
-    observer.throw(error);
-  });
+  const source = flat([of(1), throwError(error)]);
   const materialized = pipe(source, throttle(100), materialize());
 
   // Act
@@ -211,7 +211,7 @@ Deno.test("throttle should throw when source is not an Observable", () => {
 Deno.test("throttle should emit all values immediately when milliseconds is 0", () => {
   // Arrange
   const notifications: Array<ObserverNotification<number>> = [];
-  const source = pipe([1, 2, 3], ofIterable());
+  const source = forOf([1, 2, 3]);
   const materialized = pipe(source, throttle(0), materialize());
 
   // Act

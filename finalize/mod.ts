@@ -1,19 +1,18 @@
 import { isObservable, Observable } from "@observable/core";
-import { asObservable } from "@observable/as-observable";
-import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
-import { pipe } from "@observable/pipe";
+import { from } from "@observable/from";
 
 /**
- * The [consumer](https://jsr.io/@observable/core#consumer) is telling the [producer](https://jsr.io/@observable/core#producer)
- * it's no longer interested in receiving {@linkcode Value|values}.
+ * Registers a {@linkcode callback} to be invoked on [`unsubscribe`](https://jsr.io/@observable/core/doc/~/Observer.signal).
  * @example
+ * Return
  * ```ts
  * import { finalize } from "@observable/finalize";
- * import { ofIterable } from "@observable/of-iterable";
+ * import { forOf } from "@observable/for-of";
  * import { pipe } from "@observable/pipe";
  *
  * const controller = new AbortController();
- * pipe([1, 2, 3], ofIterable(), finalize(() => console.log("finalized"))).subscribe({
+ *
+ * pipe(forOf([1, 2, 3]), finalize(() => console.log("finalized"))).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
  *   return: () => console.log("return"),
@@ -28,16 +27,18 @@ import { pipe } from "@observable/pipe";
  * // "return"
  * ```
  * @example
+ * Throw
  * ```ts
  * import { finalize } from "@observable/finalize";
  * import { throwError } from "@observable/throw-error";
  * import { pipe } from "@observable/pipe";
- * import { ofIterable } from "@observable/of-iterable";
+ * import { forOf } from "@observable/for-of";
  * import { flat } from "@observable/flat";
  *
  * const controller = new AbortController();
- * const source = flat([pipe([1, 2, 3], ofIterable()), throwError(new Error("error"))]);
- * pipe(source, finalize(() => console.log("finalized"))).subscribe({
+ * const observable = flat([forOf([1, 2, 3]), throwError(new Error("error"))]);
+ *
+ * pipe(observable, finalize(() => console.log("finalized"))).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
  *   return: () => console.log("return"),
@@ -51,22 +52,39 @@ import { pipe } from "@observable/pipe";
  * // "finalized"
  * // "throw" Error: error
  * ```
+ * @example
+ * Unsubscribe
+ * ```ts
+ * import { finalize } from "@observable/finalize";
+ * import { pipe } from "@observable/pipe";
+ * import { never } from "@observable/never";
+ *
+ * const controller = new AbortController();
+ *
+ * pipe(never, finalize(() => console.log("finalized"))).subscribe({
+ *   signal: controller.signal,
+ *   next: (value) => console.log("next", value),
+ *   return: () => console.log("return"),
+ *   throw: (value) => console.log("throw", value),
+ * });
+ *
+ * controller.abort();
+ *
+ * // Console output:
+ * // "finalized"
+ * ```
  */
 export function finalize<Value>(
-  teardown: () => void,
+  callback: () => void,
 ): (source: Observable<Value>) => Observable<Value> {
-  if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-  if (typeof teardown !== "function") {
-    throw new ParameterTypeError(0, "Function");
-  }
+  if (!arguments.length) throw new TypeError("1 argument required but 0 present");
+  if (typeof callback !== "function") throw new TypeError("Parameter 1 is not of type 'Function'");
   return function finalizeFn(source) {
-    if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-    if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
-    source = pipe(source, asObservable());
+    if (!arguments.length) throw new TypeError("1 argument required but 0 present");
+    if (!isObservable(source)) throw new TypeError("Parameter 1 is not of type 'Observable'");
+    source = from(source);
     return new Observable((observer) => {
-      observer.signal.addEventListener("abort", () => teardown(), {
-        once: true,
-      });
+      observer.signal.addEventListener("abort", () => callback(), { once: true });
       source.subscribe(observer);
     });
   };

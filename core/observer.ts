@@ -1,13 +1,3 @@
-import {
-  InstanceofError,
-  isAbortSignal,
-  isNil,
-  isObject,
-  MinimumArgumentsRequiredError,
-  ParameterTypeError,
-} from "@observable/internal";
-import type { ObserverConstructor } from "./observer-constructor.ts";
-
 /**
  * Object interface that defines a standard way to [consume](https://jsr.io/@observable/core#consumer)
  * a sequence of values (either finite or infinite).
@@ -40,6 +30,44 @@ export interface Observer<Value = unknown> {
 }
 
 /**
+ * Object interface for an {@linkcode Observer} factory.
+ */
+export interface ObserverConstructor {
+  /**
+   * Creates and return an object that provides a standard way to [consume](https://jsr.io/@observable/core#consumer)
+   * a sequence of values (either finite or infinite).
+   * ```ts
+   * import { Observer } from "@observable/core";
+   *
+   * const observer = new Observer<0>({
+   *   next: (value) => console.log("next", value),
+   *   return: () => console.log("return"),
+   *   throw: (value) => console.log("throw", value),
+   * });
+   * const timeout = setTimeout(() => {
+   *   observer.next(0);
+   *   observer.return();
+   *   // The following "next" and "throw" method calls are no-ops since we already returned
+   *   // and are only here for demonstration purposes.
+   *   observer.next(0);
+   *   observer.throw(new Error("Should not be thrown"));
+   * }, 100);
+   * observer.signal.addEventListener("abort", () => clearTimeout(timeout), {
+   *   once: true,
+   * });
+   *
+   * // Console output (after 100ms):
+   * // "next" 0
+   * // "return"
+   * ```
+   */
+  new <Value>(
+    observer?: Partial<Observer<Value>> | Observer<Value>["next"] | null,
+  ): Observer<Value>;
+  readonly prototype: Observer;
+}
+
+/**
  * A fixed string that is used to identify the {@linkcode Observer} class.
  * @internal Do NOT export.
  */
@@ -53,12 +81,11 @@ export const Observer: ObserverConstructor = class<Value> {
 
   constructor(observer?: Partial<Observer<Value>> | Observer<Value>["next"] | null) {
     if (
-      !isNil(observer) &&
+      (typeof observer !== "undefined" && observer !== null) &&
       typeof observer !== "function" &&
       !isPartialObserver(observer)
     ) {
-      const expected = "(Partial<Observer> or Observer['next'])";
-      throw new ParameterTypeError(0, expected);
+      throw new TypeError("Parameter 1 is not of type '(Partial<Observer> or Observer['next'])'");
     }
     this.#observer = typeof observer === "function" ? { next: observer } : observer;
     if (isAbortSignal(this.#observer?.signal)) {
@@ -68,7 +95,7 @@ export const Observer: ObserverConstructor = class<Value> {
   }
 
   next(value: Value): void {
-    if (!(this instanceof Observer)) throw new InstanceofError("this", stringTag);
+    if (!(this instanceof Observer)) throw new TypeError(`'this' is not instanceof '${stringTag}'`);
     // No arguments.length check because Value may be void, making next() with no args valid.
 
     // If this observer has been aborted there is nothing to do.
@@ -83,7 +110,7 @@ export const Observer: ObserverConstructor = class<Value> {
   }
 
   return(): void {
-    if (!(this instanceof Observer)) throw new InstanceofError("this", stringTag);
+    if (!(this instanceof Observer)) throw new TypeError(`'this' is not instanceof '${stringTag}'`);
 
     // If this observer has been aborted there is nothing to do.
     if (this.signal.aborted) return;
@@ -104,8 +131,8 @@ export const Observer: ObserverConstructor = class<Value> {
   }
 
   throw(value: unknown): void {
-    if (!(this instanceof Observer)) throw new InstanceofError("this", stringTag);
-    if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
+    if (!(this instanceof Observer)) throw new TypeError(`'this' is not instanceof '${stringTag}'`);
+    if (!arguments.length) throw new TypeError("1 argument required but 0 present");
 
     // If this observer has been aborted there is nothing to do.
     if (this.signal.aborted) return;
@@ -132,6 +159,63 @@ Object.freeze(Observer);
 Object.freeze(Observer.prototype);
 
 /**
+ * Checks if a {@linkcode value} is an object that implements the {@linkcode Observer} interface.
+ * @example
+ * ```ts
+ * import { isObserver, Observer } from "@observable/core";
+ *
+ * const instance = new Observer((value) => {
+ *   // Implementation omitted for brevity.
+ * });
+ * isObserver(instance); // true
+ *
+ * const literal: Observer = {
+ *   signal: {
+ *     aborted: false,
+ *     onabort: null,
+ *     throwIfAborted() {
+ *       // Implementation omitted for brevity.
+ *     },
+ *     addEventListener() {
+ *       // Implementation omitted for brevity.
+ *     },
+ *     removeEventListener() {
+ *       // Implementation omitted for brevity.
+ *     },
+ *     dispatchEvent() {
+ *       // Implementation omitted for brevity.
+ *     },
+ *   },
+ *   next(value) {
+ *     // Implementation omitted for brevity.
+ *   },
+ *   return() {
+ *     // Implementation omitted for brevity.
+ *   },
+ *   throw(value) {
+ *     // Implementation omitted for brevity.
+ *   },
+ * };
+ * isObserver(literal); // true
+ * ```
+ */
+export function isObserver(value: unknown): value is Observer {
+  if (!arguments.length) throw new TypeError("1 argument required but 0 present");
+  return (
+    value instanceof Observer ||
+    ((typeof value === "object" && value !== null) &&
+      "next" in value &&
+      typeof value.next === "function" &&
+      "return" in value &&
+      typeof value.return === "function" &&
+      "throw" in value &&
+      typeof value.throw === "function" &&
+      "signal" in value &&
+      isAbortSignal(value.signal))
+  );
+}
+
+/**
  * Reports an unhandled error asynchronously to prevent
  * [producer interference](https://jsr.io/@observable/core#producer-interference).
  * @internal Do NOT export.
@@ -151,10 +235,10 @@ function reportUnhandledError(value: unknown): void {
  * @internal Do NOT export.
  */
 function isPartialObserver(value: unknown): value is Partial<Observer> {
-  if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
+  if (!arguments.length) throw new TypeError("1 argument required but 0 present");
   return (
     value instanceof Observer ||
-    (isObject(value) &&
+    ((typeof value === "object" && value !== null) &&
       (!("next" in value) ||
         typeof value.next === "undefined" ||
         typeof value.next === "function") &&
@@ -167,5 +251,41 @@ function isPartialObserver(value: unknown): value is Partial<Observer> {
       (!("signal" in value) ||
         typeof value.signal === "undefined" ||
         isAbortSignal(value.signal)))
+  );
+}
+
+/**
+ * Checks if a {@linkcode value} is an object that implements the {@linkcode AbortSignal} interface.
+ * @internal Do NOT export
+ */
+function isAbortSignal(value: unknown): value is AbortSignal {
+  if (!arguments.length) throw new TypeError("1 argument required but 0 present");
+  return (
+    value instanceof AbortSignal ||
+    (isEventTarget(value) &&
+      "aborted" in value &&
+      typeof value.aborted === "boolean" &&
+      "onabort" in value &&
+      (typeof value.onabort === "function" || value.onabort === null) &&
+      "throwIfAborted" in value &&
+      typeof value.throwIfAborted === "function" &&
+      "reason" in value)
+  );
+}
+
+/**
+ * Checks if a {@linkcode value} is an object that implements the {@linkcode EventTarget} interface.
+ * @internal Do NOT export
+ */
+function isEventTarget(value: unknown): value is EventTarget {
+  if (!arguments.length) throw new TypeError("1 argument required but 0 present");
+  return (
+    (typeof value === "object" && value !== null) &&
+    "addEventListener" in value &&
+    typeof value.addEventListener === "function" &&
+    "removeEventListener" in value &&
+    typeof value.removeEventListener === "function" &&
+    "dispatchEvent" in value &&
+    typeof value.dispatchEvent === "function"
   );
 }

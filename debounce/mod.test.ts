@@ -1,14 +1,17 @@
 import { assertEquals, assertStrictEquals, assertThrows } from "@std/assert";
-import { Observable, Observer, Subject } from "@observable/core";
+import { Observer, Subject } from "@observable/core";
 import { empty } from "@observable/empty";
 import { pipe } from "@observable/pipe";
-import { ofIterable } from "@observable/of-iterable";
+import { forOf } from "@observable/for-of";
 import { materialize, type ObserverNotification } from "@observable/materialize";
 import { debounce } from "./mod.ts";
+import { flat } from "@observable/flat";
+import { throwError } from "@observable/throw-error";
+import { of } from "@observable/of";
 
 Deno.test("debounce should return empty if milliseconds is negative", () => {
   // Arrange
-  const source = pipe([1, 2, 3], ofIterable());
+  const source = forOf([1, 2, 3]);
 
   // Act
   const result = pipe(source, debounce(-1));
@@ -19,7 +22,7 @@ Deno.test("debounce should return empty if milliseconds is negative", () => {
 
 Deno.test("debounce should return empty if milliseconds is NaN", () => {
   // Arrange
-  const source = pipe([1, 2, 3], ofIterable());
+  const source = forOf([1, 2, 3]);
 
   // Act
   const result = pipe(source, debounce(NaN));
@@ -31,7 +34,7 @@ Deno.test("debounce should return empty if milliseconds is NaN", () => {
 Deno.test("debounce should ignore values but propagate return when milliseconds is Infinity", () => {
   // Arrange
   const notifications: Array<ObserverNotification<number>> = [];
-  const source = pipe([1, 2, 3], ofIterable());
+  const source = forOf([1, 2, 3]);
   const materialized = pipe(source, debounce(Infinity), materialize());
 
   // Act
@@ -47,11 +50,7 @@ Deno.test("debounce should ignore values but propagate throw when milliseconds i
   // Arrange
   const error = new Error("test error");
   const notifications: Array<ObserverNotification<number>> = [];
-  const source = new Observable<number>((observer) => {
-    observer.next(1);
-    observer.next(2);
-    observer.throw(error);
-  });
+  const source = flat([forOf([1, 2]), throwError(error)]);
   const materialized = pipe(source, debounce(Infinity), materialize());
 
   // Act
@@ -168,10 +167,7 @@ Deno.test("debounce should pump throws right through itself", () => {
     },
   });
 
-  const source = new Observable<number>((observer) => {
-    observer.next(1);
-    observer.throw(error);
-  });
+  const source = flat([of(1), throwError(error)]);
   const materialized = pipe(source, debounce(100), materialize());
 
   // Act

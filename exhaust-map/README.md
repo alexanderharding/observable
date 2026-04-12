@@ -1,10 +1,8 @@
 # [@observable/exhaust-map](https://jsr.io/@observable/exhaust-map)
 
-Projects each [source](https://jsr.io/@observable/core#source) value to an
-[`Observable`](https://jsr.io/@observable/core/doc/~/Observable) which is merged in the output
-[`Observable`](https://jsr.io/@observable/core/doc/~/Observable) only if the previous projected
-[`Observable`](https://jsr.io/@observable/core/doc/~/Observable) has
-[`return`](https://jsr.io/@observable/core/doc/~/Observer.return)ed.
+Projects each value to an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) ignoring
+any new values until the projected [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)
+[`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s.
 
 ## Build
 
@@ -23,16 +21,16 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 
 ```ts
 import { exhaustMap } from "@observable/exhaust-map";
-import { ofIterable } from "@observable/of-iterable";
+import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 import { timeout } from "@observable/timeout";
 import { map } from "@observable/map";
 
 const controller = new AbortController();
-const source = pipe([1, 2, 3], ofIterable());
+const observable = forOf([1, 2, 3]);
 
 pipe(
-  source,
+  observable,
   exhaustMap((value) => pipe(timeout(100), map(() => value))),
 ).subscribe({
   signal: controller.signal,
@@ -64,7 +62,7 @@ CRITICAL: This library is NOT RxJS. Key differences:
 USAGE PATTERN:
 ```ts
 import { exhaustMap } from "@observable/exhaust-map";
-import { ofIterable } from "@observable/of-iterable";
+import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 import { timeout } from "@observable/timeout";
 import { map } from "@observable/map";
@@ -72,8 +70,7 @@ import { map } from "@observable/map";
 const controller = new AbortController();
 
 pipe(
-  [1, 2, 3],  // Rapid clicks
-  ofIterable(),
+  forOf([1, 2, 3]),
   exhaustMap((value) => pipe(
     timeout(100),
     map(() => value)

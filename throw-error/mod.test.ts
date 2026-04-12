@@ -1,6 +1,6 @@
 import { Observer } from "@observable/core";
 import { throwError } from "./mod.ts";
-import { assertEquals } from "@std/assert";
+import { assertEquals, assertThrows } from "@std/assert";
 import { materialize, type ObserverNotification } from "@observable/materialize";
 import { pipe } from "@observable/pipe";
 
@@ -21,3 +21,12 @@ Deno.test(
     assertEquals(notifications, [["throw", error]]);
   },
 );
+
+Deno.test("throwError should throw a TypeError if called with no arguments", () => {
+  // Arrange / Act / Assert
+  assertThrows(
+    () => throwError(...([] as unknown as Parameters<typeof throwError>)),
+    TypeError,
+    "1 argument required but 0 present",
+  );
+});

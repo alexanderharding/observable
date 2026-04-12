@@ -1,7 +1,6 @@
 import { assertEquals, assertStrictEquals, assertThrows } from "@std/assert";
 import { Observer } from "@observable/core";
-import { noop } from "@observable/internal";
-import { ofIterable } from "@observable/of-iterable";
+import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 import { materialize, type ObserverNotification } from "@observable/materialize";
 import { ReplaySubject } from "./mod.ts";
@@ -30,6 +29,17 @@ Deno.test("ReplaySubject.prototype should be frozen", () => {
 });
 
 Deno.test(
+  "ReplaySubject should not freeze Object.prototype",
+  () => {
+    // Arrange / Act
+    new ReplaySubject(Infinity);
+
+    // Assert
+    assertStrictEquals(Object.isFrozen(Object.prototype), false);
+  },
+);
+
+Deno.test(
   "ReplaySubject.constructor should not throw when creating with more than one argument",
   () => {
     // Arrange / Act / Assert
@@ -46,7 +56,7 @@ Deno.test(
   () => {
     // Arrange
     const notifications: Array<ObserverNotification<number>> = [];
-    const source = pipe([1, 2, 3, 4, 5], ofIterable());
+    const source = forOf([1, 2, 3, 4, 5]);
     const subject = new ReplaySubject<number>(Infinity);
 
     // Act
@@ -155,6 +165,24 @@ Deno.test("ReplaySubject.next should emit values to observers", () => {
   ]);
 });
 
+Deno.test(
+  "ReplaySubject.next should allow empty next when created with void type",
+  () => {
+    // Arrange
+    const subject = new ReplaySubject<void>(1);
+    const notifications: Array<ObserverNotification<void>> = [];
+    pipe(subject, materialize()).subscribe(
+      new Observer((notification) => notifications.push(notification)),
+    );
+
+    // Act
+    subject.next();
+
+    // Assert
+    assertEquals(notifications, [["next", undefined]]);
+  },
+);
+
 Deno.test("ReplaySubject.next should store values for late observers", () => {
   // Arrange
   const subject = new ReplaySubject<string>(2);
@@ -172,6 +200,15 @@ Deno.test("ReplaySubject.next should store values for late observers", () => {
     ["next", "foo"],
     ["next", "bar"],
   ]);
+});
+
+Deno.test("ReplaySubject.throw should throw if called with no arguments", () => {
+  // Arrange / Act / Assert
+  assertThrows(
+    () => new ReplaySubject(1).throw(...([] as unknown as Parameters<Observer["throw"]>)),
+    TypeError,
+    "1 argument required but 0 present",
+  );
 });
 
 Deno.test("ReplaySubject.throw should pass through this subject", () => {
@@ -201,7 +238,7 @@ Deno.test("ReplaySubject.throw should not notify late observers of buffered valu
   const error = new Error("test error");
   const subject = new ReplaySubject<string>(2);
   const notifications: Array<ObserverNotification<string>> = [];
-  subject.subscribe(new Observer({ throw: noop }));
+  subject.subscribe(new Observer({ throw: () => {} }));
 
   // Act
   subject.next("foo");
@@ -291,6 +328,79 @@ Deno.test(
     // Assert
     assertStrictEquals(subject.signal.aborted, true);
     assertEquals(notifications, [["return"]]);
+  },
+);
+
+Deno.test(
+  "ReplaySubject should truncate fractional buffer sizes toward zero",
+  () => {
+    // Arrange
+    const subject = new ReplaySubject<string>(2.9);
+    const notifications: Array<ObserverNotification<string>> = [];
+
+    // Act
+    subject.next("first");
+    subject.next("second");
+    subject.next("third");
+    pipe(subject, materialize()).subscribe(
+      new Observer((notification) => notifications.push(notification)),
+    );
+
+    // Assert
+    assertEquals(notifications, [
+      ["next", "second"],
+      ["next", "third"],
+    ]);
+  },
+);
+
+Deno.test(
+  "ReplaySubject should treat a positive fractional count that truncates to 0 like count 0",
+  () => {
+    // Arrange
+    const subject = new ReplaySubject<string>(0.6);
+    const notifications: Array<ObserverNotification<string>> = [];
+
+    // Act
+    subject.next("first");
+    subject.next("second");
+    pipe(subject, materialize()).subscribe(
+      new Observer((notification) => notifications.push(notification)),
+    );
+    subject.next("third");
+    assertStrictEquals(subject.signal.aborted, false);
+    subject.return();
+
+    // Assert
+    assertEquals(notifications, [
+      ["next", "third"],
+      ["return"],
+    ]);
+  },
+);
+
+Deno.test(
+  "ReplaySubject should treat a negative fractional count that truncates to 0 like count 0",
+  () => {
+    // Arrange
+    const subject = new ReplaySubject<string>(-0.4);
+    const notifications: Array<ObserverNotification<string>> = [];
+
+    // Act
+    subject.next("first");
+    subject.next("second");
+    pipe(subject, materialize()).subscribe(
+      new Observer((notification) => notifications.push(notification)),
+    );
+    subject.next("third");
+    assertStrictEquals(subject.signal.aborted, false);
+    subject.return();
+
+    // Assert
+    assertEquals(notifications, [
+      ["next", "third"],
+      ["return"],
+    ]);
   },
 );
 

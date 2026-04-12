@@ -1,0 +1,95 @@
+import { isObservable, type Observable, Observer } from "@observable/core";
+import { pipe } from "@observable/pipe";
+import { at } from "@observable/at";
+
+/**
+ * [`Resolve`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/resolve)s with the
+ * last {@linkcode Value|value} of the given {@linkcode observable} on [`return`](https://jsr.io/@observable/core/doc/~/Observer.return),
+ * [`reject`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/reject)s with
+ * a [`throw`](https://jsr.io/@observable/core/doc/~/Observer.throw)n value of the given {@linkcode observable}, or
+ * [`reject`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/reject)s with a
+ * [`TypeError`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypeError)
+ * if the given {@linkcode observable} [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s
+ * without [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ing a {@linkcode Value|value}.
+ * @example
+ * Last emitted value
+ * ```ts
+ * import { lastValueFrom } from "@observable/last-value-from";
+ * import { forOf } from "@observable/for-of";
+ *
+ * console.log(await lastValueFrom(forOf([1, 2, 3])));
+ *
+ * // Console output:
+ * // 3
+ * ```
+ * @example
+ * Inner PromiseLike
+ * ```ts
+ * import { lastValueFrom } from "@observable/last-value-from";
+ * import { of } from "@observable/of";
+ *
+ * console.log(await lastValueFrom(of(Promise.resolve(3))));
+ *
+ * // Console output:
+ * // 3
+ * ```
+ * @example
+ * take(1) count
+ * ```ts
+ * import { lastValueFrom } from "@observable/last-value-from";
+ * import { forOf } from "@observable/for-of";
+ * import { pipe } from "@observable/pipe";
+ * import { take } from "@observable/take";
+ *
+ * console.log(await lastValueFrom(pipe(forOf([1, 2, 3]), take(1))));
+ *
+ * // Console output:
+ * // 1
+ * ```
+ * @example
+ * Source throws
+ * ```ts
+ * import { lastValueFrom } from "@observable/last-value-from";
+ * import { throwError } from "@observable/throw-error";
+ *
+ * try {
+ *   await lastValueFrom(throwError(new Error("test")));
+ * } catch (error) {
+ *   console.log(error);
+ * }
+ *
+ * // Console output:
+ * // Error: test
+ * ```
+ * @example
+ * Empty observable
+ * ```ts
+ * import { lastValueFrom } from "@observable/last-value-from";
+ * import { empty } from "@observable/empty";
+ *
+ * try {
+ *   await lastValueFrom(empty);
+ * } catch (error) {
+ *   console.log(error);
+ * }
+ *
+ * // Console output:
+ * // TypeError: Cannot convert empty Observable to Promise
+ * ```
+ */
+export function lastValueFrom<Value>(
+  observable: Observable<Value | PromiseLike<Value>>,
+): Promise<Value> {
+  if (!arguments.length) throw new TypeError("1 argument required but 0 present");
+  if (!isObservable(observable)) throw new TypeError("Parameter 1 is not of type 'Observable'");
+  return new Promise((resolve, reject) => {
+    pipe(observable, at(-1)).subscribe(
+      new Observer({
+        next: (value) => resolve(value),
+        // Reject on return to avoid hanging promises if the observable is empty.
+        return: () => reject(new TypeError("Cannot convert empty Observable to Promise")),
+        throw: (value) => reject(value),
+      }),
+    );
+  });
+}

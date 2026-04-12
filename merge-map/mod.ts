@@ -1,25 +1,22 @@
 import { isObservable, Observable } from "@observable/core";
-import { asObservable } from "@observable/as-observable";
-import { pipe } from "@observable/pipe";
-import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
+import { from } from "@observable/from";
 
 /**
- * {@linkcode project|Projects} each [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed
- * value to an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) which is merged in the output
+ * Concurrently {@linkcode project|projects} each {@linkcode In|value} to an
  * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable).
  * @example
  * ```ts
  * import { mergeMap } from "@observable/merge-map";
- * import { ofIterable } from "@observable/of-iterable";
+ * import { forOf } from "@observable/for-of";
  * import { pipe } from "@observable/pipe";
  *
  * const controller = new AbortController();
  * const observableLookup = {
- *   1: pipe([1, 2, 3], ofIterable()),
- *   2: pipe([4, 5, 6], ofIterable()),
- *   3: pipe([7, 8, 9], ofIterable()),
+ *   1: forOf([1, 2, 3]),
+ *   2: forOf([4, 5, 6]),
+ *   3: forOf([7, 8, 9]),
  * } as const;
- * pipe([1, 2, 3], ofIterable(), mergeMap((value) => observableLookup[value])).subscribe({
+ * pipe(forOf([1, 2, 3]), mergeMap((value) => observableLookup[value])).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
  *   return: () => console.log("return"),
@@ -42,14 +39,12 @@ import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/i
 export function mergeMap<In, Out>(
   project: (value: In, index: number) => Observable<Out>,
 ): (source: Observable<In>) => Observable<Out> {
-  if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-  if (typeof project !== "function") {
-    throw new ParameterTypeError(0, "Function");
-  }
+  if (!arguments.length) throw new TypeError("1 argument required but 0 present");
+  if (typeof project !== "function") throw new TypeError("Parameter 1 is not of type 'Function'");
   return function mergeMapFn(source) {
-    if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-    if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
-    source = pipe(source, asObservable());
+    if (!arguments.length) throw new TypeError("1 argument required but 0 present");
+    if (!isObservable(source)) throw new TypeError("Parameter 1 is not of type 'Observable'");
+    source = from(source);
     return new Observable((observer) => {
       let index = 0;
       let outerSubscriptionHasReturned = false;
@@ -59,13 +54,11 @@ export function mergeMap<In, Out>(
         signal: observer.signal,
         next(value) {
           activeInnerSubscriptions++;
-          pipe(project(value, index++), asObservable()).subscribe({
+          from(project(value, index++)).subscribe({
             signal: observer.signal,
             next: (value) => observer.next(value),
             return() {
-              if (!--activeInnerSubscriptions && outerSubscriptionHasReturned) {
-                observer.return();
-              }
+              if (!--activeInnerSubscriptions && outerSubscriptionHasReturned) observer.return();
             },
             throw: (value) => observer.throw(value),
           });

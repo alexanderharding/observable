@@ -1,10 +1,8 @@
 # [@observable/distinct](https://jsr.io/@observable/distinct)
 
-Only [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s values from the
-[source](https://jsr.io/@observable/core#source)
-[`Observable`](https://jsr.io/@observable/core/doc/~/Observable) that are
+Filters values that are
 [distinct](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/is)
-from all previously [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values.
+from all previous values.
 
 ## Build
 
@@ -23,11 +21,11 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 
 ```ts
 import { distinct } from "@observable/distinct";
-import { ofIterable } from "@observable/of-iterable";
+import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
-pipe([1, 2, 2, 3, 1, 3], ofIterable(), distinct()).subscribe({
+pipe(forOf([1, 2, 2, 3, 1, 3]), distinct()).subscribe({
   signal: controller.signal,
   next: (value) => console.log("next", value),
   return: () => console.log("return"),
@@ -38,7 +36,7 @@ pipe([1, 2, 2, 3, 1, 3], ofIterable(), distinct()).subscribe({
 // "next" 1
 // "next" 2
 // "next" 3
-// return
+// "return"
 ```
 
 # AI Prompt
@@ -59,16 +57,12 @@ CRITICAL: This library is NOT RxJS. Key differences:
 USAGE PATTERN:
 ```ts
 import { distinct } from "@observable/distinct";
-import { ofIterable } from "@observable/of-iterable";
+import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
 
-pipe(
-  [1, 2, 2, 3, 1, 3, 4],
-  ofIterable(),
-  distinct()
-).subscribe({
+pipe(forOf([1, 2, 2, 3, 1, 3]), distinct()).subscribe({
   signal: controller.signal,
   next: (value) => console.log(value),  // 1, 2, 3, 4
   return: () => console.log("done"),

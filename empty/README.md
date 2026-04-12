@@ -1,7 +1,6 @@
 # [@observable/empty](https://jsr.io/@observable/empty)
 
-Immediately [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s each
-[`Observer`](https://jsr.io/@observable/core/doc/~/Observer) on
+Immediately [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s on
 [`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe).
 
 ## Build
@@ -81,11 +80,11 @@ pipe(
 
 COMMON USE — Default case:
 ```ts
-import { ofIterable } from "@observable/of-iterable";
+import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 
 const getObservable = (condition: boolean) =>
-  condition ? pipe([1, 2, 3], ofIterable()) : empty;
+  condition ? forOf([1, 2, 3]) : empty;
 ```
 
 SEE ALSO:

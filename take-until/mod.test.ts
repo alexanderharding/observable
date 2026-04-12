@@ -1,15 +1,18 @@
 import { assertEquals } from "@std/assert";
-import { Observable, Observer, Subject } from "@observable/core";
-import { noop } from "@observable/internal";
-import { ofIterable } from "@observable/of-iterable";
+import { Observer, Subject } from "@observable/core";
+import { never } from "@observable/never";
+import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 import { takeUntil } from "./mod.ts";
 import { materialize, type ObserverNotification } from "@observable/materialize";
+import { flat } from "@observable/flat";
+import { of } from "@observable/of";
+import { throwError } from "@observable/throw-error";
 
 Deno.test("takeUntil should return when notifier nexts", () => {
   // Arrange
   const notifications: Array<ObserverNotification<number>> = [];
-  const source = pipe([1, 2, 3, 4, 5], ofIterable());
+  const source = forOf([1, 2, 3, 4, 5]);
   const notifier = new Subject<void>();
   const materialized = pipe(source, takeUntil(notifier), materialize());
 
@@ -49,8 +52,8 @@ Deno.test("takeUntil should let values through until notifier nexts", () => {
 Deno.test("takeUntil should allow all values if notifier never fires", () => {
   // Arrange
   const notifications: Array<ObserverNotification<number>> = [];
-  const source = pipe([10, 20, 30], ofIterable());
-  const notifier = new Observable<void>(noop);
+  const source = forOf([10, 20, 30]);
+  const notifier = never;
   const materialized = pipe(source, takeUntil(notifier), materialize());
 
   // Act
@@ -71,10 +74,7 @@ Deno.test("takeUntil should propagate throws from source", () => {
   // Arrange
   const error = new Error("source error");
   const notifications: Array<ObserverNotification<number>> = [];
-  const source = new Observable<number>((observer) => {
-    observer.next(1);
-    observer.throw(error);
-  });
+  const source = flat([of(1), throwError(error)]);
   const notifier = new Subject<void>();
   const materialized = pipe(source, takeUntil(notifier), materialize());
 

@@ -1,5 +1,4 @@
 import { isObservable, type Observable } from "@observable/core";
-import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 import { defer } from "@observable/defer";
 import { pipe } from "@observable/pipe";
 import { filter } from "@observable/filter";
@@ -7,24 +6,22 @@ import { switchMap } from "@observable/switch-map";
 import { finalize } from "@observable/finalize";
 
 /**
- * {@linkcode project|Projects} each [source](https://jsr.io/@observable/core#source) value to an
- * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) which is merged in the output
- * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) only if the previous
- * {@linkcode project|projected} [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) has
- * [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)ed.
+ * {@linkcode project|Projects} each {@linkcode In|value} to an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) ignoring any new
+ * {@linkcode In|values} until the {@linkcode project|projected} [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)
+ * [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s.
  * @example
  * ```ts
  * import { exhaustMap } from "@observable/exhaust-map";
- * import { ofIterable } from "@observable/of-iterable";
+ * import { forOf } from "@observable/for-of";
  * import { pipe } from "@observable/pipe";
  * import { timeout } from "@observable/timeout";
  * import { map } from "@observable/map";
  *
  * const controller = new AbortController();
- * const source = pipe([1, 2, 3], ofIterable());
+ * const observable = forOf([1, 2, 3]);
  *
  * pipe(
- *   source,
+ *   observable,
  *   exhaustMap((value) => pipe(timeout(100), map(() => value))),
  * ).subscribe({
  *   signal: controller.signal,
@@ -41,13 +38,11 @@ import { finalize } from "@observable/finalize";
 export function exhaustMap<In, Out>(
   project: (value: In, index: number) => Observable<Out>,
 ): (source: Observable<In>) => Observable<Out> {
-  if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-  if (typeof project !== "function") {
-    throw new ParameterTypeError(0, "Function");
-  }
+  if (!arguments.length) throw new TypeError("1 argument required but 0 present");
+  if (typeof project !== "function") throw new TypeError("Parameter 1 is not of type 'Function'");
   return function exhaustMapFn(source) {
-    if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-    if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
+    if (!arguments.length) throw new TypeError("1 argument required but 0 present");
+    if (!isObservable(source)) throw new TypeError("Parameter 1 is not of type 'Observable'");
     return defer(() => {
       let activeInnerSubscription = false;
       return pipe(

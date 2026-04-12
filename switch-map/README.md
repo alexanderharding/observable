@@ -1,12 +1,8 @@
 # [@observable/switch-map](https://jsr.io/@observable/switch-map)
 
-Projects each [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed value from the
-[source](https://jsr.io/@observable/core#source)
-[`Observable`](https://jsr.io/@observable/core/doc/~/Observable) to an inner
-[`Observable`](https://jsr.io/@observable/core/doc/~/Observable),
-[subscribing](https://jsr.io/@observable/core/doc/~/Observable.subscribe) only to the most recently
-projected inner [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) and canceling any
-previous inner [subscription](https://jsr.io/@observable/core#subscription).
+Projects each value to an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) and
+[`unsubscribes`](https://jsr.io/@observable/core/doc/~/Observer.signal) from any previously
+projected [`Observable`](https://jsr.io/@observable/core/doc/~/Observable).
 
 ## Build
 
@@ -24,18 +20,15 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 ## Example
 
 ```ts
+import { BehaviorSubject } from "@observable/behavior-subject";
 import { switchMap } from "@observable/switch-map";
-import { ofIterable } from "@observable/of-iterable";
+import { of } from "@observable/of";
 import { pipe } from "@observable/pipe";
+import type { Observable } from "@observable/core";
 
+const page = new BehaviorSubject(1);
 const controller = new AbortController();
-const observableLookup = {
-  1: pipe([1, 2, 3], ofIterable()),
-  2: pipe([4, 5, 6], ofIterable()),
-  3: pipe([7, 8, 9], ofIterable()),
-} as const;
-
-pipe([1, 2, 3], ofIterable(), switchMap((value) => observableLookup[value])).subscribe({
+pipe(page, switchMap((value) => of(`Page ${page}`))).subscribe({
   signal: controller.signal,
   next: (value) => console.log("next", value),
   return: () => console.log("return"),
@@ -43,9 +36,16 @@ pipe([1, 2, 3], ofIterable(), switchMap((value) => observableLookup[value])).sub
 });
 
 // Console output:
-// "next" 7
-// "next" 8
-// "next" 9
+// "next" "Page 1"
+
+page.next(2);
+
+// Console output:
+// "next" "Page 2"
+
+page.return();
+
+// Console output:
 // "return"
 ```
 
@@ -67,14 +67,13 @@ CRITICAL: This library is NOT RxJS. Key differences:
 USAGE PATTERN:
 ```ts
 import { switchMap } from "@observable/switch-map";
-import { ofIterable } from "@observable/of-iterable";
+import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
 
 pipe(
-  [1, 2, 3],
-  ofIterable(),
+  forOf([1, 2, 3]),
   switchMap((id) => fetchUser(id))  // Only latest request matters
 ).subscribe({
   signal: controller.signal,
@@ -96,10 +95,9 @@ pipe(
 
 SYNCHRONOUS EXAMPLE:
 ```ts
-const lookup = { 1: pipe([1, 2, 3], ofIterable()), 2: pipe([4, 5, 6], ofIterable()), 3: pipe([7, 8, 9], ofIterable()) };
+const lookup = { 1: forOf([1, 2, 3]), 2: forOf([4, 5, 6]), 3: forOf([7, 8, 9]) };
 pipe(
-  [1, 2, 3],
-  ofIterable(),
+  forOf([1, 2, 3]),
   switchMap((key) => lookup[key])
 ).subscribe({ ... });
 // Only emits: 7, 8, 9 (from the last Observable)

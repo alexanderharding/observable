@@ -1,8 +1,7 @@
 # [@observable/materialize](https://jsr.io/@observable/materialize)
 
-Projects all of the [`Observer`](https://jsr.io/@observable/core/doc/~/Observer)
-[notification](https://jsr.io/@observable/core#notification) as
-[`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values.
+[`Next`](https://jsr.io/@observable/core/doc/~/Observer.next)s all
+[notifications](https://jsr.io/@observable/core#notification) as values.
 
 ## Build
 
@@ -17,15 +16,18 @@ Automated by `.github\workflows\publish.yml`.
 Run `deno task test` or `deno task test:ci` to execute the unit tests via
 [Deno](https://deno.land/).
 
-## Example
+## Examples
+
+Notifications as values
 
 ```ts
 import { materialize } from "@observable/materialize";
-import { ofIterable } from "@observable/of-iterable";
+import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
-pipe([1, 2, 3], ofIterable(), materialize()).subscribe({
+
+pipe(forOf([1, 2, 3]), materialize()).subscribe({
   signal: controller.signal,
   next: (value) => console.log(value),
   return: () => console.log("return"),
@@ -40,31 +42,50 @@ pipe([1, 2, 3], ofIterable(), materialize()).subscribe({
 // "return"
 ```
 
-## Unit testing example
+Throw notification
+
+```ts
+import { materialize } from "@observable/materialize";
+import { throwError } from "@observable/throw-error";
+import { pipe } from "@observable/pipe";
+
+const controller = new AbortController();
+
+pipe(throwError(new Error("error")), materialize()).subscribe({
+  signal: controller.signal,
+  next: (value) => console.log("next", value),
+  return: () => console.log("return"),
+  throw: (value) => console.log("throw", value),
+});
+
+// Console output:
+// ["throw", new Error("error")]
+// "return"
+```
+
+Unit testing
 
 ```ts
 import { materialize, ObserverNotification } from "@observable/materialize";
 import { pipe } from "@observable/pipe";
-import { ofIterable } from "@observable/of-iterable";
+import { forOf } from "@observable/for-of";
 import { Observer } from "@observable/core";
 
-const observable = pipe([1, 2, 3], ofIterable());
+describe("example", () => {
+  let controller: AbortController;
 
-describe("observable", () => {
-  let activeSubscriptionController: AbortController;
+  beforeEach(() => (controller = new AbortController()));
 
-  beforeEach(() => (activeSubscriptionController = new AbortController()));
-
-  afterEach(() => activeSubscriptionController?.abort());
+  afterEach(() => controller?.abort());
 
   it("should emit the notifications", () => {
     // Arrange
     const notifications: Array<ObserverNotification<number>> = [];
 
     // Act
-    pipe(observable, materialize()).subscribe(
+    pipe(forOf([1, 2, 3]), materialize()).subscribe(
       new Observer({
-        signal: activeSubscriptionController.signal,
+        signal: controller.signal,
         next: (notification) => notifications.push(notification),
       }),
     );
@@ -103,14 +124,13 @@ NOTIFICATION FORMAT:
 USAGE PATTERN:
 ```ts
 import { materialize } from "@observable/materialize";
-import { ofIterable } from "@observable/of-iterable";
+import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
 
 pipe(
-  [1, 2, 3],
-  ofIterable(),
+  forOf([1, 2, 3]),
   materialize()
 ).subscribe({
   signal: controller.signal,

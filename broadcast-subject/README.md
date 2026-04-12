@@ -1,14 +1,11 @@
 # [@observable/broadcast-subject](https://jsr.io/@observable/broadcast-subject)
 
-A variant of [`Subject`](https://jsr.io/@xan/subject/doc/~/Subject) whose
-[`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values are
-[`structured cloned`](https://developer.mozilla.org/en-US/docs/Web/API/structuredClone) and sent
-only to [consumers](https://jsr.io/@observable/core#consumer) of _other_
-[`BroadcastSubject`](https://jsr.io/@observable/broadcast-subject/doc/~/BroadcastSubject) instances
-with the same name even if they are in different browsing contexts (e.g. browser tabs). Logically,
-[consumers](https://jsr.io/@observable/core#consumer) of the
-[`BroadcastSubject`](https://jsr.io/@observable/broadcast-subject/doc/~/BroadcastSubject) do not
-receive it's _own_ [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values.
+A variant of [`Subject`](https://jsr.io/@xan/subject/doc/~/Subject) whose values are
+[`structured cloned`](https://developer.mozilla.org/en-US/docs/Web/API/structuredClone) and
+[pushed](https://jsr.io/@observable/core#push) only to
+[consumers](https://jsr.io/@observable/core#consumer) of _other_
+[`BroadcastSubject`](https://jsr.io/@observable/broadcast-subject/doc/~/BroadcastSubject)s with the
+same `name` even if they are in different browsing contexts (e.g. browser tabs).
 
 ## Build
 

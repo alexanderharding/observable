@@ -1,19 +1,17 @@
 import { isObservable, Observable } from "@observable/core";
-import { asObservable } from "@observable/as-observable";
-import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
-import { pipe } from "@observable/pipe";
+import { from } from "@observable/from";
 
 /**
- * Filters [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values from the
- * [source](https://jsr.io/@observable/core#source) that satisfy a specified {@linkcode predicate}.
+ * Filters {@linkcode Value|values} that satisfy the given {@linkcode predicate} function.
  * @example
  * ```ts
  * import { filter } from "@observable/filter";
- * import { ofIterable } from "@observable/of-iterable";
+ * import { forOf } from "@observable/for-of";
  * import { pipe } from "@observable/pipe";
  *
  * const controller = new AbortController();
- * pipe([1, 2, 3, 4, 5], ofIterable(), filter((value) => value % 2 === 0)).subscribe({
+ *
+ * pipe(forOf([1, 2, 3, 4, 5]), filter((value) => value % 2 === 0)).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
  *   return: () => console.log("return"),
@@ -29,14 +27,12 @@ import { pipe } from "@observable/pipe";
 export function filter<Value>(
   predicate: (value: Value, index: number) => boolean,
 ): (source: Observable<Value>) => Observable<Value> {
-  if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-  if (typeof predicate !== "function") {
-    throw new ParameterTypeError(0, "Function");
-  }
+  if (!arguments.length) throw new TypeError("1 argument required but 0 present");
+  if (typeof predicate !== "function") throw new TypeError("Parameter 1 is not of type 'Function'");
   return function filterFn(source) {
-    if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-    if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
-    source = pipe(source, asObservable());
+    if (!arguments.length) throw new TypeError("1 argument required but 0 present");
+    if (!isObservable(source)) throw new TypeError("Parameter 1 is not of type 'Observable'");
+    source = from(source);
     return new Observable((observer) => {
       let index = 0;
       source.subscribe({

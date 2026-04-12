@@ -1,22 +1,19 @@
 import { isObservable, Observable, Subject } from "@observable/core";
-import { asObservable } from "@observable/as-observable";
-import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
+import { from } from "@observable/from";
 import { pipe } from "@observable/pipe";
 import { finalize } from "@observable/finalize";
 import { defer } from "@observable/defer";
 
 /**
- * Shares a single [subscription](https://jsr.io/@observable/core#subscription) to the
- * [source](https://jsr.io/@observable/core#source)
- * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) and projects
- * it to all [consumers](https://jsr.io/@observable/core#consumer) through a
- * [`Subject`](https://jsr.io/@observable/core/doc/~/Subject). Resets when all
- * [unsubscribe](https://jsr.io/@observable/core@0.3.0/doc/~/Observer.signal) or when the
- * [source](https://jsr.io/@observable/core#source)
- * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)
- * [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s or
- * [`throw`](https://jsr.io/@observable/core/doc/~/Observer.throw)s.
+ * Shares a single [subscription](https://jsr.io/@observable/core#subscription) forwarding
+ * [`notifications`](https://jsr.io/@observable/core#notification) to all
+ * [consumers](https://jsr.io/@observable/core#consumer) through a
+ * [`Subject`](https://jsr.io/@observable/core/doc/~/Subject) created the
+ * given {@linkcode factory} function. Resets on [`return`](https://jsr.io/@observable/core/doc/~/Observer.return),
+ * [`throw`](https://jsr.io/@observable/core/doc/~/Observer.throw), or when on all
+ * [consumers](https://jsr.io/@observable/core#consumer) [unsubscribe](https://jsr.io/@observable/core/doc/~/Observer.signal).
  * @example
+ * Basic usage
  * ```ts
  * import { share } from "@observable/share";
  * import { timeout } from "@observable/timeout";
@@ -40,14 +37,14 @@ import { defer } from "@observable/defer";
  * });
  *
  * // Console output (after 1 second):
- * // "next" 0
- * // "next" 0
+ * // "next" undefined
+ * // "next" undefined
  * // "return"
  * // "return"
  * ```
  *
  * @example
- * Using ReplaySubject to buffer values for consumers that join mid-stream:
+ * ReplaySubject factory
  * ```ts
  * import { share } from "@observable/share";
  * import { ReplaySubject } from "@observable/replay-subject";
@@ -55,8 +52,8 @@ import { defer } from "@observable/defer";
  * import { pipe } from "@observable/pipe";
  *
  * const controller = new AbortController();
- * const source = new Subject<number>();
- * const shared = pipe(source, share(() => new ReplaySubject<number>(1)));
+ * const subject = new Subject<number>();
+ * const shared = pipe(subject, share(() => new ReplaySubject<number>(1)));
  *
  * shared.subscribe({
  *   signal: controller.signal,
@@ -65,8 +62,8 @@ import { defer } from "@observable/defer";
  *   throw: (value) => console.log("1st throw", value),
  * });
  *
- * source.next(1);
- * source.next(2);
+ * subject.next(1);
+ * subject.next(2);
  *
  * // A second consumer joins and receives the last buffered value (2) immediately.
  * shared.subscribe({
@@ -76,8 +73,8 @@ import { defer } from "@observable/defer";
  *   throw: (value) => console.log("2nd throw", value),
  * });
  *
- * source.next(3);
- * source.return();
+ * subject.next(3);
+ * subject.return();
  *
  * // Console output:
  * // "1st" 1
@@ -92,22 +89,20 @@ import { defer } from "@observable/defer";
 export function share<Value>(
   factory: () => Subject<NoInfer<Value>> = () => new Subject(),
 ): (source: Observable<Value>) => Observable<Value> {
-  if (typeof factory !== "function") {
-    throw new ParameterTypeError(0, "Function");
-  }
+  if (typeof factory !== "function") throw new TypeError("Parameter 1 is not of type 'Function'");
   return function shareFn(source) {
-    if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-    if (!isObservable(source)) throw new ParameterTypeError(0, "Observable");
+    if (!arguments.length) throw new TypeError("1 argument required but 0 present");
+    if (!isObservable(source)) throw new TypeError("Parameter 1 is not of type 'Observable'");
     let activeSubscriptions = 0;
     let shared: Observable<Value> | undefined;
-    source = pipe(source, asObservable());
+    source = from(source);
     return pipe(
       defer(() => {
         ++activeSubscriptions;
         if (isObservable(shared)) return shared;
         return new Observable((observer) => {
           const subject = factory();
-          (shared = pipe(subject, asObservable())).subscribe(observer);
+          (shared = from(subject)).subscribe(observer);
           source.subscribe(subject);
         });
       }),

@@ -1,9 +1,4 @@
 import { isObserver, type Observer, type Subject } from "@observable/core";
-import {
-  InstanceofError,
-  MinimumArgumentsRequiredError,
-  ParameterTypeError,
-} from "@observable/internal";
 import { ReplaySubject } from "@observable/replay-subject";
 
 /**
@@ -16,9 +11,9 @@ export type BehaviorSubject<Value = unknown> = Subject<Value>;
  */
 export interface BehaviorSubjectConstructor {
   /**
-   * Creates and returns an object that acts as a [`Subject`](https://jsr.io/@observable/core/doc/~/Subject) that keeps track of it's current
-   * value and replays it to [`consumers`](https://jsr.io/@observable/core#consumer) upon
-   * [`subscription`](https://jsr.io/@observable/core/doc/~/Observable.subscribe).
+   * Creates and returns an object that acts as a [`Subject`](https://jsr.io/@observable/core/doc/~/Subject) that keeps track of its current
+   * {@linkcode value} and replays it to [`consumers`](https://jsr.io/@observable/core#consumer) upon
+   * [`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe).
    * @example
    * ```ts
    * import { BehaviorSubject } from "@observable/behavior-subject";
@@ -73,30 +68,39 @@ export const BehaviorSubject: BehaviorSubjectConstructor = class<Value> {
   readonly signal = this.#subject.signal;
 
   constructor(value: Value) {
-    if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
+    if (!arguments.length) throw new TypeError("1 argument required but 0 present");
     Object.freeze(this);
     this.#subject.next(value);
   }
 
   next(value: Value): void {
-    if (this instanceof BehaviorSubject) this.#subject.next(value);
-    else throw new InstanceofError("this", stringTag);
+    if (!(this instanceof BehaviorSubject)) {
+      throw new TypeError(`'this' is not instanceof '${stringTag}'`);
+    }
+    // No arguments.length check because Value may be void, making next() with no args valid.
+
+    this.#subject.next(value);
   }
 
   return(): void {
     if (this instanceof BehaviorSubject) this.#subject.return();
-    else throw new InstanceofError("this", stringTag);
+    else throw new TypeError(`'this' is not instanceof '${stringTag}'`);
   }
 
   throw(value: unknown): void {
-    if (this instanceof BehaviorSubject) this.#subject.throw(value);
-    else throw new InstanceofError("this", stringTag);
+    if (!(this instanceof BehaviorSubject)) {
+      throw new TypeError(`'this' is not instanceof '${stringTag}'`);
+    }
+    if (!arguments.length) throw new TypeError("1 argument required but 0 present");
+    this.#subject.throw(value);
   }
 
   subscribe(observer: Observer<Value>): void {
-    if (!(this instanceof BehaviorSubject)) throw new InstanceofError("this", stringTag);
-    if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-    if (!isObserver(observer)) throw new ParameterTypeError(0, "Observer");
+    if (!(this instanceof BehaviorSubject)) {
+      throw new TypeError(`'this' is not instanceof '${stringTag}'`);
+    }
+    if (!arguments.length) throw new TypeError("1 argument required but 0 present");
+    if (!isObserver(observer)) throw new TypeError("Parameter 1 is not of type 'Observer'");
     this.#subject.subscribe(observer);
   }
 };

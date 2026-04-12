@@ -1,15 +1,10 @@
 # [@observable/all](https://jsr.io/@observable/all)
 
-Calculates [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values from the latest
-[`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed value of each
-[source](https://jsr.io/@observable/core#source)
-[`Observable`](https://jsr.io/@observable/core/doc/~/Observable). If any of the
-[sources](https://jsr.io/@observable/core#source)
-[`return`](https://jsr.io/@observable/core/doc/~/Observer.return) without
-[`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ing a value, the returned
-[`Observable`](https://jsr.io/@observable/core/doc/~/Observable) will also
-[`return`](https://jsr.io/@observable/core/doc/~/Observer.return) without
-[`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ing a value.
+[`Next`](https://jsr.io/@observable/core/doc/~/Observer.next)s an
+[`Array`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) of
+values from _all_ of the given `observables` in
+[iteration](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#the_iterable_protocol)
+order.
 
 ## Build
 
@@ -24,19 +19,21 @@ Automated by `.github\workflows\publish.yml`.
 Run `deno task test` or `deno task test:ci` to execute the unit tests via
 [Deno](https://deno.land/).
 
-## Example
+## Examples
+
+Array of observables
 
 ```ts
 import { all } from "@observable/all";
-import { ofIterable } from "@observable/of-iterable";
+import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 
-const source1 = pipe([1, 2, 3], ofIterable());
-const source2 = pipe([4, 5, 6], ofIterable());
-const source3 = pipe([7, 8, 9], ofIterable());
-
+const observable1 = forOf([1, 2, 3]);
+const observable2 = forOf([4, 5, 6]);
+const observable3 = forOf([7, 8, 9]);
 const controller = new AbortController();
-all([source1, source2, source3]).subscribe({
+
+all([observable1, observable2, observable3]).subscribe({
   signal: controller.signal,
   next: (value) => console.log("next", value),
   return: () => console.log("return"),
@@ -50,19 +47,37 @@ all([source1, source2, source3]).subscribe({
 // "return"
 ```
 
-## Example with empty source
+Array with an empty observable
 
 ```ts
 import { all } from "@observable/all";
-import { ofIterable } from "@observable/of-iterable";
+import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 import { empty } from "@observable/empty";
 
-const source1 = pipe([1, 2, 3], ofIterable());
-const source2 = pipe([7, 8, 9], ofIterable());
+const observable1 = forOf([1, 2, 3]);
+const observable2 = forOf([7, 8, 9]);
+const controller = new AbortController();
+
+all([observable1, empty, observable2]).subscribe({
+  signal: controller.signal,
+  next: (value) => console.log("next", value),
+  return: () => console.log("return"),
+  throw: (value) => console.log("throw", value),
+});
+
+// Console output:
+// "return"
+```
+
+Empty observable array
+
+```ts
+import { all } from "@observable/all";
 
 const controller = new AbortController();
-all([source1, empty, source2]).subscribe({
+
+all([]).subscribe({
   signal: controller.signal,
   next: (value) => console.log("next", value),
   return: () => console.log("return"),
@@ -81,7 +96,7 @@ Use the following prompt with AI assistants to help them understand this library
 You are helping me with code that uses @observable/all from the @observable library ecosystem.
 
 WHAT IT DOES:
-`all(sources)` creates an Observable that emits arrays containing the latest value from each source. Only starts emitting once ALL sources have emitted at least once. If any source is empty, the result is empty.
+`all(input)` nexts an Array of the latest values from _all_ of `input`'s Observables — in index order when `input` is an array, or in iteration order for other iterables. Emitting starts when each of `input`'s Observables has nexted its first value. If any of them is empty, the returned Observable returns without nexting. Each emitted array is a frozen snapshot.
 
 CRITICAL: This library is NOT RxJS. Key differences:
 - Observer uses `return`/`throw` — NOT `complete`/`error`
@@ -91,12 +106,12 @@ CRITICAL: This library is NOT RxJS. Key differences:
 USAGE PATTERN:
 ```ts
 import { all } from "@observable/all";
-import { ofIterable } from "@observable/of-iterable";
+import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 
-const source1 = pipe([1, 2, 3], ofIterable());
-const source2 = pipe([4, 5, 6], ofIterable());
-const source3 = pipe([7, 8, 9], ofIterable());
+const source1 = forOf([1, 2, 3]);
+const source2 = forOf([4, 5, 6]);
+const source3 = forOf([7, 8, 9]);
 
 const controller = new AbortController();
 
@@ -108,30 +123,30 @@ all([source1, source2, source3]).subscribe({
 });
 
 // Output:
-// [3, 6, 7]  — all sources have emitted, combining latest
+// [3, 6, 7]  — each of input's Observables has nexted its first value
 // [3, 6, 8]
 // [3, 6, 9]
 // "done"
 ```
 
-EMPTY SOURCE BEHAVIOR:
+WHEN ONE OF INPUT'S OBSERVABLES IS EMPTY:
 ```ts
 import { empty } from "@observable/empty";
 
-const source1 = pipe([1, 2, 3], ofIterable());
-const source2 = pipe([7, 8, 9], ofIterable());
+const source1 = forOf([1, 2, 3]);
+const source2 = forOf([7, 8, 9]);
 
 all([source1, empty, source2]).subscribe({
-  next: (value) => console.log(value),  // Never called!
-  return: () => console.log("done"),    // Called immediately
+  next: (value) => console.log(value),  // Never called
+  return: () => console.log("done"),    // Called immediately — returns without nexting
   ...
 });
-// Output: "done" (because one source is empty)
+// Output: "done"
 ```
 
 SEE ALSO:
-- `merge` — emits individual values from all sources
-- `race` — mirrors only the first source to emit
+- `merge` — nexts every value from every Observable in the input
+- `race` — mirrors the first of input's Observables to next
 ````
 
 # Glossary And Semantics

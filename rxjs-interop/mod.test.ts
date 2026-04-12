@@ -1,10 +1,9 @@
 import { assertEquals, assertInstanceOf, assertThrows } from "@std/assert";
 import { Observable, Observer, Subject } from "@observable/core";
-import { ofIterable } from "@observable/of-iterable";
+import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 import { throwError } from "@observable/throw-error";
 import { materialize, type ObserverNotification } from "@observable/materialize";
-import { MinimumArgumentsRequiredError, ParameterTypeError } from "@observable/internal";
 import {
   Observable as RxJsObservable,
   of as rxJsOf,
@@ -13,6 +12,9 @@ import {
   throwError as rxJsThrowError,
 } from "rxjs";
 import { asObservable, asRxJsObservable } from "./mod.ts";
+import { finalize } from "@observable/finalize";
+import { never } from "@observable/never";
+import { empty } from "@observable/empty";
 
 Deno.test("asObservable should convert RxJS Observable and emit values", () => {
   // Arrange
@@ -91,9 +93,7 @@ Deno.test("asObservable should emit values before abort signal", () => {
       signal: controller.signal,
       next: (notification) => {
         notifications.push(notification);
-        if (notification[0] === "next" && notification[1] === 2) {
-          controller.abort();
-        }
+        if (notification[0] === "next" && notification[1] === 2) controller.abort();
       },
     }),
   );
@@ -109,7 +109,7 @@ Deno.test("asObservable should emit values before abort signal", () => {
 });
 
 Deno.test(
-  "asObservable should throw MinimumArgumentsRequiredError when called with no arguments",
+  "asObservable should throw TypeError when called with no arguments",
   () => {
     // Arrange
     const operator = asObservable();
@@ -117,13 +117,14 @@ Deno.test(
     // Act & Assert
     assertThrows(
       () => (operator as () => Observable<unknown>)(),
-      MinimumArgumentsRequiredError,
+      TypeError,
+      "1 argument required but 0 present",
     );
   },
 );
 
 Deno.test(
-  "asObservable should throw ParameterTypeError when called with non-RxJS Observable",
+  "asObservable should throw TypeError when called with non-RxJS Observable",
   () => {
     // Arrange
     const operator = asObservable();
@@ -132,7 +133,8 @@ Deno.test(
     // Act & Assert
     assertThrows(
       () => operator(notAnRxjsObservable as RxJsObservable<unknown>),
-      ParameterTypeError,
+      TypeError,
+      "Parameter 1 is not of type 'RxJsObservable'",
     );
   },
 );
@@ -157,7 +159,7 @@ Deno.test(
     // Arrange
     const values: Array<number> = [];
     let completed = false;
-    const observable = pipe([1, 2, 3], ofIterable());
+    const observable = forOf([1, 2, 3]);
 
     // Act
     pipe(observable, asRxJsObservable()).subscribe({
@@ -204,11 +206,7 @@ Deno.test("asRxJsObservable should handle completion", () => {
 Deno.test("asRxJsObservable should handle unsubscription", () => {
   // Arrange
   let sourceAborted = false;
-  const source = new Observable<number>((observer) => {
-    observer.signal.addEventListener("abort", () => (sourceAborted = true), {
-      once: true,
-    });
-  });
+  const source = pipe(never, finalize(() => (sourceAborted = true)));
 
   // Act
   pipe(source, asRxJsObservable()).subscribe().unsubscribe();
@@ -238,7 +236,7 @@ Deno.test("asRxJsObservable should emit values before unsubscription", () => {
 });
 
 Deno.test(
-  "asRxJsObservable should throw MinimumArgumentsRequiredError when called with no arguments",
+  "asRxJsObservable should throw TypeError when called with no arguments",
   () => {
     // Arrange
     const operator = asRxJsObservable();
@@ -246,13 +244,14 @@ Deno.test(
     // Act & Assert
     assertThrows(
       () => (operator as () => RxJsObservable<unknown>)(),
-      MinimumArgumentsRequiredError,
+      TypeError,
+      "1 argument required but 0 present",
     );
   },
 );
 
 Deno.test(
-  "asRxJsObservable should throw ParameterTypeError when called with non-Observable",
+  "asRxJsObservable should throw TypeError when called with non-Observable",
   () => {
     // Arrange
     const operator = asRxJsObservable();
@@ -261,7 +260,8 @@ Deno.test(
     // Act & Assert
     assertThrows(
       () => operator(notAnObservable as Observable<unknown>),
-      ParameterTypeError,
+      TypeError,
+      "Parameter 1 is not of type 'Observable'",
     );
   },
 );
@@ -270,7 +270,7 @@ Deno.test(
   "asRxJsObservable should return an RxJS Observable instance",
   () => {
     // Arrange
-    const observable = pipe([1, 2, 3], ofIterable());
+    const observable = forOf([1, 2, 3]);
 
     // Act
     const result = pipe(observable, asRxJsObservable());
@@ -285,14 +285,7 @@ Deno.test(
   () => {
     // Arrange
     let sourceAborted = false;
-    const source = new Observable<number>((observer) => {
-      observer.signal.addEventListener("abort", () => (sourceAborted = true), {
-        once: true,
-      });
-      observer.next(1);
-      observer.next(2);
-      observer.return();
-    });
+    const source = pipe(forOf([1, 2]), finalize(() => (sourceAborted = true)));
     const rxjsObservable = pipe(source, asRxJsObservable());
     const values: Array<number> = [];
     let completed = false;
@@ -315,15 +308,10 @@ Deno.test(
   () => {
     // Arrange
     const notifications: Array<ObserverNotification<number>> = [];
-    const source = pipe([1, 2, 3], ofIterable());
+    const source = forOf([1, 2, 3]);
 
     // Act
-    pipe(
-      source,
-      asRxJsObservable(),
-      asObservable(),
-      materialize(),
-    ).subscribe(
+    pipe(source, asRxJsObservable(), asObservable(), materialize()).subscribe(
       new Observer((notification) => notifications.push(notification)),
     );
 
@@ -362,17 +350,11 @@ Deno.test(
   () => {
     // Arrange
     const events: Array<string> = [];
-    const source = new Observable<number>((observer) => {
-      observer.signal.addEventListener("abort", () => events.push("abort"), { once: true });
-      observer.next(1);
-      observer.return();
-    });
+    const source = pipe(empty, finalize(() => events.push("abort")));
     const rxjsObservable = pipe(source, asRxJsObservable());
 
     // Act
-    rxjsObservable.subscribe({
-      complete: () => events.push("complete"),
-    });
+    rxjsObservable.subscribe({ complete: () => events.push("complete") });
 
     // Assert
     assertEquals(events, ["abort", "complete"]);
@@ -385,17 +367,11 @@ Deno.test(
     // Arrange
     const events: Array<string> = [];
     const error = new Error("test");
-    const source = new Observable<number>((observer) => {
-      observer.signal.addEventListener("abort", () => events.push("abort"), { once: true });
-      observer.next(1);
-      observer.throw(error);
-    });
+    const source = pipe(throwError(error), finalize(() => events.push("abort")));
     const rxjsObservable = pipe(source, asRxJsObservable());
 
     // Act
-    rxjsObservable.subscribe({
-      error: () => events.push("error"),
-    });
+    rxjsObservable.subscribe({ error: () => events.push("error") });
 
     // Assert
     assertEquals(events, ["abort", "error"]);
@@ -409,7 +385,7 @@ Deno.test(
     let subscriberClosedDuringComplete = false;
     let capturedSubscriber: Subscriber<number> | null = null;
     const rxjsObservable = new RxJsObservable<number>((subscriber) => {
-      capturedSubscriber = subscriber as Subscriber<number>;
+      capturedSubscriber = subscriber;
       subscriber.next(1);
       subscriber.complete();
     });
@@ -437,7 +413,7 @@ Deno.test(
     let capturedSubscriber: Subscriber<number> | null = null;
     const error = new Error("test");
     const rxjsObservable = new RxJsObservable<number>((subscriber) => {
-      capturedSubscriber = subscriber as Subscriber<number>;
+      capturedSubscriber = subscriber;
       subscriber.next(1);
       subscriber.error(error);
     });

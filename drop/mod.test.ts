@@ -1,7 +1,7 @@
 import { assertEquals, assertStrictEquals } from "@std/assert";
 import { Observer } from "@observable/core";
 import { empty } from "@observable/empty";
-import { ofIterable } from "@observable/of-iterable";
+import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 import { materialize, type ObserverNotification } from "@observable/materialize";
 import { drop } from "./mod.ts";
@@ -10,7 +10,7 @@ Deno.test(
   "drop should return an empty observable if the count is less than 0",
   () => {
     // Arrange
-    const source = pipe([1, 2, 3], ofIterable());
+    const source = forOf([1, 2, 3]);
 
     // Act
     const result = pipe(source, drop(-1));
@@ -22,7 +22,7 @@ Deno.test(
 
 Deno.test("drop should return the source observable if the count is 0", () => {
   // Arrange
-  const source = pipe([1, 2, 3], ofIterable());
+  const source = forOf([1, 2, 3]);
 
   // Act
   const result = pipe(source, drop(0));
@@ -31,9 +31,37 @@ Deno.test("drop should return the source observable if the count is 0", () => {
   assertStrictEquals(result, source);
 });
 
+Deno.test(
+  "drop should return the source observable if a positive fractional count truncates to 0",
+  () => {
+    // Arrange
+    const source = forOf([1, 2, 3]);
+
+    // Act
+    const result = pipe(source, drop(0.8));
+
+    // Assert
+    assertStrictEquals(result, source);
+  },
+);
+
+Deno.test(
+  "drop should return the source observable if a negative fractional count truncates to 0",
+  () => {
+    // Arrange
+    const source = forOf([1, 2, 3]);
+
+    // Act
+    const result = pipe(source, drop(-0.2));
+
+    // Assert
+    assertStrictEquals(result, source);
+  },
+);
+
 Deno.test("drop should return empty if the count is NaN", () => {
   // Arrange
-  const source = pipe([1, 2, 3], ofIterable());
+  const source = forOf([1, 2, 3]);
 
   // Act
   const result = pipe(source, drop(NaN));
@@ -44,7 +72,7 @@ Deno.test("drop should return empty if the count is NaN", () => {
 
 Deno.test("drop should ignore all elements if the count is Infinity", () => {
   // Arrange
-  const source = pipe([1, 2, 3], ofIterable());
+  const source = forOf([1, 2, 3]);
   const notifications: Array<ObserverNotification<number>> = [];
   const materialized = pipe(source, drop(Infinity), materialize());
 
@@ -61,9 +89,32 @@ Deno.test(
   "drop should drop the items if the count is a positive number",
   () => {
     // Arrange
-    const source = pipe([1, 2, 3, 4, 5], ofIterable());
+    const source = forOf([1, 2, 3, 4, 5]);
     const notifications: Array<ObserverNotification<number>> = [];
     const materialized = pipe(source, drop(2), materialize());
+
+    // Act
+    materialized.subscribe(
+      new Observer((notification) => notifications.push(notification)),
+    );
+
+    // Assert
+    assertEquals(notifications, [
+      ["next", 3],
+      ["next", 4],
+      ["next", 5],
+      ["return"],
+    ]);
+  },
+);
+
+Deno.test(
+  "drop should truncate fractional counts toward zero when dropping",
+  () => {
+    // Arrange
+    const source = forOf([1, 2, 3, 4, 5]);
+    const notifications: Array<ObserverNotification<number>> = [];
+    const materialized = pipe(source, drop(2.7), materialize());
 
     // Act
     materialized.subscribe(

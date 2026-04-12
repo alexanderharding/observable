@@ -1,0 +1,143 @@
+import { isObservable, type Observable } from "@observable/core";
+import { from } from "@observable/from";
+
+/**
+ * Flag indicating that a value is not thrown.
+ * @internal Do NOT export.
+ */
+const notThrown = Symbol("Flag indicating that a value is not thrown.");
+
+/**
+ * Flag indicating that we are done yielding values.
+ * @internal Do NOT export.
+ */
+const doneValue = Symbol("Flag indicating that we are done yielding values.");
+
+/**
+ * Object type representing a deferred resolver.
+ * @internal Do NOT export.
+ */
+type Deferred<Value> = Omit<PromiseWithResolvers<Value>, "promise">;
+
+/**
+ * [`Yield`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/yield)s each {@linkcode Value|value} in order.
+ * @example
+ * Basic usage
+ * ```ts
+ * import { eachValueFrom } from "@observable/each-value-from";
+ * import { forOf } from "@observable/for-of";
+ *
+ * for await (const value of eachValueFrom(forOf([1, 2, 3]))) {
+ *   console.log(value);
+ * }
+ * console.log("Done!");
+ *
+ * // Console output:
+ * // 1
+ * // 2
+ * // 3
+ * // "Done!"
+ * ```
+ * @example
+ * Thrown value
+ * ```ts
+ * import { eachValueFrom } from "@observable/each-value-from";
+ * import { throwError } from "@observable/throw-error";
+ *
+ * try {
+ *   for await (const value of eachValueFrom(throwError(new Error("test")))) {
+ *     console.log(value);
+ *   }
+ * } catch (error) {
+ *   console.log(error);
+ *   // Console output:
+ *   // Error: test
+ * }
+ * ```
+ * @example
+ * Early break
+ * ```ts
+ * import { eachValueFrom } from "@observable/each-value-from";
+ * import { interval } from "@observable/interval";
+ *
+ * for await (const value of eachValueFrom(interval(100))) {
+ *   console.log(value);
+ *   if (value === 5) break;
+ * }
+ *
+ * // Console output:
+ * // 0
+ * // 1
+ * // 2
+ * // 3
+ * // 4
+ * // 5
+ * ```
+ * @example
+ * Empty observable
+ * ```ts
+ * import { eachValueFrom } from "@observable/each-value-from";
+ * import { empty } from "@observable/empty";
+ *
+ * for await (const value of eachValueFrom(empty)) {
+ *   console.log(value);
+ * }
+ * console.log("Done!");
+ *
+ * // Console output:
+ * // Done!
+ * ```
+ */
+export async function* eachValueFrom<Value>(
+  observable: Observable<Value>,
+): AsyncGenerator<Value, void, void> {
+  if (!arguments.length) throw new TypeError("1 argument required but 0 present");
+  if (!isObservable(observable)) throw new TypeError("Parameter 1 is not of type 'Observable'");
+
+  let thrownValue: unknown = notThrown;
+  let returned = false;
+  const controller = new AbortController();
+  const buffer: Array<Value> = [];
+  const deferreds: Array<Deferred<Value | typeof doneValue>> = [];
+
+  from(observable).subscribe({
+    signal: controller.signal,
+    next(value) {
+      const deferred = deferreds.shift();
+      if (deferred) deferred.resolve(value);
+      else buffer.push(value);
+    },
+    return() {
+      returned = true;
+      let deferred: Deferred<Value | typeof doneValue> | undefined;
+      while ((deferred = deferreds.shift())) deferred.resolve(doneValue);
+    },
+    throw(value) {
+      thrownValue = value;
+      let deferred: Deferred<Value | typeof doneValue> | undefined;
+      while ((deferred = deferreds.shift())) deferred.reject(value);
+    },
+  });
+
+  try {
+    while (true) {
+      // If we already have some values in our buffer, we'll yield the next one.
+      if (buffer.length > 0) yield buffer.shift()!;
+      // If the observable has returned, we're done.
+      else if (returned) return;
+      // If the observable has thrown an error, we'll rethrow it.
+      else if (thrownValue !== notThrown) throw thrownValue;
+      // Otherwise, we'll wait for the next value.
+      else {
+        const value = await new Promise<Value | typeof doneValue>((resolve, reject) => {
+          deferreds.push({ resolve, reject });
+        });
+        if (value !== doneValue && !returned) yield value;
+      }
+    }
+  } finally {
+    controller.abort();
+    deferreds.length = 0;
+    buffer.length = 0;
+  }
+}

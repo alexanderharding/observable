@@ -1,8 +1,40 @@
-import { assertEquals, assertThrows } from "@std/assert";
-import { Observable, Observer } from "@observable/core";
+import { assertEquals, assertStrictEquals, assertThrows } from "@std/assert";
+import { Observer } from "@observable/core";
 import { materialize, type ObserverNotification } from "@observable/materialize";
 import { pipe } from "@observable/pipe";
 import { BehaviorSubject } from "./mod.ts";
+import { forOf } from "@observable/for-of";
+
+Deno.test("BehaviorSubject.toString should be '[object BehaviorSubject]'", () => {
+  // Arrange / Act / Assert
+  assertStrictEquals(`${new BehaviorSubject(2)}`, "[object BehaviorSubject]");
+});
+
+Deno.test("BehaviorSubject.constructor should be frozen", () => {
+  // Arrange / Act / Assert
+  assertStrictEquals(Object.isFrozen(BehaviorSubject), true);
+});
+
+Deno.test("BehaviorSubject should be frozen", () => {
+  // Arrange / Act / Assert
+  assertStrictEquals(Object.isFrozen(new BehaviorSubject(2)), true);
+});
+
+Deno.test("BehaviorSubject.prototype should be frozen", () => {
+  // Arrange / Act / Assert
+  assertStrictEquals(Object.isFrozen(BehaviorSubject.prototype), true);
+});
+
+Deno.test(
+  "BehaviorSubject should not freeze Object.prototype",
+  () => {
+    // Arrange / Act
+    new BehaviorSubject(2);
+
+    // Assert
+    assertStrictEquals(Object.isFrozen(Object.prototype), false);
+  },
+);
 
 Deno.test(
   "BehaviorSubject.constructor should not throw when creating with more than one argument",
@@ -74,11 +106,26 @@ Deno.test("BehaviorSubject.next should emit value to observers", () => {
   subject.next("foo");
 
   // Assert
-  assertEquals(notifications, [
-    ["next", "initial"],
-    ["next", "foo"],
-  ]);
+  assertEquals(notifications, [["next", "initial"], ["next", "foo"]]);
 });
+
+Deno.test(
+  "BehaviorSubject.next should allow empty next when created with void type",
+  () => {
+    // Arrange
+    const subject = new BehaviorSubject<void>(undefined);
+    const notifications: Array<ObserverNotification<void>> = [];
+    pipe(subject, materialize()).subscribe(
+      new Observer((notification) => notifications.push(notification)),
+    );
+
+    // Act
+    subject.next();
+
+    // Assert
+    assertEquals(notifications, [["next", undefined], ["next", undefined]]);
+  },
+);
 
 Deno.test(
   "BehaviorSubject.next should store value for late observers",
@@ -97,6 +144,15 @@ Deno.test(
     assertEquals(notifications, [["next", "foo"]]);
   },
 );
+
+Deno.test("BehaviorSubject.throw should throw if called with no arguments", () => {
+  // Arrange / Act / Assert
+  assertThrows(
+    () => new BehaviorSubject("initial").throw(...([] as unknown as Parameters<Observer["throw"]>)),
+    TypeError,
+    "1 argument required but 0 present",
+  );
+});
 
 Deno.test("BehaviorSubject.throw should pass through this subject", () => {
   // Arrange
@@ -170,10 +226,7 @@ Deno.test(
   "BehaviorSubject should be an Observer which can be given to Observable.subscribe",
   () => {
     // Arrange
-    const source = new Observable<number>((observer) => {
-      [1, 2, 3, 4, 5].forEach((value) => observer.next(value));
-      observer.return();
-    });
+    const source = forOf([1, 2, 3, 4, 5]);
     const subject = new BehaviorSubject(0);
     const notifications: Array<ObserverNotification<number>> = [];
 

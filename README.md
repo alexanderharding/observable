@@ -106,13 +106,11 @@ directly to the user's call site, making debugging straightforward.
 ```ts
 // ✓ Good: Validation at entry point produces a shallow stack trace
 function map<In, Out>(transform: (value: In) => Out): (source: In[]) => Out[] {
-  if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-  if (typeof transform !== "function") {
-    throw new ParameterTypeError(0, "Function");
-  }
+  if (!arguments.length) throw new TypeError("1 argument required but 0 present");
+  if (typeof transform !== "function") throw new TypeError("Parameter 1 is not of type 'Function'");
   return function mapFn(source) {
-    if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
-    if (!Array.isArray(source)) throw new ParameterTypeError(0, "Array");
+    if (!arguments.length) throw new TypeError("1 argument required but 0 present");
+    if (!Array.isArray(source)) throw new TypeError("Parameter 1 is not of type 'Array'");
     // ...
   };
 }
@@ -140,10 +138,10 @@ Provide `is*` type guard functions for all unique public interfaces. Type guards
 
 ```ts
 function isUser(value: unknown): value is User {
-  if (arguments.length === 0) throw new MinimumArgumentsRequiredError();
+  if (!arguments.length) throw new TypeError("1 argument required but 0 present");
   return (
     value instanceof User ||
-    (isObject(value) &&
+    ((typeof value === "object" && value !== null) &&
       "id" in value &&
       typeof value.id === "string" &&
       "name" in value &&
@@ -267,19 +265,4 @@ Deno.test("sum should return 0 for an empty array", () => {
   // Assert
   assertEquals(result, 0);
 });
-```
-
-### Internal Utilities
-
-Reusable utilities should be centralized in a dedicated internal package/module. Internal functions
-that should not be exported are marked with `@internal Do NOT export.` in their JSDoc.
-
-```ts
-/**
- * Clamps a value between a minimum and maximum.
- * @internal Do NOT export.
- */
-function clamp(value: number, min: number, max: number): number {
-  return Math.min(Math.max(value, min), max);
-}
 ```

@@ -97,9 +97,7 @@ Deno.test("fetch should abort the request on unsubscription", async () => {
   const originalFetch = globalThis.fetch;
   Object.defineProperty(globalThis, "fetch", {
     value: (_url: RequestInfo | URL, init?: RequestInit) => {
-      if (init?.signal) {
-        abortSignals.push(init.signal);
-      }
+      if (init?.signal) abortSignals.push(init.signal);
       return new Promise(() => {
         // Never resolves
       });
@@ -165,9 +163,7 @@ Deno.test("fetch should not abort the response after it is received", async () =
   const originalFetch = globalThis.fetch;
   Object.defineProperty(globalThis, "fetch", {
     value: (_url: RequestInfo | URL, init?: RequestInit) => {
-      if (init?.signal) {
-        abortSignals.push(init.signal);
-      }
+      if (init?.signal) abortSignals.push(init.signal);
       return Promise.resolve(mockResponse);
     },
     configurable: true,
@@ -383,43 +379,6 @@ Deno.test("fetch should accept undefined as init", async () => {
   // Assert
   assertEquals(fetchCalls.length, 1);
   assertEquals(notifications, [["next", mockResponse], ["return"]]);
-
-  Object.defineProperty(globalThis, "fetch", { value: originalFetch, configurable: true });
-});
-
-Deno.test("fetch should pass abort reason when unsubscribed with reason", async () => {
-  // Arrange
-  const controller = new AbortController();
-  const abortReasons: Array<unknown> = [];
-  const originalFetch = globalThis.fetch;
-  Object.defineProperty(globalThis, "fetch", {
-    value: (_url: RequestInfo | URL, init?: RequestInit) => {
-      if (init?.signal) {
-        init.signal.addEventListener("abort", () => {
-          abortReasons.push(init.signal?.reason);
-        });
-      }
-      return new Promise(() => {
-        // Never resolves
-      });
-    },
-    configurable: true,
-  });
-  const customReason = new Error("Custom abort reason");
-
-  // Act
-  fetch("https://example.com/api").subscribe(
-    new Observer({
-      signal: controller.signal,
-      next: () => {},
-    }),
-  );
-  controller.abort(customReason);
-  await Promise.resolve();
-
-  // Assert
-  assertEquals(abortReasons.length, 1);
-  assertEquals(abortReasons[0], customReason);
 
   Object.defineProperty(globalThis, "fetch", { value: originalFetch, configurable: true });
 });

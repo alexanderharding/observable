@@ -1,15 +1,13 @@
 # [@observable/share](https://jsr.io/@observable/share)
 
-Shares a single [subscription](https://jsr.io/@observable/core#subscription) to the
-[source](https://jsr.io/@observable/core#source)
-[`Observable`](https://jsr.io/@observable/core/doc/~/Observable) and projects it to all
+Shares a single [subscription](https://jsr.io/@observable/core#subscription) forwarding
+[`notifications`](https://jsr.io/@observable/core#notification) to all
 [consumers](https://jsr.io/@observable/core#consumer) through a
-[`Subject`](https://jsr.io/@observable/core/doc/~/Subject). Resets when all
-[unsubscribe](https://jsr.io/@observable/core@0.3.0/doc/~/Observer.signal) or when the
-[source](https://jsr.io/@observable/core#source)
-[`Observable`](https://jsr.io/@observable/core/doc/~/Observable)
-[`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s or
-[`throw`](https://jsr.io/@observable/core/doc/~/Observer.throw)s.
+[`Subject`](https://jsr.io/@observable/core/doc/~/Subject) created by the given `factory` function.
+Resets on [`return`](https://jsr.io/@observable/core/doc/~/Observer.return),
+[`throw`](https://jsr.io/@observable/core/doc/~/Observer.throw), or when on all
+[consumers](https://jsr.io/@observable/core#consumer)
+[`unsubscribe`](https://jsr.io/@observable/core/doc/~/Observer.signal).
 
 ## Build
 
@@ -24,15 +22,19 @@ Automated by `.github\workflows\publish.yml`.
 Run `deno task test` or `deno task test:ci` to execute the unit tests via
 [Deno](https://deno.land/).
 
-## Example
+## Examples
+
+Basic usage
 
 ```ts
 import { share } from "@observable/share";
 import { timeout } from "@observable/timeout";
 import { pipe } from "@observable/pipe";
 
-const shared = pipe(timeout(1_000), share());
 const controller = new AbortController();
+const shared = pipe(timeout(1_000), share());
+
+// Both consumers share the same timeout — it only runs once.
 shared.subscribe({
   signal: controller.signal,
   next: (value) => console.log("next", value),
@@ -47,10 +49,53 @@ shared.subscribe({
 });
 
 // Console output (after 1 second):
-// "next" 0
-// "next" 0
+// "next" undefined
+// "next" undefined
 // "return"
 // "return"
+```
+
+ReplaySubject factory
+
+```ts
+import { share } from "@observable/share";
+import { ReplaySubject } from "@observable/replay-subject";
+import { Subject } from "@observable/core";
+import { pipe } from "@observable/pipe";
+
+const controller = new AbortController();
+const subject = new Subject<number>();
+const shared = pipe(subject, share(() => new ReplaySubject<number>(1)));
+
+shared.subscribe({
+  signal: controller.signal,
+  next: (value) => console.log("1st", value),
+  return: () => console.log("1st return"),
+  throw: (value) => console.log("1st throw", value),
+});
+
+subject.next(1);
+subject.next(2);
+
+// A second consumer joins and receives the last buffered value (2) immediately.
+shared.subscribe({
+  signal: controller.signal,
+  next: (value) => console.log("2nd", value),
+  return: () => console.log("2nd return"),
+  throw: (value) => console.log("2nd throw", value),
+});
+
+subject.next(3);
+subject.return();
+
+// Console output:
+// "1st" 1
+// "1st" 2
+// "2nd" 2
+// "1st" 3
+// "2nd" 3
+// "1st return"
+// "2nd return"
 ```
 
 # AI Prompt
@@ -61,7 +106,7 @@ Use the following prompt with AI assistants to help them understand this library
 You are helping me with code that uses @observable/share from the @observable library ecosystem.
 
 WHAT IT DOES:
-`share()` multicasts a source Observable through a Subject, sharing a single subscription among multiple subscribers. Resets when all subscribers unsubscribe or when the source returns/throws.
+`share()` multicasts a source Observable through a Subject, sharing a single subscription among multiple consumers. Resets when all consumers unsubscribe or when the source returns/throws.
 
 CRITICAL: This library is NOT RxJS. Key differences:
 - Observer uses `return`/`throw` — NOT `complete`/`error`
@@ -77,7 +122,7 @@ import { pipe } from "@observable/pipe";
 const shared = pipe(timeout(1_000), share());
 const controller = new AbortController();
 
-// Both subscribers share the same source subscription
+// Both consumers share the same source subscription
 shared.subscribe({
   signal: controller.signal,
   next: (value) => console.log("A:", value),
@@ -100,12 +145,12 @@ shared.subscribe({
 ```
 
 HOT VS COLD:
-- Without `share()`: Each subscriber creates a new subscription (cold)
-- With `share()`: All subscribers share one subscription (hot)
+- Without `share()`: Each consumer creates a new subscription (cold)
+- With `share()`: All consumers share one subscription (hot)
 
 RESET BEHAVIOR:
 The shared subscription resets when:
-- All subscribers unsubscribe
+- All consumers unsubscribe
 - The source returns (`return()`)
 - The source throws (`throw()`)
 

@@ -1,8 +1,7 @@
 import { Observer } from "@observable/core";
-import { ofIterable } from "@observable/of-iterable";
+import { forOf } from "@observable/for-of";
 import { BroadcastSubject } from "./mod.ts";
 import { assertEquals, assertInstanceOf, assertStrictEquals, assertThrows } from "@std/assert";
-import { noop } from "@observable/internal";
 import { pipe } from "@observable/pipe";
 import { materialize, type ObserverNotification } from "@observable/materialize";
 
@@ -36,6 +35,18 @@ Deno.test("BroadcastSubject.prototype should be frozen", () => {
   // Arrange / Act / Assert
   assertStrictEquals(Object.isFrozen(BroadcastSubject.prototype), true);
 });
+
+Deno.test(
+  "BroadcastSubject should not freeze Object.prototype",
+  () => {
+    // Arrange / Act
+    const subject = new BroadcastSubject("test");
+
+    // Assert
+    assertStrictEquals(Object.isFrozen(Object.prototype), false);
+    subject.return(); // Clean up
+  },
+);
 
 Deno.test(
   "BroadcastSubject.constructor should throw when creating with 0 arguments",
@@ -108,7 +119,7 @@ Deno.test(
   "BroadcastSubject should be an Observer which can be given to Observable.subscribe",
   () => {
     // Arrange
-    const source = pipe([1, 2, 3, 4, 5], ofIterable());
+    const source = forOf([1, 2, 3, 4, 5]);
     const subject = new BroadcastSubject<number>("test");
     const notifications: Array<ObserverNotification<number>> = [];
     const postMessageCalls: Array<Parameters<BroadcastChannel["postMessage"]>> = [];
@@ -153,6 +164,30 @@ Deno.test(
 
     // Assert
     assertEquals(postMessageCalls, [["foo"]]);
+    subject.return();
+  },
+);
+
+Deno.test(
+  "BroadcastSubject.next should allow empty next when created with void type",
+  () => {
+    // Arrange
+    const subject = new BroadcastSubject<void>("test");
+    const postMessageCalls: Array<Parameters<BroadcastChannel["postMessage"]>> = [];
+    Object.defineProperty(BroadcastChannel.prototype, "postMessage", {
+      value: new Proxy(BroadcastChannel.prototype.postMessage, {
+        apply: (target, thisArg, argumentsList: [message: unknown]) => {
+          postMessageCalls.push(argumentsList);
+          return target.apply(thisArg, argumentsList);
+        },
+      }),
+    });
+
+    // Act
+    subject.next();
+
+    // Assert
+    assertEquals(postMessageCalls, [[undefined]]);
     subject.return();
   },
 );
@@ -223,7 +258,7 @@ Deno.test(
   () => {
     // Arrange
     const subject = new BroadcastSubject<string>("test");
-    subject.subscribe(new Observer({ throw: noop }));
+    subject.subscribe(new Observer({ throw: () => {} }));
     subject.throw(new Error("test error"));
 
     // Act / Assert
@@ -250,6 +285,19 @@ Deno.test(
     assertInstanceOf(notifications[0][1], DOMException);
   },
 );
+
+Deno.test("BroadcastSubject.throw should throw if called with no arguments", () => {
+  // Arrange
+  const subject = new BroadcastSubject("test");
+  subject.return(); // Prevent memory leaks
+
+  // Act / Assert
+  assertThrows(
+    () => subject.throw(...([] as unknown as Parameters<Observer["throw"]>)),
+    TypeError,
+    "1 argument required but 0 present",
+  );
+});
 
 Deno.test("BroadcastSubject.throw should pass through this subject", () => {
   // Arrange
@@ -297,7 +345,7 @@ Deno.test("BroadcastSubject.throw should abort signal", () => {
   // Arrange
   const error = new Error("test error");
   const subject = new BroadcastSubject<string>("test");
-  subject.subscribe(new Observer({ throw: noop }));
+  subject.subscribe(new Observer({ throw: () => {} }));
 
   // Act
   subject.throw(error);

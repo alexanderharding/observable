@@ -1,12 +1,9 @@
 # [@observable/flat-map](https://jsr.io/@observable/flat-map)
 
-Projects each [source](https://jsr.io/@observable/core#source)
-[`Observable`](https://jsr.io/@observable/core/doc/~/Observable)'s
-[`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed value to an
-[`Observable`](https://jsr.io/@observable/core/doc/~/Observable) which is merged in the output
-[`Observable`](https://jsr.io/@observable/core/doc/~/Observable), in a serialized fashion waiting
-for each one to [`return`](https://jsr.io/@observable/core/doc/~/Observer.return) before merging the
-next.
+Sequentially projects each value to an
+[`Observable`](https://jsr.io/@observable/core/doc/~/Observable) waiting for each projected
+[`Observable`](https://jsr.io/@observable/core/doc/~/Observable) to
+[`return`](https://jsr.io/@observable/core/doc/~/Observer.return) before moving on to the next.
 
 ## Build
 
@@ -25,18 +22,18 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 
 ```ts
 import { flatMap } from "@observable/flat-map";
-import { ofIterable } from "@observable/of-iterable";
+import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 
-const source = pipe(["a", "b", "c"], ofIterable());
+const observable = forOf(["a", "b", "c"]);
 const controller = new AbortController();
 const observableLookup = {
-  a: pipe([1, 2, 3], ofIterable()),
-  b: pipe([4, 5, 6], ofIterable()),
-  c: pipe([7, 8, 9], ofIterable()),
+  a: forOf([1, 2, 3]),
+  b: forOf([4, 5, 6]),
+  c: forOf([7, 8, 9]),
 } as const;
 
-pipe(source, flatMap((value) => observableLookup[value])).subscribe({
+pipe(observable, flatMap((value) => observableLookup[value])).subscribe({
   signal: controller.signal,
   next: (value) => console.log("next", value),
   return: () => console.log("return"),
@@ -75,20 +72,19 @@ CRITICAL: This library is NOT RxJS. Key differences:
 USAGE PATTERN:
 ```ts
 import { flatMap } from "@observable/flat-map";
-import { ofIterable } from "@observable/of-iterable";
+import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
 
 const lookup = {
-  a: pipe([1, 2, 3], ofIterable()),
-  b: pipe([4, 5, 6], ofIterable()),
-  c: pipe([7, 8, 9], ofIterable()),
+  a: forOf([1, 2, 3]),
+  b: forOf([4, 5, 6]),
+  c: forOf([7, 8, 9]),
 };
 
 pipe(
-  ["a", "b", "c"],
-  ofIterable(),
+  forOf(["a", "b", "c"]),
   flatMap((key) => lookup[key])
 ).subscribe({
   signal: controller.signal,
@@ -102,8 +98,7 @@ SEQUENTIAL EXECUTION:
 Each inner Observable returns before the next one starts:
 ```ts
 pipe(
-  ["file1", "file2", "file3"],
-  ofIterable(),
+  forOf(["file1", "file2", "file3"]),
   flatMap((file) => uploadFile(file))  // Uploads one at a time
 ).subscribe({ ... });
 ```

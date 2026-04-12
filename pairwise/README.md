@@ -1,8 +1,7 @@
 # [@observable/pairwise](https://jsr.io/@observable/pairwise)
 
-[`Next`](https://jsr.io/@observable/core/doc/~/Observer.next)s pairs of consecutive values from the
-[source](https://jsr.io/@observable/core#source)
-[`Observable`](https://jsr.io/@observable/core/doc/~/Observable).
+[`Next`](https://jsr.io/@observable/core/doc/~/Observer.next)s
+[`pair`](https://jsr.io/@observable/pairwise/doc/~/Pair)s of consecutive values.
 
 ## Build
 
@@ -21,11 +20,11 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 
 ```ts
 import { pairwise } from "@observable/pairwise";
-import { ofIterable } from "@observable/of-iterable";
+import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
-pipe([1, 2, 3, 4], ofIterable(), pairwise()).subscribe({
+pipe(forOf([1, 2, 3, 4]), pairwise()).subscribe({
   signal: controller.signal,
   next: (value) => console.log("next", value),
   return: () => console.log("return"),
@@ -57,14 +56,13 @@ CRITICAL: This library is NOT RxJS. Key differences:
 USAGE PATTERN:
 ```ts
 import { pairwise } from "@observable/pairwise";
-import { ofIterable } from "@observable/of-iterable";
+import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
 
 pipe(
-  [1, 2, 3, 4],
-  ofIterable(),
+  forOf([1, 2, 3, 4]),
   pairwise()
 ).subscribe({
   signal: controller.signal,

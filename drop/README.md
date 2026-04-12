@@ -1,8 +1,6 @@
 # [@observable/drop](https://jsr.io/@observable/drop)
 
-Drops the first count of [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values from
-the [source](https://jsr.io/@observable/core#source)
-[`Observable`](https://jsr.io/@observable/core/doc/~/Observable).
+Drops the first `count` of values.
 
 ## Build
 
@@ -17,15 +15,18 @@ Automated by `.github\workflows\publish.yml`.
 Run `deno task test` or `deno task test:ci` to execute the unit tests via
 [Deno](https://deno.land/).
 
-## Example
+## Examples
+
+Positive integer count
 
 ```ts
 import { drop } from "@observable/drop";
-import { ofIterable } from "@observable/of-iterable";
+import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
-pipe([1, 2, 3, 4, 5], ofIterable(), drop(2)).subscribe({
+
+pipe(forOf([1, 2, 3, 4, 5]), drop(2)).subscribe({
   signal: controller.signal,
   next: (value) => console.log("next", value),
   return: () => console.log("return"),
@@ -36,6 +37,94 @@ pipe([1, 2, 3, 4, 5], ofIterable(), drop(2)).subscribe({
 // "next" 3
 // "next" 4
 // "next" 5
+// "return"
+```
+
+Positive fractional count
+
+```ts
+import { drop } from "@observable/drop";
+import { forOf } from "@observable/for-of";
+import { pipe } from "@observable/pipe";
+
+const controller = new AbortController();
+
+pipe(forOf([1, 2, 3, 4, 5]), drop(2.3)).subscribe({
+  signal: controller.signal,
+  next: (value) => console.log("next", value),
+  return: () => console.log("return"),
+  throw: (value) => console.log("throw", value),
+});
+
+// Console output:
+// "next" 3
+// "next" 4
+// "next" 5
+// "return"
+```
+
+0 count
+
+```ts
+import { drop } from "@observable/drop";
+import { forOf } from "@observable/for-of";
+import { pipe } from "@observable/pipe";
+
+const controller = new AbortController();
+
+pipe(forOf([1, 2, 3, 4, 5]), drop(0)).subscribe({
+  signal: controller.signal,
+  next: (value) => console.log("next", value),
+  return: () => console.log("return"),
+  throw: (value) => console.log("throw", value),
+});
+
+// Console output:
+// "next" 1
+// "next" 2
+// "next" 3
+// "next" 4
+// "next" 5
+// "return"
+```
+
+Negative integer count
+
+```ts
+import { drop } from "@observable/drop";
+import { forOf } from "@observable/for-of";
+import { pipe } from "@observable/pipe";
+
+const controller = new AbortController();
+
+pipe(forOf([1, 2, 3, 4, 5]), drop(-1)).subscribe({
+  signal: controller.signal,
+  next: (value) => console.log("next", value),
+  return: () => console.log("return"),
+  throw: (value) => console.log("throw", value),
+});
+
+// Console output:
+// "return"
+```
+
+NaN count
+
+```ts
+import { drop } from "@observable/drop";
+import { forOf } from "@observable/for-of";
+import { pipe } from "@observable/pipe";
+
+const controller = new AbortController();
+
+pipe(forOf([1, 2, 3, 4, 5]), drop(NaN)).subscribe({
+  signal: controller.signal,
+  next: (value) => console.log("next", value),
+  return: () => console.log("return"),
+  throw: (value) => console.log("throw", value),
+});
+
+// Console output:
 // "return"
 ```
 
@@ -58,16 +147,12 @@ CRITICAL: This library is NOT RxJS. Key differences:
 USAGE PATTERN:
 ```ts
 import { drop } from "@observable/drop";
-import { ofIterable } from "@observable/of-iterable";
+import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
 
-pipe(
-  [1, 2, 3, 4, 5],
-  ofIterable(),
-  drop(2)
-).subscribe({
+pipe(forOf([1, 2, 3, 4, 5]), drop(2)).subscribe({
   signal: controller.signal,
   next: (value) => console.log(value),  // 3, 4, 5
   return: () => console.log("done"),
@@ -79,8 +164,7 @@ COMBINING WITH TAKE:
 ```ts
 // Get items 3-5 from a sequence
 pipe(
-  [1, 2, 3, 4, 5, 6, 7],
-  ofIterable(),
+  forOf([1, 2, 3, 4, 5]),
   drop(2),   // Skip first 2
   take(3),   // Take next 3
 ).subscribe({ ... });  // 3, 4, 5
