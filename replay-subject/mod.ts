@@ -15,7 +15,7 @@ export type ReplaySubject<Value = unknown> = Subject<Value>;
 export interface ReplaySubjectConstructor {
   /**
    * Creates and returns an object that acts as a variant of [`Subject`](https://jsr.io/@observable/core/doc/~/Subject) that replays
-   * the last integer {@linkcode count} of buffered [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values upon
+   * the last integer {@linkcode count} of buffered {@linkcode Value|values} to [consumers](https://jsr.io/@observable/core#consumer) upon
    * [`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe).
    * @example
    * Positive integer count
@@ -389,11 +389,14 @@ export const ReplaySubject: ReplaySubjectConstructor = class<Value> {
     if (!(this instanceof ReplaySubject)) {
       throw new TypeError(`'this' is not instanceof '${stringTag}'`);
     }
+    // No arguments.length check because Value may be void, making next() with no args valid.
+
     if (!this.signal.aborted && this.#count > 0) {
       const length = this.#buffer.push(value);
       if (length > this.#count) this.#buffer.shift();
       this.#bufferSnapshot = undefined;
     }
+
     this.#subject.next(value);
   }
 
@@ -403,10 +406,12 @@ export const ReplaySubject: ReplaySubjectConstructor = class<Value> {
   }
 
   throw(value: unknown): void {
-    if (this instanceof ReplaySubject) this.#subject.throw(value);
-    else throw new TypeError(`'this' is not instanceof '${stringTag}'`);
+    if (!(this instanceof ReplaySubject)) {
+      throw new TypeError(`'this' is not instanceof '${stringTag}'`);
+    }
+    if (!arguments.length) throw new TypeError("1 argument required but 0 present");
+    this.#subject.throw(value);
   }
-
   subscribe(observer: Observer<Value>): void {
     if (!(this instanceof ReplaySubject)) {
       throw new TypeError(`'this' is not instanceof '${stringTag}'`);
