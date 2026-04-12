@@ -1,16 +1,16 @@
 import { assertEquals, assertInstanceOf, assertStrictEquals, assertThrows } from "@std/assert";
 import { Observer } from "@observable/core";
 import { empty } from "@observable/empty";
-import { ofIterable } from "@observable/of-iterable";
 import { pipe } from "@observable/pipe";
 import { materialize, type ObserverNotification } from "@observable/materialize";
 import { delay } from "./mod.ts";
+import { forOf } from "@observable/for-of";
 
 Deno.test(
   "delay should return an empty observable if the milliseconds is less than 0",
   () => {
     // Arrange
-    const source = pipe([1, 2, 3], ofIterable());
+    const source = forOf([1, 2, 3]);
 
     // Act
     const result = pipe(source, delay(-1));
@@ -22,7 +22,7 @@ Deno.test(
 
 Deno.test("delay should return the source observable if the milliseconds is 0 and source is an Observable instance", () => {
   // Arrange
-  const source = pipe([1, 2, 3], ofIterable());
+  const source = forOf([1, 2, 3]);
 
   // Act
   const result = pipe(source, delay(0));
@@ -33,7 +33,7 @@ Deno.test("delay should return the source observable if the milliseconds is 0 an
 
 Deno.test("delay should return empty if the milliseconds is NaN", () => {
   // Arrange
-  const source = pipe([1, 2, 3], ofIterable());
+  const source = forOf([1, 2, 3]);
 
   // Act
   const result = pipe(source, delay(NaN));
@@ -44,7 +44,7 @@ Deno.test("delay should return empty if the milliseconds is NaN", () => {
 
 Deno.test("delay should drop all values and return when source returns if the milliseconds is Infinity", () => {
   // Arrange
-  const source = pipe([1, 2, 3], ofIterable());
+  const source = forOf([1, 2, 3]);
   const notifications: Array<ObserverNotification<number>> = [];
 
   // Act
@@ -74,7 +74,7 @@ Deno.test(
     });
 
     // Act
-    pipe(pipe([1, 2, 3], ofIterable()), delay(milliseconds), materialize()).subscribe(
+    pipe(forOf([1, 2, 3]), delay(milliseconds), materialize()).subscribe(
       new Observer((notification) => notifications.push(notification)),
     );
 
@@ -112,7 +112,7 @@ Deno.test(
     const originalSetTimeout = globalThis.setTimeout;
     const originalClearTimeout = globalThis.clearTimeout;
     const controller = new AbortController();
-    const materialized = pipe(pipe([1, 2, 3], ofIterable()), delay(milliseconds), materialize());
+    const materialized = pipe(forOf([1, 2, 3]), delay(milliseconds), materialize());
     let idCounter = 0;
     Object.defineProperty(globalThis, "setTimeout", {
       value: (...args: Parameters<typeof setTimeout>) => {
@@ -175,7 +175,7 @@ Deno.test(
     const originalSetTimeout = globalThis.setTimeout;
     const originalClearTimeout = globalThis.clearTimeout;
     const controller = new AbortController();
-    const materialized = pipe(pipe([1, 2, 3], ofIterable()), delay(milliseconds), materialize());
+    const materialized = pipe(forOf([1, 2, 3]), delay(milliseconds), materialize());
     Object.defineProperty(globalThis, "setTimeout", {
       value: (...args: Parameters<typeof setTimeout>) => {
         setTimeoutCalls.push(args);
@@ -270,7 +270,7 @@ Deno.test(
     const clearTimeoutCalls: Array<Parameters<typeof clearTimeout>> = [];
     const originalSetTimeout = globalThis.setTimeout;
     const originalClearTimeout = globalThis.clearTimeout;
-    const materialized = pipe(pipe([1, 2, 3], ofIterable()), delay(0), materialize());
+    const materialized = pipe(forOf([1, 2, 3]), delay(0), materialize());
     Object.defineProperty(globalThis, "setTimeout", {
       value: (...args: Parameters<typeof setTimeout>) => {
         setTimeoutCalls.push(args);
@@ -319,7 +319,7 @@ Deno.test(
     });
 
     // Act
-    pipe(pipe([5, 4, 3, 2, 1], ofIterable()), delay(milliseconds), materialize()).subscribe(
+    pipe(forOf([5, 4, 3, 2, 1]), delay(milliseconds), materialize()).subscribe(
       new Observer((notification) => notifications.push(notification)),
     );
 

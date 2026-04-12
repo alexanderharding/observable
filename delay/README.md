@@ -1,8 +1,6 @@
 # [@observable/delay](https://jsr.io/@observable/delay)
 
-Delays the [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ing of values from the
-[source](https://jsr.io/@observable/core#source)
-[`Observable`](https://jsr.io/@observable/core/doc/~/Observable) by a given number of milliseconds.
+Delays values by the given number of `milliseconds`.
 
 ## Build
 
@@ -17,15 +15,17 @@ Automated by `.github\workflows\publish.yml`.
 Run `deno task test` or `deno task test:ci` to execute the unit tests via
 [Deno](https://deno.land/).
 
-## Example
+## Examples
+
+1000 milliseconds
 
 ```ts
 import { delay } from "@observable/delay";
-import { ofIterable } from "@observable/of-iterable";
+import { of } from "@observable/of";
 import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
-pipe([1, 2, 3, 4, 5], ofIterable(), delay(1_000)).subscribe({
+pipe(of([1, 2, 3, 4, 5]), delay(1_000)).subscribe({
   signal: controller.signal,
   next: (value) => console.log("next", value),
   return: () => console.log("return"),
@@ -38,6 +38,87 @@ pipe([1, 2, 3, 4, 5], ofIterable(), delay(1_000)).subscribe({
 // "next" 3
 // "next" 4
 // "next" 5
+// "return"
+```
+
+0 milliseconds
+
+```ts
+import { delay } from "@observable/delay";
+import { of } from "@observable/of";
+import { pipe } from "@observable/pipe";
+
+const controller = new AbortController();
+pipe(of([1, 2, 3, 4, 5]), delay(0)).subscribe({
+  signal: controller.signal,
+  next: (value) => console.log("next", value),
+  return: () => console.log("return"),
+  throw: (value) => console.log("throw", value),
+});
+
+// Console output (synchronously):
+// "next" 1
+// "next" 2
+// "next" 3
+// "next" 4
+// "next" 5
+// "return"
+```
+
+Infinite milliseconds
+
+```ts
+import { delay } from "@observable/delay";
+import { of } from "@observable/of";
+import { pipe } from "@observable/pipe";
+
+const controller = new AbortController();
+pipe(of([1, 2, 3, 4, 5]), delay(Infinity)).subscribe({
+  signal: controller.signal,
+  next: (value) => console.log("next", value),
+  return: () => console.log("return"),
+  throw: (value) => console.log("throw", value),
+});
+
+// Console output (synchronously):
+// "return"
+```
+
+Negative milliseconds
+
+```ts
+import { delay } from "@observable/delay";
+import { of } from "@observable/of";
+import { pipe } from "@observable/pipe";
+
+const controller = new AbortController();
+pipe(of([1, 2, 3, 4, 5]), delay(-1)).subscribe({
+  signal: controller.signal,
+  next: (value) => console.log("next", value),
+  return: () => console.log("return"),
+  throw: (value) => console.log("throw", value),
+});
+
+// Console output (synchronously):
+// "return"
+```
+
+NaN milliseconds
+
+```ts
+import { delay } from "@observable/delay";
+import { of } from "@observable/of";
+import { pipe } from "@observable/pipe";
+
+const controller = new AbortController();
+pipe(of([1, 2, 3, 4, 5]), delay(NaN))).subscribe({
+  signal: controller.signal,
+  next: (value) => console.log("next", value),
+  return: () => console.log("return"),
+  throw: (value) => console.log("throw", value),
+});
+
+// Console output (synchronously):
 // "return"
 ```
 
