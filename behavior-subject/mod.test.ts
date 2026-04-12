@@ -10,17 +10,17 @@ Deno.test("BehaviorSubject.toString should be '[object BehaviorSubject]'", () =>
   assertStrictEquals(`${new BehaviorSubject(2)}`, "[object BehaviorSubject]");
 });
 
-Deno.test("AsyncSubject.constructor should be frozen", () => {
+Deno.test("BehaviorSubject.constructor should be frozen", () => {
   // Arrange / Act / Assert
   assertStrictEquals(Object.isFrozen(BehaviorSubject), true);
 });
 
-Deno.test("AsyncSubject should be frozen", () => {
+Deno.test("BehaviorSubject should be frozen", () => {
   // Arrange / Act / Assert
   assertStrictEquals(Object.isFrozen(new BehaviorSubject(2)), true);
 });
 
-Deno.test("AsyncSubject.prototype should be frozen", () => {
+Deno.test("BehaviorSubject.prototype should be frozen", () => {
   // Arrange / Act / Assert
   assertStrictEquals(Object.isFrozen(BehaviorSubject.prototype), true);
 });
@@ -106,11 +106,26 @@ Deno.test("BehaviorSubject.next should emit value to observers", () => {
   subject.next("foo");
 
   // Assert
-  assertEquals(notifications, [
-    ["next", "initial"],
-    ["next", "foo"],
-  ]);
+  assertEquals(notifications, [["next", "initial"], ["next", "foo"]]);
 });
+
+Deno.test(
+  "BehaviorSubject.next should allow empty next when created with void type",
+  () => {
+    // Arrange
+    const subject = new BehaviorSubject<void>(undefined);
+    const notifications: Array<ObserverNotification<void>> = [];
+    pipe(subject, materialize()).subscribe(
+      new Observer((notification) => notifications.push(notification)),
+    );
+
+    // Act
+    subject.next();
+
+    // Assert
+    assertEquals(notifications, [["next", undefined], ["next", undefined]]);
+  },
+);
 
 Deno.test(
   "BehaviorSubject.next should store value for late observers",
@@ -129,6 +144,15 @@ Deno.test(
     assertEquals(notifications, [["next", "foo"]]);
   },
 );
+
+Deno.test("BehaviorSubject.throw should throw if called with no arguments", () => {
+  // Arrange / Act / Assert
+  assertThrows(
+    () => new BehaviorSubject("initial").throw(...([] as unknown as Parameters<Observer["throw"]>)),
+    TypeError,
+    "1 argument required but 0 present",
+  );
+});
 
 Deno.test("BehaviorSubject.throw should pass through this subject", () => {
   // Arrange
