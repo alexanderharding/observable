@@ -6,8 +6,9 @@ import { pipe } from "@observable/pipe";
 import { forOf } from "@observable/for-of";
 import { of } from "@observable/of";
 import { materialize, type ObserverNotification } from "@observable/materialize";
-import { pairwise } from "./mod.ts";
+import { type Pair, pairwise } from "./mod.ts";
 import { empty } from "@observable/empty";
+import { tap } from "@observable/tap";
 
 Deno.test("pairwise should emit pairs of consecutive values", () => {
   // Arrange
@@ -32,22 +33,28 @@ Deno.test("pairwise should emit pairs of consecutive values", () => {
 
 Deno.test("pairwise should not emit if source emits only one value", () => {
   // Arrange
-  const notifications: Array<ObserverNotification<readonly [number, number]>> = [];
-  const source = of(1);
-  const materialized = pipe(source, pairwise(), materialize());
+  const notifications: Array<["tap", value: number] | ObserverNotification<Pair<number>>> = [];
 
   // Act
-  materialized.subscribe(
+  pipe(
+    of(1),
+    tap((value) => notifications.push(["tap", value])),
+    pairwise(),
+    materialize(),
+  ).subscribe(
     new Observer((notification) => notifications.push(notification)),
   );
 
   // Assert
-  assertEquals(notifications, [["return"]]);
+  assertEquals(notifications, [
+    ["tap", 1],
+    ["return"],
+  ]);
 });
 
 Deno.test("pairwise should not emit if source is empty", () => {
   // Arrange
-  const notifications: Array<ObserverNotification<readonly [number, number]>> = [];
+  const notifications: Array<ObserverNotification<Pair<number>>> = [];
   const materialized = pipe(empty, pairwise(), materialize());
 
   // Act
@@ -77,7 +84,7 @@ Deno.test("pairwise should emit exactly one pair when source emits two values", 
 Deno.test("pairwise should pump throws right through itself", () => {
   // Arrange
   const error = new Error("test error");
-  const notifications: Array<ObserverNotification<readonly [number, number]>> = [];
+  const notifications: Array<ObserverNotification<Pair<number>>> = [];
   const source = flat([forOf([1, 2, 3]), throwError(error)]);
   const materialized = pipe(source, pairwise(), materialize());
 
@@ -97,7 +104,7 @@ Deno.test("pairwise should pump throws right through itself", () => {
 Deno.test("pairwise should honor unsubscribe", () => {
   // Arrange
   const controller = new AbortController();
-  const notifications: Array<ObserverNotification<readonly [number, number]>> = [];
+  const notifications: Array<ObserverNotification<Pair<number>>> = [];
   const source = flat([
     forOf([1, 2, 3, 4, 5]),
     throwError(new Error("Should not make it here")),
@@ -149,7 +156,7 @@ Deno.test("pairwise should throw when source is not an Observable", () => {
 
 Deno.test("pairwise should work with Subject", () => {
   // Arrange
-  const notifications: Array<ObserverNotification<readonly [number, number]>> = [];
+  const notifications: Array<ObserverNotification<Pair<number>>> = [];
   const source = new Subject<number>();
   const materialized = pipe(source, pairwise(), materialize());
 
@@ -172,8 +179,8 @@ Deno.test("pairwise should work with Subject", () => {
 
 Deno.test("pairwise should reset state for each subscription", () => {
   // Arrange
-  const notifications1: Array<ObserverNotification<readonly [number, number]>> = [];
-  const notifications2: Array<ObserverNotification<readonly [number, number]>> = [];
+  const notifications1: Array<ObserverNotification<Pair<number>>> = [];
+  const notifications2: Array<ObserverNotification<Pair<number>>> = [];
   const source = forOf([1, 2, 3]);
   const pairwiseSource = pipe(source, pairwise());
 

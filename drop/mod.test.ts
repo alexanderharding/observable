@@ -4,6 +4,7 @@ import { empty } from "@observable/empty";
 import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 import { materialize, type ObserverNotification } from "@observable/materialize";
+import { tap } from "@observable/tap";
 import { drop } from "./mod.ts";
 
 Deno.test(
@@ -72,17 +73,25 @@ Deno.test("drop should return empty if the count is NaN", () => {
 
 Deno.test("drop should ignore all elements if the count is Infinity", () => {
   // Arrange
-  const source = forOf([1, 2, 3]);
-  const notifications: Array<ObserverNotification<number>> = [];
-  const materialized = pipe(source, drop(Infinity), materialize());
+  const notifications: Array<["tap", value: number] | ObserverNotification<number>> = [];
 
   // Act
-  materialized.subscribe(
+  pipe(
+    forOf([1, 2, 3]),
+    tap((value) => notifications.push(["tap", value])),
+    drop(Infinity),
+    materialize(),
+  ).subscribe(
     new Observer((notification) => notifications.push(notification)),
   );
 
   // Assert
-  assertEquals(notifications, [["return"]]);
+  assertEquals(notifications, [
+    ["tap", 1],
+    ["tap", 2],
+    ["tap", 3],
+    ["return"],
+  ]);
 });
 
 Deno.test(
