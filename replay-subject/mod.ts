@@ -358,6 +358,11 @@ export interface ReplaySubjectConstructor {
 const stringTag = "ReplaySubject";
 
 export const ReplaySubject: ReplaySubjectConstructor = class<Value> {
+  static {
+    Object.freeze(this);
+    Object.freeze(this.prototype);
+  }
+
   readonly [Symbol.toStringTag] = stringTag;
   readonly #count: number;
   /**
@@ -421,6 +426,3 @@ export const ReplaySubject: ReplaySubjectConstructor = class<Value> {
     this.#observable.subscribe(observer);
   }
 };
-
-Object.freeze(ReplaySubject);
-Object.freeze(ReplaySubject.prototype);

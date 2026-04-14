@@ -74,6 +74,11 @@ export interface ObserverConstructor {
 const stringTag = "Observer";
 
 export const Observer: ObserverConstructor = class<Value> {
+  static {
+    Object.freeze(this);
+    Object.freeze(this.prototype);
+  }
+
   readonly [Symbol.toStringTag] = stringTag;
   readonly #observer?: Partial<Observer<Value>> | null;
   readonly #controller = new AbortController();
@@ -154,9 +159,6 @@ export const Observer: ObserverConstructor = class<Value> {
     } else reportUnhandledError(value);
   }
 };
-
-Object.freeze(Observer);
-Object.freeze(Observer.prototype);
 
 /**
  * Checks if a {@linkcode value} is an object that implements the {@linkcode Observer} interface.

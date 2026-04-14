@@ -63,6 +63,11 @@ export interface BehaviorSubjectConstructor {
 const stringTag = "BehaviorSubject";
 
 export const BehaviorSubject: BehaviorSubjectConstructor = class<Value> {
+  static {
+    Object.freeze(this);
+    Object.freeze(this.prototype);
+  }
+
   readonly [Symbol.toStringTag] = stringTag;
   readonly #subject = new ReplaySubject<Value>(1);
   readonly signal = this.#subject.signal;
@@ -104,6 +109,3 @@ export const BehaviorSubject: BehaviorSubjectConstructor = class<Value> {
     this.#subject.subscribe(observer);
   }
 };
-
-Object.freeze(BehaviorSubject);
-Object.freeze(BehaviorSubject.prototype);

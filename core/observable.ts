@@ -122,6 +122,11 @@ export interface ObservableConstructor {
 const stringTag = "Observable";
 
 export const Observable: ObservableConstructor = class<Value> {
+  static {
+    Object.freeze(this);
+    Object.freeze(this.prototype);
+  }
+
   readonly [Symbol.toStringTag] = stringTag;
   readonly #subscribe: (observer: Observer<Value>) => void;
 
@@ -158,9 +163,6 @@ export const Observable: ObservableConstructor = class<Value> {
     }
   }
 };
-
-Object.freeze(Observable);
-Object.freeze(Observable.prototype);
 
 /**
  * Checks if a {@linkcode value} is an object that implements the {@linkcode Observable} interface.
