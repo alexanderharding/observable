@@ -98,6 +98,11 @@ const namespace = "394068c9-9d2c-45cb-81d2-a09197594a9d";
 const stringTag = "BroadcastSubject";
 
 export const BroadcastSubject: BroadcastSubjectConstructor = class<Value> {
+  static {
+    Object.freeze(this);
+    Object.freeze(this.prototype);
+  }
+
   readonly [Symbol.toStringTag] = stringTag;
   readonly #subject = new Subject<Value>();
   readonly signal = this.#subject.signal;
@@ -148,6 +153,3 @@ export const BroadcastSubject: BroadcastSubjectConstructor = class<Value> {
     this.#subject.subscribe(observer);
   }
 };
-
-Object.freeze(BroadcastSubject);
-Object.freeze(BroadcastSubject.prototype);

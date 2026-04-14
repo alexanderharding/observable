@@ -107,6 +107,11 @@ const notThrown = Symbol("Flag indicating that a value is not thrown.");
 const stringTag = "Subject";
 
 export const Subject: SubjectConstructor = class<Value> {
+  static {
+    Object.freeze(this);
+    Object.freeze(this.prototype);
+  }
+
   readonly [Symbol.toStringTag] = stringTag;
   /**
    * Tracking the value that was thrown by the [producer](https://jsr.io/@observable/core#producer), if any.
@@ -204,9 +209,6 @@ export const Subject: SubjectConstructor = class<Value> {
     this.#observable.subscribe(observer);
   }
 };
-
-Object.freeze(Subject);
-Object.freeze(Subject.prototype);
 
 /**
  * Checks if a {@linkcode value} is an object that implements the {@linkcode Subject} interface.
