@@ -5,6 +5,7 @@ import { pipe } from "@observable/pipe";
 import { materialize, type ObserverNotification } from "@observable/materialize";
 import { delay } from "./mod.ts";
 import { forOf } from "@observable/for-of";
+import { tap } from "@observable/tap";
 
 Deno.test(
   "delay should return an empty observable if the milliseconds is less than 0",
@@ -44,16 +45,25 @@ Deno.test("delay should return empty if the milliseconds is NaN", () => {
 
 Deno.test("delay should drop all values and return when source returns if the milliseconds is Infinity", () => {
   // Arrange
-  const source = forOf([1, 2, 3]);
-  const notifications: Array<ObserverNotification<number>> = [];
+  const notifications: Array<["tap", value: number] | ObserverNotification<number>> = [];
 
   // Act
-  pipe(source, delay(Infinity), materialize()).subscribe(
+  pipe(
+    forOf([1, 2, 3]),
+    tap((value) => notifications.push(["tap", value])),
+    delay(Infinity),
+    materialize(),
+  ).subscribe(
     new Observer((notification) => notifications.push(notification)),
   );
 
   // Assert
-  assertEquals(notifications, [["return"]]);
+  assertEquals(notifications, [
+    ["tap", 1],
+    ["tap", 2],
+    ["tap", 3],
+    ["return"],
+  ]);
 });
 
 Deno.test(
