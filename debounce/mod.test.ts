@@ -8,6 +8,7 @@ import { debounce } from "./mod.ts";
 import { flat } from "@observable/flat";
 import { throwError } from "@observable/throw-error";
 import { of } from "@observable/of";
+import { tap } from "@observable/tap";
 
 Deno.test("debounce should return empty if milliseconds is negative", () => {
   // Arrange
@@ -33,33 +34,48 @@ Deno.test("debounce should return empty if milliseconds is NaN", () => {
 
 Deno.test("debounce should ignore values but propagate return when milliseconds is Infinity", () => {
   // Arrange
-  const notifications: Array<ObserverNotification<number>> = [];
-  const source = forOf([1, 2, 3]);
-  const materialized = pipe(source, debounce(Infinity), materialize());
+  const notifications: Array<["tap", value: number] | ObserverNotification<number>> = [];
 
   // Act
-  materialized.subscribe(
+  pipe(
+    forOf([1, 2, 3]),
+    tap((value) => notifications.push(["tap", value])),
+    debounce(Infinity),
+    materialize(),
+  ).subscribe(
     new Observer((notification) => notifications.push(notification)),
   );
 
   // Assert
-  assertEquals(notifications, [["return"]]);
+  assertEquals(notifications, [
+    ["tap", 1],
+    ["tap", 2],
+    ["tap", 3],
+    ["return"],
+  ]);
 });
 
 Deno.test("debounce should ignore values but propagate throw when milliseconds is Infinity", () => {
   // Arrange
   const error = new Error("test error");
-  const notifications: Array<ObserverNotification<number>> = [];
-  const source = flat([forOf([1, 2]), throwError(error)]);
-  const materialized = pipe(source, debounce(Infinity), materialize());
+  const notifications: Array<["tap", value: number] | ObserverNotification<number>> = [];
 
   // Act
-  materialized.subscribe(
+  pipe(
+    flat([forOf([1, 2]), throwError(error)]),
+    tap((value) => notifications.push(["tap", value])),
+    debounce(Infinity),
+    materialize(),
+  ).subscribe(
     new Observer((notification) => notifications.push(notification)),
   );
 
   // Assert
-  assertEquals(notifications, [["throw", error]]);
+  assertEquals(notifications, [
+    ["tap", 1],
+    ["tap", 2],
+    ["throw", error],
+  ]);
 });
 
 Deno.test("debounce should emit value after timeout expires", () => {

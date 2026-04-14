@@ -6,6 +6,7 @@ import { filter } from "./mod.ts";
 import { materialize, type ObserverNotification } from "@observable/materialize";
 import { flat } from "@observable/flat";
 import { throwError } from "@observable/throw-error";
+import { tap } from "@observable/tap";
 
 Deno.test(
   "filter should filter the items emitted by the source observable",
@@ -24,6 +25,30 @@ Deno.test(
 
     // Assert
     assertEquals(notifications, [["next", 2], ["next", 4], ["return"]]);
+  },
+);
+
+Deno.test(
+  "filter should drop all values and return when the predicate never matches",
+  () => {
+    // Arrange
+    const notifications: Array<["tap", value: number] | ObserverNotification<number>> = [];
+
+    // Act
+    pipe(
+      forOf([1, 2, 3]),
+      tap((value) => notifications.push(["tap", value])),
+      filter(() => false),
+      materialize(),
+    ).subscribe(new Observer((notification) => notifications.push(notification)));
+
+    // Assert
+    assertEquals(notifications, [
+      ["tap", 1],
+      ["tap", 2],
+      ["tap", 3],
+      ["return"],
+    ]);
   },
 );
 

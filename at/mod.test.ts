@@ -7,6 +7,7 @@ import { materialize } from "@observable/materialize";
 import type { ObserverNotification } from "@observable/materialize";
 import { at } from "./mod.ts";
 import { throwError } from "@observable/throw-error";
+import { tap } from "@observable/tap";
 
 Deno.test("at should throw if no arguments are provided", () => {
   assertThrows(
@@ -170,14 +171,23 @@ Deno.test("at(negative fractional) should truncate index -2.8 to -2", () => {
 });
 
 Deno.test("at(positive) when source has fewer items should emit nothing then return", () => {
-  const notifications: Array<ObserverNotification<number>> = [];
-  const observable = pipe(forOf([1, 2]), at(5), materialize());
+  const notifications: Array<["tap", value: number] | ObserverNotification<number>> = [];
+  const observable = pipe(
+    forOf([1, 2]),
+    tap((value) => notifications.push(["tap", value])),
+    at(5),
+    materialize(),
+  );
 
   observable.subscribe(
     new Observer((notification) => notifications.push(notification)),
   );
 
-  assertEquals(notifications, [["return"]]);
+  assertEquals(notifications, [
+    ["tap", 1],
+    ["tap", 2],
+    ["return"],
+  ]);
 });
 
 Deno.test("at(-1) should emit only the last value", () => {
@@ -203,36 +213,65 @@ Deno.test("at(-2) should emit only the second-to-last value", () => {
 });
 
 Deno.test("at(negative) when source has fewer than |index| items should emit nothing then return", () => {
-  const notifications: Array<ObserverNotification<number>> = [];
-  const observable = pipe(forOf([1, 2]), at(-5), materialize());
+  const notifications: Array<["tap", value: number] | ObserverNotification<number>> = [];
+  const observable = pipe(
+    forOf([1, 2]),
+    tap((value) => notifications.push(["tap", value])),
+    at(-5),
+    materialize(),
+  );
 
   observable.subscribe(
     new Observer((notification) => notifications.push(notification)),
   );
 
-  assertEquals(notifications, [["return"]]);
+  assertEquals(notifications, [
+    ["tap", 1],
+    ["tap", 2],
+    ["return"],
+  ]);
 });
 
 Deno.test("at(Infinity) should never emit", () => {
-  const notifications: Array<ObserverNotification<number>> = [];
-  const observable = pipe(forOf([1, 2, 3]), at(Infinity), materialize());
+  const notifications: Array<["tap", value: number] | ObserverNotification<number>> = [];
+  const observable = pipe(
+    forOf([1, 2, 3]),
+    tap((value) => notifications.push(["tap", value])),
+    at(Infinity),
+    materialize(),
+  );
 
   observable.subscribe(
     new Observer((notification) => notifications.push(notification)),
   );
 
-  assertEquals(notifications, [["return"]]);
+  assertEquals(notifications, [
+    ["tap", 1],
+    ["tap", 2],
+    ["tap", 3],
+    ["return"],
+  ]);
 });
 
 Deno.test("at(-Infinity) should never emit", () => {
-  const notifications: Array<ObserverNotification<number>> = [];
-  const observable = pipe(forOf([1, 2, 3]), at(-Infinity), materialize());
+  const notifications: Array<["tap", value: number] | ObserverNotification<number>> = [];
+  const observable = pipe(
+    forOf([1, 2, 3]),
+    tap((value) => notifications.push(["tap", value])),
+    at(-Infinity),
+    materialize(),
+  );
 
   observable.subscribe(
     new Observer((notification) => notifications.push(notification)),
   );
 
-  assertEquals(notifications, [["return"]]);
+  assertEquals(notifications, [
+    ["tap", 1],
+    ["tap", 2],
+    ["tap", 3],
+    ["return"],
+  ]);
 });
 
 Deno.test("at should pump throws through itself", () => {
