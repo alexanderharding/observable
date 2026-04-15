@@ -5,8 +5,8 @@ import { flatMap } from "@observable/flat-map";
 import { empty } from "@observable/empty";
 
 /**
- * Sequentially mirrors each given {@linkcode observables} waiting for each one to [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)
- * before moving on to the next.
+ * [Pushes](https://jsr.io/@observable/core#push) _all_ values from each of the given {@linkcode observables} in
+ * [index](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array#array_indices) order.
  * @example
  * Array of observables
  * ```ts
@@ -60,10 +60,9 @@ export function flat<const Values extends ReadonlyArray<unknown>>(
   observables: Readonly<{ [Key in keyof Values]: Observable<Values[Key]> }>,
 ): Observable<Values[number]>;
 /**
- * Sequentially mirrors each given {@linkcode observables} waiting for each one to [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)
- * before moving on to the next.
+ * [Pushes](https://jsr.io/@observable/core#push) _all_ values from each of the given {@linkcode observables} in
+ * [iteration](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#the_iterable_protocol) order.
  * @example
- * Iterable of observables
  * ```ts
  * import { flat } from "@observable/flat";
  * import { forOf } from "@observable/for-of";
