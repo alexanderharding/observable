@@ -1,7 +1,7 @@
 # [@observable/distinct-until-changed](https://jsr.io/@observable/distinct-until-changed)
 
-Filters each value that is distinct from the previous value according to the given `comparator`
-function or
+[Pushes](https://jsr.io/@observable/core#push) each value that is distinct from the previous value
+according to the given `comparator` function or
 [`Object.is`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/is)
 if one is not provided.
 
