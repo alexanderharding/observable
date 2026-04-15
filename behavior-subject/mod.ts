@@ -12,8 +12,7 @@ export type BehaviorSubject<Value = unknown> = Subject<Value>;
 export interface BehaviorSubjectConstructor {
   /**
    * Creates and returns an object that acts as a [`Subject`](https://jsr.io/@observable/core/doc/~/Subject) that keeps track of its current
-   * {@linkcode Value|value} and [pushes](https://jsr.io/@observable/core#push) it to [`consumers`](https://jsr.io/@observable/core#consumer)
-   * upon [`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe).
+   * {@linkcode Value|value} and [pushes](https://jsr.io/@observable/core#push) it upon [`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe).
    * @example
    * ```ts
    * import { BehaviorSubject } from "@observable/behavior-subject";
