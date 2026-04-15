@@ -1,7 +1,7 @@
 # [@observable/merge-map](https://jsr.io/@observable/merge-map)
 
-Concurrently projects each value to an
-[`Observable`](https://jsr.io/@observable/core/doc/~/Observable).
+Projects each value to an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)
+concurrently.
 
 ## Build
 
@@ -19,25 +19,36 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 ## Example
 
 ```ts
+import { Subject } from "@observable/core";
 import { mergeMap } from "@observable/merge-map";
 import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
 const observableLookup = {
-  1: forOf([1, 2, 3]),
-  2: forOf([4, 5, 6]),
-  3: forOf([7, 8, 9]),
+  a: new Subject<number>(),
+  b: new Subject<number>(),
+  c: new Subject<number>(),
 } as const;
-pipe(
-  forOf([1, 2, 3]),
-  mergeMap((value) => observableLookup[value]),
-).subscribe({
+
+pipe(forOf(["a", "b", "c"]), mergeMap((value) => observableLookup[value])).subscribe({
   signal: controller.signal,
   next: (value) => console.log("next", value),
   return: () => console.log("return"),
   throw: (value) => console.log("throw", value),
 });
+
+observableLookup.b.next(1);
+observableLookup.a.next(2);
+observableLookup.a.next(3);
+observableLookup.a.return();
+observableLookup.c.next(4);
+observableLookup.b.next(5);
+observableLookup.b.next(6);
+observableLookup.b.return();
+observableLookup.c.next(7);
+observableLookup.c.next(8);
+observableLookup.c.return();
 
 // Console output:
 // "next" 1
@@ -48,7 +59,6 @@ pipe(
 // "next" 6
 // "next" 7
 // "next" 8
-// "next" 9
 // "return"
 ```
 
