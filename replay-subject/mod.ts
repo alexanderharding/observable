@@ -14,9 +14,9 @@ export type ReplaySubject<Value = unknown> = Subject<Value>;
  */
 export interface ReplaySubjectConstructor {
   /**
-   * Creates and returns an object that acts as a variant of [`Subject`](https://jsr.io/@observable/core/doc/~/Subject) that replays
-   * the last integer {@linkcode count} of buffered {@linkcode Value|values} to [consumers](https://jsr.io/@observable/core#consumer) upon
-   * [`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe).
+   * Creates and returns an object that acts as a variant of [`Subject`](https://jsr.io/@observable/core/doc/~/Subject) that
+   * [pushes](https://jsr.io/@observable/core#push) the last {@linkcode count} of {@linkcode Value|values} to
+   * [`consumers`](https://jsr.io/@observable/core#consumer) upon [`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe).
    * @example
    * Positive integer count
    * ```ts
