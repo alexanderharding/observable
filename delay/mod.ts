@@ -8,7 +8,7 @@ import { drop } from "@observable/drop";
 import { from } from "@observable/from";
 
 /**
- * Delays {@linkcode Value|values} by the given number of {@linkcode milliseconds}.
+ * Delays {@linkcode Value|values} by the given {@linkcode milliseconds}.
  * @example
  * 1000 milliseconds
  * ```ts
