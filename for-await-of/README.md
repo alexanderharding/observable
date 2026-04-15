@@ -1,9 +1,8 @@
 # [@observable/for-await-of](https://jsr.io/@observable/for-await-of)
 
-[`Next`](https://jsr.io/@observable/core/doc/~/Observer.next)s each
+[Pushes](https://jsr.io/@observable/core#push) each
 [`await`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/await)ed value
-of the given `values` in order and then
-[`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s.
+of the given `values` in order.
 
 ## Build
 
