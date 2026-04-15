@@ -1,8 +1,7 @@
 # [@observable/race](https://jsr.io/@observable/race)
 
-Mirrors the first of the given `observables` to
-[`next`](https://jsr.io/@observable/core/doc/~/Observer.next) or
-[`throw`](https://jsr.io/@observable/core/doc/~/Observer.throw) a value.
+[Pushes](https://jsr.io/@observable/core#push) values from the first of the given `observables` to
+[push](https://jsr.io/@observable/core#push) a value.
 
 ## Build
 
