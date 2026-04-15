@@ -1,7 +1,6 @@
 # [@observable/reduce](https://jsr.io/@observable/reduce)
 
-Reduces each value to a single value on
-[`return`](https://jsr.io/@observable/core/doc/~/Observer.return).
+Reduces all values to a single values.
 
 ## Build
 

@@ -4,8 +4,7 @@ import { pipe } from "@observable/pipe";
 import { at } from "@observable/at";
 
 /**
- * {@linkcode reducer|Reduces} each {@linkcode In|value} to a single {@linkcode Out|value} on
- * [`return`](https://jsr.io/@observable/core/doc/~/Observer.return).
+ * {@linkcode reducer|Reduces} all {@linkcode In|values} to a single {@linkcode Out|value}.
  * @example
  * ```ts
  * import { reduce } from "@observable/reduce";
