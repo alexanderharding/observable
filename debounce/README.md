@@ -1,6 +1,6 @@
 # [@observable/debounce](https://jsr.io/@observable/debounce)
 
-Debounces each value by the given number of `milliseconds`.
+Debounces each value by the given `milliseconds`.
 
 ## Build
 
