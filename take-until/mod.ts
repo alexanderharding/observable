@@ -3,7 +3,7 @@ import { from } from "@observable/from";
 
 /**
  * Takes {@linkcode Value|values} until the given {@linkcode notifier}
- * [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s a value.
+ * [pushes](https://jsr.io/@observable/core#push) a value.
  * @example
  * ```ts
  * import { Subject } from "@observable/core";

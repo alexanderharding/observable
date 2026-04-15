@@ -1,7 +1,6 @@
 # [@observable/take-until](https://jsr.io/@observable/take-until)
 
-Takes values until the given `notifier`
-[`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s a value.
+Takes values until the given `notifier` [pushes](https://jsr.io/@observable/core#push) a value.
 
 ## Build
 
