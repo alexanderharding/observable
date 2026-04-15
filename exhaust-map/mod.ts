@@ -7,8 +7,8 @@ import { finalize } from "@observable/finalize";
 
 /**
  * {@linkcode project|Projects} each {@linkcode In|value} to an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) ignoring any new
- * {@linkcode In|values} until the {@linkcode project|projected} [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)
- * [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s.
+ * {@linkcode In|values} until all {@linkcode Out|values} of the {@linkcode project|projected} [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)
+ * have been [pushed](https://jsr.io/@observable/core#push).
  * @example
  * ```ts
  * import { exhaustMap } from "@observable/exhaust-map";
@@ -18,10 +18,9 @@ import { finalize } from "@observable/finalize";
  * import { map } from "@observable/map";
  *
  * const controller = new AbortController();
- * const observable = forOf([1, 2, 3]);
  *
  * pipe(
- *   observable,
+ *   forOf([1, 2, 3]),
  *   exhaustMap((value) => pipe(timeout(100), map(() => value))),
  * ).subscribe({
  *   signal: controller.signal,

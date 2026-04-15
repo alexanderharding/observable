@@ -1,8 +1,9 @@
 # [@observable/exhaust-map](https://jsr.io/@observable/exhaust-map)
 
 Projects each value to an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) ignoring
-any new values until the projected [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)
-[`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s.
+any new value until all values of the projected
+[`Observable`](https://jsr.io/@observable/core/doc/~/Observable) have been
+[pushed](https://jsr.io/@observable/core#push).
 
 ## Build
 
@@ -27,10 +28,9 @@ import { timeout } from "@observable/timeout";
 import { map } from "@observable/map";
 
 const controller = new AbortController();
-const observable = forOf([1, 2, 3]);
 
 pipe(
-  observable,
+  forOf([1, 2, 3]),
   exhaustMap((value) => pipe(timeout(100), map(() => value))),
 ).subscribe({
   signal: controller.signal,
