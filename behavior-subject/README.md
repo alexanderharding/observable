@@ -1,8 +1,7 @@
 # [@observable/behavior-subject](https://jsr.io/@observable/behavior-subject)
 
 A variant of [`Subject`](https://jsr.io/@observable/core/doc/~/Subject) that keeps track of its
-current value and [pushes](https://jsr.io/@observable/core#push) it to
-[`consumers`](https://jsr.io/@observable/core#consumer) upon
+current value and [pushes](https://jsr.io/@observable/core#push) it upon
 [`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe).
 
 ## Build

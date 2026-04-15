@@ -1,8 +1,7 @@
 # [@observable/replay-subject](https://jsr.io/@observable/replay-subject)
 
 A variant of [`Subject`](https://jsr.io/@observable/core/doc/~/Subject) that
-[pushes](https://jsr.io/@observable/core#push) the last of the given `count` of values to
-[`consumers`](https://jsr.io/@observable/core#consumer) upon
+[pushes](https://jsr.io/@observable/core#push) the last of the given `count` of values upon
 [`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe).
 
 ## Build
