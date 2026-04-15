@@ -11,7 +11,7 @@ import { takeUntil } from "@observable/take-until";
 import { finalize } from "@observable/finalize";
 
 /**
- * [`Next`](https://jsr.io/@observable/core/doc/~/Observer.next)s {@linkcode Values|values} from _all_ of the given
+ * [Pushes](https://jsr.io/@observable/core#push) the latest {@linkcode Values|values} from _all_ of the given
  * {@linkcode observables} in [index](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array#array_indices)
  * order.
  * @example
@@ -83,9 +83,9 @@ export function all<const Values extends ReadonlyArray<unknown>>(
   observables: Readonly<{ [Key in keyof Values]: Observable<Values[Key]> }>,
 ): Observable<Values>;
 /**
- * [`Next`](https://jsr.io/@observable/core/doc/~/Observer.next)s an [`Array`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)
- * of {@linkcode Value|values} from _all_ of the given {@linkcode observables} in [iteration](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#the_iterable_protocol)
- * order.
+ * [Pushes](https://jsr.io/@observable/core#push) an [`Array`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)
+ * of the latest {@linkcode Value|values} from _all_ of the given {@linkcode observables} in
+ * [iteration](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#the_iterable_protocol) order.
  * @example
  * Iterable of observables
  * ```ts
@@ -103,6 +103,7 @@ export function all<const Values extends ReadonlyArray<unknown>>(
  *   return: () => console.log("return"),
  *   throw: (value) => console.log("throw", value),
  * });
+ *
  * subject2.next(1);
  * subject1.next(2);
  * subject3.next(3); // "next" [2, 3]
