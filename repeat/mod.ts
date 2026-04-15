@@ -9,7 +9,7 @@ import { of } from "@observable/of";
 /**
  * Re-[`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe)s on
  * [`return`](https://jsr.io/@observable/core/doc/~/Observer.return) as long as the given {@linkcode notifier}
- * then [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s a value.
+ * then [pushes](https://jsr.io/@observable/core#push) a value.
  * @example
  * ```ts
  * import { repeat } from "@observable/repeat";

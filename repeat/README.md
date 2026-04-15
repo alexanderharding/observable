@@ -2,7 +2,7 @@
 
 Re-[`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe)s on
 [`return`](https://jsr.io/@observable/core/doc/~/Observer.return) as long as the given `notifier`
-then [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s a value.
+then [pushes](https://jsr.io/@observable/core#push) a value.
 
 ## Build
 
