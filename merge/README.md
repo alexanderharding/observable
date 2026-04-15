@@ -1,6 +1,6 @@
 # [@observable/merge](https://jsr.io/@observable/merge)
 
-Concurrently mirrors all of the given `observables`
+[Pushes](https://jsr.io/@observable/core#push) each value of the given `observables`.
 
 ## Build
 
