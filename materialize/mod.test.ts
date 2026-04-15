@@ -1,9 +1,9 @@
-import { assertEquals } from "@std/assert";
+import { assertEquals, assertStrictEquals, assertThrows } from "@std/assert";
 import { Observer } from "@observable/core";
 import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 import { throwError } from "@observable/throw-error";
-import { materialize, type ObserverNotification } from "./mod.ts";
+import { isObserverNotification, materialize, type ObserverNotification } from "./mod.ts";
 
 Deno.test(
   "materialize should emit the notifications from a source observable that returns",
@@ -89,4 +89,96 @@ Deno.test("materialize should honor unsubscription", () => {
   ]);
   assertEquals(returnCalls, []);
   assertEquals(throwCalls, []);
+});
+
+Deno.test("isObserverNotification should throw if no arguments are provided", () => {
+  assertThrows(
+    // @ts-expect-error: Testing invalid arguments
+    () => isObserverNotification(),
+    TypeError,
+    "1 argument required but 0 present",
+  );
+});
+
+Deno.test("isObserverNotification should return true for a next notification", () => {
+  // Arrange
+  const notification: ObserverNotification = ["next", 0];
+
+  // Act
+  const result = isObserverNotification(notification);
+
+  // Assert
+  assertStrictEquals(result, true);
+});
+
+Deno.test("isObserverNotification should return true for a return notification", () => {
+  // Arrange
+  const notification: ObserverNotification = ["return"];
+
+  // Act
+  const result = isObserverNotification(notification);
+
+  // Assert
+  assertStrictEquals(result, true);
+});
+
+Deno.test("isObserverNotification should return true for a throw notification", () => {
+  // Arrange
+  const error = new Error("test");
+  const notification: ObserverNotification = ["throw", error];
+
+  // Act
+  const result = isObserverNotification(notification);
+
+  // Assert
+  assertStrictEquals(result, true);
+});
+
+Deno.test(
+  "isObserverNotification should return false when next lacks a value",
+  () => {
+    // Arrange
+    const notification = ["next"];
+
+    // Act
+    const result = isObserverNotification(notification);
+
+    // Assert
+    assertStrictEquals(result, false);
+  },
+);
+Deno.test(
+  "isObserverNotification should return false when throw lacks a value",
+  () => {
+    // Arrange
+    const notification = ["throw"];
+
+    // Act
+    const result = isObserverNotification(notification);
+
+    // Assert
+    assertStrictEquals(result, false);
+  },
+);
+
+Deno.test("isObserverNotification should return false for an unknown notification kind", () => {
+  // Arrange
+  const notification = ["invalid"];
+
+  // Act
+  const result = isObserverNotification(notification);
+
+  // Assert
+  assertStrictEquals(result, false);
+});
+
+Deno.test("isObserverNotification should return false when the value is not an array", () => {
+  // Arrange
+  const value = null;
+
+  // Act
+  const result = isObserverNotification(value);
+
+  // Assert
+  assertStrictEquals(result, false);
 });

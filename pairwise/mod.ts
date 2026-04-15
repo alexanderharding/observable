@@ -15,7 +15,7 @@ const noValue = Symbol("Flag indicating that no value has been emitted yet");
 export type Pair<Value = unknown> = Readonly<[previous: Value, current: Value]>;
 
 /**
- * [`Next`](https://jsr.io/@observable/core/doc/~/Observer.next)s {@linkcode Pair|pair}s of consecutive {@linkcode Value|values}.
+ * [Pushes](https://jsr.io/@observable/core#push) {@linkcode Pair|pairs} of consecutive {@linkcode Value|values}.
  * @example
  * ```ts
  * import { pairwise } from "@observable/pairwise";

@@ -1,8 +1,8 @@
 import { Observable } from "@observable/core";
 
 /**
- * [`Next`](https://jsr.io/@observable/core/doc/~/Observer.next)s each [`await`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/await)ed
- * {@linkcode Value|value} of the given {@linkcode values} in order and then [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s.
+ * [Pushes](https://jsr.io/@observable/core#push) each [`await`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/await)ed
+ * {@linkcode Value|value} of the given {@linkcode values} in order.
  * @example
  * ```ts
  * import { forAwaitOf } from "@observable/for-await-of";

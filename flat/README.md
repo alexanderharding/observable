@@ -1,7 +1,8 @@
 # [@observable/flat](https://jsr.io/@observable/flat)
 
-Sequentially mirrors each given `observables` waiting for each one to
-[`return`](https://jsr.io/@observable/core/doc/~/Observer.return) before moving on to the next.
+[Pushes](https://jsr.io/@observable/core#push) _all_ values from each of the given `observables` in
+[iteration](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#the_iterable_protocol)
+order.
 
 ## Build
 
@@ -65,6 +66,35 @@ flat([]).subscribe({
 });
 
 // Console output (synchronously):
+// "return"
+```
+
+Iterable of observables
+
+```ts
+import { flat } from "@observable/flat";
+import { forOf } from "@observable/for-of";
+import { pipe } from "@observable/pipe";
+
+const controller = new AbortController();
+const observable1 = forOf([1, 2, 3]);
+const observable2 = observable1;
+const observable3 = forOf([4, 5, 6]);
+
+flat(new Set([observable1, observable2, observable3])).subscribe({
+  signal: controller.signal,
+  next: (value) => console.log("next", value),
+  return: () => console.log("return"),
+  throw: (value) => console.log("throw", value),
+});
+
+// Console output:
+// "next" 1
+// "next" 2
+// "next" 3
+// "next" 4
+// "next" 5
+// "next" 6
 // "return"
 ```
 

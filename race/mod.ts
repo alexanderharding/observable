@@ -9,9 +9,7 @@ import { filter } from "@observable/filter";
 import { empty } from "@observable/empty";
 
 /**
- * Mirrors the first of the given {@linkcode observables} to
- * [`next`](https://jsr.io/@observable/core/doc/~/Observer.next) or
- * [`throw`](https://jsr.io/@observable/core/doc/~/Observer.throw) a value.
+ * [Pushes](https://jsr.io/@observable/core#push) values from the first of the given {@linkcode observables} to [push](https://jsr.io/@observable/core#push) a value.
  * @example
  * Array of observables
  * ```ts
@@ -59,9 +57,7 @@ export function race<const Values extends ReadonlyArray<unknown>>(
   observables: Readonly<{ [Key in keyof Values]: Observable<Values[Key]> }>,
 ): Observable<Values[number]>;
 /**
- * Mirrors the first of the given {@linkcode observables} to
- * [`next`](https://jsr.io/@observable/core/doc/~/Observer.next) or
- * [`throw`](https://jsr.io/@observable/core/doc/~/Observer.throw) a value.
+ * [Pushes](https://jsr.io/@observable/core#push) values from the first of the given {@linkcode observables} to [push](https://jsr.io/@observable/core#push) a value.
  * @example
  * Iterable of observables
  * ```ts

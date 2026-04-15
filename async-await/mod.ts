@@ -2,8 +2,7 @@ import { Observable } from "@observable/core";
 
 /**
  * [`Await`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/await)s the given
- * {@linkcode expression}, [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s its resolved value, and then
- * [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s.
+ * {@linkcode expression} and [pushes](https://jsr.io/@observable/core#push) its resolved value.
  * @example
  * Resolved promise
  * ```ts

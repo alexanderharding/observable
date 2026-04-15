@@ -1,7 +1,7 @@
 # [@observable/interval](https://jsr.io/@observable/interval)
 
-Repeatedly [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s a `void` value with a
-fixed time delay between each call.
+Repeatedly [pushes](https://jsr.io/@observable/core#push) a `void` value at an interval of the given
+`milliseconds`.
 
 ## Build
 

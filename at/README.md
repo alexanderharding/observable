@@ -1,8 +1,7 @@
 # [@observable/at](https://jsr.io/@observable/at)
 
-[`Next`](https://jsr.io/@observable/core/doc/~/Observer.next)s the first value at the given `index`
-and then [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s. Negative indices count
-back from the last value in the sequence.
+[Pushes](https://jsr.io/@observable/core#push) the first value at the given `index`. Negative
+indices count back from the last value in the sequence.
 
 ## Build
 

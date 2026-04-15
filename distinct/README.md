@@ -1,6 +1,6 @@
 # [@observable/distinct](https://jsr.io/@observable/distinct)
 
-Filters values that are
+[Pushes](https://jsr.io/@observable/core#push) values that are
 [distinct](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/is)
 from all previous values.
 

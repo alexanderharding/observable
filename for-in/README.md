@@ -1,7 +1,6 @@
 # [@observable/for-in](https://jsr.io/@observable/for-in)
 
-[`Next`](https://jsr.io/@observable/core/doc/~/Observer.next)s each key of the given `object` in
-order and then [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s.
+[Pushes](https://jsr.io/@observable/core#push) each key of the given `object` in order.
 
 ## Build
 

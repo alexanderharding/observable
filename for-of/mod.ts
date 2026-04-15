@@ -2,14 +2,15 @@ import { Observable } from "@observable/core";
 import { empty } from "@observable/empty";
 
 /**
- * [`Next`](https://jsr.io/@observable/core/doc/~/Observer.next)s each [iterated](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols)
- * value in order and then [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s.
+ * [Pushes](https://jsr.io/@observable/core#push) each [iterated](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols)
+ * value in order.
  * @example
  * Populate array
  * ```ts
  * import { forOf } from "@observable/for-of";
  *
  * const controller = new AbortController();
+ *
  * forOf([1, 2, 3]).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
@@ -29,6 +30,7 @@ import { empty } from "@observable/empty";
  * import { forOf } from "@observable/for-of";
  *
  * const controller = new AbortController();
+ *
  * forOf([]).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
@@ -44,13 +46,14 @@ export function forOf<const Values extends ReadonlyArray<unknown>>(
   values: Values,
 ): Observable<Values[number]>;
 /**
- * [`Next`](https://jsr.io/@observable/core/doc/~/Observer.next)s each [iterated](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols)
- * {@linkcode Value|value} in order and then [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s.
+ * [Pushes](https://jsr.io/@observable/core#push) each [iterated](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols)
+ * {@linkcode Value|value} in order.
  * @example
  * ```ts
  * import { forOf } from "@observable/for-of";
  *
  * const controller = new AbortController();
+ *
  * forOf(new Set([1, 2, 1, 2, 3, 3])).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),

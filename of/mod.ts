@@ -2,8 +2,7 @@ import type { Observable } from "@observable/core";
 import { forOf } from "@observable/for-of";
 
 /**
- * [`Next`](https://jsr.io/@observable/core/doc/~/Observer.next)s the given {@linkcode value}
- * and then [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s.
+ * [Pushes](https://jsr.io/@observable/core#push) the given {@linkcode value}.
  * @example
  * ```ts
  * import { of } from "@observable/of";

@@ -1,7 +1,6 @@
 # [@observable/take](https://jsr.io/@observable/take)
 
-Takes the first `count` of values and then
-[`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s.
+[Pushes](https://jsr.io/@observable/core#push) the first of the given `count` of values.
 
 ## Build
 

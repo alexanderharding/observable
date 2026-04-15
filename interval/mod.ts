@@ -10,8 +10,7 @@ import { never } from "@observable/never";
 const infiniteVoid = defer(() => forOf(generateInfiniteVoid()));
 
 /**
- * Repeatedly [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s a `void` value with a
- * fixed {@linkcode milliseconds|time delay} between each call.
+ * Repeatedly [pushes](https://jsr.io/@observable/core#push) a `void` value at an interval of the given {@linkcode milliseconds}.
  * @example
  * Positive integer milliseconds
  * ```ts

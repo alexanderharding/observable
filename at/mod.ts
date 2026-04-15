@@ -7,9 +7,8 @@ import { empty } from "@observable/empty";
 import { from } from "@observable/from";
 
 /**
- * [`Next`](https://jsr.io/@observable/core/doc/~/Observer.next)s the first {@linkcode Value|value} at the given
- * {@linkcode index} and then [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s. Negative
- * {@linkcode index|indices} count back from the last {@linkcode Value|value} in the sequence.
+ * [Pushes](https://jsr.io/@observable/core#push) the first {@linkcode Value|value} at the given
+ * {@linkcode index}. Negative {@linkcode index|indices} count back from the last {@linkcode Value|value} in the sequence.
  * @example
  * Positive index integer
  * ```ts

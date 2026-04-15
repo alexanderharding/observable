@@ -1,6 +1,6 @@
 # [@observable/pairwise](https://jsr.io/@observable/pairwise)
 
-[`Next`](https://jsr.io/@observable/core/doc/~/Observer.next)s
+[Pushes](https://jsr.io/@observable/core#push)
 [`pair`](https://jsr.io/@observable/pairwise/doc/~/Pair)s of consecutive values.
 
 ## Build

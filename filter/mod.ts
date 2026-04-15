@@ -2,7 +2,7 @@ import { isObservable, Observable } from "@observable/core";
 import { from } from "@observable/from";
 
 /**
- * Filters {@linkcode Value|values} that satisfy the given {@linkcode predicate} function.
+ * [Pushes](https://jsr.io/@observable/core#push) {@linkcode Value|values} that satisfy the given {@linkcode predicate} function.
  * @example
  * ```ts
  * import { filter } from "@observable/filter";

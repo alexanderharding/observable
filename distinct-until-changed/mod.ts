@@ -14,7 +14,8 @@ import { of } from "@observable/of";
 const noValue = Symbol("Flag indicating that no value has been emitted yet");
 
 /**
- * Filters each {@linkcode Value|value} that is [distinct](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/is)
+ * [Pushes](https://jsr.io/@observable/core#push) each {@linkcode Value|value} that is
+ * [distinct](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/is)
  * from the previous {@linkcode Value|value}.
  * @example
  * ```ts
@@ -40,7 +41,8 @@ const noValue = Symbol("Flag indicating that no value has been emitted yet");
  */
 export function distinctUntilChanged<Value>(): (source: Observable<Value>) => Observable<Value>;
 /**
- * Filters each {@linkcode Value|value} that is distinct from the previous {@linkcode Value|value} according to the given {@linkcode comparator} function.
+ * [Pushes](https://jsr.io/@observable/core#push) each {@linkcode Value|value} that is distinct from the previous
+ * {@linkcode Value|value} according to the given {@linkcode comparator} function.
  * @example
  * ```ts
  * import { distinctUntilChanged } from "@observable/distinct-until-changed";
@@ -66,8 +68,10 @@ export function distinctUntilChanged<Value>(
   comparator: (previous: Value, current: Value) => boolean,
 ): (source: Observable<Value>) => Observable<Value>;
 /**
- * Filters each {@linkcode Value|value} that is distinct from the previous {@linkcode Value|value} according to the given {@linkcode comparator}
- * function or [`Object.is`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/is) if one is not provided.
+ * [Pushes](https://jsr.io/@observable/core#push) each {@linkcode Value|value} that is distinct from the previous
+ * {@linkcode Value|value} according to the given {@linkcode comparator} function or
+ * [`Object.is`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/is) if one is
+ * not provided.
  * @example
  * Default comparator
  * ```ts

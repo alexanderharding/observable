@@ -1,7 +1,6 @@
 # [@observable/of](https://jsr.io/@observable/of)
 
-[`Next`](https://jsr.io/@observable/core/doc/~/Observer.next)s the given `value` and then
-[`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s.
+[Pushes](https://jsr.io/@observable/core#push) the given `value`.
 
 ## Build
 

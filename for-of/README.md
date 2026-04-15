@@ -1,8 +1,8 @@
 # [@observable/for-of](https://jsr.io/@observable/for-of)
 
-[`Next`](https://jsr.io/@observable/core/doc/~/Observer.next)s each
+[Pushes](https://jsr.io/@observable/core#push) each
 [iterated](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols)
-value in order and then [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s.
+value in order.
 
 ## Build
 
@@ -25,6 +25,7 @@ Populate array
 import { forOf } from "@observable/for-of";
 
 const controller = new AbortController();
+
 forOf([1, 2, 3]).subscribe({
   signal: controller.signal,
   next: (value) => console.log("next", value),
@@ -45,6 +46,7 @@ Empty array
 import { forOf } from "@observable/for-of";
 
 const controller = new AbortController();
+
 forOf([]).subscribe({
   signal: controller.signal,
   next: (value) => console.log("next", value),
@@ -62,6 +64,7 @@ Iterable
 import { forOf } from "@observable/for-of";
 
 const controller = new AbortController();
+
 forOf(new Set([1, 2, 1, 2, 3, 3])).subscribe({
   signal: controller.signal,
   next: (value) => console.log("next", value),

@@ -1,6 +1,6 @@
 # [@observable/delay](https://jsr.io/@observable/delay)
 
-Delays values by the given number of `milliseconds`.
+Delays values by the given `milliseconds`.
 
 ## Build
 

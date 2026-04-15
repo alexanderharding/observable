@@ -5,7 +5,7 @@ import { mergeMap } from "@observable/merge-map";
 import { empty } from "@observable/empty";
 
 /**
- * Concurrently mirrors all of the given {@linkcode observables}.
+ * [Pushes](https://jsr.io/@observable/core#push) each value of the given {@linkcode observables}.
  * @example
  * Array of observables
  * ```ts
@@ -54,8 +54,7 @@ export function merge<const Values extends ReadonlyArray<unknown>>(
   observables: Readonly<{ [Key in keyof Values]: Observable<Values[Key]> }>,
 ): Observable<Values[number]>;
 /**
- * Concurrently [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)s all values from all
- * given {@linkcode observables}.
+ * [Pushes](https://jsr.io/@observable/core#push) each {@linkcode Value|value} of the given {@linkcode observables}.
  * @example
  * Iterable of observables
  * ```ts

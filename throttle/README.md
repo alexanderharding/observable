@@ -1,6 +1,6 @@
 # [@observable/throttle](https://jsr.io/@observable/throttle)
 
-Throttles each value by the given number of `milliseconds`.
+Throttles each value by the given `milliseconds`.
 
 ## Build
 

@@ -4,13 +4,13 @@ import { at } from "@observable/at";
 
 /**
  * [`Resolve`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/resolve)s with the
- * last {@linkcode Value|value} of the given {@linkcode observable} on [`return`](https://jsr.io/@observable/core/doc/~/Observer.return),
+ * last {@linkcode Value|value} of the given {@linkcode observable},
  * [`reject`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/reject)s with
  * a [`throw`](https://jsr.io/@observable/core/doc/~/Observer.throw)n value of the given {@linkcode observable}, or
  * [`reject`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/reject)s with a
  * [`TypeError`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypeError)
  * if the given {@linkcode observable} [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s
- * without [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ing a {@linkcode Value|value}.
+ * without [pushing](https://jsr.io/@observable/core#push) a {@linkcode Value|value}.
  * @example
  * Last emitted value
  * ```ts

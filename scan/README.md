@@ -1,6 +1,6 @@
 # [@observable/scan](https://jsr.io/@observable/scan)
 
-Reduces each value to a single value.
+Reduces each value to an intermediate value.
 
 ## Build
 

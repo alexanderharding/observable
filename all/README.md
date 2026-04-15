@@ -1,8 +1,8 @@
 # [@observable/all](https://jsr.io/@observable/all)
 
-[`Next`](https://jsr.io/@observable/core/doc/~/Observer.next)s an
+[Pushes](https://jsr.io/@observable/core#push) an
 [`Array`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) of
-values from _all_ of the given `observables` in
+the latest values from _all_ of the given `observables` in
 [iteration](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#the_iterable_protocol)
 order.
 
@@ -78,6 +78,57 @@ import { all } from "@observable/all";
 const controller = new AbortController();
 
 all([]).subscribe({
+  signal: controller.signal,
+  next: (value) => console.log("next", value),
+  return: () => console.log("return"),
+  throw: (value) => console.log("throw", value),
+});
+
+// Console output:
+// "return"
+```
+
+Iterable of observables
+
+```ts
+import { all } from "@observable/all";
+import { Subject } from "@observable/core";
+
+const subject1 = new Subject<number>();
+const subject2 = subject1;
+const subject3 = new Subject<number>();
+const controller = new AbortController();
+
+all(new Set([subject1, subject2, subject3])).subscribe({
+  signal: controller.signal,
+  next: (value) => console.log("next", value),
+  return: () => console.log("return"),
+  throw: (value) => console.log("throw", value),
+});
+
+subject2.next(1);
+subject1.next(2);
+subject3.next(3); // "next" [2, 3]
+subject1.next(4); // "next" [4, 3]
+subject2.next(5); // "next" [4, 5]
+subject1.return();
+subject3.return(); // "return"
+subject2.return();
+```
+
+Iterable with an empty observable
+
+```ts
+import { all } from "@observable/all";
+import { forOf } from "@observable/for-of";
+import { pipe } from "@observable/pipe";
+import { empty } from "@observable/empty";
+
+const observable1 = forOf([1, 2, 3]);
+const observable2 = forOf([7, 8, 9]);
+const controller = new AbortController();
+
+all(new Set([observable1, empty, observable2])).subscribe({
   signal: controller.signal,
   next: (value) => console.log("next", value),
   return: () => console.log("return"),

@@ -2,40 +2,47 @@ import { isObservable, Observable } from "@observable/core";
 import { from } from "@observable/from";
 
 /**
- * Sequentially {@linkcode project|projects} each {@linkcode In|value} to an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)
- * waiting for each {@linkcode project|projected} [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)
- * to [`return`](https://jsr.io/@observable/core/doc/~/Observer.return) before moving on to the next.
+ * {@linkcode project|Projects} each {@linkcode In|value} to an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) sequentially.
  * @example
  * ```ts
+ * import { Subject } from "@observable/core";
  * import { flatMap } from "@observable/flat-map";
  * import { forOf } from "@observable/for-of";
  * import { pipe } from "@observable/pipe";
  *
- * const observable = forOf(["a", "b", "c"]);
  * const controller = new AbortController();
  * const observableLookup = {
- *   a: forOf([1, 2, 3]),
- *   b: forOf([4, 5, 6]),
- *   c: forOf([7, 8, 9]),
+ *   a: new Subject<number>(),
+ *   b: new Subject<number>(),
+ *   c: new Subject<number>(),
  * } as const;
  *
- * pipe(observable, flatMap((value) => observableLookup[value])).subscribe({
+ * pipe(forOf(["a", "b", "c"]), flatMap((value) => observableLookup[value])).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
  *   return: () => console.log("return"),
  *   throw: (value) => console.log("throw", value),
  * });
  *
+ * observableLookup.b.next(1); // ignored
+ * observableLookup.a.next(2);
+ * observableLookup.a.next(3);
+ * observableLookup.a.return();
+ * observableLookup.c.next(4); // ignored
+ * observableLookup.b.next(5);
+ * observableLookup.b.next(6);
+ * observableLookup.b.return();
+ * observableLookup.c.next(7);
+ * observableLookup.c.next(8);
+ * observableLookup.c.return();
+ *
  * // Console output:
- * // "next" 1
  * // "next" 2
  * // "next" 3
- * // "next" 4
  * // "next" 5
  * // "next" 6
  * // "next" 7
  * // "next" 8
- * // "next" 9
  * // "return"
  * ```
  */

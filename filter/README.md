@@ -1,6 +1,6 @@
 # [@observable/filter](https://jsr.io/@observable/filter)
 
-Filters values that satisfy the given `predicate` function.
+[Pushes](https://jsr.io/@observable/core#push) values that satisfy the given `predicate` function.
 
 ## Build
 
