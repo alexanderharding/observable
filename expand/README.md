@@ -1,7 +1,7 @@
 # [@observable/expand](https://jsr.io/@observable/expand)
 
-Recursively projects each value to an
-[`Observable`](https://jsr.io/@observable/core/doc/~/Observable).
+Projects each value to an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)
+recursively.
 
 ## Build
 

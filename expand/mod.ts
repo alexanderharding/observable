@@ -7,8 +7,8 @@ import { defer } from "@observable/defer";
 import { of } from "@observable/of";
 
 /**
- * Recursively {@linkcode project|projects} each {@linkcode Value|value} to an
- * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable).
+ * {@linkcode project|Projects} each {@linkcode Value|value} to an
+ * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) recursively.
  * @example
  * Double until 16
  * ```ts
