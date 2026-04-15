@@ -3,7 +3,7 @@ import { from } from "@observable/from";
 import { empty } from "@observable/empty";
 
 /**
- * Takes the first {@linkcode count} of {@linkcode Value|values}.
+ * [Pushes](https://jsr.io/@observable/core#push) the first of the given {@linkcode count} of {@linkcode Value|values}.
  * @example
  * Positive integer count
  * ```ts
