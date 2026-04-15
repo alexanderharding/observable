@@ -1,7 +1,6 @@
 # [@observable/timeout](https://jsr.io/@observable/timeout)
 
-[Pushes](https://jsr.io/@observable/core#push) a `void` value after the given number of
-`milliseconds`.
+[Pushes](https://jsr.io/@observable/core#push) a `void` value after the given `milliseconds`.
 
 ## Build
 

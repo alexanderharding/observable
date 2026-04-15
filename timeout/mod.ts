@@ -6,7 +6,7 @@ import { pipe } from "@observable/pipe";
 import { take } from "@observable/take";
 
 /**
- * [Pushes](https://jsr.io/@observable/core#push) a `void` value after the given number of {@linkcode milliseconds}.
+ * [Pushes](https://jsr.io/@observable/core#push) a `void` value after the given {@linkcode milliseconds}.
  * @example
  * Positive integer milliseconds
  * ```ts
