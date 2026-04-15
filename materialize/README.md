@@ -1,7 +1,9 @@
 # [@observable/materialize](https://jsr.io/@observable/materialize)
 
-[`Next`](https://jsr.io/@observable/core/doc/~/Observer.next)s all
-[notifications](https://jsr.io/@observable/core#notification) as values.
+[Pushes](https://jsr.io/@observable/core#push) all
+[notifications](https://jsr.io/@observable/core#notification) as values marked with their original
+types within
+[`ObserverNotification`](https://jsr.io/@observable/materialize/doc/~/ObserverNotification) objects.
 
 ## Build
 

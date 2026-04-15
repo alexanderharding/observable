@@ -12,7 +12,8 @@ export type ObserverNotification<Value = unknown> = Readonly<
 >;
 
 /**
- * [`Next`](https://jsr.io/@observable/core/doc/~/Observer.next)s all [notifications](https://jsr.io/@observable/core#notification) as values.
+ * [Pushes](https://jsr.io/@observable/core#push) all [notifications](https://jsr.io/@observable/core#notification)
+ * as values marked with their original types within {@linkcode ObserverNotification} objects.
  * @example
  * Notifications as values
  * ```ts
@@ -116,4 +117,67 @@ export function materialize<Value>(): (
       })
     );
   };
+}
+
+/**
+ * Checks if a {@linkcode value} is an object that implements the {@linkcode ObserverNotification} interface.
+ * @example
+ * Next
+ * ```ts
+ * import { isObserverNotification, ObserverNotification } from "@observable/materialize";
+ *
+ * const value: ObserverNotification = ["next", 1];
+ *
+ * isObserverNotification(value); // true
+ * ```
+ * @example
+ * Return
+ * ```ts
+ * import { isObserverNotification, ObserverNotification } from "@observable/materialize";
+ *
+ * const value: ObserverNotification = ["return"];
+ *
+ * isObserverNotification(value); // true
+ * ```
+ * @example
+ * Throw
+ * ```ts
+ * import { isObserverNotification, ObserverNotification } from "@observable/materialize";
+ *
+ * const value: ObserverNotification = ["throw", new Error("error")];
+ *
+ * isObserverNotification(value); // true
+ * ```
+ * @example
+ * Invalid Next
+ * ```ts
+ * import { isObserverNotification, ObserverNotification } from "@observable/materialize";
+ *
+ * const value: ObserverNotification = ["next"];
+ *
+ * isObserverNotification(value); // false
+ * ```
+ * @example
+ * Invalid Throw
+ * ```ts
+ * import { isObserverNotification, ObserverNotification } from "@observable/materialize";
+ *
+ * const value: ObserverNotification = ["throw"];
+ *
+ * isObserverNotification(value); // false
+ * ```
+ * @example
+ * Invalid
+ * ```ts
+ * import { isObserverNotification, ObserverNotification } from "@observable/materialize";
+ *
+ * const value = ["invalid"];
+ *
+ * isObserverNotification(value); // false
+ * ```
+ */
+export function isObserverNotification(value: unknown): value is ObserverNotification {
+  if (!arguments.length) throw new TypeError("1 argument required but 0 present");
+  return Array.isArray(value) &&
+    (value[0] === "return" || ((value[0] === "next" || value[0] === "throw") && value.length > 1));
 }
