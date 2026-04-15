@@ -5,7 +5,7 @@ import { pipe } from "@observable/pipe";
 import { map } from "@observable/map";
 
 /**
- * {@linkcode reducer|Reduces} each {@linkcode In|value} to a single {@linkcode Out|value}.
+ * {@linkcode reducer|Reduces} each {@linkcode In|value} to an intermediate {@linkcode Out|value}.
  * @example
  * ```ts
  * import { scan } from "@observable/scan";
