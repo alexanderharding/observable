@@ -6,7 +6,8 @@ import { tap } from "@observable/tap";
 import { filter } from "@observable/filter";
 
 /**
- * Filters {@linkcode Value|values} that are [distinct](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/is)
+ * [Pushes](https://jsr.io/@observable/core#push) {@linkcode Value|values} that are
+ * [distinct](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/is)
  * from all previous {@linkcode Value|values}.
  * @example
  * ```ts
