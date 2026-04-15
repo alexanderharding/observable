@@ -3,7 +3,7 @@ import { from } from "@observable/from";
 import { empty } from "@observable/empty";
 
 /**
- * Takes the first {@linkcode count} of {@linkcode Value|values} and then [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s.
+ * Takes the first {@linkcode count} of {@linkcode Value|values}.
  * @example
  * Positive integer count
  * ```ts
