@@ -1,7 +1,7 @@
 # [@observable/timeout](https://jsr.io/@observable/timeout)
 
-[`Next`](https://jsr.io/@observable/core/doc/~/Observer.next)s a `void` value after the given number
-of `milliseconds` and then [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s.
+[Pushes](https://jsr.io/@observable/core#push) a `void` value after the given number of
+`milliseconds`.
 
 ## Build
 
