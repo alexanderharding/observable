@@ -1,8 +1,7 @@
 import { Observable } from "@observable/core";
 
 /**
- * [`Next`](https://jsr.io/@observable/core/doc/~/Observer.next)s each key of the given {@linkcode object} in order and then
- * [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s.
+ * [Pushes](https://jsr.io/@observable/core#push) each key of the given {@linkcode object} in order.
  * @example
  * ```ts
  * import { forIn } from "@observable/for-in";
