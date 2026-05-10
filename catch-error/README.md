@@ -1,6 +1,7 @@
 # [@observable/catch-error](https://jsr.io/@observable/catch-error)
 
-Projects each [`throw`](https://jsr.io/@observable/core/doc/~/Observer.throw)n value to an
+[`Projects`](https://jsr.io/@observable/catch-error/doc/~/catchError#function_catcherror_0_parameter_project)
+each [`throw`](https://jsr.io/@observable/core/doc/~/Observer.throw)n value to an
 [`Observable`](https://jsr.io/@observable/core/doc/~/Observable).
 
 ## Build

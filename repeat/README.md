@@ -1,7 +1,8 @@
 # [@observable/repeat](https://jsr.io/@observable/repeat)
 
 Re-[`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe)s on
-[`return`](https://jsr.io/@observable/core/doc/~/Observer.return) as long as the given `notifier`
+[`return`](https://jsr.io/@observable/core/doc/~/Observer.return) as long as the given
+[`notifier`](https://jsr.io/@observable/repeat/doc/~/repeat#function_repeat_0_parameter_notifier)
 then [pushes](https://jsr.io/@observable/core#push) a value.
 
 ## Build

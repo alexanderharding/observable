@@ -1,6 +1,8 @@
 # [@observable/map](https://jsr.io/@observable/map)
 
-Projects each value to another value.
+[`Projects`](https://jsr.io/@observable/map/doc/~/map#function_map_0_parameter_project) each
+[`value`](https://jsr.io/@observable/map/doc/~/map#type_param_in) to another
+[`value`](https://jsr.io/@observable/map/doc/~/map#type_param_out).
 
 ## Build
 

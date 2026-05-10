@@ -1,6 +1,8 @@
 # [@observable/merge](https://jsr.io/@observable/merge)
 
-[Pushes](https://jsr.io/@observable/core#push) each value of the given `observables`.
+[Pushes](https://jsr.io/@observable/core#push) each
+[`value`](https://jsr.io/@observable/merge/doc/~/merge#type_param_value) of the given
+[`observables`](https://jsr.io/@observable/merge/doc/~/merge#function_merge_1_parameter_observables).
 
 ## Build
 

@@ -1,8 +1,11 @@
 # [@observable/switch-map](https://jsr.io/@observable/switch-map)
 
-Projects each value to an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) and
+[`Projects`](https://jsr.io/@observable/switch-map/doc/~/switchMap#function_switchmap_0_parameter_project)
+each [`value`](https://jsr.io/@observable/switch-map/doc/~/switchMap#type_param_in) to an
+[`Observable`](https://jsr.io/@observable/core/doc/~/Observable) and
 [`unsubscribes`](https://jsr.io/@observable/core/doc/~/Observer.signal) from any previously
-projected [`Observable`](https://jsr.io/@observable/core/doc/~/Observable).
+[`projected`]((https://jsr.io/@observable/switch-map/doc/~/switchMap#function_switchmap_0_parameter_project))
+[`Observable`](https://jsr.io/@observable/core/doc/~/Observable).
 
 ## Build
 

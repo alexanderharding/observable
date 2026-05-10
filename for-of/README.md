@@ -2,7 +2,7 @@
 
 [Pushes](https://jsr.io/@observable/core#push) each
 [iterated](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols)
-value in order.
+[`value`](https://jsr.io/@observable/for-of/doc/~/forOf#type_param_value) in order.
 
 ## Build
 

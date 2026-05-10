@@ -1,7 +1,8 @@
 # [@observable/throw-error](https://jsr.io/@observable/throw-error)
 
-[`Throw`](https://jsr.io/@observable/core/doc/~/Observer.throw)s the given value immediately upon
-[`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe).
+[`Throw`](https://jsr.io/@observable/core/doc/~/Observer.throw)s the given
+[`value`](https://jsr.io/@observable/throw-error/doc/~/throwError#function_throwerror_0_parameter_value)
+immediately upon [`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe).
 
 ## Build
 

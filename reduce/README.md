@@ -1,6 +1,8 @@
 # [@observable/reduce](https://jsr.io/@observable/reduce)
 
-Reduces all values to a single values.
+[`Reduces`](https://jsr.io/@observable/reduce/doc/~/reduce#function_reduce_0_parameter_reducer) all
+[`values`](https://jsr.io/@observable/reduce/doc/~/reduce#type_param_in) to a single
+[`value`](https://jsr.io/@observable/reduce/doc/~/reduce#type_param_out).
 
 ## Build
 

@@ -1,7 +1,11 @@
 # [@observable/exhaust-map](https://jsr.io/@observable/exhaust-map)
 
-Projects each value to an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) ignoring
-any new value until all values of the projected
+[`Projects`](https://jsr.io/@observable/exhaust-map/doc/~/exhaustMap#function_exhaustmap_0_parameter_project)
+each [`value`](https://jsr.io/@observable/exhaust-map/doc/~/exhaustMap#type_param_in) to an
+[`Observable`](https://jsr.io/@observable/core/doc/~/Observable) ignoring any new
+[`values`](https://jsr.io/@observable/exhaust-map/doc/~/exhaustMap#type_param_in) until all
+[`values`](https://jsr.io/@observable/exhaust-map/doc/~/exhaustMap#type_param_out) of the
+[`projected`](https://jsr.io/@observable/exhaust-map/doc/~/exhaustMap#function_exhaustmap_0_parameter_project)
 [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) have been
 [pushed](https://jsr.io/@observable/core#push).
 

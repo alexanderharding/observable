@@ -3,8 +3,9 @@
 Shares a single [subscription](https://jsr.io/@observable/core#subscription) forwarding
 [`notifications`](https://jsr.io/@observable/core#notification) to all
 [consumers](https://jsr.io/@observable/core#consumer) through a
-[`Subject`](https://jsr.io/@observable/core/doc/~/Subject) created by the given `factory` function.
-Resets on [`return`](https://jsr.io/@observable/core/doc/~/Observer.return),
+[`Subject`](https://jsr.io/@observable/core/doc/~/Subject) created by the given
+[`factory`](https://jsr.io/@observable/share/doc/~/share#function_share_0_parameter_factory)
+function. Resets on [`return`](https://jsr.io/@observable/core/doc/~/Observer.return),
 [`throw`](https://jsr.io/@observable/core/doc/~/Observer.throw), or when on all
 [consumers](https://jsr.io/@observable/core#consumer)
 [`unsubscribe`](https://jsr.io/@observable/core/doc/~/Observer.signal).

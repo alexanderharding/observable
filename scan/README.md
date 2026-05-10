@@ -1,6 +1,8 @@
 # [@observable/scan](https://jsr.io/@observable/scan)
 
-Reduces each value to an intermediate value.
+[`Reduces`](https://jsr.io/@observable/scan/doc/~/scan#function_scan_0_parameter_reducer) each
+[`value`](https://jsr.io/@observable/scan/doc/~/scan#type_param_in) to an intermediate
+[`value`](https://jsr.io/@observable/scan/doc/~/scan#type_param_out).
 
 ## Build
 

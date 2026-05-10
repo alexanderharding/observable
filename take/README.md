@@ -1,6 +1,8 @@
 # [@observable/take](https://jsr.io/@observable/take)
 
-[Pushes](https://jsr.io/@observable/core#push) the first of the given `count` of values.
+[Pushes](https://jsr.io/@observable/core#push) the first of the given
+[`count`](https://jsr.io/@observable/take/doc/~/take#function_take_0_parameter_count) of
+[`values`](https://jsr.io/@observable/take/doc/~/take#type_param_value).
 
 ## Build
 

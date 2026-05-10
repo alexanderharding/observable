@@ -1,7 +1,8 @@
 # [@observable/defer](https://jsr.io/@observable/defer)
 
-Registers the given `factory` function to be invoked on
-[`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe).
+Registers the given
+[`factory`](https://jsr.io/@observable/defer/doc/~/defer#function_defer_0_parameter_factory)
+function to be invoked on [`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe).
 
 ## Build
 

@@ -9,9 +9,9 @@ import { flat } from "@observable/flat";
 import { of } from "@observable/of";
 
 /**
- * Debounces each {@linkcode Value|value} by the given {@linkcode milliseconds}.
+ * [Pushes](https://jsr.io/@observable/core#push) the latest {@linkcode Value|value} after the given {@linkcode milliseconds}.
  * @example
- * Positive integer milliseconds
+ * 100 milliseconds
  * ```ts
  * import { debounce } from "@observable/debounce";
  * import { Subject } from "@observable/core";
@@ -57,7 +57,7 @@ import { of } from "@observable/of";
  * // "return"
  * ```
  * @example
- * Negative integer milliseconds
+ * Negative milliseconds
  * ```ts
  * import { debounce } from "@observable/debounce";
  * import { forOf } from "@observable/for-of";
@@ -95,7 +95,7 @@ import { of } from "@observable/of";
  * // "return"
  * ```
  * @example
- * Infinity milliseconds
+ * Infinite milliseconds
  * ```ts
  * import { debounce } from "@observable/debounce";
  * import { forOf } from "@observable/for-of";

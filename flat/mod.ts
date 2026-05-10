@@ -60,7 +60,7 @@ export function flat<const Values extends ReadonlyArray<unknown>>(
   observables: Readonly<{ [Key in keyof Values]: Observable<Values[Key]> }>,
 ): Observable<Values[number]>;
 /**
- * [Pushes](https://jsr.io/@observable/core#push) _all_ values from each of the given {@linkcode observables} in
+ * [Pushes](https://jsr.io/@observable/core#push) _all_ {@linkcode Values|values} from each of the given {@linkcode observables} in
  * [iteration](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#the_iterable_protocol) order.
  * @example
  * ```ts

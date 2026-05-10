@@ -1,7 +1,8 @@
 # [@observable/merge-map](https://jsr.io/@observable/merge-map)
 
-Projects each value to an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)
-concurrently.
+[`Projects`](https://jsr.io/@observable/merge-map/doc/~/mergeMap#function_mergemap_0_parameter_project)
+each [`value`](https://jsr.io/@observable/merge-map/doc/~/mergeMap#type_param_in) to an
+[`Observable`](https://jsr.io/@observable/core/doc/~/Observable) concurrently.
 
 ## Build
 

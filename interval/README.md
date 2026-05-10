@@ -1,7 +1,7 @@
 # [@observable/interval](https://jsr.io/@observable/interval)
 
 Repeatedly [pushes](https://jsr.io/@observable/core#push) a `void` value at an interval of the given
-`milliseconds`.
+[`milliseconds`](https://jsr.io/@observable/interval/doc/~/interval#function_interval_0_parameter_milliseconds).
 
 ## Build
 

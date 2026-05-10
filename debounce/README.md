@@ -1,6 +1,8 @@
 # [@observable/debounce](https://jsr.io/@observable/debounce)
 
-Debounces each value by the given `milliseconds`.
+[Pushes](https://jsr.io/@observable/core#push) the latest
+[`value`](https://jsr.io/@observable/debounce/doc/~/debounce#type_param_value) after the given
+[`milliseconds`](https://jsr.io/@observable/debounce/doc/~/debounce#function_debounce_0_parameter_milliseconds).
 
 ## Build
 
@@ -17,7 +19,7 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 
 ## Examples
 
-Positive integer milliseconds
+100 milliseconds
 
 ```ts
 import { debounce } from "@observable/debounce";
@@ -65,7 +67,7 @@ pipe(forOf([1, 2, 3]), debounce(0)).subscribe({
 // "return"
 ```
 
-Negative integer milliseconds
+Negative milliseconds
 
 ```ts
 import { debounce } from "@observable/debounce";
@@ -105,7 +107,7 @@ pipe(forOf([1, 2, 3]), debounce(NaN)).subscribe({
 // "return"
 ```
 
-Infinity milliseconds
+Infinite milliseconds
 
 ```ts
 import { debounce } from "@observable/debounce";
@@ -125,7 +127,7 @@ pipe(forOf([1, 2, 3]), debounce(Infinity)).subscribe({
 // "return"
 ```
 
-# AI Prompt
+## AI Prompt
 
 Use the following prompt with AI assistants to help them understand this library:
 
@@ -172,6 +174,6 @@ SEE ALSO:
 - `throttle(ms)` — emits first value, then ignores for duration
 ````
 
-# Glossary And Semantics
+## Glossary And Semantics
 
 [@observable/core](https://jsr.io/@observable/core#glossary-and-semantics)

@@ -1,6 +1,8 @@
 # [@observable/drop](https://jsr.io/@observable/drop)
 
-Drops the first `count` of values.
+Drops the first
+[`count`](https://jsr.io/@observable/drop/doc/~/drop#function_drop_0_parameter_count) of
+[`values`](https://jsr.io/@observable/drop/doc/~/drop#type_param_value).
 
 ## Build
 

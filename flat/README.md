@@ -1,6 +1,8 @@
 # [@observable/flat](https://jsr.io/@observable/flat)
 
-[Pushes](https://jsr.io/@observable/core#push) _all_ values from each of the given `observables` in
+[Pushes](https://jsr.io/@observable/core#push) _all_
+[`values`](https://jsr.io/@observable/flat/doc/~/flat#type_param_value) from each of the given
+[`observables`](https://jsr.io/@observable/flat/doc/~/flat#function_flat_1_parameter_observables) in
 [iteration](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#the_iterable_protocol)
 order.
 

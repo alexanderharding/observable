@@ -1,7 +1,8 @@
 # [@observable/finalize](https://jsr.io/@observable/finalize)
 
-Registers a `callback` to be invoked on
-[`unsubscribe`](https://jsr.io/@observable/core/doc/~/Observer.signal).
+Registers a
+[`callback`](https://jsr.io/@observable/finalize/doc/~/finalize#function_finalize_0_parameter_callback)
+to be invoked on [`unsubscribe`](https://jsr.io/@observable/core/doc/~/Observer.signal).
 
 ## Build
 

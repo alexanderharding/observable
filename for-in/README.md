@@ -1,6 +1,8 @@
 # [@observable/for-in](https://jsr.io/@observable/for-in)
 
-[Pushes](https://jsr.io/@observable/core#push) each key of the given `object` in order.
+[Pushes](https://jsr.io/@observable/core#push) each key of the given
+[`object`](https://jsr.io/@observable/for-in/doc/~/forIn#function_forin_0_parameter_object) in
+order.
 
 ## Build
 

@@ -1,7 +1,7 @@
 # [@observable/each-value-from](https://jsr.io/@observable/each-value-from)
 
 [`Yield`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/yield)s each
-value in order.
+[`value`](https://jsr.io/@observable/each-value-from/doc/~/eachValueFrom#type_param_value) in order.
 
 ## Examples
 
