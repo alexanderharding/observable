@@ -51,7 +51,7 @@ subject2.return(); // subject2 returned
 subject1.next(3); // No console output since subject2 is already returned
 ```
 
-# AI Prompt
+## AI Prompt
 
 Use the following prompt with AI assistants to help them understand this library:
 
@@ -108,6 +108,6 @@ USE CASES:
 - Logout from all tabs
 ````
 
-# Glossary And Semantics
+## Glossary And Semantics
 
 [@observable/core](https://jsr.io/@observable/core#glossary-and-semantics)

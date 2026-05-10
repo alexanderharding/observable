@@ -41,7 +41,7 @@ pipe(observable, scan((previous, current) => previous + current, 0)).subscribe({
 // "return"
 ```
 
-# AI Prompt
+## AI Prompt
 
 Use the following prompt with AI assistants to help them understand this library:
 
@@ -99,6 +99,6 @@ SEE ALSO:
 - `reduce()` — same accumulator idea, but only `next`s the final accumulated value on source `return`
 ````
 
-# Glossary And Semantics
+## Glossary And Semantics
 
 [@observable/core](https://jsr.io/@observable/core#glossary-and-semantics)

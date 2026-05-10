@@ -40,7 +40,7 @@ pipe(forOf([1, 2, 3, 4, 5]), filter((value) => value % 2 === 0)).subscribe({
 // "return"
 ```
 
-# AI Prompt
+## AI Prompt
 
 Use the following prompt with AI assistants to help them understand this library:
 
@@ -90,6 +90,6 @@ pipe(
 ```
 ````
 
-# Glossary And Semantics
+## Glossary And Semantics
 
 [@observable/core](https://jsr.io/@observable/core#glossary-and-semantics)

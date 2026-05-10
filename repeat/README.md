@@ -60,7 +60,7 @@ repeated.subscribe({
 // "return"
 ```
 
-# AI Prompt
+## AI Prompt
 
 Use the following prompt with AI assistants to help them understand this library:
 
@@ -109,6 +109,6 @@ NOTIFIER BEHAVIOR:
 - Notifier calls `throw()` → stop repeating, propagate error
 ````
 
-# Glossary And Semantics
+## Glossary And Semantics
 
 [@observable/core](https://jsr.io/@observable/core#glossary-and-semantics)

@@ -99,7 +99,7 @@ try {
 // TypeError: Cannot convert empty Observable to Promise
 ```
 
-# AI Prompt
+## AI Prompt
 
 Use the following prompt with AI assistants to help them understand this library:
 
@@ -154,6 +154,6 @@ IMPORTANT:
 - Rejects with the thrown value if Observable throws
 ````
 
-# Glossary And Semantics
+## Glossary And Semantics
 
 [@observable/core](https://jsr.io/@observable/core#glossary-and-semantics)

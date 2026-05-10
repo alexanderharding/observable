@@ -141,7 +141,7 @@ all(new Set([observable1, empty, observable2])).subscribe({
 // "return"
 ```
 
-# AI Prompt
+## AI Prompt
 
 Use the following prompt with AI assistants to help them understand this library:
 
@@ -202,6 +202,6 @@ SEE ALSO:
 - `race` — mirrors the first of input's Observables to next
 ````
 
-# Glossary And Semantics
+## Glossary And Semantics
 
 [@observable/core](https://jsr.io/@observable/core#glossary-and-semantics)

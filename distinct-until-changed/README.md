@@ -69,7 +69,7 @@ pipe(forOf([{ id: 1 }, { id: 1 }, { id: 2 }]), distinctUntilChanged((a, b) => a.
 // Console output: // "next" { id: 1 } // "next" { id: 2 } // "return"
 
 ```
-# AI Prompt
+## AI Prompt
 
 Use the following prompt with AI assistants to help them understand this library:
 ```
@@ -126,7 +126,7 @@ SEE ALSO:
 - `distinct()` — filters all duplicates across the stream
 
 ```
-# Glossary And Semantics
+## Glossary And Semantics
 
 [@observable/core](https://jsr.io/@observable/core#glossary-and-semantics)
 ```
