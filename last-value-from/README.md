@@ -1,7 +1,9 @@
 # [@observable/last-value-from](https://jsr.io/@observable/last-value-from)
 
 [`Resolve`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/resolve)s
-with the last value of the given `observable`,
+with the last
+[`value`](https://jsr.io/@observable/last-value-from/doc/~/lastValueFrom#type_param_value) of the
+given `observable`,
 [`reject`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/reject)s
 with a [`throw`](https://jsr.io/@observable/core/doc/~/Observer.throw)n value of the given
 `observable`, or
@@ -9,7 +11,8 @@ with a [`throw`](https://jsr.io/@observable/core/doc/~/Observer.throw)n value of
 with a
 [`TypeError`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypeError)
 if the given `observable` [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s without
-[pushing](https://jsr.io/@observable/core#push) a value.
+[pushing](https://jsr.io/@observable/core#push) a
+[`value`](https://jsr.io/@observable/last-value-from/doc/~/lastValueFrom#type_param_value).
 
 ## Build
 

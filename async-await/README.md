@@ -1,7 +1,9 @@
 # [@observable/async-await](https://jsr.io/@observable/async-await)
 
 [`Await`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/await)s the
-given `expression` and [pushes](https://jsr.io/@observable/core#push) its resolved value.
+given
+[`expression`](https://jsr.io/@observable/async-await/doc/~/asyncAwait#function_asyncawait_0_parameter_expression)
+and [pushes](https://jsr.io/@observable/core#push) its resolved value.
 
 ## Build
 

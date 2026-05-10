@@ -1,7 +1,7 @@
 # [@observable/flat-map](https://jsr.io/@observable/flat-map)
 
-Projects each value to an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)
-sequentially.
+[`Projects`](https://jsr.io/@observable/flat-map/doc/~/flatMap#function_flatmap_0_parameter_project)
+each value to an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) sequentially.
 
 ## Build
 

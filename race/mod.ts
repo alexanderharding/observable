@@ -57,7 +57,7 @@ export function race<const Values extends ReadonlyArray<unknown>>(
   observables: Readonly<{ [Key in keyof Values]: Observable<Values[Key]> }>,
 ): Observable<Values[number]>;
 /**
- * [Pushes](https://jsr.io/@observable/core#push) values from the first of the given {@linkcode observables} to [push](https://jsr.io/@observable/core#push) a value.
+ * [Pushes](https://jsr.io/@observable/core#push) {@linkcode Value|values} from the first of the given {@linkcode observables} to [push](https://jsr.io/@observable/core#push) a {@linkcode Value|value}.
  * @example
  * Iterable of observables
  * ```ts

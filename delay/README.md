@@ -1,6 +1,8 @@
 # [@observable/delay](https://jsr.io/@observable/delay)
 
-Delays values by the given `milliseconds`.
+[Pushes](https://jsr.io/@observable/core#push) each
+[`value`](https://jsr.io/@observable/delay/doc/~/delay#type_param_value) after the given
+[`milliseconds`](https://jsr.io/@observable/delay/doc/~/delay#function_delay_0_parameter_milliseconds).
 
 ## Build
 

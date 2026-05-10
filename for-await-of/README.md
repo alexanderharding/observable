@@ -1,8 +1,10 @@
 # [@observable/for-await-of](https://jsr.io/@observable/for-await-of)
 
 [Pushes](https://jsr.io/@observable/core#push) each
-[`await`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/await)ed value
-of the given `values` in order.
+[`await`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/await)ed
+[`value`](https://jsr.io/@observable/for-await-of/doc/~/forAwaitOf#type_param_value) of the given
+[`values`](https://jsr.io/@observable/for-await-of/doc/~/forAwaitOf#function_forawaitof_0_parameter_values)
+in order.
 
 ## Build
 

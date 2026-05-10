@@ -1,12 +1,14 @@
 # [@observable/from](https://jsr.io/@observable/from)
 
 Converts a custom [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) to a proper
-[`Observable`](https://jsr.io/@observable/core/doc/~/Observable). If the provided `value` is already
-an instanceof [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) (which means it has
+[`Observable`](https://jsr.io/@observable/core/doc/~/Observable). If the provided
+[`value`](https://jsr.io/@observable/from/doc/~/from#function_from_0_parameter_value) is already an
+instanceof [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) (which means it has
 [`Observable.prototype`](https://jsr.io/@observable/core/doc/~/ObservableConstructor.prototype) in
 its prototype chain), it's returned directly. Otherwise, a new
 [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) object is created that wraps the
-original provided `value`.
+original provided
+[`value`](https://jsr.io/@observable/from/doc/~/from#function_from_0_parameter_value).
 
 ## Build
 

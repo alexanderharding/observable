@@ -1,8 +1,9 @@
 # [@observable/distinct](https://jsr.io/@observable/distinct)
 
-[Pushes](https://jsr.io/@observable/core#push) values that are
+[Pushes](https://jsr.io/@observable/core#push)
+[`values`](https://jsr.io/@observable/distinct/doc/~/distinct#type_param_value) that are
 [distinct](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/is)
-from all previous values.
+from all previous [`values`](https://jsr.io/@observable/distinct/doc/~/distinct#type_param_value).
 
 ## Build
 

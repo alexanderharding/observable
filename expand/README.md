@@ -1,7 +1,8 @@
 # [@observable/expand](https://jsr.io/@observable/expand)
 
-Projects each value to an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)
-recursively.
+[`Projects`](https://jsr.io/@observable/expand/doc/~/expand#function_expand_0_parameter_project)
+each [`value`](https://jsr.io/@observable/expand/doc/~/expand#type_param_value) to an
+[`Observable`](https://jsr.io/@observable/core/doc/~/Observable) recursively.
 
 ## Build
 

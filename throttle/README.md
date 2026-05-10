@@ -1,6 +1,10 @@
 # [@observable/throttle](https://jsr.io/@observable/throttle)
 
-Throttles each value by the given `milliseconds`.
+[Pushes](https://jsr.io/@observable/core#push) each
+[`value`](https://jsr.io/@observable/throttle/doc/~/throttle#type_param_value), then ignores
+subsequent [`values`](https://jsr.io/@observable/throttle/doc/~/throttle#type_param_value) for the
+given
+[`milliseconds`](https://jsr.io/@observable/throttle/doc/~/throttle#function_throttle_0_parameter_milliseconds).
 
 ## Build
 
@@ -17,7 +21,7 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 
 ## Examples
 
-Positive integer milliseconds
+100 milliseconds
 
 ```ts
 import { throttle } from "@observable/throttle";
@@ -70,7 +74,7 @@ pipe(forOf([1, 2, 3]), throttle(0)).subscribe({
 // "return"
 ```
 
-Negative integer milliseconds
+Negative milliseconds
 
 ```ts
 import { throttle } from "@observable/throttle";
@@ -110,7 +114,7 @@ pipe(forOf([1, 2, 3]), throttle(NaN)).subscribe({
 // "return"
 ```
 
-Infinity milliseconds
+Infinite milliseconds
 
 ```ts
 import { throttle } from "@observable/throttle";
@@ -136,7 +140,7 @@ subject.return();
 // "return"
 ```
 
-# AI Prompt
+## AI Prompt
 
 Use the following prompt with AI assistants to help them understand this library:
 
@@ -181,6 +185,6 @@ SEE ALSO:
 - `debounce(ms)` — waits for silence before emitting
 ````
 
-# Glossary And Semantics
+## Glossary And Semantics
 
 [@observable/core](https://jsr.io/@observable/core#glossary-and-semantics)

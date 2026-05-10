@@ -2,7 +2,9 @@
 
 [Pushes](https://jsr.io/@observable/core#push) an
 [`Array`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) of
-the latest values from _all_ of the given `observables` in
+the latest [`values`](https://jsr.io/@observable/all/doc/~/all#type_param_value) from _all_ of the
+given [`observables`](https://jsr.io/@observable/all/doc/~/all#function_all_1_parameter_observables)
+in
 [iteration](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#the_iterable_protocol)
 order.
 

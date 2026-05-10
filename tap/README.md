@@ -1,6 +1,8 @@
 # [@observable/tap](https://jsr.io/@observable/tap)
 
-Registers the given `callback` to be invoked for each value.
+Registers the given
+[`callback`](https://jsr.io/@observable/tap/doc/~/tap#function_tap_0_parameter_callback) to be
+invoked for each [`value`](https://jsr.io/@observable/tap/doc/~/tap#type_param_value).
 
 ## Build
 

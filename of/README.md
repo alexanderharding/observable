@@ -1,6 +1,7 @@
 # [@observable/of](https://jsr.io/@observable/of)
 
-[Pushes](https://jsr.io/@observable/core#push) the given `value`.
+[Pushes](https://jsr.io/@observable/core#push) the given
+[`value`](https://jsr.io/@observable/of/doc/~/of#function_of_0_parameter_value).
 
 ## Build
 

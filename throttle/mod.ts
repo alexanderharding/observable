@@ -10,9 +10,9 @@ import { timeout } from "@observable/timeout";
 import { drop } from "@observable/drop";
 
 /**
- * Throttles each {@linkcode Value|value} by the given {@linkcode milliseconds}.
+ * [Pushes](https://jsr.io/@observable/core#push) each {@linkcode Value|value}, then ignores subsequent {@linkcode Value|values} for the given {@linkcode milliseconds}.
  * @example
- * Positive integer milliseconds
+ * 100 milliseconds
  * ```ts
  * import { throttle } from "@observable/throttle";
  * import { Subject } from "@observable/core";
@@ -63,7 +63,7 @@ import { drop } from "@observable/drop";
  * // "return"
  * ```
  * @example
- * Negative integer milliseconds
+ * Negative milliseconds
  * ```ts
  * import { throttle } from "@observable/throttle";
  * import { forOf } from "@observable/for-of";
@@ -101,7 +101,7 @@ import { drop } from "@observable/drop";
  * // "return"
  * ```
  * @example
- * Infinity milliseconds
+ * Infinite milliseconds
  * ```ts
  * import { throttle } from "@observable/throttle";
  * import { Subject } from "@observable/core";

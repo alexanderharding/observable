@@ -5,7 +5,7 @@ import { pipe } from "@observable/pipe";
 import { filter } from "@observable/filter";
 
 /**
- * Drops the first {@linkcode count} of {@linkcode Value|values}.
+ * [Pushes](https://jsr.io/@observable/core#push) {@linkcode Value|values} after the first of the given {@linkcode count}.
  * @example
  * Positive integer count
  * ```ts

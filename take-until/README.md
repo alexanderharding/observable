@@ -1,7 +1,9 @@
 # [@observable/take-until](https://jsr.io/@observable/take-until)
 
-[Pushes](https://jsr.io/@observable/core#push) values until the given `notifier` also
-[pushes](https://jsr.io/@observable/core#push) a value.
+[Pushes](https://jsr.io/@observable/core#push)
+[`values`](https://jsr.io/@observable/take-until/doc/~/takeUntil#type_param_value) until the given
+[`notifier`](https://jsr.io/@observable/take-until/doc/~/takeUntil#function_takeuntil_0_parameter_notifier)
+also [pushes](https://jsr.io/@observable/core#push) a value.
 
 ## Build
 

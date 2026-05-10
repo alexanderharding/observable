@@ -1,7 +1,10 @@
 # [@observable/at](https://jsr.io/@observable/at)
 
-[Pushes](https://jsr.io/@observable/core#push) the first value at the given `index`. Negative
-indices count back from the last value in the sequence.
+[Pushes](https://jsr.io/@observable/core#push) the first
+[`value`](https://jsr.io/@observable/at/doc/~/at#type_param_value) at the given
+[`index`](https://jsr.io/@observable/at/doc/~/at#function_at_0_parameter_index). Negative
+[`indices`](https://jsr.io/@observable/at/doc/~/at#function_at_0_parameter_index) count back from
+the last [`value`](https://jsr.io/@observable/at/doc/~/at#type_param_value) in the sequence.
 
 ## Build
 

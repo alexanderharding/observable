@@ -1,6 +1,9 @@
 # [@observable/filter](https://jsr.io/@observable/filter)
 
-[Pushes](https://jsr.io/@observable/core#push) values that satisfy the given `predicate` function.
+[Pushes](https://jsr.io/@observable/core#push)
+[`values`](https://jsr.io/@observable/filter/doc/~/filter#type_param_value) that satisfy the given
+[`predicate`](https://jsr.io/@observable/filter/doc/~/filter#function_filter_0_parameter_predicate)
+function.
 
 ## Build
 

@@ -1,7 +1,10 @@
 # [@observable/race](https://jsr.io/@observable/race)
 
-[Pushes](https://jsr.io/@observable/core#push) values from the first of the given `observables` to
-[push](https://jsr.io/@observable/core#push) a value.
+[Pushes](https://jsr.io/@observable/core#push)
+[`values`](https://jsr.io/@observable/race/doc/~/race#type_param_value) from the first of the given
+[`observables`](https://jsr.io/@observable/race/doc/~/race#function_race_1_parameter_observables) to
+[push](https://jsr.io/@observable/core#push) a
+[`value`](https://jsr.io/@observable/race/doc/~/race#type_param_value).
 
 ## Build
 

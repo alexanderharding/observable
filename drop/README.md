@@ -1,6 +1,8 @@
 # [@observable/drop](https://jsr.io/@observable/drop)
 
-Drops the first `count` of values.
+[Pushes](https://jsr.io/@observable/core#push)
+[`values`](https://jsr.io/@observable/drop/doc/~/drop#type_param_value) after the first of the given
+[`count`](https://jsr.io/@observable/drop/doc/~/drop#function_drop_0_parameter_count).
 
 ## Build
 
@@ -128,7 +130,7 @@ pipe(forOf([1, 2, 3, 4, 5]), drop(NaN)).subscribe({
 // "return"
 ```
 
-# AI Prompt
+## AI Prompt
 
 Use the following prompt with AI assistants to help them understand this library:
 
@@ -175,6 +177,6 @@ SEE ALSO:
 - `filter(predicate)` — filters by condition
 ````
 
-# Glossary And Semantics
+## Glossary And Semantics
 
 [@observable/core](https://jsr.io/@observable/core#glossary-and-semantics)
