@@ -57,7 +57,7 @@ result === customObservable; // false
 result instanceof Observable; // true
 ```
 
-# AI Prompt
+## AI Prompt
 
 Use the following prompt with AI assistants to help them understand this library:
 
@@ -110,6 +110,6 @@ IMPORTANT:
 - Useful for ensuring you have a true Observable instance with prototype methods
 ````
 
-# Glossary And Semantics
+## Glossary And Semantics
 
 [@observable/core](https://jsr.io/@observable/core#glossary-and-semantics)

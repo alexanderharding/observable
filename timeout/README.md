@@ -105,7 +105,7 @@ timeout(Infinity).subscribe({
 controller.abort();
 ```
 
-# AI Prompt
+## AI Prompt
 
 Use the following prompt with AI assistants to help them understand this library:
 
@@ -165,6 +165,6 @@ SEE ALSO:
 - `interval(ms)` — emits repeatedly at interval
 ````
 
-# Glossary And Semantics
+## Glossary And Semantics
 
 [@observable/core](https://jsr.io/@observable/core#glossary-and-semantics)

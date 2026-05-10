@@ -3,6 +3,19 @@
 [`Yield`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/yield)s each
 [`value`](https://jsr.io/@observable/each-value-from/doc/~/eachValueFrom#type_param_value) in order.
 
+## Build
+
+Automated by [JSR](https://jsr.io/).
+
+## Publishing
+
+Automated by `.github/workflows/publish.yml`.
+
+## Running unit tests
+
+Run `deno task test` or `deno task test:ci` to execute the unit tests via
+[Deno](https://deno.land/).
+
 ## Examples
 
 Basic usage
@@ -75,19 +88,6 @@ console.log("Done!");
 // Done!
 ```
 
-## Build
-
-Automated by [JSR](https://jsr.io/).
-
-## Publishing
-
-Automated by `.github/workflows/publish.yml`.
-
-## Running unit tests
-
-Run `deno task test` or `deno task test:ci` to execute the unit tests via
-[Deno](https://deno.land/).
-
 ## AI Prompt
 
 Use the following prompt with AI assistants to help them understand this library:
@@ -124,6 +124,6 @@ IMPORTANT:
 - Breaking or closing the loop unsubscribes from the source
 ````
 
-## Glossary and semantics
+## Glossary And Semantics
 
 [@observable/core](https://jsr.io/@observable/core#glossary-and-semantics)

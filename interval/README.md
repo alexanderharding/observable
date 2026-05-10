@@ -114,7 +114,7 @@ interval(Infinity).subscribe({
 // No console output
 ```
 
-# AI Prompt
+## AI Prompt
 
 Use the following prompt with AI assistants to help them understand this library:
 
@@ -171,6 +171,6 @@ SEE ALSO:
 - `timeout(ms)` — emits once after delay, then returns
 ````
 
-# Glossary And Semantics
+## Glossary And Semantics
 
 [@observable/core](https://jsr.io/@observable/core#glossary-and-semantics)

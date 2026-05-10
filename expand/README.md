@@ -91,7 +91,7 @@ pipe(
 // "done"
 ```
 
-# AI Prompt
+## AI Prompt
 
 Use the following prompt with AI assistants to help them understand this library:
 
@@ -164,6 +164,6 @@ SEE ALSO:
 - `flatMap` — projects each value to Observable, subscribes sequentially (non-recursive)
 ````
 
-# Glossary And Semantics
+## Glossary And Semantics
 
 [@observable/core](https://jsr.io/@observable/core#glossary-and-semantics)

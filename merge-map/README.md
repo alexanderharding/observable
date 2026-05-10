@@ -63,7 +63,7 @@ observableLookup.c.return();
 // "return"
 ```
 
-# AI Prompt
+## AI Prompt
 
 Use the following prompt with AI assistants to help them understand this library:
 
@@ -123,6 +123,6 @@ SEE ALSO:
 - `exhaustMap` — ignores new values while inner Observable is active
 ````
 
-# Glossary And Semantics
+## Glossary And Semantics
 
 [@observable/core](https://jsr.io/@observable/core#glossary-and-semantics)

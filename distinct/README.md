@@ -40,7 +40,7 @@ pipe(forOf([1, 2, 2, 3, 1, 3]), distinct()).subscribe({
 // "return"
 ```
 
-# AI Prompt
+## AI Prompt
 
 Use the following prompt with AI assistants to help them understand this library:
 
@@ -80,6 +80,6 @@ SEE ALSO:
 - `distinctUntilChanged()` — only filters consecutive duplicates
 ````
 
-# Glossary And Semantics
+## Glossary And Semantics
 
 [@observable/core](https://jsr.io/@observable/core#glossary-and-semantics)

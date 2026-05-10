@@ -57,7 +57,7 @@ observable.subscribe({
 // "return"
 ```
 
-# Glossary And Semantics
+## Glossary And Semantics
 
 When discussing and documenting [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)s,
 it's important to have a common language and a known set of rules around what is going on. This
@@ -69,17 +69,17 @@ While not all of the documentation for this library reflects this terminology, i
 it does, and to ensure the language and names around the library use this document as a source of
 truth and unified language.
 
-## Major Entities
+### Major Entities
 
 There are high level entities that are frequently discussed. It's important to define them
 separately from other lower-level concepts, because they relate to the nature of
 [`Observable`](https://jsr.io/@observable/core/doc/~/Observable).
 
-### Consumer
+#### Consumer
 
 Any system or thing that is being notified of [producer](#producer) [notifications](#notification).
 
-### Producer
+#### Producer
 
 Any system or thing that is the source of values that are being pushed to the [consumer](#consumer).
 This can be a wide variety of things, from a
@@ -87,11 +87,11 @@ This can be a wide variety of things, from a
 to a simple iteration over an
 [`Array`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array).
 
-### Subscriber
+#### Subscriber
 
 The [consumer](#consumer) that initiated the [subscription](#subscription).
 
-### Subscription
+#### Subscription
 
 A contract where a [consumer](#consumer) is [observing](#observation) values pushed by a
 [producer](#producer). The subscription, is an ongoing process that amounts to the function of the
@@ -100,17 +100,17 @@ perspective starting the moment of
 [`subscribe`](https://jsr.io/@observable/core/doc/~/Observable.subscribe) and ending the moment of
 [unsubscribe](https://jsr.io/@observable/core/doc/~/Observer.signal).
 
-## Major Actions
+### Major Actions
 
 There are specific actions and events that occur between [major entities](#major-entities) in the
 library that need to be defined. These are the highest level events that occur within various parts
 of the library.
 
-### Observation
+#### Observation
 
 A [consumer](#consumer) reacting to [producer](#producer) [notifications](#notification).
 
-### Observation Chain
+#### Observation Chain
 
 When an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) uses another
 [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) as a [producer](#producer), an
@@ -118,7 +118,7 @@ When an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) uses an
 [consumers](#consumer) are notifying each other in a unidirectional way toward the final
 [consumer](#consumer).
 
-### Notification
+#### Notification
 
 The act of a [producer](#producer) pushing
 [`next`](https://jsr.io/@observable/core/doc/~/Observer.next)ed values,
@@ -126,12 +126,12 @@ The act of a [producer](#producer) pushing
 [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)s to a [consumer](#consumer) to be
 [observed](#observation).
 
-## Major Concepts
+### Major Concepts
 
 Some of what we discuss is conceptual. These are mostly common traits of behaviors that can manifest
 in [push-based](#push) reactive systems.
 
-### Cold
+#### Cold
 
 An [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) is "cold" when it creates a new
 [producer](#producer) during
@@ -142,7 +142,7 @@ being one [producer](#producer) [observed](#observation) by one [consumer](#cons
 [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)s can be made [hot](#hot) but not
 the other way around.
 
-### Hot
+#### Hot
 
 An [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) is "hot", when its
 [producer](#producer) was created outside of the context of the
@@ -157,24 +157,24 @@ unlikely one. For the purposes of discussion, all "hot"
 [multicast](#multicast). Hot [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)s
 cannot be made [cold](#cold).
 
-### Multicast
+#### Multicast
 
 The act of one [producer](#producer) being [observed](#observation) by **many**
 [consumers](#consumer).
 
-### Unicast
+#### Unicast
 
 The act of one [producer](#producer) being [observed](#observation) by **only one**
 [consumer](#consumer).
 
-### Push
+#### Push
 
 [`Observer`](https://jsr.io/@observable/core/doc/~/Observer)s are a push-based type. That means
 rather than having the [consumer](#consumer) call a function or perform some other action to get a
 value, the [consumer](#consumer) receives values as soon as the [producer](#producer) has produced
 them, via a registered [next](https://jsr.io/@observable/core/doc/~/Observer.next) handler.
 
-### Pull
+#### Pull
 
 Pull-based systems are the opposite of [push](#push)-based. In a pull-based type or system, the
 [consumer](#consumer) must request each value the [producer](#producer) has produced manually,
@@ -183,21 +183,21 @@ perhaps long after the [producer](#producer) has actually done so. Examples of s
 and
 [`Iterators`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols)
 
-## Minor Entities
+### Minor Entities
 
 There are low level entities that are rarely discussed.
 
-### Operator
+#### Operator
 
 A factory function that creates an [operator function](#operator-function).
 
-### Operator Function
+#### Operator Function
 
 A function that takes an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable), and maps
 it to a new [`Observable`](https://jsr.io/@observable/core/doc/~/Observable). Nothing more, nothing
 less. [Operator functions](#operator-function) are created by [operators](#operator).
 
-### Operation
+#### Operation
 
 An action taken while handling a [notification](#notification), as set up by an
 [operator](#operator) and/or [operator function](#operator-function). During
@@ -205,7 +205,7 @@ An action taken while handling a [notification](#notification), as set up by an
 [`Observable`](https://jsr.io/@observable/core/doc/~/Observable), [operations](#operation) are
 performed in an order dictated by the [observation chain](#observation-chain).
 
-### Stream
+#### Stream
 
 A "stream" or "streaming" in the case of
 [`Observable`](https://jsr.io/@observable/core/doc/~/Observable)s, refers to the collection of
@@ -215,7 +215,7 @@ documentation and articles. Instead, prefer [observation chain](#observation-cha
 [operations](#operation), or [subscription](#subscription). "Streaming" is less ambiguous, and is
 fine to use given this defined meaning.
 
-### Source
+#### Source
 
 An [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) that will supply values to
 another [`Observable`](https://jsr.io/@observable/core/doc/~/Observable). This [source](#source),
@@ -224,7 +224,7 @@ will be the [producer](#producer) for the resulting
 [subscriptions](#subscriptions). Sources may generally be any type of
 [`Observable`](https://jsr.io/@observable/core/doc/~/Observable).
 
-### Notifier
+#### Notifier
 
 An [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) that is being used to notify
 another [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) that it needs to perform
@@ -233,9 +233,9 @@ some action. The action should only occur on a
 [`return`](https://jsr.io/@observable/core/doc/~/Observer.return) or
 [`throw`](https://jsr.io/@observable/core/doc/~/Observer.throw).
 
-## Other Concepts
+### Other Concepts
 
-### Unhandled Errors
+#### Unhandled Errors
 
 An "unhandled error" is any
 [`throw`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/throw)n value
@@ -246,7 +246,7 @@ that is not handled by a [consumer](#consumer)-provided function, which is gener
 will assume the error is "unhandled" and rethrow it on a new callstack to prevent
 ["producer interference"](#producer-interference).
 
-### Producer Interference
+#### Producer Interference
 
 [Producer](#producer) interference happens when an error is allowed to unwind the library's
 callstack during [notification](#notification). When this happens, the error could break things like
@@ -257,25 +257,25 @@ logical explanation. The library goes out of its way to prevent
 ["producer interference"](#producer-interference) by ensuring that all unhandled errors are thrown
 on a separate callstack.
 
-### Upstream And Downstream
+#### Upstream And Downstream
 
 The order in which [notifications](#notification) are processed by [operations](#operation) in a
 [stream](#stream) have a directionality to them. "Upstream" refers to an [operations](#operation)
 that was already processed before the current [operations](#operation) , and "downstream" refers to
 an [operations](#operation) that will be processed after the current [operations](#operation).
 
-# Differences From [RxJS](https://rxjs.dev/)
+## Differences From [RxJS](https://rxjs.dev/)
 
 While inspired by [RxJS](https://rxjs.dev/), this library takes a different approach in several key
 areas that are worth discussing here.
 
-## Simplicity First
+### Simplicity First
 
 This library is designed to be minimal and focused. Rather than providing an exhaustive set of
 features, it aims to provide a solid foundation with correct and predictable semantics. The API
 surface is intentionally small, making it easier to learn, debug, and reason about.
 
-## Composition Over Inheritance
+### Composition Over Inheritance
 
 [RxJS](https://rxjs.dev/) relies heavily on class inheritance. At a glance this is fine, especially
 within the bounds of the [RxJS](https://rxjs.dev/) library, but once you want to create your own
@@ -284,7 +284,7 @@ implement the _entire_ interface, including internal and private members. This l
 its way to use composition to provide a simple interface and hide internal and private members so
 that you can create custom implementations without headache.
 
-### Example
+#### Example
 
 ```ts
 import { Observable, type Observer, Subject } from "@observable/core";
@@ -317,7 +317,7 @@ class CustomerService implements Observable<Customer> {
 }
 ```
 
-## Correct Teardown Ordering
+### Correct Teardown Ordering
 
 This is a [known issue in RxJS](https://github.com/ReactiveX/rxjs/issues/7443) that has persisted
 for nearly a decade. This library fixes this problem by reversing the ordering of teardown
@@ -325,7 +325,7 @@ for nearly a decade. This library fixes this problem by reversing the ordering o
 [notifications](#notification) ([`throw`](https://jsr.io/@observable/core/doc/~/Observer.throw) and
 [`return`](https://jsr.io/@observable/core/doc/~/Observer.return)).
 
-## Native AbortController Integration
+### Native AbortController Integration
 
 With the wide support of
 [`AbortController`](https://developer.mozilla.org/en-US/docs/Web/API/AbortController) since 2019,
@@ -334,7 +334,7 @@ integrate with other APIs that support abort signals (like
 [`fetch`](https://developer.mozilla.org/en-US/docs/Web/API/fetch)) while also solving the
 ["synchronous firehose" problem](https://github.com/ReactiveX/rxjs/discussions/6345).
 
-# AI Prompt
+## AI Prompt
 
 Use the following prompt with AI assistants to help them understand this library:
 

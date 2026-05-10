@@ -211,7 +211,7 @@ pipe(forOf([1, 2, 3]), tap((value) => console.log("tap next", value)), at(NaN)).
 // "return"
 ```
 
-# AI Prompt
+## AI Prompt
 
 Use the following prompt with AI assistants to help them understand this library:
 
@@ -262,6 +262,6 @@ SEE ALSO:
 - `drop(count)` — skip first N values
 ````
 
-# Glossary And Semantics
+## Glossary And Semantics
 
 [@observable/core](https://jsr.io/@observable/core#glossary-and-semantics)
