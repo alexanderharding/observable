@@ -72,9 +72,10 @@ pipe(forOf([{ id: 1 }, { id: 1 }, { id: 2 }]), distinctUntilChanged((a, b) => a.
 ## AI Prompt
 
 Use the following prompt with AI assistants to help them understand this library:
+```
 
-````
-You are helping me with code that uses @observable/distinct-until-changed from the @observable library ecosystem.
+You are helping me with code that uses @observable/distinct-until-changed from the @observable
+library ecosystem.
 
 WHAT IT DOES: `distinctUntilChanged(comparator?)` only emits when the current value is different
 from the previous value. Uses `Object.is` by default, or a custom comparator if provided (return
@@ -123,8 +124,9 @@ DIFFERENCE FROM `distinct()`:
 SEE ALSO:
 
 - `distinct()` — filters all duplicates across the stream
-````
 
+```
 ## Glossary And Semantics
 
 [@observable/core](https://jsr.io/@observable/core#glossary-and-semantics)
+```
