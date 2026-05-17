@@ -9,6 +9,7 @@ import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 import { all } from "./mod.ts";
 import { ReplaySubject } from "@observable/replay-subject";
+import { throwError } from "@observable/throw-error";
 
 Deno.test(
   "all should combine multiple input's Observables that next and return synchronously",
@@ -146,6 +147,40 @@ Deno.test("all should accept iterable (generator) of observables", () => {
     ["next", [2, 3]],
     ["next", [2, 4]],
     ["return"],
+  ]);
+});
+
+Deno.test("all should report thrown values when thrown before pushing values", () => {
+  // Arrange
+  const error = new Error("test error");
+  const notifications: Array<ObserverNotification<ReadonlyArray<number>>> = [];
+  const observable = all([forOf([1, 2]), throwError(error)]);
+
+  // Act
+  pipe(observable, materialize()).subscribe(
+    new Observer((notification) => notifications.push(notification)),
+  );
+
+  // Assert
+  assertEquals(notifications, [["throw", error]]);
+});
+
+Deno.test("all should report thrown values when thrown after pushing values", () => {
+  // Arrange
+  const error = new Error("test error");
+  const notifications: Array<ObserverNotification<ReadonlyArray<number>>> = [];
+  const observable = all([forOf([1, 2]), flat([forOf([3, 4]), throwError(error)])]);
+
+  // Act
+  pipe(observable, materialize()).subscribe(
+    new Observer((notification) => notifications.push(notification)),
+  );
+
+  // Assert
+  assertEquals(notifications, [
+    ["next", [2, 3]],
+    ["next", [2, 4]],
+    ["throw", error],
   ]);
 });
 
