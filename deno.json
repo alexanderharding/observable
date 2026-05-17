@@ -3,6 +3,7 @@
     "all",
     "async-await",
     "at",
+    "audit",
     "behavior-subject",
     "broadcast-subject",
     "catch-error",
