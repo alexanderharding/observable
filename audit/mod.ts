@@ -8,7 +8,7 @@ import { map } from "@observable/map";
 import { exhaustMap } from "@observable/exhaust-map";
 import { tap } from "@observable/tap";
 import { drop } from "@observable/drop";
-import { takeUntil } from "@observable/take-until";
+import { until } from "@observable/until";
 
 /**
  * Flag indicating that no value has been emitted yet.
@@ -154,7 +154,7 @@ export function audit<Value>(
       return pipe(
         source,
         tap((value) => (pending = value)),
-        exhaustMap(() => pipe(timeout(milliseconds), map(() => pending), takeUntil(close))),
+        exhaustMap(() => pipe(timeout(milliseconds), map(() => pending), until(close))),
         tap(() => close.next()),
       );
     });

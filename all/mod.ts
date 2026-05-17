@@ -7,7 +7,7 @@ import { tap } from "@observable/tap";
 import { map } from "@observable/map";
 import { mergeMap } from "@observable/merge-map";
 import { filter } from "@observable/filter";
-import { takeUntil } from "@observable/take-until";
+import { until } from "@observable/until";
 import { finalize } from "@observable/finalize";
 
 /**
@@ -211,7 +211,7 @@ export function all<Value>(
       // All first values have been received, we can cleanup the notifier.
       tap(() => stop.return()),
       map(() => bufferSnapshot ??= Object.freeze(buffer.slice())),
-      takeUntil(stop),
+      until(stop),
     );
   });
 }

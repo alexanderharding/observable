@@ -1,8 +1,8 @@
-# [@observable/take-until](https://jsr.io/@observable/take-until)
+# [@observable/until](https://jsr.io/@observable/until)
 
 [Pushes](https://jsr.io/@observable/core#push)
-[`values`](https://jsr.io/@observable/take-until/doc/~/takeUntil#type_param_value) until the given
-[`notifier`](https://jsr.io/@observable/take-until/doc/~/takeUntil#function_takeuntil_0_parameter_notifier)
+[`values`](https://jsr.io/@observable/until/doc/~/until#type_param_value) until the given
+[`notifier`](https://jsr.io/@observable/until/doc/~/until#function_takeuntil_0_parameter_notifier)
 also [pushes](https://jsr.io/@observable/core#push) a value.
 
 ## Build
@@ -22,14 +22,14 @@ Run `deno task test` or `deno task test:ci` to execute the unit tests via
 
 ```ts
 import { Subject } from "@observable/core";
-import { takeUntil } from "@observable/take-until";
+import { until } from "@observable/until";
 import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
 const subject = new Subject<number>();
 const notifier = new Subject<void>();
 
-pipe(subject, takeUntil(notifier)).subscribe({
+pipe(subject, until(notifier)).subscribe({
   signal: controller.signal,
   next: (value) => console.log("next", value),
   return: () => console.log("return"),
@@ -48,20 +48,20 @@ subject.return();
 Use the following prompt with AI assistants to help them understand this library:
 
 ````
-You are helping me with code that uses @observable/take-until from the @observable library ecosystem.
+You are helping me with code that uses @observable/until from the @observable library ecosystem.
 
 WHAT IT DOES:
-`takeUntil(notifier)` takes values from the source until the notifier Observable emits a value.
+`until(notifier)` takes values from the source until the notifier Observable emits a value.
 
 CRITICAL: This library is NOT RxJS. Key differences:
 - Observer uses `return`/`throw` — NOT `complete`/`error`
 - Unsubscription via `AbortController.abort()` — NOT `subscription.unsubscribe()`
-- `takeUntil` is a standalone function used with `pipe()` — NOT a method on Observable
+- `until` is a standalone function used with `pipe()` — NOT a method on Observable
 
 USAGE PATTERN:
 ```ts
 import { Subject } from "@observable/core";
-import { takeUntil } from "@observable/take-until";
+import { until } from "@observable/until";
 import { pipe } from "@observable/pipe";
 
 const controller = new AbortController();
@@ -70,7 +70,7 @@ const notifier = new Subject<void>();
 
 pipe(
   source,
-  takeUntil(notifier)
+  until(notifier)
 ).subscribe({
   signal: controller.signal,
   next: (value) => console.log(value),
@@ -90,7 +90,7 @@ const destroy = new Subject<void>();
 
 pipe(
   someObservable,
-  takeUntil(destroy)
+  until(destroy)
 ).subscribe({ ... });
 
 // When component/resource is destroyed:
