@@ -9,6 +9,8 @@ import { mergeMap } from "@observable/merge-map";
 import { filter } from "@observable/filter";
 import { until } from "@observable/until";
 import { finalize } from "@observable/finalize";
+import { catchError } from "@observable/catch-error";
+import { throwError } from "@observable/throw-error";
 
 /**
  * [Pushes](https://jsr.io/@observable/core#push) the latest {@linkcode Values|values} from _all_ of the given
@@ -176,7 +178,7 @@ export function all<Value>(
 
     /**
      * The [notifier](https://jsr.io/@observable/core#notifier) that will tell the output
-     * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) to stop taking values.
+     * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) to stop pushing values.
      */
     const stop = new Subject<void>();
 
@@ -203,7 +205,10 @@ export function all<Value>(
               bufferSnapshot = undefined;
             }
           }),
-          // If this `observable` is empty, tell the output Observable to stop taking values.
+          catchError((value) => {
+            isEmpty = false;
+            return throwError(value);
+          }),
           finalize(() => isEmpty && stop.next()),
         );
       }),
