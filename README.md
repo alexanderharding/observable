@@ -227,7 +227,7 @@ forEach((value) => console.log(value));
 defer(() => of([Date.now()]));
 
 // notifier — "signal me when to stop"
-takeUntil(destroy);
+until(destroy);
 ```
 
 ### Documentation

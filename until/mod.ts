@@ -7,14 +7,14 @@ import { from } from "@observable/from";
  * @example
  * ```ts
  * import { Subject } from "@observable/core";
- * import { takeUntil } from "@observable/take-until";
+ * import { until } from "@observable/until";
  * import { pipe } from "@observable/pipe";
  *
  * const controller = new AbortController();
  * const subject = new Subject<number>();
  * const notifier = new Subject<void>();
  *
- * pipe(subject, takeUntil(notifier)).subscribe({
+ * pipe(subject, until(notifier)).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
  *   return: () => console.log("return"),
@@ -28,13 +28,13 @@ import { from } from "@observable/from";
  * subject.return();
  * ```
  */
-export function takeUntil<Value>(
+export function until<Value>(
   notifier: Observable,
 ): (source: Observable<Value>) => Observable<Value> {
   if (!arguments.length) throw new TypeError("1 argument required but 0 present");
   if (!isObservable(notifier)) throw new TypeError("Parameter 1 is not of type 'Observable'");
   notifier = from(notifier);
-  return function takeUntilFn(source) {
+  return function untilFn(source) {
     if (!arguments.length) throw new TypeError("1 argument required but 0 present");
     if (!isObservable(source)) throw new TypeError("Parameter 1 is not of type 'Observable'");
     source = from(source);

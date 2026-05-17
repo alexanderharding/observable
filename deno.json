@@ -47,11 +47,11 @@
     "share",
     "switch-map",
     "take",
-    "take-until",
     "tap",
     "throttle",
     "throw-error",
-    "timeout"
+    "timeout",
+    "until"
   ],
   "license": "MIT",
   "tasks": {

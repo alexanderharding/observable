@@ -2,7 +2,7 @@ import { isObservable, type Observable, Subject } from "@observable/core";
 import { from } from "@observable/from";
 import { defer } from "@observable/defer";
 import { pipe } from "@observable/pipe";
-import { takeUntil } from "@observable/take-until";
+import { until } from "@observable/until";
 import { mergeMap } from "@observable/merge-map";
 
 /**
@@ -56,7 +56,7 @@ export function switchMap<In, Out>(
         source,
         mergeMap((value, index) => {
           switching.next();
-          return pipe(project(value, index), takeUntil(switching));
+          return pipe(project(value, index), until(switching));
         }),
       );
     });

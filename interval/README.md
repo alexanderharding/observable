@@ -164,7 +164,7 @@ interval(0).subscribe({
 ```
 
 REMEMBER:
-- `interval` never returns — always use `take()`, `takeUntil()`, or `abort()` to stop
+- `interval` never returns — always use `take()`, `until()`, or `abort()` to stop
 - First emission is AFTER the interval (not immediately)
 
 SEE ALSO:

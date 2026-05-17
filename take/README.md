@@ -188,7 +188,7 @@ pipe(
 
 SEE ALSO:
 - `drop(count)` — skips first N values
-- `takeUntil(notifier)` — takes until notifier emits
+- `until(notifier)` — takes until notifier emits
 ````
 
 ## Glossary And Semantics

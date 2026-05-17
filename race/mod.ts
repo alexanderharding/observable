@@ -4,7 +4,7 @@ import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 import { tap } from "@observable/tap";
 import { mergeMap } from "@observable/merge-map";
-import { takeUntil } from "@observable/take-until";
+import { until } from "@observable/until";
 import { filter } from "@observable/filter";
 import { empty } from "@observable/empty";
 
@@ -96,7 +96,7 @@ export function race<Value>(observables: Iterable<Observable<Value>>): Observabl
     const finished = new Subject<number>();
     return pipe(
       forOf(observables),
-      takeUntil(finished),
+      until(finished),
       mergeMap((observable, index) =>
         pipe(
           observable,
@@ -104,7 +104,7 @@ export function race<Value>(observables: Iterable<Observable<Value>>): Observabl
             finished.next(index);
             finished.return();
           }),
-          takeUntil(pipe(finished, filter((winnerIndex) => winnerIndex !== index))),
+          until(pipe(finished, filter((winnerIndex) => winnerIndex !== index))),
         )
       ),
     );
