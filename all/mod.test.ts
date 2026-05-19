@@ -1,5 +1,5 @@
 import { assertEquals, assertStrictEquals, assertThrows } from "@std/assert";
-import { Observer } from "@observable/core";
+import { Observable, Observer } from "@observable/core";
 import { materialize, type ObserverNotification } from "@observable/materialize";
 import { flat } from "@observable/flat";
 import { defer } from "@observable/defer";
@@ -104,6 +104,35 @@ Deno.test("all should return empty when given an empty array", () => {
 
   // Assert
   assertStrictEquals(observable, empty);
+});
+
+Deno.test("all should return empty when given an empty set", () => {
+  // Arrange / Act
+  const observable = all(new Set<Observable>());
+
+  // Assert
+  assertStrictEquals(observable, empty);
+});
+
+Deno.test("all should be empty when given an empty iterable", () => {
+  // Arrange
+  const notifications: Array<ObserverNotification<ReadonlyArray<unknown>>> = [];
+  const iterable: Iterable<Observable<unknown>> = {
+    [Symbol.iterator]: () => ({
+      next: () => ({ done: true, value: undefined }),
+      return: () => ({ done: true, value: undefined }),
+      throw: () => ({ done: true, value: undefined }),
+    }),
+  };
+  const observable = all(iterable);
+
+  // Act
+  pipe(observable, materialize()).subscribe(
+    new Observer((notification) => notifications.push(notification)),
+  );
+
+  // Assert
+  assertEquals(notifications, [["return"]]);
 });
 
 Deno.test("all should accept Set of observables", () => {

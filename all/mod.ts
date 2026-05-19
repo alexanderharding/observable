@@ -1,16 +1,13 @@
-import { type Observable, Subject } from "@observable/core";
-import { defer } from "@observable/defer";
+import { Observable } from "@observable/core";
 import { empty } from "@observable/empty";
-import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
-import { tap } from "@observable/tap";
-import { map } from "@observable/map";
-import { mergeMap } from "@observable/merge-map";
-import { filter } from "@observable/filter";
-import { until } from "@observable/until";
 import { finalize } from "@observable/finalize";
-import { catchError } from "@observable/catch-error";
-import { throwError } from "@observable/throw-error";
+
+/**
+ * An iterable that has a known `size` _before_ iteration begins.
+ * @internal Do NOT export
+ */
+type BoundedIterable<Value> = Iterable<Value> & Readonly<Record<"size", number>>;
 
 /**
  * [Pushes](https://jsr.io/@observable/core#push) the latest {@linkcode Values|values} from _all_ of the given
@@ -142,82 +139,86 @@ export function all<Value>(
   observables: Iterable<Observable<Value>>,
 ): Observable<ReadonlyArray<Value>>;
 export function all<Value>(
-  observables: Iterable<Observable<Value>>,
+  iterable: Iterable<Observable<Value>>,
 ): Observable<ReadonlyArray<Value>> {
   if (!arguments.length) throw new TypeError("1 argument required but 0 present");
-  if (!isIterable(observables)) throw new TypeError("Parameter 1 is not of type 'Iterable'");
+  if (!isIterable(iterable)) throw new TypeError("Parameter 1 is not of type 'Iterable'");
 
-  if (Array.isArray(observables) && !observables.length) return empty;
+  if (Array.isArray(iterable) && !iterable.length) return empty;
+  if (iterable instanceof Set && !iterable.size) return empty;
 
-  // Use defer so we do not start iterating until subscription, we get a fresh iteration for each subscription,
-  // and we get a fresh variable scope for each subscription.
-  return defer(() => {
+  // We could compose a few different operators to achieve the same result, but this is
+  // a more direct implementation that is easier to understand and reason about.
+  return new Observable((observer) => {
+    /**
+     * The bounded {@linkcode iterable} which has a known `size` for subsequent logic.
+     */
+    const observables = bound(iterable);
+
+    if (!observables.size) return observer.return();
+
     /**
      * Tracking the number of first values that have been received.
      */
     let receivedFirstValueCount = 0;
     /**
-     * The normalized {@linkcode observables} which has a known length for subsequent logic.
+     * Tracking the number of active inner subscriptions.
      */
-    const observableArray: ReadonlyArray<Observable<Value>> = Array.isArray(observables)
-      ? observables
-      : Array.from(observables);
-    /**
-     * Tracking the expected number of first values that need to be received before the first snapshot is emitted.
-     */
-    const expectedFirstValueCount = observableArray.length;
+    let activeInnerSubscriptions = observables.size;
 
     /**
-     * Tracking a known list of buffered values, so we don't have to clone them while nexting to prevent reentrant behaviors.
+     * Tracking a known list of {@linkcode buffer|buffered} values, so we don't have to clone them while nexting to prevent reentrant behaviors.
      */
-    let bufferSnapshot: ReadonlyArray<Value> | undefined;
+    let snapshot: ReadonlyArray<Value> | undefined;
     /**
      * Tracking the buffered values.
      */
     const buffer: Array<Value> = [];
 
     /**
-     * The [notifier](https://jsr.io/@observable/core#notifier) that will tell the output
-     * [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) to stop pushing values.
+     * Tracking the index of the current observable.
      */
-    const stop = new Subject<void>();
+    let index = 0;
 
-    return pipe(
-      forOf(observableArray),
-      mergeMap((observable, index) => {
-        /**
-         * Tracking if the observable is empty to be evaluated by subsequent logic.
-         */
-        let isEmpty = true;
-        return pipe(
-          observable,
-          tap((value) => {
-            if (isEmpty) receivedFirstValueCount++;
-            isEmpty = false;
+    for (const observable of observables) {
+      /**
+       * Tracking if the {@linkcode observable} is empty to be evaluated by subsequent logic.
+       */
+      let isEmpty = true;
+      /**
+       * Tracking a snapshot of the {@linkcode index} at the time of evaluation.
+       */
+      const indexSnapshot = index++;
 
-            // Check for value equality and update the buffer only if it's different.
-            // Though this doesn't stop the snapshot from being emitted, it prevents the buffer from
-            // being cloned unnecessarily.
-            if (!Object.is(buffer[index], value)) {
-              // Update the buffer.
-              buffer[index] = value;
-              // Reset the buffer snapshot since it's now stale.
-              bufferSnapshot = undefined;
-            }
-          }),
-          catchError((value) => {
-            isEmpty = false;
-            return throwError(value);
-          }),
-          finalize(() => isEmpty && stop.next()),
-        );
-      }),
-      filter(() => receivedFirstValueCount === expectedFirstValueCount),
-      // All first values have been received, we can cleanup the notifier.
-      tap(() => stop.return()),
-      map(() => bufferSnapshot ??= Object.freeze(buffer.slice())),
-      until(stop),
-    );
+      pipe(observable, finalize(() => --activeInnerSubscriptions)).subscribe({
+        signal: observer.signal,
+        next(value) {
+          if (isEmpty) ++receivedFirstValueCount;
+
+          isEmpty = false;
+
+          // Check for value equality and update the buffer only if it's different.
+          // Though this doesn't stop the snapshot from being pushed, it prevents the buffer from
+          // being cloned unnecessarily.
+          if (!Object.is(buffer[indexSnapshot], value)) {
+            // Update the buffer.
+            buffer[indexSnapshot] = value;
+            // Reset the buffer snapshot since it's now stale.
+            snapshot = undefined;
+          }
+
+          if (receivedFirstValueCount === observables.size) {
+            observer.next(snapshot ??= Object.freeze(buffer.slice()));
+          }
+        },
+        return() {
+          if (isEmpty || !activeInnerSubscriptions) observer.return();
+        },
+        throw: (value) => observer.throw(value),
+      });
+
+      if (observer.signal.aborted) return;
+    }
   });
 }
 
@@ -226,10 +227,16 @@ export function all<Value>(
  * @internal Do NOT export
  */
 function isIterable(value: unknown): value is Iterable<unknown> {
-  if (!arguments.length) throw new TypeError("1 argument required but 0 present");
-  return (
-    (typeof value === "object" && value !== null) &&
-    Symbol.iterator in value &&
-    typeof value[Symbol.iterator] === "function"
-  );
+  return typeof value === "object" && value !== null && Symbol.iterator in value &&
+    typeof value[Symbol.iterator] === "function";
+}
+
+/**
+ * Converts the given {@linkcode value} to a _reliable_ {@linkcode BoundedIterable}.
+ * @internal Do NOT export
+ */
+function bound<Value>(value: Iterable<Value>): BoundedIterable<Value> {
+  if (value instanceof Set) return value;
+  const array = Array.isArray(value) ? value : Array.from(value);
+  return { [Symbol.iterator]: () => array[Symbol.iterator](), size: array.length };
 }
