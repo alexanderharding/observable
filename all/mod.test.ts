@@ -1,5 +1,5 @@
 import { assertEquals, assertStrictEquals, assertThrows } from "@std/assert";
-import { Observable, Observer } from "@observable/core";
+import { type Observable, Observer } from "@observable/core";
 import { materialize, type ObserverNotification } from "@observable/materialize";
 import { flat } from "@observable/flat";
 import { defer } from "@observable/defer";
