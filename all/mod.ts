@@ -182,9 +182,9 @@ export function all<Value>(
 
     for (const observable of observables) {
       /**
-       * Tracking if the {@linkcode observable} is empty to be evaluated by subsequent logic.
+       * Tracking if the {@linkcode observable} has pushed its first value.
        */
-      let isEmpty = true;
+      let receivedFirstValue = false;
       /**
        * Tracking a snapshot of the {@linkcode index} at the time of evaluation.
        */
@@ -193,17 +193,12 @@ export function all<Value>(
       pipe(observable, finalize(() => --activeInnerSubscriptions)).subscribe({
         signal: observer.signal,
         next(value) {
-          if (isEmpty) ++receivedFirstValueCount;
+          if (!receivedFirstValue || !Object.is(buffer[indexSnapshot], value)) {
+            if (!receivedFirstValue) ++receivedFirstValueCount;
 
-          isEmpty = false;
+            receivedFirstValue = true;
 
-          // Check for value equality and update the buffer only if it's different.
-          // Though this doesn't stop the snapshot from being pushed, it prevents the buffer from
-          // being cloned unnecessarily.
-          if (!Object.is(buffer[indexSnapshot], value)) {
-            // Update the buffer.
             buffer[indexSnapshot] = value;
-            // Reset the buffer snapshot since it's now stale.
             snapshot = undefined;
           }
 
@@ -212,7 +207,7 @@ export function all<Value>(
           }
         },
         return() {
-          if (isEmpty || !activeInnerSubscriptions) observer.return();
+          if (!receivedFirstValue || !activeInnerSubscriptions) observer.return();
         },
         throw: (value) => observer.throw(value),
       });

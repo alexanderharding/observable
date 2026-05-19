@@ -10,6 +10,7 @@ import { pipe } from "@observable/pipe";
 import { all } from "./mod.ts";
 import { ReplaySubject } from "@observable/replay-subject";
 import { throwError } from "@observable/throw-error";
+import { of } from "@observable/of";
 
 Deno.test(
   "all should combine multiple input's Observables that next and return synchronously",
@@ -95,6 +96,23 @@ Deno.test("all should handle reentrancy", () => {
     ["next", [10, 6, 7]],
     ["next", [10, 6, 8]],
     ["next", [10, 6, 9]],
+  ]);
+});
+
+Deno.test("all should handle undefined first values", () => {
+  // Arrange
+  const notifications: Array<ObserverNotification<ReadonlyArray<undefined>>> = [];
+  const observable = all([of(undefined), of(undefined), of(undefined)]);
+
+  // Act
+  pipe(observable, materialize()).subscribe(
+    new Observer((notification) => notifications.push(notification)),
+  );
+
+  // Assert
+  assertEquals(notifications, [
+    ["next", [undefined, undefined, undefined]],
+    ["return"],
   ]);
 });
 
