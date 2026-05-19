@@ -1,5 +1,5 @@
 import { assertEquals, assertStrictEquals, assertThrows } from "@std/assert";
-import { Observer } from "@observable/core";
+import { type Observable, Observer } from "@observable/core";
 import { materialize, type ObserverNotification } from "@observable/materialize";
 import { flat } from "@observable/flat";
 import { defer } from "@observable/defer";
@@ -10,6 +10,7 @@ import { pipe } from "@observable/pipe";
 import { all } from "./mod.ts";
 import { ReplaySubject } from "@observable/replay-subject";
 import { throwError } from "@observable/throw-error";
+import { of } from "@observable/of";
 
 Deno.test(
   "all should combine multiple input's Observables that next and return synchronously",
@@ -98,12 +99,58 @@ Deno.test("all should handle reentrancy", () => {
   ]);
 });
 
+Deno.test("all should handle undefined first values", () => {
+  // Arrange
+  const notifications: Array<ObserverNotification<ReadonlyArray<undefined>>> = [];
+  const observable = all([of(undefined), of(undefined), of(undefined)]);
+
+  // Act
+  pipe(observable, materialize()).subscribe(
+    new Observer((notification) => notifications.push(notification)),
+  );
+
+  // Assert
+  assertEquals(notifications, [
+    ["next", [undefined, undefined, undefined]],
+    ["return"],
+  ]);
+});
+
 Deno.test("all should return empty when given an empty array", () => {
   // Arrange / Act
   const observable = all([]);
 
   // Assert
   assertStrictEquals(observable, empty);
+});
+
+Deno.test("all should return empty when given an empty set", () => {
+  // Arrange / Act
+  const observable = all(new Set<Observable>());
+
+  // Assert
+  assertStrictEquals(observable, empty);
+});
+
+Deno.test("all should be empty when given an empty iterable", () => {
+  // Arrange
+  const notifications: Array<ObserverNotification<ReadonlyArray<unknown>>> = [];
+  const iterable: Iterable<Observable<unknown>> = {
+    [Symbol.iterator]: () => ({
+      next: () => ({ done: true, value: undefined }),
+      return: () => ({ done: true, value: undefined }),
+      throw: () => ({ done: true, value: undefined }),
+    }),
+  };
+  const observable = all(iterable);
+
+  // Act
+  pipe(observable, materialize()).subscribe(
+    new Observer((notification) => notifications.push(notification)),
+  );
+
+  // Assert
+  assertEquals(notifications, [["return"]]);
 });
 
 Deno.test("all should accept Set of observables", () => {
