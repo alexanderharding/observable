@@ -11,7 +11,7 @@ Automated by [JSR](https://jsr.io/)
 
 ## Publishing
 
-Automated by `.github\workflows\publish.yml`.
+Automated by `.github/workflows/publish.yml`.
 
 ## Running unit tests
 

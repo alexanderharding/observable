@@ -11,7 +11,7 @@ Automated by [JSR](https://jsr.io/)
 
 ## Publishing
 
-Automated by `.github\workflows\publish.yml`.
+Automated by `.github/workflows/publish.yml`.
 
 ## Running unit tests
 
@@ -65,7 +65,7 @@ const controller = new AbortController();
 
 pipe(forOf([1, 2, 2, 3, 1, 3]), distinct()).subscribe({
   signal: controller.signal,
-  next: (value) => console.log(value),  // 1, 2, 3, 4
+  next: (value) => console.log(value),  // 1, 2, 3
   return: () => console.log("done"),
   throw: (error) => console.error(error),
 });

@@ -445,3 +445,19 @@ Deno.test(
     ]);
   },
 );
+
+Deno.test("ReplaySubject.constructor should throw when called with no arguments", () => {
+  assertThrows(
+    () => new ReplaySubject(...([] as unknown as ConstructorParameters<typeof ReplaySubject>)),
+    TypeError,
+    "1 argument required but 0 present",
+  );
+});
+
+Deno.test("ReplaySubject.constructor should throw when count is not a number", () => {
+  assertThrows(
+    () => new ReplaySubject("3" as unknown as number),
+    TypeError,
+    "Parameter 1 is not of type 'Number'",
+  );
+});

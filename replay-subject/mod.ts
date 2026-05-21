@@ -382,8 +382,13 @@ export const ReplaySubject: ReplaySubjectConstructor = class<Value> {
     if (!arguments.length) throw new TypeError("1 argument required but 0 present");
     if (typeof count !== "number") throw new TypeError("Parameter 1 is not of type 'Number'");
     Object.freeze(this);
-    (this.#count = Math.trunc(count)) >= 0 ? this.#bufferSnapshot = undefined : this.return();
+
+    this.#count = Math.trunc(count);
+    if (this.#count >= 0) this.#bufferSnapshot = undefined;
+    else this.return();
+
     if (this.signal.aborted || this.#count === 0) return;
+
     this.signal.addEventListener("abort", () => {
       this.#buffer.length = 0;
       this.#bufferSnapshot = empty;
@@ -417,6 +422,7 @@ export const ReplaySubject: ReplaySubjectConstructor = class<Value> {
     if (!arguments.length) throw new TypeError("1 argument required but 0 present");
     this.#subject.throw(value);
   }
+
   subscribe(observer: Observer<Value>): void {
     if (!(this instanceof ReplaySubject)) {
       throw new TypeError(`'this' is not instanceof '${stringTag}'`);

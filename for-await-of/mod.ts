@@ -35,8 +35,8 @@ export function forAwaitOf<Value>(values: AsyncIterable<Value>): Observable<Valu
   return new Observable(async (observer) => {
     try {
       for await (const value of values) {
-        observer.next(value);
         if (observer.signal.aborted) return;
+        observer.next(value);
       }
       observer.return();
     } catch (value) {
