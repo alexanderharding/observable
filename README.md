@@ -29,8 +29,8 @@ interface Example {
 }
 
 interface ExampleConstructor {
-  new (): A;
-  readonly prototype: A;
+  new (): Example;
+  readonly prototype: Example;
 }
 
 const Example: ExampleConstructor = class {
@@ -54,8 +54,8 @@ const Example: ExampleConstructor = class {
 
 ### Immutability
 
-All object instances, constructors, and prototypes **must be frozen** to prevent runtime mutation.
-This ensures predictable behavior and guards against accidental modification.
+All **public/exported** object instances, constructors, and prototypes **must be frozen** to prevent
+runtime mutation. This ensures predictable behavior and guards against accidental modification.
 
 ```ts
 const Example: ExampleConstructor = class {
