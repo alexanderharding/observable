@@ -47,7 +47,7 @@ Use the following prompt with AI assistants to help them understand this library
 You are helping me with code that uses @observable/for-in from the @observable library ecosystem.
 
 WHAT IT DOES:
-`forIn(object)` creates an Observable that synchronously emits each enumerable key of the given object in order, then calls `return()`. It's the Observable analog of the `for...in` loop, but it only emits OWN keys (like `Object.keys`), not inherited ones.
+`forIn(object)` creates an Observable that synchronously emits each enumerable key of the given object in order, then calls `return()`. It's the Observable analog of the `for...in` loop, so it emits both own and inherited enumerable string keys (unlike `Object.keys`, which only returns own keys).
 
 CRITICAL: This library is NOT RxJS. Key differences:
 - Observer uses `return`/`throw` — NOT `complete`/`error`

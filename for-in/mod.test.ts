@@ -48,3 +48,20 @@ Deno.test("forIn should emit keys in order", () => {
   // Assert
   assertEquals(notifications, [["next", "a"], ["next", "b"], ["next", "c"], ["return"]]);
 });
+
+Deno.test("forIn should handle inherited enumerable properties", () => {
+  // Arrange
+  const notifications: Array<ObserverNotification> = [];
+  const proto = { inherited: "value" };
+  const object = Object.create(proto);
+  object.own = "ownValue";
+  const source = forIn(object);
+
+  // Act
+  pipe(source, materialize()).subscribe(
+    new Observer((notification) => notifications.push(notification)),
+  );
+
+  // Assert
+  assertEquals(notifications, [["next", "own"], ["next", "inherited"], ["return"]]);
+});
