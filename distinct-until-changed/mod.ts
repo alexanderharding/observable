@@ -51,13 +51,16 @@ export function distinctUntilChanged<Value>(): (source: Observable<Value>) => Ob
  *
  * const controller = new AbortController();
  *
- * pipe(forOf([{ id: 1 }, { id: 1 }, { id: 2 }]), distinctUntilChanged((a, b) => a.id === b.id)).subscribe({
+ * pipe(
+ *   forOf([{ id: 1 }, { id: 1 }, { id: 2 }]),
+ *   distinctUntilChanged((a, b) => a.id === b.id),
+ * ).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
  *   return: () => console.log("return"),
  *   throw: (value) => console.log("throw", value),
  * });
- * ```
+ *
  * // Console output:
  * // "next" { id: 1 }
  * // "next" { id: 2 }
@@ -109,7 +112,7 @@ export function distinctUntilChanged<Value>(
  *   return: () => console.log("return"),
  *   throw: (value) => console.log("throw", value),
  * });
- * ```
+ *
  * // Console output:
  * // "next" { id: 1 }
  * // "next" { id: 2 }
