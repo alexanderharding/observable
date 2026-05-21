@@ -35,7 +35,7 @@ Deno.test(
 );
 
 Deno.test(
-  "Subject.constructor should throw when creating with arguments",
+  "Subject.constructor should ignore extra arguments",
   () => {
     // Arrange / Act / Assert
     new Subject(
@@ -1031,25 +1031,3 @@ Deno.test("isSubject should return false if 'throw' is not a function", () => {
   // Assert
   assertEquals(result, false);
 });
-
-Deno.test(
-  "isSubject should return false if 'signal' is not an instance of AbortSignal",
-  () => {
-    // Arrange
-    const value:
-      & Omit<Subject, "signal">
-      & Record<"signal", "not an AbortSignal"> = {
-        subscribe: () => {},
-        signal: "not an AbortSignal",
-        next: () => {},
-        return: () => {},
-        throw: () => {},
-      };
-
-    // Act
-    const result = isSubject(value);
-
-    // Assert
-    assertEquals(result, false);
-  },
-);

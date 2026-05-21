@@ -446,13 +446,12 @@ Deno.test(
   () => {
     // Arrange
     let proxy = true;
-    // const error = new Error("test");
-    const throwError = new Error("return handler threw");
+    const error = new Error("return handler threw");
     const returnCalls: Array<Parameters<Observer["return"]>> = [];
     const observer = new Observer({
       return: (...args) => {
         returnCalls.push(args);
-        throw throwError;
+        throw error;
       },
     });
     const queueMicrotaskCalls: Array<

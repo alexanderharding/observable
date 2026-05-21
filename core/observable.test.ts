@@ -241,7 +241,7 @@ Deno.test(
 Deno.test(
   "Observable should call internal subscribe again on resubscribe",
   () => {
-    // Arrange;
+    // Arrange
     const subscribeCalls: Array<Parameters<Observable["subscribe"]>> = [];
     const subscribeFn: Observable["subscribe"] = (observer) => subscribeCalls.push([observer]);
     const observable = new Observable(subscribeFn);
