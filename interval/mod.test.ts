@@ -31,7 +31,7 @@ Deno.test("interval should return empty if the milliseconds is NaN", () => {
   assertStrictEquals(observable, empty);
 });
 
-Deno.test("interval should emit indexes synchronously when milliseconds is 0", () => {
+Deno.test("interval should emit void values synchronously when milliseconds is 0", () => {
   // Arrange
   const notifications: Array<ObserverNotification<void>> = [];
   const observable = pipe(interval(0), take(5), materialize());

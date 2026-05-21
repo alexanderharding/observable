@@ -28,7 +28,7 @@ Deno.test("tap should throw if callback is not a function", () => {
   );
 });
 
-Deno.test("tap should throw if no arguments are provided", () => {
+Deno.test("tap operator function should throw if no arguments are provided", () => {
   const operatorFn = tap(() => {});
   assertThrows(
     // @ts-expect-error: Testing invalid arguments
