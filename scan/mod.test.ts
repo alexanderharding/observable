@@ -1,4 +1,4 @@
-import { assertEquals } from "@std/assert";
+import { assertEquals, assertThrows } from "@std/assert";
 import { Observer } from "@observable/core";
 import { forOf } from "@observable/for-of";
 import { of } from "@observable/of";
@@ -9,6 +9,53 @@ import { materialize, type ObserverNotification } from "@observable/materialize"
 import { empty } from "@observable/empty";
 import { finalize } from "@observable/finalize";
 import { never } from "@observable/never";
+
+Deno.test("scan should throw if no arguments are provided", () => {
+  assertThrows(
+    // @ts-expect-error: Testing invalid arguments
+    () => scan(),
+    TypeError,
+    "2 arguments required but 0 present",
+  );
+});
+
+Deno.test("scan should throw if only one argument is provided", () => {
+  assertThrows(
+    // @ts-expect-error: Testing invalid arguments
+    () => scan(() => {}),
+    TypeError,
+    "2 arguments required but 1 present",
+  );
+});
+
+Deno.test("scan should throw if reducer is not a function", () => {
+  assertThrows(
+    // @ts-expect-error: Testing invalid arguments
+    () => scan("not a function", 0),
+    TypeError,
+    "Parameter 1 is not of type 'Function'",
+  );
+});
+
+Deno.test("scan should throw if initial value is not provided", () => {
+  const operatorFn = scan(() => 0, 0);
+  assertThrows(
+    // @ts-expect-error: Testing invalid arguments
+    () => operatorFn(),
+    TypeError,
+    "1 argument required but 0 present",
+  );
+});
+
+Deno.test("scan should throw if source is not an Observable", () => {
+  const operatorFn = scan(() => 0, 0);
+  assertThrows(
+    // @ts-expect-error: Testing invalid arguments
+    () => operatorFn("not an observable"),
+    TypeError,
+    "Parameter 1 is not of type 'Observable'",
+  );
+});
 
 Deno.test("scan should accumulate values with an initial value", () => {
   // Arrange
