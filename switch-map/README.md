@@ -4,7 +4,7 @@
 each [`value`](https://jsr.io/@observable/switch-map/doc/~/switchMap#type_param_in) to an
 [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) and
 [`unsubscribes`](https://jsr.io/@observable/core/doc/~/Observer.signal) from any previously
-[`projected`]((https://jsr.io/@observable/switch-map/doc/~/switchMap#function_switchmap_0_parameter_project))
+[`projected`](https://jsr.io/@observable/switch-map/doc/~/switchMap#function_switchmap_0_parameter_project)
 [`Observable`](https://jsr.io/@observable/core/doc/~/Observable).
 
 ## Build
@@ -31,7 +31,7 @@ import type { Observable } from "@observable/core";
 
 const page = new BehaviorSubject(1);
 const controller = new AbortController();
-pipe(page, switchMap((value) => of(`Page ${page}`))).subscribe({
+pipe(page, switchMap((value) => of(`Page ${value}`))).subscribe({
   signal: controller.signal,
   next: (value) => console.log("next", value),
   return: () => console.log("return"),
