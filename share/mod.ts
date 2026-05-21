@@ -95,6 +95,7 @@ export function share<Value>(
     if (!isObservable(source)) throw new TypeError("Parameter 1 is not of type 'Observable'");
     let activeSubscriptions = 0;
     let shared: Observable<Value> | undefined;
+    let sourceController: AbortController | undefined;
     source = from(source);
     return pipe(
       defer(() => {
@@ -103,10 +104,21 @@ export function share<Value>(
         return new Observable((observer) => {
           const subject = factory();
           (shared = from(subject)).subscribe(observer);
-          source.subscribe(subject);
+          sourceController = new AbortController();
+          source.subscribe({
+            signal: AbortSignal.any([subject.signal, sourceController.signal]),
+            next: (value) => subject.next(value),
+            return: () => subject.return(),
+            throw: (value) => subject.throw(value),
+          });
         });
       }),
-      finalize(() => --activeSubscriptions === 0 && (shared = undefined)),
+      finalize(() => {
+        if (--activeSubscriptions) return;
+        sourceController?.abort();
+        sourceController = undefined;
+        shared = undefined;
+      }),
     );
   };
 }
