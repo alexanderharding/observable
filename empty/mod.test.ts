@@ -32,11 +32,14 @@ Deno.test(
 
     // Act
     materialized.subscribe(
-      new Observer((notification) => notifications.push(notification)),
+      new Observer({
+        signal: controller.signal,
+        next: (notification) => notifications.push(notification),
+      }),
     );
 
     // Assert
-    assertEquals(notifications, [["return"]]);
+    assertEquals(notifications, []);
   },
 );
 
