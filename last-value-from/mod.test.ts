@@ -9,13 +9,12 @@ Deno.test("lastValueFrom should pump throw values right through the Promise", as
   // Arrange
   const error = new Error("test");
 
-  // Act
-  try {
-    await lastValueFrom(throwError(error));
-  } catch (thrownError) {
-    // Assert
-    assertStrictEquals(thrownError, error);
-  }
+  // Act / Assert
+  await assertRejects(
+    () => lastValueFrom(throwError(error)),
+    Error,
+    "test",
+  );
 });
 
 Deno.test("lastValueFrom should pump last next value through the Promise", async () => {
