@@ -19,7 +19,7 @@ import { mergeMap } from "@observable/merge-map";
  *
  * const page = new BehaviorSubject(1);
  * const controller = new AbortController();
- * pipe(page, switchMap((value) => of(`Page ${page}`))).subscribe({
+ * pipe(page, switchMap((value) => of(`Page ${value}`))).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
  *   return: () => console.log("return"),

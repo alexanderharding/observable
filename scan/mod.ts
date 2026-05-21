@@ -33,7 +33,8 @@ export function scan<In, Out>(
   reducer: (previous: Out, current: In, index: number) => Out,
   initialValue: Out,
 ): (source: Observable<In>) => Observable<Out> {
-  if (!arguments.length) throw new TypeError("1 argument required but 0 present");
+  if (!arguments.length) throw new TypeError("2 arguments required but 0 present");
+  if (arguments.length < 2) throw new TypeError("2 arguments required but 1 present");
   if (typeof reducer !== "function") throw new TypeError("Parameter 1 is not of type 'Function'");
   return function scanFn(source) {
     if (!arguments.length) throw new TypeError("1 argument required but 0 present");

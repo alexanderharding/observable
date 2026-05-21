@@ -1,4 +1,4 @@
-import { assertEquals } from "@std/assert";
+import { assertEquals, assertThrows } from "@std/assert";
 import { Observer } from "@observable/core";
 import { materialize, type ObserverNotification } from "@observable/materialize";
 import { pipe } from "@observable/pipe";
@@ -6,6 +6,44 @@ import { finalize } from "./mod.ts";
 import { flat } from "@observable/flat";
 import { forOf } from "@observable/for-of";
 import { throwError } from "@observable/throw-error";
+
+Deno.test("finalize should throw if no arguments are provided", () => {
+  assertThrows(
+    // @ts-expect-error: Testing invalid arguments
+    () => finalize(),
+    TypeError,
+    "1 argument required but 0 present",
+  );
+});
+
+Deno.test("finalize should throw if callback is not a function", () => {
+  assertThrows(
+    // @ts-expect-error: Testing invalid arguments
+    () => finalize("not a function"),
+    TypeError,
+    "Parameter 1 is not of type 'Function'",
+  );
+});
+
+Deno.test("finalize operator function should throw if no arguments are provided", () => {
+  const operatorFn = finalize(() => {});
+  assertThrows(
+    // @ts-expect-error: Testing invalid arguments
+    () => operatorFn(),
+    TypeError,
+    "1 argument required but 0 present",
+  );
+});
+
+Deno.test("finalize should throw if source is not an Observable", () => {
+  const operatorFn = finalize(() => {});
+  assertThrows(
+    // @ts-expect-error: Testing invalid arguments
+    () => operatorFn("not an observable"),
+    TypeError,
+    "Parameter 1 is not of type 'Observable'",
+  );
+});
 
 Deno.test(
   "finalize should call the finalizer function after the source is returned",

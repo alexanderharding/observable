@@ -45,7 +45,7 @@ export function pairwise<Value>(): (source: Observable<Value>) => Observable<Pai
     return pipe(
       source,
       scan(([, previous], current) => [previous, current] as const, initialValue),
-      filter((pair) => pair.every((value) => value !== noValue)),
+      filter((pair): pair is Pair<Value> => pair.every((value) => value !== noValue)),
     );
   };
 }

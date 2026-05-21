@@ -1,5 +1,5 @@
 import { assertEquals, assertStrictEquals, assertThrows } from "@std/assert";
-import { Observer, Subject } from "@observable/core";
+import { Observable, Observer, Subject } from "@observable/core";
 import { pipe } from "@observable/pipe";
 import { share } from "./mod.ts";
 import { forOf } from "@observable/for-of";
@@ -465,6 +465,86 @@ Deno.test("share should propagate from error when connector returns non-observab
     (notifications[0][1] as TypeError).message,
     "Parameter 1 is not of type 'Observable'",
   );
+});
+
+Deno.test("share should abort the source subscription when all observers unsubscribe", () => {
+  // Arrange
+  let sourceSignal: AbortSignal | undefined;
+  const source = new Observable<number>((observer) => {
+    sourceSignal = observer.signal;
+  });
+  const shared = pipe(source, share());
+  const controller1 = new AbortController();
+  const controller2 = new AbortController();
+
+  // Act
+  shared.subscribe(new Observer({ signal: controller1.signal }));
+  shared.subscribe(new Observer({ signal: controller2.signal }));
+  assertStrictEquals(sourceSignal?.aborted, false);
+  controller1.abort();
+  assertStrictEquals(sourceSignal?.aborted, false);
+  controller2.abort();
+
+  // Assert
+  assertStrictEquals(sourceSignal?.aborted, true);
+});
+
+Deno.test("share should not abort the source subscription while at least one observer remains", () => {
+  // Arrange
+  let sourceSignal: AbortSignal | undefined;
+  const source = new Observable<number>((observer) => {
+    sourceSignal = observer.signal;
+  });
+  const shared = pipe(source, share());
+  const controller1 = new AbortController();
+  const controller2 = new AbortController();
+
+  // Act
+  shared.subscribe(new Observer({ signal: controller1.signal }));
+  shared.subscribe(new Observer({ signal: controller2.signal }));
+  controller1.abort();
+
+  // Assert
+  assertStrictEquals(sourceSignal?.aborted, false);
+});
+
+Deno.test("share should use a fresh source controller on each reset cycle", () => {
+  // Arrange
+  const sourceSignals: Array<AbortSignal> = [];
+  const source = new Observable<number>((observer) => {
+    sourceSignals.push(observer.signal);
+  });
+  const shared = pipe(source, share());
+  const controller = new AbortController();
+
+  // Act
+  shared.subscribe(new Observer({ signal: controller.signal }));
+  controller.abort();
+  shared.subscribe(new Observer());
+
+  // Assert
+  assertStrictEquals(sourceSignals.length, 2);
+  assertStrictEquals(sourceSignals[0].aborted, true);
+  assertStrictEquals(sourceSignals[1].aborted, false);
+  assertStrictEquals(sourceSignals[0] === sourceSignals[1], false);
+});
+
+Deno.test("share should abort the source subscription when the subject terminates", () => {
+  // Arrange
+  let sourceSignal: AbortSignal | undefined;
+  const subject = new Subject<number>();
+  const source = new Observable<number>((observer) => {
+    sourceSignal = observer.signal;
+  });
+  const shared = pipe(source, share(() => subject));
+
+  // Act
+  shared.subscribe(new Observer());
+  assertStrictEquals(sourceSignal?.aborted, false);
+  subject.return();
+
+  // Assert
+  assertStrictEquals(sourceSignal?.aborted, true);
 });
 
 Deno.test("share should propagate error when connector throws synchronously", () => {

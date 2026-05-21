@@ -29,7 +29,7 @@ Deno.test(
 );
 
 Deno.test(
-  "from should return the same observer if it is already a proper observer",
+  "from should return the same Observable if it is already a proper Observable",
   () => {
     // Arrange
     const expected = new Observable(() => {});
