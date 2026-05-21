@@ -99,7 +99,7 @@ import { from } from "@observable/from";
  * import { pipe } from "@observable/pipe";
  *
  * const controller = new AbortController();
- * pipe(of([1, 2, 3, 4, 5]), delay(NaN))).subscribe({
+ * pipe(of([1, 2, 3, 4, 5]), delay(NaN)).subscribe({
  *   signal: controller.signal,
  *   next: (value) => console.log("next", value),
  *   return: () => console.log("return"),
