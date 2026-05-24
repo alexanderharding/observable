@@ -135,14 +135,14 @@ Deno.test("all should return empty when given an empty set", () => {
 Deno.test("all should be empty when given an empty iterable", () => {
   // Arrange
   const notifications: Array<ObserverNotification<ReadonlyArray<unknown>>> = [];
-  const iterable: Iterable<Observable<unknown>> = {
+  const observables: Iterable<Observable> = {
     [Symbol.iterator]: () => ({
       next: () => ({ done: true, value: undefined }),
       return: () => ({ done: true, value: undefined }),
       throw: () => ({ done: true, value: undefined }),
     }),
   };
-  const observable = all(iterable);
+  const observable = all(observables);
 
   // Act
   pipe(observable, materialize()).subscribe(

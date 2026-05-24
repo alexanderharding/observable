@@ -68,13 +68,13 @@ export function forOf<const Values extends ReadonlyArray<unknown>>(
  * // "return"
  * ```
  */
-export function forOf<Value>(iterable: Iterable<Value>): Observable<Value>;
-export function forOf<Value>(iterable: Iterable<Value>): Observable<Value> {
+export function forOf<Value>(values: Iterable<Value>): Observable<Value>;
+export function forOf<Value>(values: Iterable<Value>): Observable<Value> {
   if (!arguments.length) throw new TypeError("1 argument required but 0 present");
-  if (!isIterable(iterable)) throw new TypeError("Parameter 1 is not of type 'Iterable'");
-  if (Array.isArray(iterable) && !iterable.length) return empty;
+  if (!isIterable(values)) throw new TypeError("Parameter 1 is not of type 'Iterable'");
+  if (Array.isArray(values) && !values.length) return empty;
   return new Observable((observer) => {
-    for (const value of iterable) {
+    for (const value of values) {
       observer.next(value);
       if (observer.signal.aborted) return;
     }
