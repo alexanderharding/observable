@@ -34,8 +34,8 @@ export interface Observer<Value = unknown> {
  */
 export interface ObserverConstructor {
   /**
-   * Creates and return an object that provides a standard way to [consume](https://jsr.io/@observable/core#consumer)
-   * a sequence of values (either finite or infinite).
+   * Creates and returns an object that provides a standard way to [consume](https://jsr.io/@observable/core#consumer)
+   * a sequence of {@linkcode Value|values} (either finite or infinite).
    * ```ts
    * import { Observer } from "@observable/core";
    *
