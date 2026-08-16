@@ -237,7 +237,6 @@ function reportUnhandledError(value: unknown): void {
  * @internal Do NOT export.
  */
 function isPartialObserver(value: unknown): value is Partial<Observer> {
-  if (!arguments.length) throw new TypeError("1 argument required but 0 present");
   return (
     value instanceof Observer ||
     ((typeof value === "object" && value !== null) &&
@@ -261,7 +260,6 @@ function isPartialObserver(value: unknown): value is Partial<Observer> {
  * @internal Do NOT export
  */
 function isAbortSignal(value: unknown): value is AbortSignal {
-  if (!arguments.length) throw new TypeError("1 argument required but 0 present");
   return (
     value instanceof AbortSignal ||
     (isEventTarget(value) &&
@@ -280,7 +278,6 @@ function isAbortSignal(value: unknown): value is AbortSignal {
  * @internal Do NOT export
  */
 function isEventTarget(value: unknown): value is EventTarget {
-  if (!arguments.length) throw new TypeError("1 argument required but 0 present");
   return (
     (typeof value === "object" && value !== null) &&
     "addEventListener" in value &&

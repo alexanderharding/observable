@@ -1,11 +1,62 @@
-import { assertEquals, assertStrictEquals } from "@std/assert";
-import { Observer } from "@observable/core";
+import { assertEquals, assertStrictEquals, assertThrows } from "@std/assert";
+import { type Observable, Observer } from "@observable/core";
 import { empty } from "@observable/empty";
 import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 import { materialize, type ObserverNotification } from "@observable/materialize";
 import { tap } from "@observable/tap";
 import { drop } from "./mod.ts";
+
+Deno.test("drop should throw if no arguments are provided", () => {
+  assertThrows(
+    // @ts-expect-error: Testing invalid arguments
+    () => drop(),
+    TypeError,
+    "1 argument required but 0 present",
+  );
+});
+
+Deno.test("drop should throw if index is not a number", () => {
+  assertThrows(
+    // @ts-expect-error: Testing invalid arguments
+    () => drop("not a number"),
+    TypeError,
+    "Parameter 1 is not of type 'Number'",
+  );
+});
+
+Deno.test("drop should throw if source is not provided", () => {
+  const dropOne = drop(1);
+  assertThrows(
+    () => (dropOne as (source?: unknown) => Observable<number>)(),
+    TypeError,
+    "1 argument required but 0 present",
+  );
+});
+
+Deno.test(
+  "drop should throw if source is not an Observable (e.g. undefined)",
+  () => {
+    const dropOne = drop(1);
+    assertThrows(
+      () => dropOne(undefined as unknown as Observable<number>),
+      TypeError,
+      "Parameter 1 is not of type 'Observable'",
+    );
+  },
+);
+
+Deno.test(
+  "drop should throw if source is not an Observable (invalid object)",
+  () => {
+    const dropOne = drop(1);
+    assertThrows(
+      () => dropOne({ subscribe: 1 } as unknown as Observable<number>),
+      TypeError,
+      "Parameter 1 is not of type 'Observable'",
+    );
+  },
+);
 
 Deno.test(
   "drop should return an empty observable if the count is less than 0",

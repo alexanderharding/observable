@@ -1,4 +1,4 @@
-import { assertEquals, assertStrictEquals } from "@std/assert";
+import { assertEquals, assertStrictEquals, assertThrows } from "@std/assert";
 import { Observer } from "@observable/core";
 import { materialize } from "@observable/materialize";
 import type { ObserverNotification } from "@observable/materialize";
@@ -101,5 +101,31 @@ Deno.test("defer should propagate from error when getter returns null", () => {
   assertEquals(
     (notifications[0][1] as TypeError).message,
     "Parameter 1 is not of type 'Observable'",
+  );
+});
+
+Deno.test(
+  "defer should not throw when invoked with more than one argument",
+  () => {
+    // Arrange / Act / Assert
+    defer(...([() => {}, 2] as unknown as Parameters<typeof defer>));
+  },
+);
+
+Deno.test("defer should throw when invoked with no arguments", () => {
+  // Arrange / Act / Assert
+  assertThrows(
+    () => defer(...([] as unknown as Parameters<typeof defer>)),
+    TypeError,
+    "1 argument required but 0 present",
+  );
+});
+
+Deno.test("defer should throw when invoked with a non-function as the first argument", () => {
+  // Arrange / Act / Assert
+  assertThrows(
+    () => defer(...([123] as unknown as Parameters<typeof defer>)),
+    TypeError,
+    "Parameter 1 is not of type 'Function'",
   );
 });

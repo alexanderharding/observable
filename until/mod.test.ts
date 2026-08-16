@@ -1,5 +1,5 @@
-import { assertEquals } from "@std/assert";
-import { Observer, Subject } from "@observable/core";
+import { assertEquals, assertThrows } from "@std/assert";
+import { type Observable, Observer, Subject } from "@observable/core";
 import { never } from "@observable/never";
 import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
@@ -8,6 +8,57 @@ import { materialize, type ObserverNotification } from "@observable/materialize"
 import { flat } from "@observable/flat";
 import { of } from "@observable/of";
 import { throwError } from "@observable/throw-error";
+
+Deno.test("until should throw if no arguments are provided", () => {
+  assertThrows(
+    // @ts-expect-error: Testing invalid arguments
+    () => until(),
+    TypeError,
+    "1 argument required but 0 present",
+  );
+});
+
+Deno.test("until should throw if notifier is not an Observable", () => {
+  assertThrows(
+    // @ts-expect-error: Testing invalid arguments
+    () => until("not an observable"),
+    TypeError,
+    "Parameter 1 is not of type 'Observable'",
+  );
+});
+
+Deno.test("until should throw if source is not provided", () => {
+  const untilNever = until(never);
+  assertThrows(
+    () => (untilNever as (source?: unknown) => Observable<number>)(),
+    TypeError,
+    "1 argument required but 0 present",
+  );
+});
+
+Deno.test(
+  "until should throw if source is not an Observable (e.g. undefined)",
+  () => {
+    const untilNever = until(never);
+    assertThrows(
+      () => untilNever(undefined as unknown as Observable<number>),
+      TypeError,
+      "Parameter 1 is not of type 'Observable'",
+    );
+  },
+);
+
+Deno.test(
+  "until should throw if source is not an Observable (invalid object)",
+  () => {
+    const untilNever = until(never);
+    assertThrows(
+      () => untilNever({ subscribe: 1 } as unknown as Observable<number>),
+      TypeError,
+      "Parameter 1 is not of type 'Observable'",
+    );
+  },
+);
 
 Deno.test("until should return when notifier nexts", () => {
   // Arrange

@@ -116,9 +116,9 @@ export function race<Value>(observables: Iterable<Observable<Value>>): Observabl
  * @internal Do NOT export
  */
 function isIterable(value: unknown): value is Iterable<unknown> {
-  if (!arguments.length) throw new TypeError("1 argument required but 0 present");
   return (
-    (typeof value === "object" && value !== null) &&
+    typeof value === "object" &&
+    value !== null &&
     Symbol.iterator in value &&
     typeof value[Symbol.iterator] === "function"
   );

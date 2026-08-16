@@ -1,9 +1,27 @@
-import { assertEquals, assertRejects, assertStrictEquals } from "@std/assert";
+import { assertEquals, assertRejects, assertStrictEquals, assertThrows } from "@std/assert";
 import { lastValueFrom } from "./mod.ts";
 import { forOf } from "@observable/for-of";
 import { throwError } from "@observable/throw-error";
 import { empty } from "@observable/empty";
 import { of } from "@observable/of";
+
+Deno.test("lastValueFrom should throw if no arguments are provided", () => {
+  assertThrows(
+    // @ts-expect-error: Testing invalid arguments
+    () => lastValueFrom(),
+    TypeError,
+    "1 argument required but 0 present",
+  );
+});
+
+Deno.test("lastValueFrom should throw if notifier is not an Observable", () => {
+  assertThrows(
+    // @ts-expect-error: Testing invalid arguments
+    () => lastValueFrom("not an observable"),
+    TypeError,
+    "Parameter 1 is not of type 'Observable'",
+  );
+});
 
 Deno.test("lastValueFrom should pump throw values right through the Promise", async () => {
   // Arrange

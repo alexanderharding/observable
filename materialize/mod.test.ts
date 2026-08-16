@@ -1,9 +1,47 @@
 import { assertEquals, assertStrictEquals, assertThrows } from "@std/assert";
-import { Observer } from "@observable/core";
+import { Observable, Observer } from "@observable/core";
 import { forOf } from "@observable/for-of";
 import { pipe } from "@observable/pipe";
 import { throwError } from "@observable/throw-error";
 import { isObserverNotification, materialize, type ObserverNotification } from "./mod.ts";
+
+Deno.test("materialize should throw if arguments are provided", () => {
+  // @ts-expect-error: Testing invalid arguments
+  materialize(1);
+});
+
+Deno.test("materialize should throw if source is not provided", () => {
+  const materializeFn = materialize();
+  assertThrows(
+    () => (materializeFn as (source?: unknown) => Observable<unknown>)(),
+    TypeError,
+    "1 argument required but 0 present",
+  );
+});
+
+Deno.test(
+  "materialize should throw if source is not an Observable (e.g. undefined)",
+  () => {
+    const materializeFn = materialize();
+    assertThrows(
+      () => materializeFn(undefined as unknown as Observable<number>),
+      TypeError,
+      "Parameter 1 is not of type 'Observable'",
+    );
+  },
+);
+
+Deno.test(
+  "materialize should throw if source is not an Observable (invalid object)",
+  () => {
+    const materializeFn = materialize();
+    assertThrows(
+      () => materializeFn({ subscribe: 1 } as unknown as Observable<number>),
+      TypeError,
+      "Parameter 1 is not of type 'Observable'",
+    );
+  },
+);
 
 Deno.test(
   "materialize should emit the notifications from a source observable that returns",

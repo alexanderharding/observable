@@ -50,7 +50,6 @@ export function forAwaitOf<Value>(values: AsyncIterable<Value>): Observable<Valu
  * @internal Do NOT export
  */
 function isAsyncIterable(value: unknown): value is AsyncIterable<unknown> {
-  if (!arguments.length) throw new TypeError("1 argument required but 0 present");
   return (
     (typeof value === "object" && value !== null) &&
     Symbol.asyncIterator in value &&

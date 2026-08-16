@@ -1,6 +1,7 @@
-import { assertEquals } from "@std/assert";
-import { Observer, Subject } from "@observable/core";
+import { assertEquals, assertThrows } from "@std/assert";
+import { type Observable, Observer, Subject } from "@observable/core";
 import { pipe } from "@observable/pipe";
+import { never } from "@observable/never";
 import { map } from "@observable/map";
 import { materialize, type ObserverNotification } from "@observable/materialize";
 import { mergeMap } from "./mod.ts";
@@ -356,5 +357,56 @@ Deno.test(
 
     // Assert
     assertEquals(notifications, [["throw", projectError]]);
+  },
+);
+
+Deno.test("mergeMap should throw if no arguments are provided", () => {
+  assertThrows(
+    // @ts-expect-error: Testing invalid arguments
+    () => mergeMap(),
+    TypeError,
+    "1 argument required but 0 present",
+  );
+});
+
+Deno.test("mergeMap should throw if project is not a function", () => {
+  assertThrows(
+    // @ts-expect-error: Testing invalid arguments
+    () => mergeMap("not a function"),
+    TypeError,
+    "Parameter 1 is not of type 'Function'",
+  );
+});
+
+Deno.test("mergeMap should throw if source is not provided", () => {
+  const mergeMapFn = mergeMap(() => never);
+  assertThrows(
+    () => (mergeMapFn as (source?: unknown) => Observable<number>)(),
+    TypeError,
+    "1 argument required but 0 present",
+  );
+});
+
+Deno.test(
+  "mergeMap should throw if source is not an Observable (e.g. undefined)",
+  () => {
+    const mergeMapFn = mergeMap(() => never);
+    assertThrows(
+      () => mergeMapFn(undefined as unknown as Observable<number>),
+      TypeError,
+      "Parameter 1 is not of type 'Observable'",
+    );
+  },
+);
+
+Deno.test(
+  "mergeMap should throw if source is not an Observable (invalid object)",
+  () => {
+    const mergeMapFn = mergeMap(() => never);
+    assertThrows(
+      () => mergeMapFn({ subscribe: 1 } as unknown as Observable<number>),
+      TypeError,
+      "Parameter 1 is not of type 'Observable'",
+    );
   },
 );

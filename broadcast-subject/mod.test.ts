@@ -286,6 +286,41 @@ Deno.test(
   },
 );
 
+Deno.test(
+  "BroadcastSubject should throw the event when the channel receives a messageerror",
+  () => {
+    // Arrange
+    const channels: Array<BroadcastChannel> = [];
+    const NativeBroadcastChannel = globalThis.BroadcastChannel;
+    globalThis.BroadcastChannel = new Proxy(NativeBroadcastChannel, {
+      construct: (target, argumentsList: [name: string]) => {
+        const channel = new target(...argumentsList);
+        channels.push(channel);
+        return channel;
+      },
+    });
+    const subject = new BroadcastSubject<string>("test");
+    globalThis.BroadcastChannel = NativeBroadcastChannel; // Restore before asserting
+    const notifications: Array<ObserverNotification<string>> = [];
+    pipe(subject, materialize()).subscribe(
+      new Observer((notification) => notifications.push(notification)),
+    );
+    // A messageerror event only occurs when a message cannot be deserialized, which cannot be
+    // provoked from this context, so it is dispatched on the underlying channel directly.
+    const event = new MessageEvent("messageerror", { data: "foo" });
+
+    // Act
+    assertStrictEquals(channels.length, 1);
+    channels[0].dispatchEvent(event);
+
+    // Assert
+    assertStrictEquals(notifications.length, 1);
+    assertStrictEquals(notifications[0][0], "throw");
+    assertStrictEquals(notifications[0][1], event); // The event, not event.data, is thrown
+    assertStrictEquals(subject.signal.aborted, true);
+  },
+);
+
 Deno.test("BroadcastSubject.throw should throw if called with no arguments", () => {
   // Arrange
   const subject = new BroadcastSubject("test");
@@ -446,5 +481,136 @@ Deno.test(
 
     // Assert
     assertEquals(notifications, [["return"]]);
+  },
+);
+
+Deno.test(
+  "BroadcastSubject should enforce the correct 'this' binding when calling instance methods",
+  () => {
+    // Arrange
+    const subject = new BroadcastSubject("test");
+
+    // Act / Assert
+    assertThrows(
+      () => subject.next.call(null, 1),
+      TypeError,
+      "'this' is not instanceof 'BroadcastSubject'",
+    );
+    assertThrows(
+      () => subject.return.call(null),
+      TypeError,
+      "'this' is not instanceof 'BroadcastSubject'",
+    );
+    assertThrows(
+      () => subject.throw.call(null, new Error("test")),
+      TypeError,
+      "'this' is not instanceof 'BroadcastSubject'",
+    );
+    assertThrows(
+      () => subject.subscribe.call(null, new Observer()),
+      TypeError,
+      "'this' is not instanceof 'BroadcastSubject'",
+    );
+    subject.return(); // Clean up
+  },
+);
+
+Deno.test(
+  "BroadcastSubject.subscribe should throw when observer is not an object",
+  () => {
+    // Arrange
+    const subject = new BroadcastSubject("test");
+
+    // Act / Assert
+    assertThrows(
+      () => subject.subscribe(1 as unknown as Observer),
+      TypeError,
+      "Parameter 1 is not of type 'Observer'",
+    );
+    subject.return(); // Clean up
+  },
+);
+
+Deno.test(
+  "BroadcastSubject.subscribe should throw when observer is null",
+  () => {
+    // Arrange
+    const subject = new BroadcastSubject("test");
+
+    // Act / Assert
+    assertThrows(
+      () => subject.subscribe(null as unknown as Observer),
+      TypeError,
+      "Parameter 1 is not of type 'Observer'",
+    );
+    subject.return(); // Clean up
+  },
+);
+
+Deno.test(
+  "BroadcastSubject.subscribe should throw when observer is undefined",
+  () => {
+    // Arrange
+    const subject = new BroadcastSubject("test");
+
+    // Act / Assert
+    assertThrows(
+      () => subject.subscribe(undefined as unknown as Observer),
+      TypeError,
+      "Parameter 1 is not of type 'Observer'",
+    );
+    subject.return(); // Clean up
+  },
+);
+
+Deno.test(
+  "BroadcastSubject.subscribe should throw when observer is a partial observer",
+  () => {
+    // Arrange
+    const subject = new BroadcastSubject("test");
+
+    // Act / Assert
+    assertThrows(
+      () =>
+        subject.subscribe({
+          next: () => {},
+        } as unknown as Observer),
+      TypeError,
+      "Parameter 1 is not of type 'Observer'",
+    );
+    subject.return(); // Clean up
+  },
+);
+
+Deno.test(
+  "BroadcastSubject.subscribe should not throw when invoked with more than one argument",
+  () => {
+    // Arrange
+    const subject = new BroadcastSubject("test");
+
+    // Act / Assert
+    subject.subscribe(
+      ...([new Observer(), 2] as unknown as Parameters<BroadcastSubject["subscribe"]>),
+    );
+    subject.return(); // Clean up
+  },
+);
+
+Deno.test(
+  "BroadcastSubject.subscribe should throw when invoked with no arguments",
+  () => {
+    // Arrange
+    const subject = new BroadcastSubject("test");
+
+    // Act / Assert
+    assertThrows(
+      () =>
+        subject.subscribe(
+          ...([] as unknown as Parameters<BroadcastSubject["subscribe"]>),
+        ),
+      TypeError,
+      "1 argument required but 0 present",
+    );
+    subject.return(); // Clean up
   },
 );

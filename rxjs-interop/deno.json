@@ -1,8 +1,0 @@
-{
-  "name": "@observable/rxjs-interop",
-  "version": "0.12.0",
-  "license": "MIT",
-  "exports": "./mod.ts",
-  "publish": { "exclude": ["*.test.ts"] },
-  "imports": { "rxjs": "npm:rxjs@^7.8.2" }
-}

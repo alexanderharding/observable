@@ -1,10 +1,62 @@
-import { assertEquals } from "@std/assert";
+import { assertEquals, assertThrows } from "@std/assert";
 import { type Observable, Observer, Subject } from "@observable/core";
 import { pipe } from "@observable/pipe";
 import { flatMap } from "./mod.ts";
 import { map } from "@observable/map";
 import { materialize, type ObserverNotification } from "@observable/materialize";
 import { forOf } from "@observable/for-of";
+import { never } from "@observable/never";
+
+Deno.test("flatMap should throw if no arguments are provided", () => {
+  assertThrows(
+    // @ts-expect-error: Testing invalid arguments
+    () => flatMap(),
+    TypeError,
+    "1 argument required but 0 present",
+  );
+});
+
+Deno.test("flatMap should throw if project is not a function", () => {
+  assertThrows(
+    // @ts-expect-error: Testing invalid arguments
+    () => flatMap("not a function"),
+    TypeError,
+    "Parameter 1 is not of type 'Function'",
+  );
+});
+
+Deno.test("flatMap should throw if source is not provided", () => {
+  const flatMapFn = flatMap(() => never);
+  assertThrows(
+    () => (flatMapFn as (source?: unknown) => Observable<number>)(),
+    TypeError,
+    "1 argument required but 0 present",
+  );
+});
+
+Deno.test(
+  "flatMap should throw if source is not an Observable (e.g. undefined)",
+  () => {
+    const flatMapFn = flatMap(() => never);
+    assertThrows(
+      () => flatMapFn(undefined as unknown as Observable<number>),
+      TypeError,
+      "Parameter 1 is not of type 'Observable'",
+    );
+  },
+);
+
+Deno.test(
+  "flatMap should throw if source is not an Observable (invalid object)",
+  () => {
+    const flatMapFn = flatMap(() => never);
+    assertThrows(
+      () => flatMapFn({ subscribe: 1 } as unknown as Observable<number>),
+      TypeError,
+      "Parameter 1 is not of type 'Observable'",
+    );
+  },
+);
 
 Deno.test("flatMap should flatten many inners", () => {
   // Arrange

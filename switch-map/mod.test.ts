@@ -1,4 +1,4 @@
-import { assertEquals } from "@std/assert";
+import { assertEquals, assertThrows } from "@std/assert";
 import { type Observable, Observer, Subject } from "@observable/core";
 import { empty } from "@observable/empty";
 import { never } from "@observable/never";
@@ -15,6 +15,57 @@ import { finalize } from "@observable/finalize";
 import { of } from "@observable/of";
 import { tap } from "@observable/tap";
 import { defer } from "@observable/defer";
+
+Deno.test("switchMap should throw if no arguments are provided", () => {
+  assertThrows(
+    // @ts-expect-error: Testing invalid arguments
+    () => switchMap(),
+    TypeError,
+    "1 argument required but 0 present",
+  );
+});
+
+Deno.test("switchMap should throw if project is not a function", () => {
+  assertThrows(
+    // @ts-expect-error: Testing invalid arguments
+    () => switchMap("not a function"),
+    TypeError,
+    "Parameter 1 is not of type 'Function'",
+  );
+});
+
+Deno.test("switchMap should throw if source is not provided", () => {
+  const switchMapFn = switchMap(() => never);
+  assertThrows(
+    () => (switchMapFn as (source?: unknown) => Observable<number>)(),
+    TypeError,
+    "1 argument required but 0 present",
+  );
+});
+
+Deno.test(
+  "switchMap should throw if source is not an Observable (e.g. undefined)",
+  () => {
+    const switchMapFn = switchMap(() => never);
+    assertThrows(
+      () => switchMapFn(undefined as unknown as Observable<number>),
+      TypeError,
+      "Parameter 1 is not of type 'Observable'",
+    );
+  },
+);
+
+Deno.test(
+  "switchMap should throw if source is not an Observable (invalid object)",
+  () => {
+    const switchMapFn = switchMap(() => never);
+    assertThrows(
+      () => switchMapFn({ subscribe: 1 } as unknown as Observable<number>),
+      TypeError,
+      "Parameter 1 is not of type 'Observable'",
+    );
+  },
+);
 
 Deno.test("switchMap should map-and-flatten each item to an Observable", () => {
   // Arrange

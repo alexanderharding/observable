@@ -1,4 +1,4 @@
-import { assertEquals, assertStrictEquals } from "@std/assert";
+import { assertEquals, assertStrictEquals, assertThrows } from "@std/assert";
 import { empty } from "@observable/empty";
 import { Observer, Subject } from "@observable/core";
 import { pipe } from "@observable/pipe";
@@ -146,4 +146,30 @@ Deno.test("flat should return empty when given an empty array", () => {
   // Assert
   assertStrictEquals(observable, empty);
   assertEquals(notifications, [["return"]]);
+});
+
+Deno.test(
+  "flat should not throw when invoked with more than one argument",
+  () => {
+    // Arrange / Act / Assert
+    flat(...([[], 2] as unknown as Parameters<typeof flat>));
+  },
+);
+
+Deno.test("flat should throw when invoked with no arguments", () => {
+  // Arrange / Act / Assert
+  assertThrows(
+    () => flat(...([] as unknown as Parameters<typeof flat>)),
+    TypeError,
+    "1 argument required but 0 present",
+  );
+});
+
+Deno.test("flat should throw when invoked with a non-iterable as the first argument", () => {
+  // Arrange / Act / Assert
+  assertThrows(
+    () => flat(...([123] as unknown as Parameters<typeof flat>)),
+    TypeError,
+    "Parameter 1 is not of type 'Iterable'",
+  );
 });

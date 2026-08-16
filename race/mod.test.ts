@@ -1,4 +1,4 @@
-import { assertEquals, assertStrictEquals } from "@std/assert";
+import { assertEquals, assertStrictEquals, assertThrows } from "@std/assert";
 import { Observer, Subject } from "@observable/core";
 import { empty } from "@observable/empty";
 import { never } from "@observable/never";
@@ -121,5 +121,34 @@ Deno.test(
       ["throw", error],
     ]);
     assertEquals(deferredCalls, [1, 2]);
+  },
+);
+
+Deno.test(
+  "race should not throw when invoked with more than one argument",
+  () => {
+    // Arrange / Act / Assert
+    race(...([[], 2] as unknown as Parameters<typeof race>));
+  },
+);
+
+Deno.test("race should throw when invoked with no arguments", () => {
+  // Arrange / Act / Assert
+  assertThrows(
+    () => race(...([] as unknown as Parameters<typeof race>)),
+    TypeError,
+    "1 argument required but 0 present",
+  );
+});
+
+Deno.test(
+  "race should throw when invoked with a non-iterable as the first argument",
+  () => {
+    // Arrange / Act / Assert
+    assertThrows(
+      () => race(...([123] as unknown as Parameters<typeof race>)),
+      TypeError,
+      "Parameter 1 is not of type 'Iterable'",
+    );
   },
 );
