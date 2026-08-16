@@ -1,6 +1,15 @@
 import { Observable, Observer } from "@observable/core";
-import { assertEquals, assertInstanceOf, assertStrictEquals } from "@std/assert";
+import { assertEquals, assertInstanceOf, assertStrictEquals, assertThrows } from "@std/assert";
 import { from } from "./mod.ts";
+
+Deno.test("from should throw if no arguments are provided", () => {
+  assertThrows(
+    // @ts-expect-error: Testing invalid arguments
+    () => from(),
+    TypeError,
+    "1 argument required but 0 present",
+  );
+});
 
 Deno.test(
   "from should convert a custom observable to a proper observable",

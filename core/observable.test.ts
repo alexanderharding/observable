@@ -167,6 +167,31 @@ Deno.test(
 );
 
 Deno.test(
+  "Observable.subscribe should not throw when invoked with more than one argument",
+  () => {
+    // Arrange / Act / Assert
+    new Observable(() => {}).subscribe(
+      ...([new Observer(), 2] as unknown as Parameters<Observable["subscribe"]>),
+    );
+  },
+);
+
+Deno.test(
+  "Observable.subscribe should throw when invoked with no arguments",
+  () => {
+    // Arrange / Act / Assert
+    assertThrows(
+      () =>
+        new Observable(() => {}).subscribe(
+          ...([] as unknown as Parameters<Observable["subscribe"]>),
+        ),
+      TypeError,
+      "1 argument required but 0 present",
+    );
+  },
+);
+
+Deno.test(
   "Observable.subscribe should create a new Observer instance correctly when subscribe is called with a non-Observer instance",
   () => {
     // Arrange
@@ -343,3 +368,20 @@ Deno.test(
     assertStrictEquals(result, false);
   },
 );
+
+Deno.test(
+  "isObservable should not throw when invoked with more than one argument",
+  () => {
+    // Arrange / Act / Assert
+    isObservable(...([new Observable(() => {}), 2] as unknown as Parameters<typeof isObservable>));
+  },
+);
+
+Deno.test("isObservable should throw when invoked with no arguments", () => {
+  // Arrange / Act / Assert
+  assertThrows(
+    () => isObservable(...([] as unknown as Parameters<typeof isObservable>)),
+    TypeError,
+    "1 argument required but 0 present",
+  );
+});

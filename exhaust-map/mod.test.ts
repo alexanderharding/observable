@@ -1,4 +1,4 @@
-import { assertEquals } from "@std/assert";
+import { assertEquals, assertThrows } from "@std/assert";
 import { type Observable, Observer, Subject } from "@observable/core";
 import { empty } from "@observable/empty";
 import { never } from "@observable/never";
@@ -12,6 +12,57 @@ import { map } from "@observable/map";
 import { forOf } from "@observable/for-of";
 import { of } from "@observable/of";
 import { tap } from "@observable/tap";
+
+Deno.test("exhaustMap should throw if no arguments are provided", () => {
+  assertThrows(
+    // @ts-expect-error: Testing invalid arguments
+    () => exhaustMap(),
+    TypeError,
+    "1 argument required but 0 present",
+  );
+});
+
+Deno.test("exhaustMap should throw if project is not a function", () => {
+  assertThrows(
+    // @ts-expect-error: Testing invalid arguments
+    () => exhaustMap("not a function"),
+    TypeError,
+    "Parameter 1 is not of type 'Function'",
+  );
+});
+
+Deno.test("exhaustMap should throw if source is not provided", () => {
+  const exhaustMapFn = exhaustMap(() => never);
+  assertThrows(
+    () => (exhaustMapFn as (source?: unknown) => Observable<number>)(),
+    TypeError,
+    "1 argument required but 0 present",
+  );
+});
+
+Deno.test(
+  "exhaustMap should throw if source is not an Observable (e.g. undefined)",
+  () => {
+    const exhaustMapFn = exhaustMap(() => never);
+    assertThrows(
+      () => exhaustMapFn(undefined as unknown as Observable<number>),
+      TypeError,
+      "Parameter 1 is not of type 'Observable'",
+    );
+  },
+);
+
+Deno.test(
+  "exhaustMap should throw if source is not an Observable (invalid object)",
+  () => {
+    const exhaustMapFn = exhaustMap(() => never);
+    assertThrows(
+      () => exhaustMapFn({ subscribe: 1 } as unknown as Observable<number>),
+      TypeError,
+      "Parameter 1 is not of type 'Observable'",
+    );
+  },
+);
 
 Deno.test(
   "exhaustMap should map-and-flatten each item to an Observable",

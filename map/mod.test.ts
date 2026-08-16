@@ -1,5 +1,5 @@
-import { assertEquals } from "@std/assert";
-import { Observer } from "@observable/core";
+import { assertEquals, assertThrows } from "@std/assert";
+import { type Observable, Observer } from "@observable/core";
 import { forOf } from "@observable/for-of";
 import { of } from "@observable/of";
 import { pipe } from "@observable/pipe";
@@ -9,6 +9,57 @@ import { materialize, type ObserverNotification } from "@observable/materialize"
 import { empty } from "@observable/empty";
 import { finalize } from "@observable/finalize";
 import { never } from "@observable/never";
+
+Deno.test("map should throw if no arguments are provided", () => {
+  assertThrows(
+    // @ts-expect-error: Testing invalid arguments
+    () => map(),
+    TypeError,
+    "1 argument required but 0 present",
+  );
+});
+
+Deno.test("map should throw if project is not a function", () => {
+  assertThrows(
+    // @ts-expect-error: Testing invalid arguments
+    () => map("not a function"),
+    TypeError,
+    "Parameter 1 is not of type 'Function'",
+  );
+});
+
+Deno.test("map should throw if source is not provided", () => {
+  const mapFn = map(() => true);
+  assertThrows(
+    () => (mapFn as (source?: unknown) => Observable<boolean>)(),
+    TypeError,
+    "1 argument required but 0 present",
+  );
+});
+
+Deno.test(
+  "map should throw if source is not an Observable (e.g. undefined)",
+  () => {
+    const mapFn = map(() => true);
+    assertThrows(
+      () => mapFn(undefined as unknown as Observable<number>),
+      TypeError,
+      "Parameter 1 is not of type 'Observable'",
+    );
+  },
+);
+
+Deno.test(
+  "map should throw if source is not an Observable (invalid object)",
+  () => {
+    const mapFn = map(() => true);
+    assertThrows(
+      () => mapFn({ subscribe: 1 } as unknown as Observable<number>),
+      TypeError,
+      "Parameter 1 is not of type 'Observable'",
+    );
+  },
+);
 
 Deno.test("map should project the values", () => {
   // Arrange

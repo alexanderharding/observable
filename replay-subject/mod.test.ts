@@ -314,6 +314,87 @@ Deno.test(
 );
 
 Deno.test(
+  "ReplaySubject.subscribe should throw when observer is not an object",
+  () => {
+    // Arrange
+    assertThrows(
+      () => new ReplaySubject(5).subscribe(1 as unknown as Observer),
+      TypeError,
+      "Parameter 1 is not of type 'Observer'",
+    );
+  },
+);
+
+Deno.test(
+  "ReplaySubject.subscribe should throw when observer is null",
+  () => {
+    // Arrange
+    assertThrows(
+      () => new ReplaySubject(5).subscribe(null as unknown as Observer),
+      TypeError,
+      "Parameter 1 is not of type 'Observer'",
+    );
+  },
+);
+
+Deno.test(
+  "ReplaySubject.subscribe should throw when observer is undefined",
+  () => {
+    // Arrange
+    assertThrows(
+      () =>
+        new ReplaySubject(5).subscribe(
+          undefined as unknown as Observer,
+        ),
+      TypeError,
+      "Parameter 1 is not of type 'Observer'",
+    );
+  },
+);
+
+Deno.test(
+  "ReplaySubject.subscribe should throw when observer is a partial observer",
+  () => {
+    // Arrange
+    assertThrows(
+      () =>
+        new ReplaySubject(5).subscribe({
+          next: () => {},
+        } as unknown as Observer),
+      TypeError,
+      "Parameter 1 is not of type 'Observer'",
+    );
+  },
+);
+
+Deno.test(
+  "ReplaySubject.subscribe should not throw when invoked with more than one argument",
+  () => {
+    // Arrange / Act / Assert
+    new ReplaySubject(5).subscribe(
+      ...([new Observer(), 2] as unknown as Parameters<
+        ReplaySubject["subscribe"]
+      >),
+    );
+  },
+);
+
+Deno.test(
+  "ReplaySubject.subscribe should throw when invoked with no arguments",
+  () => {
+    // Arrange / Act / Assert
+    assertThrows(
+      () =>
+        new ReplaySubject(5).subscribe(
+          ...([] as unknown as Parameters<ReplaySubject["subscribe"]>),
+        ),
+      TypeError,
+      "1 argument required but 0 present",
+    );
+  },
+);
+
+Deno.test(
   "ReplaySubject.constructor should be empty when count is negative",
   () => {
     // Arrange

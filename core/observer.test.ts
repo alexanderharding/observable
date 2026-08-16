@@ -578,7 +578,7 @@ Deno.test(
 
 Deno.test("isObserver should return true if 'signal' is an AbortSignal", () => {
   // Arrange
-  const value: Observer = {
+  const value1: Observer = {
     next: () => {},
     return: () => {},
     throw: () => {},
@@ -592,10 +592,43 @@ Deno.test("isObserver should return true if 'signal' is an AbortSignal", () => {
       throwIfAborted: () => {},
     },
   };
+  const value2: Observer = {
+    next: () => {},
+    return: () => {},
+    throw: () => {},
+    signal: {
+      aborted: true,
+      reason: "test",
+      onabort: null,
+      addEventListener: () => {},
+      removeEventListener: () => {},
+      dispatchEvent: () => false,
+      throwIfAborted: () => {},
+    },
+  };
 
   // Act
-  const result = isObserver(value);
+  const result1 = isObserver(value1);
+  const result2 = isObserver(value2);
 
   // Assert
-  assertStrictEquals(result, true);
+  assertStrictEquals(result1, true);
+  assertStrictEquals(result2, true);
+});
+
+Deno.test(
+  "isObserver should not throw when invoked with more than one argument",
+  () => {
+    // Arrange / Act / Assert
+    isObserver(...([{}, 2] as unknown as Parameters<typeof isObserver>));
+  },
+);
+
+Deno.test("isObserver should throw when invoked with no arguments", () => {
+  // Arrange / Act / Assert
+  assertThrows(
+    () => isObserver(...([] as unknown as Parameters<typeof isObserver>)),
+    TypeError,
+    "1 argument required but 0 present",
+  );
 });

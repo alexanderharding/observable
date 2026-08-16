@@ -868,6 +868,85 @@ Deno.test(
 );
 
 Deno.test(
+  "Subject.subscribe should throw when observer is not an object",
+  () => {
+    // Arrange
+    assertThrows(
+      () => new Subject().subscribe(1 as unknown as Observer),
+      TypeError,
+      "Parameter 1 is not of type 'Observer'",
+    );
+  },
+);
+
+Deno.test(
+  "Subject.subscribe should throw when observer is null",
+  () => {
+    // Arrange
+    assertThrows(
+      () => new Subject().subscribe(null as unknown as Observer),
+      TypeError,
+      "Parameter 1 is not of type 'Observer'",
+    );
+  },
+);
+
+Deno.test(
+  "Subject.subscribe should throw when observer is undefined",
+  () => {
+    // Arrange
+    assertThrows(
+      () =>
+        new Subject().subscribe(
+          undefined as unknown as Observer,
+        ),
+      TypeError,
+      "Parameter 1 is not of type 'Observer'",
+    );
+  },
+);
+
+Deno.test(
+  "Subject.subscribe should throw when observer is a partial observer",
+  () => {
+    // Arrange
+    assertThrows(
+      () =>
+        new Subject().subscribe({
+          next: () => {},
+        } as unknown as Observer),
+      TypeError,
+      "Parameter 1 is not of type 'Observer'",
+    );
+  },
+);
+
+Deno.test(
+  "Subject.subscribe should not throw when invoked with more than one argument",
+  () => {
+    // Arrange / Act / Assert
+    new Subject().subscribe(
+      ...([new Observer(), 2] as unknown as Parameters<Subject["subscribe"]>),
+    );
+  },
+);
+
+Deno.test(
+  "Subject.subscribe should throw when invoked with no arguments",
+  () => {
+    // Arrange / Act / Assert
+    assertThrows(
+      () =>
+        new Subject().subscribe(
+          ...([] as unknown as Parameters<Subject["subscribe"]>),
+        ),
+      TypeError,
+      "1 argument required but 0 present",
+    );
+  },
+);
+
+Deno.test(
   "isSubject should return true if the value is an instance of Subject",
   () => {
     // Arrange
@@ -1030,4 +1109,21 @@ Deno.test("isSubject should return false if 'throw' is not a function", () => {
 
   // Assert
   assertEquals(result, false);
+});
+
+Deno.test(
+  "isSubject should not throw when invoked with more than one argument",
+  () => {
+    // Arrange / Act / Assert
+    isSubject(...([{}, 2] as unknown as Parameters<typeof isSubject>));
+  },
+);
+
+Deno.test("isSubject should throw when invoked with no arguments", () => {
+  // Arrange / Act / Assert
+  assertThrows(
+    () => isSubject(...([] as unknown as Parameters<typeof isSubject>)),
+    TypeError,
+    "1 argument required but 0 present",
+  );
 });

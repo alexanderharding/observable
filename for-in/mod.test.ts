@@ -65,3 +65,36 @@ Deno.test("forIn should handle inherited enumerable properties", () => {
   // Assert
   assertEquals(notifications, [["next", "own"], ["next", "inherited"], ["return"]]);
 });
+
+Deno.test("forIn should exit early on unsubscribe", () => {
+  // Arrange
+  const notifications: Array<ObserverNotification<string>> = [];
+  const controller = new AbortController();
+  // The notifications alone can't prove the loop stopped, since next() is a no-op once aborted.
+  // `for...in` re-checks each key's enumerability as it advances, so this trap records how far
+  // the loop actually got.
+  const enumeratedKeys: Array<string | symbol> = [];
+  const object = new Proxy({ a: 1, b: 2, c: 3 }, {
+    getOwnPropertyDescriptor: (target, key) => {
+      enumeratedKeys.push(key);
+      return Reflect.getOwnPropertyDescriptor(target, key);
+    },
+  });
+
+  // Act
+  pipe(forIn(object), materialize()).subscribe(
+    new Observer({
+      signal: controller.signal,
+      next: (notification) => {
+        notifications.push(notification);
+        if (notification[0] === "next" && notification[1] === "b") {
+          controller.abort(); // Unsubscribe after receiving the second value
+        }
+      },
+    }),
+  );
+
+  // Assert
+  assertEquals(notifications, [["next", "a"], ["next", "b"]]);
+  assertEquals(enumeratedKeys, ["a", "b"]);
+});

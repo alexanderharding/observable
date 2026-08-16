@@ -9,7 +9,6 @@ import { take } from "./mod.ts";
 import { finalize } from "@observable/finalize";
 
 Deno.test("take should throw if no arguments are provided", () => {
-  // Act & Assert
   assertThrows(
     // @ts-expect-error: Testing invalid arguments
     () => take(),
@@ -18,8 +17,7 @@ Deno.test("take should throw if no arguments are provided", () => {
   );
 });
 
-Deno.test("take should throw if count is not a number", () => {
-  // Act & Assert
+Deno.test("take should throw if index is not a number", () => {
   assertThrows(
     // @ts-expect-error: Testing invalid arguments
     () => take("not a number"),
@@ -27,6 +25,39 @@ Deno.test("take should throw if count is not a number", () => {
     "Parameter 1 is not of type 'Number'",
   );
 });
+
+Deno.test("take should throw if source is not provided", () => {
+  const takeOne = take(1);
+  assertThrows(
+    () => (takeOne as (source?: unknown) => Observable<number>)(),
+    TypeError,
+    "1 argument required but 0 present",
+  );
+});
+
+Deno.test(
+  "take should throw if source is not an Observable (e.g. undefined)",
+  () => {
+    const takeOne = take(1);
+    assertThrows(
+      () => takeOne(undefined as unknown as Observable<number>),
+      TypeError,
+      "Parameter 1 is not of type 'Observable'",
+    );
+  },
+);
+
+Deno.test(
+  "take should throw if source is not an Observable (invalid object)",
+  () => {
+    const takeOne = take(1);
+    assertThrows(
+      () => takeOne({ subscribe: 1 } as unknown as Observable<number>),
+      TypeError,
+      "Parameter 1 is not of type 'Observable'",
+    );
+  },
+);
 
 Deno.test(
   "take should return an empty observable if the count is equal to 0",

@@ -141,3 +141,46 @@ Deno.test("forAwaitOf should emit thrown value on error", async () => {
   assertEquals(notifications[1]![0], "throw");
   assertEquals((notifications[1]![1] as Error).message, "test error");
 });
+
+Deno.test("forAwaitOf should exit early on unsubscribe", async () => {
+  // Arrange
+  let resumedAfterLastYield = false;
+  // Settles in both the early-exit case (the for await calls the generator's return) and the
+  // exhausted case, so the assertions below never race the generator.
+  const { promise: settled, resolve: markSettled } = Promise.withResolvers<void>();
+  async function* generateValues() {
+    try {
+      yield 1;
+      yield 2;
+      yield 3;
+      // Only reachable if the loop keeps pulling after the unsubscribe.
+      resumedAfterLastYield = true;
+    } finally {
+      markSettled();
+    }
+  }
+  const notifications: Array<ObserverNotification> = [];
+  const controller = new AbortController();
+
+  // Act
+  pipe(forAwaitOf(generateValues()), materialize()).subscribe(
+    new Observer({
+      signal: controller.signal,
+      next: (notification) => {
+        notifications.push(notification);
+        if (notification[0] === "next" && notification[1] === 2) {
+          controller.abort(); // Unsubscribe after receiving the second value
+        }
+      },
+    }),
+  );
+
+  await settled; // Allow the async generator to run
+
+  // Assert
+  assertEquals(notifications, [
+    ["next", 1],
+    ["next", 2],
+  ]);
+  assertEquals(resumedAfterLastYield, false);
+});

@@ -3,7 +3,7 @@ import { forOf } from "@observable/for-of";
 import { Observer } from "@observable/core";
 import { pipe } from "@observable/pipe";
 import { materialize, type ObserverNotification } from "@observable/materialize";
-import { assertEquals, assertStrictEquals } from "@std/assert";
+import { assertEquals, assertStrictEquals, assertThrows } from "@std/assert";
 import { empty } from "@observable/empty";
 
 Deno.test("merge should merge the values", () => {
@@ -49,3 +49,32 @@ Deno.test("merge should return empty when given an empty array", () => {
   assertStrictEquals(observable, empty);
   assertEquals(notifications, [["return"]]);
 });
+
+Deno.test(
+  "merge should not throw when invoked with more than one argument",
+  () => {
+    // Arrange / Act / Assert
+    merge(...([[], 2] as unknown as Parameters<typeof merge>));
+  },
+);
+
+Deno.test("merge should throw when invoked with no arguments", () => {
+  // Arrange / Act / Assert
+  assertThrows(
+    () => merge(...([] as unknown as Parameters<typeof merge>)),
+    TypeError,
+    "1 argument required but 0 present",
+  );
+});
+
+Deno.test(
+  "merge should throw when invoked with a non-iterable as the first argument",
+  () => {
+    // Arrange / Act / Assert
+    assertThrows(
+      () => merge(...([123] as unknown as Parameters<typeof merge>)),
+      TypeError,
+      "Parameter 1 is not of type 'Iterable'",
+    );
+  },
+);
