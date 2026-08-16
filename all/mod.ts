@@ -139,23 +139,23 @@ export function all<Value>(
   observables: Iterable<Observable<Value>>,
 ): Observable<ReadonlyArray<Value>>;
 export function all<Value>(
-  iterable: Iterable<Observable<Value>>,
+  observables: Iterable<Observable<Value>>,
 ): Observable<ReadonlyArray<Value>> {
   if (!arguments.length) throw new TypeError("1 argument required but 0 present");
-  if (!isIterable(iterable)) throw new TypeError("Parameter 1 is not of type 'Iterable'");
+  if (!isIterable(observables)) throw new TypeError("Parameter 1 is not of type 'Iterable'");
 
-  if (Array.isArray(iterable) && !iterable.length) return empty;
-  if (iterable instanceof Set && !iterable.size) return empty;
+  if (Array.isArray(observables) && !observables.length) return empty;
+  if (observables instanceof Set && !observables.size) return empty;
 
   // We could compose a few different operators to achieve the same result, but this is
   // a more direct implementation that is easier to understand and reason about.
   return new Observable((observer) => {
     /**
-     * The bounded {@linkcode iterable} which has a known `size` for subsequent logic.
+     * The bounded {@linkcode observables} which has a known `size` for subsequent logic.
      */
-    const observables = bound(iterable);
+    const boundObservables = bound(observables);
 
-    if (!observables.size) return observer.return();
+    if (!boundObservables.size) return observer.return();
 
     /**
      * Tracking the number of first values that have been received.
@@ -164,7 +164,7 @@ export function all<Value>(
     /**
      * Tracking the number of active inner subscriptions.
      */
-    let activeInnerSubscriptions = observables.size;
+    let activeInnerSubscriptions = boundObservables.size;
 
     /**
      * Tracking a known list of {@linkcode buffer|buffered} values, so we don't have to clone them while nexting to prevent reentrant behaviors.
@@ -180,7 +180,7 @@ export function all<Value>(
      */
     let index = 0;
 
-    for (const observable of observables) {
+    for (const observable of boundObservables) {
       /**
        * Tracking if the {@linkcode observable} has pushed its first value.
        */
@@ -202,7 +202,7 @@ export function all<Value>(
             snapshot = undefined;
           }
 
-          if (receivedFirstValueCount === observables.size) {
+          if (receivedFirstValueCount === boundObservables.size) {
             observer.next(snapshot ??= Object.freeze(buffer.slice()));
           }
         },
