@@ -88,10 +88,7 @@ export function merge<Value>(observables: Iterable<Observable<Value>>): Observab
   if (!arguments.length) throw new TypeError("1 argument required but 0 present");
   if (!isIterable(observables)) throw new TypeError("Parameter 1 is not of type 'Iterable'");
   if (Array.isArray(observables) && !observables.length) return empty;
-  return pipe(
-    forOf(observables),
-    mergeMap((observable) => observable),
-  );
+  return pipe(forOf(observables), mergeMap((observable) => observable));
 }
 
 /**
