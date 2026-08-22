@@ -1,4 +1,4 @@
-import { Observer } from "@observable/core";
+import { Observer, type Subject } from "@observable/core";
 import { forOf } from "@observable/for-of";
 import { BroadcastSubject } from "./mod.ts";
 import { assertEquals, assertInstanceOf, assertStrictEquals, assertThrows } from "@std/assert";
@@ -94,9 +94,9 @@ Deno.test(
     const value = Math.random().toString();
     const name = Math.random().toString();
     const otherName = Math.random().toString();
-    const senderSubject = new BroadcastSubject<string>(name);
-    const receiverSubject = new BroadcastSubject<string>(name);
-    const otherSubject = new BroadcastSubject<string>(otherName);
+    const senderSubject = new BroadcastSubject(name);
+    const receiverSubject = new BroadcastSubject(name);
+    const otherSubject = new BroadcastSubject(otherName);
     const otherChannel = new BroadcastChannel(name);
 
     // Act
@@ -120,8 +120,8 @@ Deno.test(
   () => {
     // Arrange
     const source = forOf([1, 2, 3, 4, 5]);
-    const subject = new BroadcastSubject<number>("test");
-    const notifications: Array<ObserverNotification<number>> = [];
+    const subject = new BroadcastSubject("test");
+    const notifications: Array<ObserverNotification> = [];
     const postMessageCalls: Array<Parameters<BroadcastChannel["postMessage"]>> = [];
     Object.defineProperty(BroadcastChannel.prototype, "postMessage", {
       value: new Proxy(BroadcastChannel.prototype.postMessage, {
@@ -148,7 +148,7 @@ Deno.test(
   "BroadcastSubject.next should call postMessage method on BroadcastChannel",
   () => {
     // Arrange
-    const subject = new BroadcastSubject<string>("test");
+    const subject = new BroadcastSubject("test");
     const postMessageCalls: Array<Parameters<BroadcastChannel["postMessage"]>> = [];
     Object.defineProperty(BroadcastChannel.prototype, "postMessage", {
       value: new Proxy(BroadcastChannel.prototype.postMessage, {
@@ -169,10 +169,10 @@ Deno.test(
 );
 
 Deno.test(
-  "BroadcastSubject.next should allow empty next when created with void type",
+  "BroadcastSubject.next should allow empty arguments when type alias as a Subject created with void type",
   () => {
     // Arrange
-    const subject = new BroadcastSubject<void>("test");
+    const subject: Subject<void> = new BroadcastSubject("test");
     const postMessageCalls: Array<Parameters<BroadcastChannel["postMessage"]>> = [];
     Object.defineProperty(BroadcastChannel.prototype, "postMessage", {
       value: new Proxy(BroadcastChannel.prototype.postMessage, {
@@ -194,7 +194,7 @@ Deno.test(
 
 Deno.test("BroadcastSubject.next should not abort signal", () => {
   // Arrange
-  const subject = new BroadcastSubject<string>("test");
+  const subject = new BroadcastSubject("test");
 
   // Act
   subject.next("foo");
@@ -206,7 +206,7 @@ Deno.test("BroadcastSubject.next should not abort signal", () => {
 
 Deno.test("BroadcastSubject.next should not close channel", () => {
   // Arrange
-  const subject = new BroadcastSubject<string>("test");
+  const subject = new BroadcastSubject("test");
   const closeCalls: Array<Parameters<BroadcastChannel["close"]>> = [];
   Object.defineProperty(BroadcastChannel.prototype, "close", {
     value: new Proxy(BroadcastChannel.prototype.close, {
@@ -227,8 +227,8 @@ Deno.test("BroadcastSubject.next should not close channel", () => {
 
 Deno.test("BroadcastSubject.next should not pass through this subject", () => {
   // Arrange
-  const subject = new BroadcastSubject<string>("test");
-  const notifications: Array<ObserverNotification<string>> = [];
+  const subject = new BroadcastSubject("test");
+  const notifications: Array<ObserverNotification> = [];
   pipe(subject, materialize()).subscribe(
     new Observer((notification) => notifications.push(notification)),
   );
@@ -245,7 +245,7 @@ Deno.test(
   "BroadcastSubject.next should not cause throw when called after return",
   () => {
     // Arrange
-    const subject = new BroadcastSubject<string>("test");
+    const subject = new BroadcastSubject("test");
     subject.return();
 
     // Act / Assert
@@ -257,7 +257,7 @@ Deno.test(
   "BroadcastSubject.next should not cause throw when called after throw",
   () => {
     // Arrange
-    const subject = new BroadcastSubject<string>("test");
+    const subject = new BroadcastSubject("test");
     subject.subscribe(new Observer({ throw: () => {} }));
     subject.throw(new Error("test error"));
 
@@ -270,8 +270,8 @@ Deno.test(
   "should throw when postMessage method on BroadcastChannel throws an error",
   () => {
     // Arrange
-    const subject = new BroadcastSubject<() => void>("test");
-    const notifications: Array<ObserverNotification<() => void>> = [];
+    const subject = new BroadcastSubject("test");
+    const notifications: Array<ObserverNotification> = [];
     pipe(subject, materialize()).subscribe(
       new Observer((notification) => notifications.push(notification)),
     );
@@ -299,9 +299,9 @@ Deno.test(
         return channel;
       },
     });
-    const subject = new BroadcastSubject<string>("test");
+    const subject = new BroadcastSubject("test");
     globalThis.BroadcastChannel = NativeBroadcastChannel; // Restore before asserting
-    const notifications: Array<ObserverNotification<string>> = [];
+    const notifications: Array<ObserverNotification> = [];
     pipe(subject, materialize()).subscribe(
       new Observer((notification) => notifications.push(notification)),
     );
@@ -337,8 +337,8 @@ Deno.test("BroadcastSubject.throw should throw if called with no arguments", () 
 Deno.test("BroadcastSubject.throw should pass through this subject", () => {
   // Arrange
   const error = new Error("test error");
-  const subject = new BroadcastSubject<string>("test");
-  const notifications: Array<ObserverNotification<string>> = [];
+  const subject = new BroadcastSubject("test");
+  const notifications: Array<ObserverNotification> = [];
   pipe(subject, materialize()).subscribe(
     new Observer((notification) => notifications.push(notification)),
   );
@@ -353,8 +353,8 @@ Deno.test("BroadcastSubject.throw should pass through this subject", () => {
 Deno.test("BroadcastSubject.throw should close channel", () => {
   // Arrange
   const error = new Error("test error");
-  const subject = new BroadcastSubject<string>("test");
-  const notifications: Array<ObserverNotification<string>> = [];
+  const subject = new BroadcastSubject("test");
+  const notifications: Array<ObserverNotification> = [];
   pipe(subject, materialize()).subscribe(
     new Observer((notification) => notifications.push(notification)),
   );
@@ -379,7 +379,7 @@ Deno.test("BroadcastSubject.throw should close channel", () => {
 Deno.test("BroadcastSubject.throw should abort signal", () => {
   // Arrange
   const error = new Error("test error");
-  const subject = new BroadcastSubject<string>("test");
+  const subject = new BroadcastSubject("test");
   subject.subscribe(new Observer({ throw: () => {} }));
 
   // Act
@@ -395,8 +395,8 @@ Deno.test(
   () => {
     // Arrange
     const error = new Error("test error");
-    const subject = new BroadcastSubject<string>("test");
-    const notifications: Array<ObserverNotification<string>> = [];
+    const subject = new BroadcastSubject("test");
+    const notifications: Array<ObserverNotification> = [];
     const abortHandlerCalls: Array<Parameters<EventListener>> = [];
     pipe(subject, materialize()).subscribe(
       new Observer((notification) => {
@@ -422,8 +422,8 @@ Deno.test(
 
 Deno.test("BroadcastSubject.return should pass through this subject", () => {
   // Arrange
-  const subject = new BroadcastSubject<string>("test");
-  const notifications: Array<ObserverNotification<string>> = [];
+  const subject = new BroadcastSubject("test");
+  const notifications: Array<ObserverNotification> = [];
   pipe(subject, materialize()).subscribe(
     new Observer((notification) => notifications.push(notification)),
   );
@@ -437,7 +437,7 @@ Deno.test("BroadcastSubject.return should pass through this subject", () => {
 
 Deno.test("BroadcastSubject.return should close channel", () => {
   // Arrange
-  const subject = new BroadcastSubject<string>("test");
+  const subject = new BroadcastSubject("test");
   const closeCalls: Array<Parameters<BroadcastChannel["close"]>> = [];
   Object.defineProperty(BroadcastChannel.prototype, "close", {
     value: new Proxy(BroadcastChannel.prototype.close, {
@@ -459,8 +459,8 @@ Deno.test(
   "BroadcastSubject.return should abort signal before notifying observers",
   () => {
     // Arrange
-    const subject = new BroadcastSubject<string>("test");
-    const notifications: Array<ObserverNotification<string>> = [];
+    const subject = new BroadcastSubject("test");
+    const notifications: Array<ObserverNotification> = [];
     const abortHandlerCalls: Array<Parameters<EventListener>> = [];
     pipe(subject, materialize()).subscribe(
       new Observer((notification) => {

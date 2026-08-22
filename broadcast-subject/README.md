@@ -28,8 +28,8 @@ import { BroadcastSubject } from "@observable/broadcast-subject";
 // Setup subjects
 const name = "test";
 const controller = new AbortController();
-const subject1 = new BroadcastSubject<number>(name);
-const subject2 = new BroadcastSubject<number>(name);
+const subject1 = new BroadcastSubject(name);
+const subject2 = new BroadcastSubject(name);
 
 // Subscribe to subjects
 subject1.subscribe({
@@ -72,7 +72,7 @@ USAGE PATTERN:
 import { BroadcastSubject } from "@observable/broadcast-subject";
 
 // In Tab 1:
-const subject1 = new BroadcastSubject<number>("myChannel");
+const subject1 = new BroadcastSubject("myChannel");
 const controller1 = new AbortController();
 
 subject1.subscribe({
@@ -83,7 +83,7 @@ subject1.subscribe({
 });
 
 // In Tab 2:
-const subject2 = new BroadcastSubject<number>("myChannel");
+const subject2 = new BroadcastSubject("myChannel");
 const controller2 = new AbortController();
 
 subject2.subscribe({
