@@ -6,14 +6,14 @@ import { isObserver, type Observer, Subject } from "@observable/core";
 export type BroadcastSubject = Subject;
 
 /**
- * Object interface for an {@linkcode BroadcastSubject} factory.
+ * Object interface for an [`BroadcastSubject`](https://jsr.io/@observable/broadcast-subject/doc/~/BroadcastSubject) factory.
  */
 export interface BroadcastSubjectConstructor {
   /**
-   * Creates and returns an object that acts as a variant of [`Subject`](https://jsr.io/@xan/subject/doc/~/Subject) whose values
+   * Creates and returns an object that acts as a variant of [`Subject`](https://jsr.io/@observable/core/doc/~/Subject) whose values
    * are [`structured cloned`](https://developer.mozilla.org/en-US/docs/Web/API/structuredClone) and [pushed](https://jsr.io/@observable/core#push)
-   * only to [consumers](https://jsr.io/@observable/core#consumer) of _other_ {@linkcode BroadcastSubject}s with the same
-   * {@linkcode name} even if they are in different browsing contexts (e.g. browser tabs).
+   * only to [consumers](https://jsr.io/@observable/core#consumer) of _other_ [`BroadcastSubject`](https://jsr.io/@observable/broadcast-subject/doc/~/BroadcastSubject)s
+   * with the same {@linkcode name} even if they are in different browsing contexts (e.g. browser tabs).
    * @example
    * ```ts
    * import { BroadcastSubject } from "@observable/broadcast-subject";

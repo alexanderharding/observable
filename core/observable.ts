@@ -13,7 +13,7 @@ export interface Observable<Value = unknown> {
 }
 
 /**
- * Object interface for an {@linkcode Observable} factory.
+ * Object interface for an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) factory.
  */
 export interface ObservableConstructor {
   /**
@@ -165,7 +165,7 @@ export const Observable: ObservableConstructor = class<Value> {
 };
 
 /**
- * Checks if a {@linkcode value} is an object that implements the {@linkcode Observable} interface.
+ * Checks if a {@linkcode value} is an object that implements the [`Observable`](https://jsr.io/@observable/core/doc/~/Observable) interface.
  * @example
  * Instance
  * ```ts

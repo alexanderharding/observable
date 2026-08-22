@@ -7,7 +7,7 @@ import { ReplaySubject } from "@observable/replay-subject";
 export type BehaviorSubject<Value = unknown> = Subject<Value>;
 
 /**
- * Object interface for a {@linkcode BehaviorSubject} factory.
+ * Object interface for a [`BehaviorSubject`](https://jsr.io/@observable/behavior-subject/doc/~/BehaviorSubject) factory.
  */
 export interface BehaviorSubjectConstructor {
   /**

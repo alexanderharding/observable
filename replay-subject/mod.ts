@@ -10,7 +10,7 @@ import { empty } from "@observable/empty";
 export type ReplaySubject<Value = unknown> = Subject<Value>;
 
 /**
- * Object interface for an {@linkcode ReplaySubject} factory.
+ * Object interface for a [`ReplaySubject`](https://jsr.io/@observable/replay-subject/doc/~/ReplaySubject) factory.
  */
 export interface ReplaySubjectConstructor {
   /**
