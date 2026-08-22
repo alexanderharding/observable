@@ -2,12 +2,12 @@ import { isObserver, Observer } from "./observer.ts";
 import { isObservable, Observable } from "./observable.ts";
 
 /**
- * Object type that is an {@linkcode Observer} and an {@linkcode Observable}.
+ * Object type that is an [`Observer`](https://jsr.io/@observable/core/doc/~/Observer) and an [`Observable`](https://jsr.io/@observable/core/doc/~/Observable).
  */
 export type Subject<Value = unknown> = Observer<Value> & Observable<Value>;
 
 /**
- * Object interface for a {@linkcode Subject} factory.
+ * Object interface for a [`Subject`](https://jsr.io/@observable/core/doc/~/Subject) factory.
  */
 export interface SubjectConstructor {
   /**
@@ -211,7 +211,7 @@ export const Subject: SubjectConstructor = class<Value> {
 };
 
 /**
- * Checks if a {@linkcode value} is an object that implements the {@linkcode Subject} interface.
+ * Checks if a {@linkcode value} is an object that implements the [`Subject`](https://jsr.io/@observable/core/doc/~/Subject) interface.
  * @example
  * Instance
  * ```ts

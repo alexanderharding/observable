@@ -30,7 +30,7 @@ export interface Observer<Value = unknown> {
 }
 
 /**
- * Object interface for an {@linkcode Observer} factory.
+ * Object interface for an [`Observer`](https://jsr.io/@observable/core/doc/~/Observer) factory.
  */
 export interface ObserverConstructor {
   /**
@@ -161,7 +161,7 @@ export const Observer: ObserverConstructor = class<Value> {
 };
 
 /**
- * Checks if a {@linkcode value} is an object that implements the {@linkcode Observer} interface.
+ * Checks if a {@linkcode value} is an object that implements the [`Observer`](https://jsr.io/@observable/core/doc/~/Observer) interface.
  * @example
  * ```ts
  * import { isObserver, Observer } from "@observable/core";
